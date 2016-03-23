@@ -1,0 +1,55 @@
+.upload-image-files {
+  border: 2px dotted #999;
+  width: 100%;
+  color: #000000;
+  text-align: center;
+  vertical-align: middle;
+  padding: 30px 0px;
+  margin-bottom: 10px;
+  cursor: default;
+}
+
+.upload-image-files div.browser input {
+  position: absolute;
+  top: 0;
+  right: 0;
+  margin: 0;
+  border: solid transparent;
+  border-width: 0 0 100px 200px;
+  opacity: .0;
+  filter: alpha(opacity= 0);
+  -o-transform: translate(250px,-50px) scale(1);
+  -moz-transform: translate(-300px,0) scale(4);
+  cursor: pointer;
+}
+
+.upload-image-files .fileinput-button {
+  position: relative;
+  overflow: hidden;
+  display: inline-block;
+}
+
+.upload-image-files .text {
+  font-size: 16px;
+  margin-bottom: 20px;
+}
+
+.image-files {
+  font-size: 16px;
+}
+
+.image-files .image {
+  margin-right: 20px;
+}
+
+.image-files .image-file {
+  margin-top: 20px;  
+}
+
+.image-files .status-text,
+.image-files .image-file-status-success,
+.image-files .image-file-status-error {
+  font-weight: bold;
+}
+
+

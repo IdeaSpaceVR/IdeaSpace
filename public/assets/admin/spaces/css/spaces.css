@@ -1,0 +1,14 @@
+.space-actions {
+  display: none;
+}
+
+.spaces {
+  color: #999999
+}
+
+.spaces.selected {
+  color: #000000;
+  font-weight: bold;
+}
+
+

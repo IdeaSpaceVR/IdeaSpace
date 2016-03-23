@@ -1,0 +1,85 @@
+/* {
+   font-size: 16px;
+}*/
+
+body {
+  font-family: 'Lato';
+}
+
+body { 
+  padding-top: 70px; 
+}
+
+.fa-btn {
+  margin-right: 6px;
+}
+
+.sidebar-nav {
+  position: fixed;
+  width: 8.33333333%;
+  z-index: 1000;
+  left: 0;
+  top: 50px;
+  height: 100%;
+  background-color: #222222;
+}
+
+.navbar-brand {
+  height: auto;
+}
+
+.navbar-inverse .navbar-nav>li>a,
+.navbar-inverse .navbar-nav>li>a:hover, 
+.navbar-inverse .navbar-nav>li>a:focus {
+  color: #eeeeee;
+  font-size: 16px;
+}
+
+.sidebar-nav {
+  padding-top: 1px;
+}
+
+.sidebar-nav li>a {
+  color: #eeeeee;
+  font-size: 16px;
+}
+
+.sidebar-nav li>a:focus {
+  background-color: #222222;
+}
+
+
+/* sidebar menu hover */
+.sidebar-nav li>a:hover {
+  color: #00aaff;
+  background-color: #222222;
+}
+
+
+#sidebar-icons-nav {
+  display: none;
+}
+
+
+.sidebar-nav ul.nav.collapse>li a, 
+.sidebar-nav ul.nav.collapsing>li a {
+  font-size: 14px;
+}
+
+/* collapsed menu */
+ul.nav.collapse.in {
+  background-color: #434343;
+}
+
+ul.nav.collapse.in li>a:hover {
+  color: #00aaff;
+  /*background-color: #575757;*/
+  background-color: #434343;
+}
+
+/*ul.nav.collapse.in li.active>a {*/
+ul li.active>a {
+  color: #00aaff;
+}
+
+
