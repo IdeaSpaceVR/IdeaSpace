@@ -1,13 +1,13 @@
 @extends('layouts.install_app')
 
-@section('title', 'IdeaSpaceVR')
+@section('title', 'IdeaSpace')
 
 @section('content')
 
     <div class="row">
 
         <div class="col-md-8 col-md-offset-2">
-            <h1>IdeaSpaceVR</h1>
+            <h1>IdeaSpace</h1>
         </div>
     </div>
 
@@ -68,7 +68,7 @@
                 <div class="form-group">
                     <label for="" class="col-sm-2 col-sm-offset-2 control-label"></label>
                     <div class="col-sm-4">
-                        <button class="btn btn-primary" type="submit">Install IdeaSpaceVR</button>
+                        <button class="btn btn-primary" type="submit">Install IdeaSpace</button>
                     </div>
                 </div>
 

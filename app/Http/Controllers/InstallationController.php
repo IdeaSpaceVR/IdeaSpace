@@ -137,6 +137,6 @@ class InstallationController extends Controller {
             'password' => Hash::make($request->input('password'))
         ]);        
      
-        return redirect('login')->with('alert-success', 'IdeaSpaceVR has been successfully installed!');   
+        return redirect('login')->with('alert-success', 'IdeaSpace has been successfully installed!');   
     }
 }

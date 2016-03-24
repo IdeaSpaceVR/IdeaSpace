@@ -47,7 +47,7 @@
             <div class="navbar-header">
 
                 <!-- Branding Image -->
-                <a class="navbar-brand" href="{{ url('/') }}"><img alt="IdeaSpaceVR" style="width:20px;display:inline" src="{{ asset('public/assets/layouts/app/images/isvr-logo-v1.png') }}"></a>
+                <a class="navbar-brand" href="{{ url('/') }}"><img alt="IdeaSpace" style="width:20px;display:inline" src="{{ asset('public/assets/layouts/app/images/isvr-logo-v1.png') }}"></a>
             </div>
 
         </div>

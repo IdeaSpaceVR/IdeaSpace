@@ -1,13 +1,13 @@
 @extends('layouts.install_app')
 
-@section('title', 'IdeaSpaceVR')
+@section('title', 'IdeaSpace')
 
 @section('content')
 
     <div class="row">
 
         <div class="col-md-8 col-md-offset-2">
-            <h1>IdeaSpaceVR</h1>
+            <h1>IdeaSpace</h1>
         </div>
     </div>
 
