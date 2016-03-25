@@ -29,7 +29,7 @@
         <a-entity id="earth-entity" geometry="primitive: sphere; radius: 2" material="side: double; color: #FFFFFF; src: #earth" position="0 1.8 0">
             <a-animation attribute="rotation" to="0 359 0" easing="linear" begin="0" dur="40000" repeat="indefinite"></a-animation>
         </a-entity>
-        <a-entity id="text-entity" text="size: 0.08; height: 0.01; text: {{ $content['my-text']['data'][0] }}" material="color: #FFFFFF" position="-0.4 1.8 -1"></a-entity>
+        <a-entity id="text-entity" text="size: 0.08; height: 0.01; text: {{ $content['my_text']['data'][0] }}" material="color: #FFFFFF" position="-0.4 1.8 -1"></a-entity>
         <a-entity geometry="primitive: sphere; radius: 90" material="shader: flat; color: #FFFFFF; src: #stars" scale="-1 1 1"></a-entity>
 
     </a-scene>
