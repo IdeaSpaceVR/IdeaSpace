@@ -18,7 +18,7 @@
                     id="cursor"
                     position="0 0 -2"
                     material="color:#FFFFFF"
-                    geometry="primitive: ring; radiusOuter: 0.10; radiusInner: 0.05;"
+                    geometry="primitive: sphere; radius: 0.03;"
                     visible="false">
                 </a-entity>
             </a-entity>
