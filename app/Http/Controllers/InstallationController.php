@@ -130,7 +130,10 @@ class InstallationController extends Controller {
 
         /* create database tables */
         Artisan::call('migrate');
-      
+     
+        /* seeding database tables */
+        Artisan::call('db:seed');
+ 
         User::create([
             'name' => $request->input('username'),
             'email' => $request->input('email'),
