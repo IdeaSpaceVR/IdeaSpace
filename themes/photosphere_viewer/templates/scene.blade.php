@@ -18,7 +18,7 @@
                     id="cursor"
                     position="0 0 -3.4"
                     geometry="primitive: ring; radiusOuter: 0.10; radiusInner: 0.05;"
-                    material="color: red; shader: flat;"
+                    material="color: #0080e5; shader: flat;"
                     visible="false">
                 </a-entity>
             </a-entity>
@@ -28,8 +28,8 @@
         <a-entity data-current-page="1" isvr-photosphere-menu id="photosphere-menu" visible="false">
             @if (count($content['images_upload']['data']) > 3)
             <a-entity isvr-photosphere-menu-navigation id="menu-arrow-up" position="0 1.5 0" visible="false">
-                <a-plane position="-0.07 0 0" rotation="0 0 -45" width="0.10" height="0.3" color="#5b00f4"></a-plane>
-                <a-plane position="0.07 0 0" rotation="0 0 45" width="0.10" height="0.3" color="#5b00f4"></a-plane>
+                <a-plane position="-0.07 0 0" rotation="0 0 -45" width="0.10" height="0.3" color="#0080e5"></a-plane>
+                <a-plane position="0.07 0 0" rotation="0 0 45" width="0.10" height="0.3" color="#0080e5"></a-plane>
             </a-entity>
             @endif
             @if (count($content['images_upload']['data']) > 0) 
@@ -55,8 +55,8 @@
             @endif
             @if (count($content['images_upload']['data']) > 3) 
             <a-entity isvr-photosphere-menu-navigation="url:{{ $space_url }}/field-data?key=images_upload&chunk-size=3&page=2" id="menu-arrow-down" position="0 -1.5 0" visible="@if (count($content['images_upload']['data']) > 3) true @else false @endif">
-                <a-plane position="-0.07 0 0" rotation="0 0 45" width="0.10" height="0.3" color="#5b00f4"></a-plane>
-                <a-plane position="0.07 0 0" rotation="0 0 -45" width="0.10" height="0.3" color="#5b00f4"></a-plane>
+                <a-plane position="-0.07 0 0" rotation="0 0 45" width="0.10" height="0.3" color="#0080e5"></a-plane>
+                <a-plane position="0.07 0 0" rotation="0 0 -45" width="0.10" height="0.3" color="#0080e5"></a-plane>
             </a-entity>
             @endif
         </a-entity>

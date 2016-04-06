@@ -25,7 +25,7 @@ AFRAME.registerComponent('isvr-photosphere-menu-navigation', {
           var children = this.el.childNodes;
           for (var i = 0; i < children.length; i++) {
             if (children[i].tagName == 'A-PLANE') {
-              children[i].setAttribute('color', '#5b00f4');
+              children[i].setAttribute('color', '#0080e5');
             }
           }
         }).bind(this));
