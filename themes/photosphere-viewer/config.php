@@ -4,7 +4,7 @@ return [
 
   'title' => 'Web VR Photosphere Viewer',
 
-  'description' => 'A 360-degrees photosphere viewer with a navigation menu.',
+  'description' => '360-degree photo sphere viewer with navigation menu.',
 
   'configuration' => [
     'panels' => [
