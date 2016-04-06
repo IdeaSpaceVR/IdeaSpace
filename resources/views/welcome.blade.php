@@ -3,15 +3,10 @@
 @section('title', 'IdeaSpace')
 
 @section('content')
-    <div class="row">
-        <div class="col-md-10 col-md-offset-1">
-            <div class="panel panel-default">
-                <div class="panel-heading">Welcome</div>
-
-                <div class="panel-body">
-                    
-                </div>
-            </div>
-        </div>
-    </div>
+<div class="row" style="margin-top:20px">
+  <div class="col-md-12 text-center">
+    <h1 style="font-size:72px;font-weight:300;margin-bottom:20px">IdeaSpace</h1>
+    <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);">Open source content management system<br> for the virtual reality web</p>
+  </div>
+</div>
 @endsection

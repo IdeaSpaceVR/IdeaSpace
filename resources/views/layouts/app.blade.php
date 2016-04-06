@@ -25,6 +25,7 @@
     <!-- Fonts -->
     <link href="{{ asset('public/font-awesome/css/font-awesome.min.css') }}" rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'>
+    <link href='https://fonts.googleapis.com/css?family=Roboto:400,300' rel='stylesheet' type='text/css'>
 
     <!-- Styles -->
     <link rel="stylesheet" href="{{ asset('public/bootstrap/css/bootstrap.min.css') }}">
