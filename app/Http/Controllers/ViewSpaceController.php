@@ -35,10 +35,11 @@ class ViewSpaceController extends Controller
      * Prepate space variables for template.
      *
      * @param Space $space The space.
+     * @param bool $preview True if preview.
      *
      * @return String $vars
      */
-    private function prepare_space_vars($space) {
+    private function prepare_space_vars($space, $preview = false) {
 
         try {
             $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
@@ -47,7 +48,7 @@ class ViewSpaceController extends Controller
         }
 
         $vars = [
-            'space_url' => url($space->uri),
+            'space_url' => url($space->uri) . (($preview==false)?'':'/preview'),
             'space_title' => $space->title,
             'theme_dir' => $theme->root_dir,
             'content' => []
@@ -118,7 +119,7 @@ class ViewSpaceController extends Controller
             abort(404);
         }
 
-        $vars = $this->prepare_space_vars($space);
+        $vars = $this->prepare_space_vars($space, false);
 
         /* cut off .blade.php */
         return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
@@ -144,7 +145,7 @@ class ViewSpaceController extends Controller
                 abort(404);
             }
 
-            $vars = $this->prepare_space_vars($space);
+            $vars = $this->prepare_space_vars($space, true);
         
             /* cut off .blade.php */
             return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
