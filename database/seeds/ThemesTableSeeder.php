@@ -17,5 +17,11 @@ class ThemesTableSeeder extends Seeder
         DB::table('themes')->insert([
           ['root_dir' => 'themes/hello-world', 'user_id' => 1, 'config' => json_encode($contents), 'status' => Theme::STATUS_ACTIVE]
         ]); 
+
+        $contents = (require 'themes/photosphere-viewer/config.php');
+
+        DB::table('themes')->insert([
+          ['root_dir' => 'themes/photosphere-viewer', 'user_id' => 1, 'config' => json_encode($contents), 'status' => Theme::STATUS_ACTIVE]
+        ]); 
     }
 }
