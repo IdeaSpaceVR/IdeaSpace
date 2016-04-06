@@ -170,7 +170,7 @@ class ViewSpaceController extends Controller
             try {
                 $space = Space::where('uri', $uri)->where('user_id', $user->id)->firstOrFail();
             } catch (ModelNotFoundException $e) {
-                return response()->toJson(['message' => 'Record not found'], 404);
+                return response()->json(['message' => 'Record not found'], 404);
             }
 
             $response = $this->get_field_data_json($request, $uri, $space);
@@ -194,7 +194,7 @@ class ViewSpaceController extends Controller
         try {
             $space = Space::where('uri', $uri)->where('status', Space::STATUS_PUBLISHED)->firstOrFail();
         } catch (ModelNotFoundException $e) {
-            return response()->toJson(['message' => 'Record not found'], 404);
+            return response()->json(['message' => 'Record not found'], 404);
         }
 
         $response = $this->get_field_data_json($request, $uri, $space);
