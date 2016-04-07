@@ -41,7 +41,7 @@
                 <tbody>
                 @if (count($spaces) == 0)
                   <tr>
-                        <td colspan="4">There are no entries yet.</td>
+                        <td colspan="5">There are no entries yet.</td>
                   </tr>
                 @endif 
                 @foreach ($spaces as $space)
