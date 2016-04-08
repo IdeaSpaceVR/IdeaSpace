@@ -777,7 +777,8 @@ class SpaceController extends Controller
         /* fire event */
         Event::fire('space.save', $space);
 
-        return redirect('admin/space/' . $space->id . '/edit')->withInput()->with('alert-success', 'Space saved.');
+        /* space_uri should we shown in an url-friendly way */
+        return redirect('admin/space/' . $space->id . '/edit')->withInput($request->except('space_uri'))->with('space_uri', $space_uri)->with('alert-success', 'Space saved.');
     }
 
 
