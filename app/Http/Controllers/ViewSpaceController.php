@@ -150,7 +150,8 @@ class ViewSpaceController extends Controller
             /* cut off .blade.php */
             return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
         }
-        abort(404);
+
+        return redirect('login');
     }
 
 
