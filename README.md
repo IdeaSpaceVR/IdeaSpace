@@ -6,11 +6,11 @@ Software developers should have the possibility to create and share virtual real
 
 ## Documentation
 
-https://github.com/IdeaSpaceVR/Documentation
+https://www.ideaspacevr.org/documentation
 
 ## Contributing
 
-Coming soon!
+https://www.ideaspacevr.org/documentation/master/contributions
 
 ### License
 
