@@ -89,7 +89,7 @@ jQuery(document).ready(function($) {
 
             $('#image-file-' + id).find('span.image-file-status').html('<strong>' + data.message + '</strong>').addClass('image-file-status-success');
             var elem_id = $('#upload-image-files').parent().attr('class').split(' ')[1];
-            $('#image-file-' + id).html('<input name="' + elem_id + '[]" type="hidden" value="' + data.ref_id + '"><table><tr><td><span class="image"><img width="400" src="' + data.uri + '"></span></td><td><span style="color:rgb(60, 118, 61)" class="glyphicon glyphicon-ok" aria-hidden="true"></span> ' + $('#image-file-' + id).find('span.image-file-status').html() + '<br><br><button type="button" class="btn btn-danger image-file-delete" aria-label="Delete" id="#image-file-delete-' + data.ref_id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="font-size:12px"></span> ' + data.delete_text + '</button></td></tr></table>'); 
+            $('#image-file-' + id).html('<input name="' + elem_id + '[]" type="hidden" value="' + data.ref_id + '"><table><tr><td><span class="image"><img class="img-responsive" width="400" src="' + data.uri + '"></span></td><td style="padding: 0 0 0 10px"><span style="color:rgb(60, 118, 61)" class="glyphicon glyphicon-ok" aria-hidden="true"></span> ' + $('#image-file-' + id).find('span.image-file-status').html() + '<br><br><button type="button" class="btn btn-danger image-file-delete" aria-label="Delete" id="#image-file-delete-' + data.ref_id + '"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="font-size:12px"></span> ' + data.delete_text + '</button></td></tr></table>'); 
 
           } else if (data.status == 'error') {
 

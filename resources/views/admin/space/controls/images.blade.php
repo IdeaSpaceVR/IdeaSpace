@@ -22,7 +22,7 @@
             $i = 0;
             foreach ($control['data'] as $image_data) {
         ?>
-        <div class="image-file" id="image-file-<?php echo $i; ?>"><input name="<?php echo $control['control_id']; ?>[]" type="hidden" value="<?php echo $image_data['file_id']; ?>"><table><tr><td><span class="image"><img width="400" src="<?php echo $image_data['uri']; ?>"></span></td><td><button type="button" class="btn btn-danger image-file-delete" aria-label="Delete" id="#image-file-delete-<?php echo $image_data['file_id']; ?>"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="font-size:12px"></span> <?php echo $image_data['delete_text']; ?></button></td></tr></table></div>
+        <div class="image-file" id="image-file-<?php echo $i; ?>"><input name="<?php echo $control['control_id']; ?>[]" type="hidden" value="<?php echo $image_data['file_id']; ?>"><table><tr><td><span class="image"><img class="img-responsive" width="400" src="<?php echo $image_data['uri']; ?>"></span></td><td style="padding: 0 0 0 10px"><button type="button" class="btn btn-danger image-file-delete" aria-label="Delete" id="#image-file-delete-<?php echo $image_data['file_id']; ?>"><span class="glyphicon glyphicon-remove" aria-hidden="true" style="font-size:12px"></span> <?php echo $image_data['delete_text']; ?></button></td></tr></table></div>
         <?php 
             $i++;
             } 
