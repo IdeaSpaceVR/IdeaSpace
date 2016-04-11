@@ -587,24 +587,35 @@ class SpaceController extends Controller
      */
     private function create_image($file_uri_orig, $file_uri_new, $image_settings) {
 
+        /* image quality */
+        $quality = 90;
+        if (array_has($image_settings, 'quality')) {
+            $quality = $image_settings['quality'];
+        } 
+
         if (array_has($image_settings, 'width') && array_has($image_settings, 'height')) {
 
             $file = Image::make($file_uri_orig)->resize($image_settings['width'], $image_settings['height']);
-            $file->save($file_uri_new);
+            $file->save($file_uri_new, $quality);
 
         } else if (array_has($image_settings, 'width')) {
 
             $file = Image::make($file_uri_orig)->resize($image_settings['width'], null, function ($constraint) {
                 $constraint->aspectRatio();
             });
-            $file->save($file_uri_new);
+            $file->save($file_uri_new, $quality);
 
         } else if (array_has($image_settings, 'height')) {
 
             $file = Image::make($file_uri_orig)->resize(null, $image_settings['height'], function ($constraint) {
                 $constraint->aspectRatio();
             });
-            $file->save($file_uri_new);
+            $file->save($file_uri_new, $quality);
+
+        } else if (array_has($image_settings, 'quality')) {
+
+            $file = Image::make($file_uri_orig);
+            $file->save($file_uri_new, $quality);
         }
     }
 

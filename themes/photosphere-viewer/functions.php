@@ -5,15 +5,15 @@
 
 Event::listen('media.image.manipulation', function($image_file_path) {
 
-    /* keys: width, height */
-    return array('width' => '4096');
+    /* available keys: width, height, quality */
+    return array('width' => '4096', 'quality' => 75);
 
 });
 
 
 Event::listen('media.image.thumbnail.manipulation', function($image_file_path) {
 
-    /* keys: width, height */
+    /* available keys: width, height, quality */
     return array('width' => '512');
 });
 
