@@ -30,6 +30,8 @@ class ViewSpaceController extends Controller
      */
     public function __construct()
     {
+        /* CORS = Cross Origin Resource Sharing */
+        $this->middleware('cors');
         $this->middleware('register.theme.eventlistener');
     }
 

@@ -114,7 +114,7 @@
                     <h3 class="panel-title">Embed Code</h3>
                 </div>
                 <div class="panel-body">
-                <textarea class="form-control" rows="3" aria-describedby="embed-code-help"></textarea>
+                <textarea id="space-embed-code" class="form-control" rows="4" aria-describedby="embed-code-help"><iframe width="100%" allowfullscreen frameborder="0" src="{{ url($space_uri) }}"></iframe></textarea>
                 <span id="embed-code-help" class="help-block">Copy the code and embed this space on any web site.</span>
                 </div>
             </div>

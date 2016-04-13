@@ -69,7 +69,7 @@ class FrontpageController extends Controller
                 /* show space in iframe because of the top navbar */
                 if (Auth::check()) {
 
-                    $frontpage_content = '<iframe width="100%" height="100%" frameborder="0" src="/' . $space->uri . '"></iframe>'; 
+                    $frontpage_content = '<iframe width="100%" height="100%" allowfullscreen frameborder="0" src="/' . $space->uri . '"></iframe>'; 
                     return view('frontpage.frontpage', ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 'frontpage_content' => $frontpage_content]);
                 }
             
