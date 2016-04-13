@@ -108,6 +108,17 @@
                     <p style="font-weight:bold;margin-top:20px">{{ $theme['title'] }}</p>
                 </div>
             </div>
+            @if ($space_status == App\Space::STATUS_PUBLISHED)
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Embed Code</h3>
+                </div>
+                <div class="panel-body">
+                <textarea class="form-control" rows="3" aria-describedby="embed-code-help"></textarea>
+                <span id="embed-code-help" class="help-block">Copy the code and embed this space on any web site.</span>
+                </div>
+            </div>
+            @endif
         </div>
     </div> <!-- end row //-->
 

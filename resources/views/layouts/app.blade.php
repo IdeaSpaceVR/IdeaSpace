@@ -61,7 +61,11 @@
             <div class="collapse navbar-collapse" id="spark-navbar-collapse">
                 <!-- Left Side Of Navbar -->
                 <ul class="nav navbar-nav">
+                    @if (Auth::guest())
                     <li role="presentation"><a href="{{ url('/') }}"><i class="fa fa-btn fa-home"></i> Home</a></li>
+                    @else
+                    <li role="presentation"><a href="{{ url('/admin') }}"><i class="fa fa-btn fa-home"></i> Dashboard</a></li>
+                    @endif
                 </ul>
 
                 <!-- Right Side Of Navbar -->
@@ -78,7 +82,12 @@
                         </li>
                         <li class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="#"><i class="fa fa-btn fa-image"></i> Media</a></li>
                         <li @if (Route::currentRouteName() == 'themes') class="active hidden-lg hidden-md hidden-sm" @endif class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i> Themes</a></li>   
-                        <li class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="#"><i class="fa fa-btn fa-cogs"></i> Settings</a></li>
+                        <li class="hidden-lg hidden-md hidden-sm dropdown">
+                            <a href="#" class="dropdown-toggle menu-has-submenu" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
+                        <ul class="dropdown-menu" role="menu" id="spaces-sub-xs">
+                            <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif role="presentation"><a href="{{ route('space_settings') }}">Space</a></li>
+                        </ul>
+                        </li>
                         <li class="dropdown">
                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">{{ ucfirst(Auth::user()->name) }} <span class="caret"></span></a>
                             <ul class="dropdown-menu" role="menu">
@@ -117,7 +126,11 @@
                     </li>
                     <li><a href="#"><i class="fa fa-btn fa-image"></i> Media</a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i> Themes</a></li>   
-                    <li><a href="#"><i class="fa fa-btn fa-cogs"></i> Settings</a></li>
+                    <li><a href="#" class="collapsed menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-md-lg"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
+                      <ul class="nav collapse @if (Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-md-lg">
+                        <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif><a href="{{ route('space_settings') }}"><i class="fa fa-btn fa-cube"></i> Space</a></li>
+                      </ul>
+                    </li>
                 </ul>
             </div> 
             <div id="sidebar-icons-nav" class="col-xs-1" role="navigation">
@@ -130,7 +143,11 @@
                     </li>
                     <li><a href="#"><i class="fa fa-btn fa-image"></i></a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i></a></li>   
-                    <li><a href="#"><i class="fa fa-btn fa-cogs"></i></a></li>
+                    <li><a href="#" class="menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-sm"><i class="fa fa-btn fa-cogs"></i><span class="caret"></span></a></li>
+                        <ul class="nav collapse @if (Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-sm">
+                            <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif><a href="{{ route('space_settings') }}"><i class="fa fa-btn fa-cube"></i></a></li>
+                        </ul>
+                    </li>
                 </ul>
             </div> 
             <div class="col-xs-11">

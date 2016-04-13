@@ -26,7 +26,7 @@
 
 Route::group(['middleware' => 'web'], function () {
 
-  Route::get('/', 'WelcomeController@index'); 
+  Route::get('/', 'FrontpageController@index'); 
 
   /* handles login, lost password */
   Route::auth();
@@ -80,6 +80,15 @@ Route::group(['middleware' => 'web'], function () {
    */
   Route::get('{uri}/preview/field-data', ['as' => 'preview_field_data_json', 'uses' => 'ViewSpaceController@preview_field_data_json']);
   Route::get('{uri}/preview', ['as' => 'view_space', 'uses' => 'ViewSpaceController@preview_space']);
+
+
+  /**
+   * Settings
+   */
+  Route::get('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\SpaceSettingsController@index']);
+  Route::post('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\SpaceSettingsController@save']);
+
+
 
   /**
    * Installation

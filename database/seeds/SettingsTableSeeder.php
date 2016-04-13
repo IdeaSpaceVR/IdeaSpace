@@ -19,5 +19,14 @@ class SettingsTableSeeder extends Seeder
                 'value' => 4096
             ]
         ]);
+
+        DB::table('settings')->insert([
+            [
+                'user_id' => 1, 
+                'namespace' => 'system', 
+                'key' => 'front-page-display', 
+                'value' => 'latest-spaces'
+            ]
+        ]);
     }
 }

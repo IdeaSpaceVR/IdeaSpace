@@ -23,4 +23,10 @@ class Setting extends Model
         'user_id', 'namespace', 'key', 'value'
     ];
 
+    /**
+     * Indicates if the model should be timestamped.
+     *
+     * @var bool
+     */
+    public $timestamps = false;
 }

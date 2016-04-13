@@ -16,7 +16,7 @@ body {
 
 .sidebar-nav {
   position: fixed;
-  width: 8.33333333%;
+  /*width: 8.33333333%;*/
   z-index: 1000;
   left: 0;
   top: 50px;
@@ -26,6 +26,10 @@ body {
 
 .navbar-brand {
   height: auto;
+}
+
+.navbar-inverse {
+  border-color: rgb(34, 34, 34);
 }
 
 .navbar-inverse .navbar-nav>li>a,
@@ -82,4 +86,8 @@ ul li.active>a {
   color: #00aaff;
 }
 
-
+@media (min-width: 768px) {
+  .navbar-nav>li>a {
+    padding-top: 18px;
+  }
+}
