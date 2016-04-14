@@ -44,19 +44,17 @@ class FrontpageController extends Controller
 
         } else {
 
-            $frontpage_content = null;
-
             $setting = Setting::where('key', 'front-page-display')->first();
 
             /* if there are suddenly no published spaces anymore, change setting and show default front page */
-            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->get();
+            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->simplePaginate(5);
 
             if (count($spaces) === 0) {
                 if ($setting->value != 'latest-spaces') {
                     $setting->value = 'latest-spaces';
                     $setting->save();
                 }
-                return view('frontpage.frontpage', ['frontpage_content' => $frontpage_content]);
+                return view('frontpage.welcome_frontpage');
             }
 
 
@@ -69,8 +67,11 @@ class FrontpageController extends Controller
                 /* show space in iframe because of the top navbar */
                 if (Auth::check()) {
 
-                    $frontpage_content = '<iframe width="100%" height="100%" allowfullscreen frameborder="0" src="/' . $space->uri . '"></iframe>'; 
-                    return view('frontpage.frontpage', ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 'frontpage_content' => $frontpage_content]);
+                    $content = space_embed_code('/' . $space->uri, '100%', '100%'); 
+
+                    return view('frontpage.onespace_frontpage', 
+                        ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
+                        'content' => $content]);
                 }
             
                 /* show space on full page */ 
@@ -83,15 +84,9 @@ class FrontpageController extends Controller
 
                 /* show latest spaces on front page */
 
-                //$spaces = Space::where('status', Space::STATUS_PUBLISHED)->get();
-
-                //if ($spaces == null) {
-
-                //} else {
-
-
-                //}
-                return view('frontpage.frontpage', ['frontpage_content' => $frontpage_content]);
+                return view('frontpage.latest_spaces_frontpage', 
+                    ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
+                    'spaces' => $spaces]);
             }
         }
     }

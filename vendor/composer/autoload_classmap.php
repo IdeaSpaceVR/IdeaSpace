@@ -36,7 +36,7 @@ return array(
     'App\\Providers\\AuthServiceProvider' => $baseDir . '/app/Providers/AuthServiceProvider.php',
     'App\\Providers\\EventServiceProvider' => $baseDir . '/app/Providers/EventServiceProvider.php',
     'App\\Providers\\RouteServiceProvider' => $baseDir . '/app/Providers/RouteServiceProvider.php',
-    'App\\Providers\\ThemeHelperServiceProvider' => $baseDir . '/app/Providers/ThemeHelperServiceProvider.php',
+    'App\\Providers\\HelperServiceProvider' => $baseDir . '/app/Providers/HelperServiceProvider.php',
     'App\\Setting' => $baseDir . '/app/Setting.php',
     'App\\Space' => $baseDir . '/app/Space.php',
     'App\\Theme' => $baseDir . '/app/Theme.php',

@@ -4,7 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
 
-class ThemeHelperServiceProvider extends ServiceProvider
+class HelperServiceProvider extends ServiceProvider
 {
 
     /**

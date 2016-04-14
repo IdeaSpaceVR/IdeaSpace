@@ -156,7 +156,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
-        App\Providers\ThemeHelperServiceProvider::class,
+        App\Providers\HelperServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
     ],
 
