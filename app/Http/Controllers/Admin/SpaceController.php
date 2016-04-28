@@ -110,7 +110,7 @@ class SpaceController extends Controller
 
           $request->session()->put('theme-id', $all['id']);
 
-          return response()->json(['redirect' => '/admin/space/add']);
+          return response()->json(['redirect' => url('admin/space/add')]);
 
         } else {
             abort(404);

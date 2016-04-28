@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
       var image_id = $(this).parents('.image-file').attr('id');
 
       $.ajax({
-          url: '/admin/space/media/images/delete',
+          url: 'media/images/delete',
           type: 'POST',
           data: { ref_id: ref_id, image_id: image_id }
       }).done(function(data) {
@@ -35,7 +35,7 @@ jQuery(document).ready(function($) {
 
 
   $('#upload-image-files').dmUploader({
-        url: '/admin/space/media/images/add',
+        url: 'media/images/add',
         dataType: 'json',
         allowedTypes: 'image/*',
         maxFileSize: $('#max_filesize_bytes').val(),

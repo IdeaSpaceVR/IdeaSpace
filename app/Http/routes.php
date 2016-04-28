@@ -49,8 +49,12 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpaceController@space_delete']);
   Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpaceController@space_restore']);
 
+  /* make sure paths work on new spaces and space edits */
+  Route::post('admin/space/{id}/media/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
   Route::post('admin/space/media/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
+  Route::post('admin/space/{id}/media/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
   Route::post('admin/space/media/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
+
   /* one media ajax endpoint per control type */
   //Route::post('admin/space/add/config/media/image', ['as' => 'space_add_config_media_image_submit', 'uses' => 'Admin\SpaceController@config_media_image_submit']);
   //Route::post('admin/space/add/config/media/models', ['as' => 'space_add_config_media_models_submit', 'uses' => 'Admin\SpaceController@config_media_models_submit']);
