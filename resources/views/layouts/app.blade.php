@@ -7,7 +7,7 @@
 
     <title>@yield('title')</title>
 
-    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
     <meta name="abstract" content="IdeaSpace is a content management system for the virtual reality web" />
     <meta name="description" content="IdeaSpace is a content management system for the virtual reality web" />

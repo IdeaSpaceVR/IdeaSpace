@@ -3,7 +3,7 @@
 <head>
     <title>@yield('title')</title>
 
-    <link rel="shortcut icon" type="image/png" href="/favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->

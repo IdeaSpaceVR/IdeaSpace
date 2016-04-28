@@ -7,7 +7,7 @@
 
     <title>@yield('title')</title>
 
-    <link rel="shortcut icon" type="image/png" href="favicon.png"/>
+    <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
     <meta name="abstract" content="" />
     <meta name="description" content="" />
