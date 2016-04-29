@@ -1,5 +1,10 @@
 DirectoryIndex index.php
 
+<FilesMatch "artisan|composer.phar|composer.json|composer.lock|package.json|web.config">
+    Order Allow,Deny
+    Deny from all
+</FilesMatch>
+
 <IfModule mod_rewrite.c>
     <IfModule mod_negotiation.c>
         Options -MultiViews
