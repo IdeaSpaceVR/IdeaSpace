@@ -6,6 +6,10 @@ We believe that everyone should be able to easily create and publish virtual rea
 
 Software developers should have the possibility to create and share virtual reality web themes.
 
+## Download Latest Release
+
+https://www.ideaspacevr.org/download
+
 ## Documentation
 
 https://www.ideaspacevr.org/documentation
