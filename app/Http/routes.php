@@ -71,6 +71,14 @@ Route::group(['middleware' => 'web'], function () {
 
 
   /**
+   * Media / Assets
+   */  
+  Route::get('admin/media', ['as' => 'media', 'uses' => function() {
+    return view('admin.assets.assets');
+  }]);
+
+
+  /**
    * Spaces
    */
   Route::get('admin/spaces/all', ['as' => 'spaces_all', 'uses' => 'Admin\SpacesController@spaces_all']);
