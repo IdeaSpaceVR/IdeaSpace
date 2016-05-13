@@ -824,13 +824,32 @@ class SpaceController extends Controller
             return redirect('admin/space/' . $request->input('space_id') . '/edit')->withErrors($validator)->withInput();
         }
 
+
         $space_id = $request->input('space_id');
+
+        /* generate url-friendly slug */
+        $space_uri = str_slug($request->input('space_uri'));
+
+        /* check if uri exists already, except own url */
+        try {
+            $existing_space = Space::where('uri', $space_uri)->firstOrFail();
+            if ($existing_space != null && $existing_space->id != $space_id) {
+                $validator->after(function($validator) {
+                    $validator->errors()->add('space_uri', 'This path already exists.');
+                });
+                if ($validator->fails()) {
+                    $vars = $this->prepare_field_data($request);
+                    return redirect('admin/space/' . $space_id . '/edit')->withErrors($validator)->withInput()->with('vars', $vars);
+                }
+            }
+        } catch (ModelNotFoundException $e) {
+        }
+
 
         try {
 
             $space = Space::where('id', $space_id)->firstOrFail();
             $space->title = $request->input('space_title');
-            $space_uri = str_slug($request->input('space_uri'));
             $space->uri = $space_uri;
             $space->status = $request->input('space_status');
             $space->save();
