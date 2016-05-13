@@ -31,7 +31,7 @@
                 <img width="400" src="{{ $theme['screenshot'] }}" class="img-responsive" alt="{{ $theme['title'] }}">
                 <div class="caption">
                     <h3>{{ $theme['title'] }}</h3>
-                    <p class="text-justify">{{ $theme['description'] }}</p>
+                    <p class="text-center">{{ $theme['description'] }}</p>
                 </div>
             </div>
         </div>
