@@ -18,6 +18,7 @@ use App\FieldControl;
 use App\FieldDataImage;
 use App\FieldDataText;
 use App\Setting;
+use Route;
 use Log;
 
 class SpaceController extends Controller
@@ -694,6 +695,21 @@ class SpaceController extends Controller
         } catch (ModelNotFoundException $e) {
         }
 
+        /* check if uri exists as system uri already */
+        $routeCollection = Route::getRoutes();
+        foreach ($routeCollection as $route) {
+            if ($route->getPath() == $space_uri) {
+                $validator->after(function($validator) {
+                    $validator->errors()->add('space_uri', 'This path already exists.');
+                });
+                if ($validator->fails()) {
+                    $vars = $this->prepare_field_data($request);
+                    return redirect('admin/space/add')->withErrors($validator)->withInput()->with('vars', $vars);
+                }
+            }
+        }       
+
+
         $user = Auth::user();
         $theme_id = $request->input('theme_id');
         $theme = Theme::where('id', $theme_id)->first();
@@ -844,6 +860,20 @@ class SpaceController extends Controller
             }
         } catch (ModelNotFoundException $e) {
         }
+
+        /* check if uri exists as system uri already */
+        $routeCollection = Route::getRoutes();
+        foreach ($routeCollection as $route) {
+            if ($route->getPath() == $space_uri) {
+                $validator->after(function($validator) {
+                    $validator->errors()->add('space_uri', 'This path already exists.');
+                });
+                if ($validator->fails()) {
+                    $vars = $this->prepare_field_data($request);
+                    return redirect('admin/space/' . $space_id . '/edit')->withErrors($validator)->withInput()->with('vars', $vars);
+                }
+            }
+        }       
 
 
         try {
