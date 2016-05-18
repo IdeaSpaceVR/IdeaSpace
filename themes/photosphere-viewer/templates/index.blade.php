@@ -24,9 +24,10 @@
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/isvr_photosphere_menu.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/isvr_photosphere_menu_thumb.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/isvr_photosphere_menu_navigation.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-component.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-thumb-component.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-navigation-component.js') }}"></script>
 </head>
 <body>
 
