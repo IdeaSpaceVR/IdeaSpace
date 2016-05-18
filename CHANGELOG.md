@@ -1,3 +1,9 @@
+## 0.3.1
+
+- Fixes a critical bug which prevented the installation of IdeaSpace in a sub-directory: eg. https://mydomain.com/sub
+- The DB_PREFIX parameter in .env is working. It enables to have multiple IdeaSpace installations sharing the same database using different table prefixes.
+- Added a temporary page for Media menu.
+
 ## 0.3.0  
 
 - This is the initial public release of IdeaSpace.
