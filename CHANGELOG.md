@@ -1,3 +1,9 @@
+## 0.3.2
+
+- Major improvement of default photo sphere viewer theme.
+- New default photo sphere theme: photo sphere diver.
+- Fixed some bugs related to space URIs and existing / system URIs.
+
 ## 0.3.1
 
 - Fixes a critical bug which prevented the installation of IdeaSpace in a sub-directory: eg. https://mydomain.com/sub
