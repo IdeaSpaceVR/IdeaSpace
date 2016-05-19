@@ -900,7 +900,7 @@ class SpaceController extends Controller
         foreach ($controls as $key => $control) {
 
             /* return true if present or an empty string if not */
-            //if ($request->has($control['type'] . '--' . $key)) {
+            if ($request->has($control['type'] . '--' . $key)) {
 
                 $request_val = $request->input($control['type'] . '--' . $key);
 
@@ -993,7 +993,7 @@ class SpaceController extends Controller
                 }      
 
 
-            //} /* end: if */
+            } /* end: if */
 
         } /* end: foreach */
 
