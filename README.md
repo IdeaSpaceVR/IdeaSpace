@@ -6,6 +6,10 @@ We believe that everyone should be able to easily create and publish virtual rea
 
 Software developers should have the possibility to create and share virtual reality web themes.
 
+## VR Themes
+
+Currently the latest release has 3 default themes: [Hello World](https://www.ideaspacevr.org/themes/hello-world-example-theme), [Web VR Photo Sphere Viewer](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-viewer-navigation-menu), [Photo Sphere Diver](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-diver-panorama).
+
 ## Download Latest Release
 
 https://www.ideaspacevr.org/download
@@ -13,6 +17,8 @@ https://www.ideaspacevr.org/download
 ## Documentation
 
 https://www.ideaspacevr.org/documentation
+
+The IdeaSpace Theme API is currently in development. That's why the developer documentation is currently... well, under development. ;-)
 
 ## Contributing
 
