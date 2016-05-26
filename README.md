@@ -24,6 +24,10 @@ The IdeaSpace Theme API is currently in development. That's why the developer do
 
 https://www.ideaspacevr.org/documentation/master/contributions
 
+### Roadmap
+
+0.4.0 release: Theme API will implement custom content types and fields. This enhancement will enable totally new VR Theme experiences!
+
 ### License
 
 The IdeaSpace CMS is open-sourced software licensed under the [GPL-2.0 license](https://opensource.org/licenses/GPL-2.0)
