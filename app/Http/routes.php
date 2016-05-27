@@ -71,9 +71,9 @@ Route::group(['middleware' => 'web'], function () {
 
 
   /**
-   * Media / Assets
+   * Assets
    */  
-  Route::get('admin/media', ['as' => 'media', 'uses' => function() {
+  Route::get('admin/assets', ['as' => 'assets', 'uses' => function() {
     return view('admin.assets.assets');
   }]);
 

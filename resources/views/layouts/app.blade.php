@@ -80,7 +80,7 @@
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif role="presentation"><a href="{{ route('space_add_select_theme') }}">Add New</a></li>
                         </ul>
                         </li>
-                        <li class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="{{ route('media') }}"><i class="fa fa-btn fa-image"></i> Media</a></li>
+                        <li class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="{{ route('assets') }}"><i class="fa fa-btn fa-image"></i> Assets</a></li>
                         <li @if (Route::currentRouteName() == 'themes') class="active hidden-lg hidden-md hidden-sm" @endif class="hidden-lg hidden-md hidden-sm" role="presentation"><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i> Themes</a></li>   
                         <li class="hidden-lg hidden-md hidden-sm dropdown">
                             <a href="#" class="dropdown-toggle menu-has-submenu" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
@@ -124,7 +124,7 @@
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif><a href="{{ route('space_add_select_theme') }}"><i class="fa fa-btn fa-pencil"></i> Add New</a></li>
                         </ul>
                     </li>
-                    <li><a href="{{ route('media') }}"><i class="fa fa-btn fa-image"></i> Media</a></li>
+                    <li><a href="{{ route('assets') }}"><i class="fa fa-btn fa-image"></i> Assets</a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i> Themes</a></li>   
                     <li><a href="#" class="collapsed menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-md-lg"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
                       <ul class="nav collapse @if (Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-md-lg">
