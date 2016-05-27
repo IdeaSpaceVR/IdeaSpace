@@ -8,8 +8,9 @@ class Theme extends Model
 {
 
     const STATUS_ACTIVE = 'active';
+    const STATUS_ACTIVE_TEXT = 'Uninstall';
     const STATUS_INACTIVE = 'inactive';
-    //const EXAMPLE_URL_NONE = 'none';
+    const STATUS_INACTIVE_TEXT = 'Install Theme';
     
     const TYPE_IMAGES = 'images';
     const TYPE_IMAGE = 'image';

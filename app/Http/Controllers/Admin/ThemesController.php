@@ -87,16 +87,25 @@ class ThemesController extends Controller
         $themes_mod = array();
 
         foreach ($themes as $theme) {      
-            $config = json_decode($theme->config);
+            $config = json_decode($theme->config, true);
+
+            //Log::debug($config);
+
             $theme_mod = array();
             $theme_mod['id'] = $theme->id;          
-            $theme_mod['title'] = $config->title;          
-            $theme_mod['description'] = $config->description;          
-            //$theme_mod['compatibility'] = $config->headset_compatibility;          
+            $theme_mod['theme-name'] = $config['theme-name'];          
+            $theme_mod['theme-description'] = $config['theme-description'];          
+            $theme_mod['theme-version'] = $config['theme-version'];          
+            $theme_mod['theme-author-name'] = $config['theme-author-name'];          
+            $theme_mod['theme-author-email'] = $config['theme-author-email'];          
+            $theme_mod['theme-homepage'] = $config['theme-homepage'];          
+            $theme_mod['theme-keywords'] = $config['theme-keywords'];          
+            $theme_mod['theme-compatibility'] = explode(',', $config['theme-compatibility']);          
+
             $theme_mod['status'] = $theme->status;          
-            $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?'active':'');          
+            $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?Theme::STATUS_ACTIVE:'');          
             $theme_mod['status_aria_pressed'] = (($theme->status==Theme::STATUS_ACTIVE)?'true':'false');          
-            $theme_mod['status_text'] = (($theme->status==Theme::STATUS_ACTIVE)?'Active':'Inactive');          
+            $theme_mod['status_text'] = (($theme->status==Theme::STATUS_ACTIVE)?THEME::STATUS_ACTIVE_TEXT:Theme::STATUS_INACTIVE_TEXT);          
             $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);          
             $themes_mod[] = $theme_mod;
         }
@@ -123,7 +132,8 @@ class ThemesController extends Controller
         if (array_has($all, 'id') && array_has($all, 'status_text')) {   
 
             $theme = Theme::where('id', $all['id'])->first();
-            $theme->status = ((strtolower($all['status_text'])==Theme::STATUS_ACTIVE)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE);
+            $theme->status = (($all['status_text']==Theme::STATUS_ACTIVE_TEXT)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE);
+
             if ($theme->status == Theme::STATUS_INACTIVE) { 
                 /* delete config */
                 $theme->config = '';
@@ -138,7 +148,8 @@ class ThemesController extends Controller
             }
             $theme->save();
 
-            $response_status_text = ucfirst(((strtolower($all['status_text'])==Theme::STATUS_ACTIVE)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE)); 
+            $response_status_text = (($all['status_text']==Theme::STATUS_ACTIVE_TEXT)?Theme::STATUS_INACTIVE_TEXT:Theme::STATUS_ACTIVE_TEXT); 
+            //Log::debug($response_status_text);
             return response()->json(['status_text' => $response_status_text]);
 
         } else {
