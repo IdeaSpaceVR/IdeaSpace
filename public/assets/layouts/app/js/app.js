@@ -1,6 +1,6 @@
 jQuery(document).ready(function($) {
 
-  if ($(window).width() < 1440) {
+  if ($(window).width() < 1390) {
     if ($(window).width() < 768) {
       $('#sidebar-nav').hide();
       $('#sidebar-icons-nav').hide();
@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
   }
 
   $(window).resize(function() {
-    if ($(window).width() < 1440) {
+    if ($(window).width() < 1390) {
       if ($(window).width() < 768) {
         $('#sidebar-nav').hide();
         $('#sidebar-icons-nav').hide();
