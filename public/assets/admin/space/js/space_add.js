@@ -27,6 +27,13 @@ jQuery(document).ready(function($) {
       $('form').submit(); 
     });
 
+    $('.space-add-content').click(function() {
+      $(this).addClass('disabled');
+      /* set content type key for redirection */
+      $('#contenttype_key').val($(this).attr('data-contenttype-key'));
+      $('form').submit(); 
+    });
+
     $("#space-embed-code").focus(function() {
       var $this = $(this);
       $this.select();

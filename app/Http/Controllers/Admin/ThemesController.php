@@ -93,14 +93,14 @@ class ThemesController extends Controller
 
             $theme_mod = array();
             $theme_mod['id'] = $theme->id;          
-            $theme_mod['theme-name'] = $config['theme-name'];          
-            $theme_mod['theme-description'] = $config['theme-description'];          
-            $theme_mod['theme-version'] = $config['theme-version'];          
-            $theme_mod['theme-author-name'] = $config['theme-author-name'];          
-            $theme_mod['theme-author-email'] = $config['theme-author-email'];          
-            $theme_mod['theme-homepage'] = $config['theme-homepage'];          
-            $theme_mod['theme-keywords'] = $config['theme-keywords'];          
-            $theme_mod['theme-compatibility'] = explode(',', $config['theme-compatibility']);          
+            $theme_mod['theme-name'] = $config['#theme-name'];          
+            $theme_mod['theme-description'] = $config['#theme-description'];          
+            $theme_mod['theme-version'] = $config['#theme-version'];          
+            $theme_mod['theme-author-name'] = $config['#theme-author-name'];          
+            $theme_mod['theme-author-email'] = $config['#theme-author-email'];          
+            $theme_mod['theme-homepage'] = $config['#theme-homepage'];          
+            $theme_mod['theme-keywords'] = $config['#theme-keywords'];          
+            $theme_mod['theme-compatibility'] = explode(',', $config['#theme-compatibility']);          
 
             $theme_mod['status'] = $theme->status;          
             $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?Theme::STATUS_ACTIVE:'');          

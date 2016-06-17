@@ -36,31 +36,34 @@ Route::group(['middleware' => 'web'], function () {
    */
   Route::get('admin', ['as' => 'dashboard', 'uses' => 'Admin\DashboardController@index']);
 
-  Route::get('admin/space/add/select-theme', ['as' => 'space_add_select_theme', 'uses' => 'Admin\SpaceController@select_theme']);
-  Route::post('admin/space/add/select-theme', ['as' => 'space_add_select_theme_submit', 'uses' => 'Admin\SpaceController@select_theme_submit']);
+  Route::get('admin/space/add/select-theme', ['as' => 'space_add_select_theme', 'uses' => 'Admin\SpaceAddController@select_theme']);
+  Route::post('admin/space/add/select-theme', ['as' => 'space_add_select_theme_submit', 'uses' => 'Admin\SpaceAddController@select_theme_submit']);
 
-  Route::get('admin/space/add', ['as' => 'space_add', 'uses' => 'Admin\SpaceController@space_add']);
-  Route::post('admin/space/add', ['as' => 'space_add_submit', 'uses' => 'Admin\SpaceController@space_add_submit']);
+  Route::get('admin/space/add', ['as' => 'space_add', 'uses' => 'Admin\SpaceAddController@space_add']);
+  Route::post('admin/space/add', ['as' => 'space_add_submit', 'uses' => 'Admin\SpaceAddController@space_add_submit']);
+  Route::post('admin/space/add/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceAddController@space_add_content_add_submit']);
 
-  Route::get('admin/space/{id}/edit', ['as' => 'space_edit', 'uses' => 'Admin\SpaceController@space_edit']);
-  Route::post('admin/space/{id}/edit', ['as' => 'space_edit_submit', 'uses' => 'Admin\SpaceController@space_edit_submit']);
+  Route::get('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add', 'uses' => 'Admin\Content\SpaceContentAddController@content_add']);
+  Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\Content\SpaceContentAddController@content_add_submit']);
 
-  Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpaceController@space_trash']);
-  Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpaceController@space_delete']);
-  Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpaceController@space_restore']);
+  Route::get('admin/space/{id}/edit', ['as' => 'space_edit', 'uses' => 'Admin\SpaceEditController@space_edit']);
+  Route::post('admin/space/{id}/edit', ['as' => 'space_edit_submit', 'uses' => 'Admin\SpaceEditController@space_edit_submit']);
+
+  //Route::get('admin/space/{id}/edit/{contenttype}/{id}/edit', ['as' => 'content_edit', 'uses' => 'Admin\SpaceContentEditController@content_edit']);
+  //Route::post('admin/space/{id}/edit/{contenttype}/{id}/edit', ['as' => 'content_edit_submit', 'uses' => 'Admin\SpaceContentEditController@content_edit_submit']);
+
+
+  Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpaceEditController@space_trash']);
+  Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpaceEditController@space_delete']);
+  Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpaceEditController@space_restore']);
 
   /* make sure paths work on new spaces and space edits */
-  Route::post('admin/space/{id}/media/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  Route::post('admin/space/media/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  Route::post('admin/space/{id}/media/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
-  Route::post('admin/space/media/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
+// admin/assets/add -> asset lib in overlay, then insert
 
-  /* one media ajax endpoint per control type */
-  //Route::post('admin/space/add/config/media/image', ['as' => 'space_add_config_media_image_submit', 'uses' => 'Admin\SpaceController@config_media_image_submit']);
-  //Route::post('admin/space/add/config/media/models', ['as' => 'space_add_config_media_models_submit', 'uses' => 'Admin\SpaceController@config_media_models_submit']);
-  //Route::post('admin/space/add/config/media/model', ['as' => 'space_add_config_media_model_submit', 'uses' => 'Admin\SpaceController@config_media_model_submit']);
-  //Route::post('admin/space/add/config/media/audio', ['as' => 'space_add_config_media_audio_submit', 'uses' => 'Admin\SpaceController@config_media_audio_submit']);
-  //Route::post('admin/space/add/config/media/video', ['as' => 'space_add_config_media_video_submit', 'uses' => 'Admin\SpaceController@config_media_video_submit']);
+  //Route::post('admin/space/{id}/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
+  //Route::post('admin/space/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
+  //Route::post('admin/space/{id}/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
+  //Route::post('admin/space/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
 
 
   /**

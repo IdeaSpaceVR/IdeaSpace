@@ -2,9 +2,21 @@
 
 return [
 
-  'title' => 'Hello World',
+  '#theme-name' => 'Hello World',
 
-  'description' => 'An example theme using a textinput control.',
+  '#theme-description' => 'An example theme using a textinput control.',
+
+  '#theme-version' => '1.0',
+
+  '#theme-author-name' => 'IdeaSpace',
+
+  '#theme-author-email' => 'info@ideaspacevr.org',
+
+  '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
+
+  '#theme-keywords' => 'example, hello world',
+
+  '#theme-compatibility' => 'Oculus Rift DK2, Oculus Rift CV1, HTC Vive, Google Cardboard v2, Google Daydream',
 
   'configuration' => [
     'panels' => [

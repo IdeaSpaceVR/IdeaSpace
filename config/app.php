@@ -155,8 +155,9 @@ return [
         App\Providers\AuthServiceProvider::class,
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
-        Collective\Html\HtmlServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
+        App\Providers\ContentTypeServiceProvider::class,
+        Collective\Html\HtmlServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
     ],
 

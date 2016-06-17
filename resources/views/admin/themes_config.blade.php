@@ -21,9 +21,9 @@
                 <div class="caption">
                     <h3 class="name">{{ $theme['theme-name'] }}</h3>
                     @if ($theme['status_aria_pressed'] == 'true')
-                    <span class="label label-success installed" style="font-size:100%">Installed</span>
+                    <span class="label label-success installed" style="font-size:100%">{{ trans('template_themes_config.installed') }}</span>
                     @else
-                    <span class="label label-success installed" style="font-size:100%;display:none">Installed</span>
+                    <span class="label label-success installed" style="font-size:100%;display:none">{{ trans('template_themes_config.installed') }}</span>
                     @endif
                     <h5><strong>Version:</strong> {{ $theme['theme-version'] }}</h5>
                     <h5><strong>Author:</strong> {{ $theme['theme-author-name'] }}</h5>

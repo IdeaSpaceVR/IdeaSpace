@@ -91,3 +91,9 @@ ul li.active>a {
     padding-top: 18px;
   }
 }
+
+.btn-primary {
+  background-color: #0080e5;
+  border-color: #0080e5;
+}
+

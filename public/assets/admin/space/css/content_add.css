@@ -1,0 +1,37 @@
+.form-group {
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
+label.large {
+  font-size: 18px;
+  color: #0080e5;
+}
+
+.form-control-add-file {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 15px 15px 15px 15px;
+}
+
+.form-control-color input,
+.form-control-date input {
+  width: 200px; 
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.form-control-color,
+.form-control-date {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 15px 15px 15px 15px;
+}
+
+
+

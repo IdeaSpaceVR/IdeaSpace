@@ -12,7 +12,7 @@
     @if (count($themes) === 0) 
         <div class="row">
             <div class="col-md-12" style="font-size:16px">
-            There are no active themes yet. <a href="{{ route('themes') }}" style="color:#000000;text-decoration:underline">Activate some themes here</a>.
+            There are no installed themes. <a href="{{ route('themes') }}" style="color:#000000;text-decoration:underline">Install some themes here</a>.
             </div>    
         </div>    
     @endif 
@@ -28,10 +28,11 @@
         <div class="col-md-4 text-center">
             <div class="thumbnail">
                 <input type="hidden" name="id-{{ $theme['id'] }}" value="{{ $theme['id'] }}">
-                <img width="400" src="{{ $theme['screenshot'] }}" class="img-responsive" alt="{{ $theme['title'] }}">
+                <img width="470" src="{{ $theme['screenshot'] }}" class="img-responsive" alt="{{ $theme['theme-name'] }}">
                 <div class="caption">
-                    <h3>{{ $theme['title'] }}</h3>
-                    <p class="text-center">{{ $theme['description'] }}</p>
+                    <h3>{{ $theme['theme-name'] }}</h3>
+                    <p class="text-center">{{ $theme['theme-description'] }}</p>
+                    <button class="btn btn-default btn-primary" type="button">Select</button>
                 </div>
             </div>
         </div>

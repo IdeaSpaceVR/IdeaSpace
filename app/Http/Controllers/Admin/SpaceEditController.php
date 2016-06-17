@@ -14,6 +14,7 @@ use File;
 use Image;
 use Validator;
 use App\Space;
+use App\Content\ContentType;
 use App\FieldControl;
 use App\FieldDataImage;
 use App\FieldDataText;
@@ -21,8 +22,10 @@ use App\Setting;
 use Route;
 use Log;
 
-class SpaceController extends Controller
-{
+class SpaceEditController extends Controller {
+
+    private $contentType;
+
     private $image_path = 'public/assets/user/media/images/'; 
 
     private $control_types = [
@@ -56,96 +59,15 @@ class SpaceController extends Controller
     /**
      * Create a new controller instance.
      *
+     * @param ContentType $ct
+     *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(ContentType $ct) {
+
         $this->middleware('auth');
         $this->middleware('register.theme.eventlistener');
-    }
-
-    /**
-     * Show the add space and select theme page.
-     *
-     * @return Response
-     */
-    public function select_theme()
-    {
-        $themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
-
-        $themes_mod = array();
-
-        foreach ($themes as $theme) {
-            $config = json_decode($theme->config);
-            $theme_mod = array();
-            $theme_mod['id'] = $theme->id;
-            $theme_mod['title'] = $config->title;
-            $theme_mod['description'] = $config->description;
-            //$theme_mod['compatibility'] = $config->headset_compatibility;
-            $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
-            $themes_mod[] = $theme_mod; 
-        }
-
-        $vars = [
-            'themes' => $themes_mod,
-            'js' => array(asset('public/assets/admin/space/js/space_add_select_theme.js')),
-            'css' => array(asset('public/assets/admin/space/css/space_add_select_theme.css'))
-        ];
-        
-        return view('admin.space.space_add_select_theme', $vars);
-    }
-
-
-    /**
-     * Ajax post submitting theme id.
-     *
-     * @param Request $request
-     *
-     * @return Response
-     */
-    public function select_theme_submit(Request $request)
-    {
-        $all = $request->all();
-
-        if (array_has($all, 'id')) {
-
-          $request->session()->put('theme-id', $all['id']);
-
-          return response()->json(['redirect' => url('admin/space/add')]);
-
-        } else {
-            abort(404);
-        }
-    }
-
-
-    /**
-     * The space add page.
-     *
-     * @return Response
-     */
-    public function space_add()
-    {
-        $theme_id = session('theme-id');        
-
-        try {
-            $theme = Theme::where('id', $theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('space_add_select_theme');
-        }
-
-        /* if session has vars then take these; for validation errors and keeping form field values */ 
-        if (session()->has('vars')) {
-            $vars = session()->get('vars');
-            session()->forget('vars');
-        } else {
-            $vars = $this->prepare_config($theme);
-        }
-
-        $vars['space_status'] = Space::STATUS_DRAFT;
-        $vars['space_mode'] = Space::MODE_ADD;
-
-        return response()->view('admin.space.space', $vars);
+        $this->contentType = $ct;
     }
 
 
@@ -237,7 +159,7 @@ class SpaceController extends Controller
         /* needed for middleware: app/Http/Middleware/RegisterThemeEventListener.php */
         session(['theme-id' => $theme->id]);
 
-        return view('admin.space.space', $vars);
+        return view('admin.space.space_edit', $vars);
     }
 
 
