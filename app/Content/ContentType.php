@@ -66,4 +66,35 @@ class ContentType {
     }
 
 
+    /**
+     * Get validation rules and messages for fields.
+     * 
+     * @param Request $request
+     * @param Array $contenttype
+     *
+     * @return $validation_rules_messages
+     */
+    public function get_validation_rules_messages($request, $contenttype) {
+
+        $validation_rules_messages = [
+            'rules' => [], 
+            'messages' => []
+        ];
+
+        foreach ($contenttype['#fields'] as $field_id => $properties) {
+
+            if (array_has($this->fieldTypes, $properties['#type'])) {
+
+                $validation_rules_messages = $this->fieldTypes[$properties['#type']]->get_validation_rules_messages($validation_rules_messages, $field_id, $properties);
+
+            } else {
+
+                abort(404);
+            }
+        }
+
+        return $validation_rules_messages;
+    }
+
+
 }

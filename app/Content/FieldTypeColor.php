@@ -34,4 +34,20 @@ class FieldTypeColor {
         return $field;
     }
 
+
+    /**
+     * Get validation rules and messages.
+     *
+     * @param Array $validation_rules_messages
+     * @param String $field_id
+     * @param Array $properties
+     *
+     * @return Array
+     */
+    public function get_validation_rules_messages($validation_rules_messages, $field_id, $properties) {
+
+        return $validation_rules_messages;
+    }
+
+
 }
