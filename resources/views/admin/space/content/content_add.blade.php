@@ -10,7 +10,7 @@
 
     @if (count($errors) > 0)
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-9" style="padding-left:35px">
             <div class="alert alert-danger">
             {{ trans('template_space_add.field_errors') }}
             </div>
@@ -26,6 +26,10 @@
             @foreach ($form['#fields'] as $field_id => $properties)
                 @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
             @endforeach        
+
+            <div class="form-group text-center">
+                <a href="{{ route('space_edit', ['id' => $space_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</a> <button type="button" class="btn btn-primary btn-lg content-add-save"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save</button>
+            </div>
 
         </div>
 

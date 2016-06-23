@@ -10,7 +10,7 @@
 
     @if (count($errors) > 0)
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-9" style="padding-left:35px">
             <div class="alert alert-danger">
             {{ trans('template_space_add.field_errors') }} 
             </div>
@@ -20,7 +20,7 @@
 
     @if (session('alert-success'))
     <div class="row">
-        <div class="col-md-9">
+        <div class="col-md-9" style="padding-left:35px">
             <div class="alert alert-success">
             {!! session('alert-success') !!}
             </div>

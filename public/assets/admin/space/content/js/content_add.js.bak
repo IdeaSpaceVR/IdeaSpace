@@ -1,0 +1,66 @@
+jQuery(document).ready(function($) {
+
+    var textfield_editor = new MediumEditor('.field-type-textfield', {
+        imageDragging: false,
+        extensions: {
+          'imageDragging': {}
+        },
+        toolbar: {
+            buttons: ['bold', 'italic', 'h1', 'h2', 'h3', 'h4', 'justifyLeft', 'justifyCenter', 'justifyRight']
+        },
+        disableReturn: true,
+        disableDoubleReturn: true
+    });
+
+    var textarea_editor = new MediumEditor('.field-type-textarea', {
+        imageDragging: false,
+        extensions: {
+          'imageDragging': {}
+        },
+        toolbar: {
+            buttons: ['bold', 'italic', 'h1', 'h2', 'h3', 'h4', 'justifyLeft', 'justifyCenter', 'justifyRight']
+        },
+    });
+
+    $('.content-add-cancel').click(function() {
+
+    });
+
+    $('.content-add-save').click(function() {
+
+        var data = [];
+
+        var textfields_content = textfield_editor.serialize();
+        $.each(textfields_content, function(index, value) {
+            data[index] = value.value;
+        });
+
+        var textareas_content = textarea_editor.serialize();
+        $.each(textareas_content, function(index, value) {
+            data[index] = value.value;
+        });
+
+        $('form').each(function() {
+            $(this).find(':input').not(':input[type=button], :input[type=submit], :input[type=reset]').each(function() {
+                data[$(this)[0].name] = $(this)[0].value;
+            });
+            $(this).find('textarea').each(function() {
+                data[$(this)[0].name] = $(this)[0].value;
+            });
+        });
+
+        //console.log(data);
+
+        $.ajax({
+            url: 'add',
+            type: 'post',
+            cache: false,
+            headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
+            data: data,
+            success: function(data) {
+                window.location.href = data.redirect;
+            }
+        });
+    });
+
+});

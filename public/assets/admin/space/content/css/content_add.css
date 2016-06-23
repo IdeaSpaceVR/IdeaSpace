@@ -1,0 +1,107 @@
+.form-group {
+  margin-top: 20px;
+  margin-bottom: 60px;
+}
+
+label.large {
+  font-size: 18px;
+  color: #0080e5;
+}
+
+.form-control-textfield {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 10px 10px 10px 10px;
+  background-color: #FFFFFF;
+}
+
+.form-control-textfield.has-error {
+  border-color: #a94442;
+}
+
+.form-control-textarea {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 10px 10px 10px 10px;
+  background-color: #FFFFFF;
+  min-height: 200px;
+}
+
+.form-control-textarea.has-error {
+  border-color: #a94442;
+}
+
+.form-control-add-file {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 15px 15px 15px 15px;
+  background-color: #FFFFFF;
+}
+
+.form-control-add-file.has-error {
+  border-color: #a94442;
+}
+
+.form-control-color input,
+.form-control-date input {
+  width: 200px; 
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.form-control-color,
+.form-control-date {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 15px 15px 15px 15px;
+  background-color: #FFFFFF;
+}
+
+.form-control-date.has-error, 
+.form-control-color.has-error {
+  border-color: #a94442;
+}
+
+.form-control-textfield p,
+.form-control-textarea p,
+.form-control-textfield h1,
+.form-control-textarea h1,
+.form-control-textfield h2,
+.form-control-textarea h2,
+.form-control-textfield h3, 
+.form-control-textarea h3, 
+.form-control-textfield h4, 
+.form-control-textarea h4 {
+  margin-top: 2px;
+  margin-bottom: 2px;
+}
+
+.form-control-textfield, 
+.form-control-textarea {
+  font-size: 18px;
+}
+
+.medium-editor-placeholder:after {
+  color: #999999;
+  padding: 10px 16px;
+  font-size: 18px;
+  line-height: 1.3333333;
+  font-style: normal;
+}
+
+.info-block {
+  display: block;
+  margin-top: 5px;
+  margin-bottom: 10px;
+  color: #737373;
+}
+

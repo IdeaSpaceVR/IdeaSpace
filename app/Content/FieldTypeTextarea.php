@@ -70,27 +70,30 @@ class FieldTypeTextarea {
 
             $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_id, 'required|max:' . $properties['#maxlength']);
 
-            $validation_rules_messages['messages'] = array_add(
+            /* array_dot is flattens the array because $field_id . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'],
                 $field_id . '.required',
                 trans('fieldtype_textarea.validation_required', ['label' => $properties['#label']])
-            );
+            ));
 
-            $validation_rules_messages['messages'] = array_add(
+            /* array_dot is flattens the array because $field_id . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'],
                 $field_id . '.max',
                 trans('fieldtype_textarea.validation_max', ['label' => $properties['#label'], 'max' => $properties['#maxlength']])
-            );
+            ));
 
         } else {
 
             $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_id, 'max:' . $properties['#maxlength']);
 
-            $validation_rules_messages['messages'] = array_add(
+            /* array_dot is flattens the array because $field_id . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'],
                 $field_id . '.max',
                 trans('fieldtype_textarea.validation_max', ['label' => $properties['#label'], 'max' => $properties['#maxlength']])
-            );
+            ));
         }        
 
         return $validation_rules_messages;
