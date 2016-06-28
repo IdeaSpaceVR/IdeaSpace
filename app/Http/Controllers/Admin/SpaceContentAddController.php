@@ -15,6 +15,7 @@ use Log;
 
 class SpaceContentAddController extends Controller {
 
+
     private $contentType;
 
 
@@ -82,6 +83,7 @@ class SpaceContentAddController extends Controller {
         ];
 
         $form['js'] = [
+            asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
             asset('public/medium-editor/js/medium-editor.min.js'),
             asset('public/assets/admin/space/content/js/content_add.js'),
         ];
