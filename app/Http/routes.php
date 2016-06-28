@@ -39,23 +39,27 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/space/add/select-theme', ['as' => 'space_add_select_theme', 'uses' => 'Admin\SpaceAddController@select_theme']);
   Route::post('admin/space/add/select-theme', ['as' => 'space_add_select_theme_submit', 'uses' => 'Admin\SpaceAddController@select_theme_submit']);
 
+  /* space add */
   Route::get('admin/space/add', ['as' => 'space_add', 'uses' => 'Admin\SpaceAddController@space_add']);
   Route::post('admin/space/add', ['as' => 'space_add_submit', 'uses' => 'Admin\SpaceAddController@space_add_submit']);
-  Route::post('admin/space/add/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceAddController@space_add_content_add_submit']);
+  Route::post('admin/space/add/{contenttype}/add', ['as' => 'space_add_content_add_submit', 'uses' => 'Admin\SpaceAddController@space_add_content_add_submit']);
 
-  Route::get('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add', 'uses' => 'Admin\SpaceContentAddController@content_add']);
-  Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceContentAddController@content_add_submit']);
-
+  /* space edit */
   Route::get('admin/space/{id}/edit', ['as' => 'space_edit', 'uses' => 'Admin\SpaceEditController@space_edit']);
   Route::post('admin/space/{id}/edit', ['as' => 'space_edit_submit', 'uses' => 'Admin\SpaceEditController@space_edit_submit']);
+  Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'space_edit_content_add_submit', 'uses' => 'Admin\SpaceEditController@space_edit_content_add_submit']);
+
+  /* space content add */
+  Route::get('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add', 'uses' => 'Admin\SpaceContentAddController@content_add']);
+  Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceContentAddController@content_add_submit']);
 
   //Route::get('admin/space/{id}/edit/{contenttype}/{id}/edit', ['as' => 'content_edit', 'uses' => 'Admin\SpaceContentEditController@content_edit']);
   //Route::post('admin/space/{id}/edit/{contenttype}/{id}/edit', ['as' => 'content_edit_submit', 'uses' => 'Admin\SpaceContentEditController@content_edit_submit']);
 
 
-  Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpaceEditController@space_trash']);
-  Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpaceEditController@space_delete']);
-  Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpaceEditController@space_restore']);
+  Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);
+  Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpacesController@space_delete']);
+  Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpacesController@space_restore']);
 
   /* make sure paths work on new spaces and space edits */
 // admin/assets/add -> asset lib in overlay, then insert
