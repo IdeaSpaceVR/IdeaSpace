@@ -13,14 +13,15 @@ use File;
 use Image;
 use Validator;
 use App\Space;
-use App\FieldControl;
-use App\FieldDataImage;
-use App\FieldDataText;
 use App\Setting;
 use Route;
+use App\Http\Controllers\Admin\SpaceControllerTrait;
 use Log;
 
 class SpaceAddController extends Controller {
+
+
+    use SpaceControllerTrait;
 
 
     /**
@@ -31,7 +32,7 @@ class SpaceAddController extends Controller {
     public function __construct() {
 
         $this->middleware('auth');
-        $this->middleware('register.theme.eventlistener');
+        //$this->middleware('register.theme.eventlistener');
     }
 
     /**
@@ -114,9 +115,13 @@ class SpaceAddController extends Controller {
 
         $vars = $this->process_theme($theme);
 
-        $vars['space_status'] = Space::STATUS_DRAFT;
+        /* placeholder object */
+        $space = new \stdClass();
+        $space->status = Space::STATUS_DRAFT;
+        $space->theme_id = $theme->id;
+        $vars['space'] = $space;
 
-        return response()->view('admin.space.space_add', $vars);
+        return view('admin.space.space_add', $vars);
     }
 
 
@@ -186,7 +191,7 @@ class SpaceAddController extends Controller {
             if ($existing_space != null) {
                 $validator->after(function($validator) {
                     $validator->errors()->add('space_uri', trans('space_add_controller.validation_space_uri_exists'));
-                });              
+                });
                 if ($validator->fails()) {
                     $vars = $this->process_theme($theme);
                     return redirect('admin/space/add')->withErrors($validator)->withInput()->with('vars', $vars);
@@ -207,23 +212,23 @@ class SpaceAddController extends Controller {
                     return redirect('admin/space/add')->withErrors($validator)->withInput()->with('vars', $vars);
                 }
             }
-        }       
+        }
 
         $space = [
             'user_id' => $user->id,
             'theme_id' => $theme->id,
-            'uri' => $space_uri, 
-            'title' => $request->input('space_title'), 
+            'uri' => $space_uri,
+            'title' => $request->input('space_title'),
             'status' => $request->input('space_status')
         ];
-  
+
         /* fire event */
-        Event::fire('space.save_pre', $space);
+        //Event::fire('space.save_pre', $space);
 
         $space = Space::create($space);
 
         /* fire event */
-        Event::fire('space.save', $space);
+        //Event::fire('space.save', $space);
 
         if ($request->input('contenttype_key') != '') {
             /* space_uri should we shown in an url-friendly way */
@@ -233,48 +238,6 @@ class SpaceAddController extends Controller {
         /* space_uri should we shown in an url-friendly way */
         return redirect('admin/space/' . $space->id . '/edit')->withInput($request->except('space_uri'))->with('space_uri', $space_uri)->with('alert-success', trans('space_add_controller.space_saved'));
 
-    }
-
-
-    /**
-     * Process theme.
-     *
-     * @param Theme $theme The theme which is currently in use.
-     *
-     * @return $vars The vars array for the view.
-     */
-    private function process_theme($theme) {
-
-        $theme_mod = array();
-
-        /* convert to an array */
-        $config = json_decode($theme->config, true);
-        $theme_mod = array();
-        $theme_mod['id'] = $theme->id;
-        $theme_mod['theme-name'] = $config['#theme-name'];
-        $theme_mod['theme-version'] = $config['#theme-version'];
-        $theme_mod['theme-author-name'] = $config['#theme-author-name'];
-        $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
-
-        foreach ($config['#content-types'] as $key => $value) {
-
-            $theme_mod['contenttypes'][$key] = [
-                'label' => $value['#label'], 
-                'description' => $value['#description']
-                ]; 
-        }
-
-        /* store types in session in order to validate type on json media upload submission */
-        //session(['types' => $types]);
-
-        $vars = [
-            'space_theme_id' => $theme->id,
-            'theme' => $theme_mod,
-            'js' => [asset('public/assets/admin/space/js/space_add.js')], 
-            'css' => [asset('public/assets/admin/space/css/space_add.css')]
-        ];
-      
-        return $vars;
     }
 
 
