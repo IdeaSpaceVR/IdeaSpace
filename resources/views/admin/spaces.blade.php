@@ -4,12 +4,12 @@
 
 @section('content')
 
-    <h1>Spaces <a style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" href="{{ route('space_add_select_theme') }}">Add New</a></h1>
+    <h1 style="padding-left:20px">Spaces <a style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" href="{{ route('space_add_select_theme') }}">Add New</a></h1>
 
     {!! Form::open(array('route' => 'spaces_all', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
     @if (session('alert-success'))
-    <div class="row">
+    <div class="row" style="padding-left:35px">
         <div class="col-md-9">
             <div class="alert alert-success">
             {!! session('alert-success') !!}
@@ -18,7 +18,7 @@
     </div>
     @endif
 
-    <div class="row">
+    <div class="row" style="padding-left:35px">
 
         <div class="col-md-12">
 
@@ -57,7 +57,7 @@
                             </div>
                             @endif
                         </td>
-                        <td>{{ $space->theme_title }}</td>
+                        <td>{{ $space->theme_name }}</td>
                         <td>{{ $space->author }}</td>
                         <td>{{ date_format($space->updated_at, 'Y/m/d') }}<br>{{ ucfirst($space->status) }}</td>
                     </tr>
