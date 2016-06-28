@@ -171,7 +171,7 @@ class SpacesController extends Controller {
         }
         $space->delete();
 
-        return redirect()->route('spaces_all')->with('alert-success', 'Space has been deleted.');
+        return redirect()->route('spaces_all')->with('alert-success', trans('spaces_controller.space_deleted'));
     }
 
 
@@ -191,7 +191,7 @@ class SpacesController extends Controller {
         $space->status = Space::STATUS_TRASH;
         $space->save();
 
-        return redirect()->route('spaces_all')->with('alert-success', 'Space moved to trash. <a href="' . route('space_restore', ['id' => $space->id]) . '">Undo</a>.');
+        return redirect()->route('spaces_all')->with('alert-success', trans('spaces_controller.space_trashed', ['route' => route('space_restore', ['id' => $space->id])]));
     }
 
 
@@ -211,7 +211,7 @@ class SpacesController extends Controller {
         $space->status = Space::STATUS_DRAFT;
         $space->save();
 
-        return redirect()->route('spaces_all')->with('alert-success', 'Space has been restored.');
+        return redirect()->route('spaces_all')->with('alert-success', trans('spaces_controller.space_restored'));
     }
 
 
