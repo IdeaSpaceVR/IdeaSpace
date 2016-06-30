@@ -4,15 +4,14 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class FieldDataText extends Model
-{
+class Field extends Model {
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'field_data_text';
+    protected $table = 'fields';
 
     /**
      * The attributes that are mass assignable.
@@ -20,7 +19,7 @@ class FieldDataText extends Model
      * @var array
      */
     protected $fillable = [
-        'space_id', 'field_control_id', 'text'
+        'content_id', 'key', 'type', 'value'
     ];
 
 }

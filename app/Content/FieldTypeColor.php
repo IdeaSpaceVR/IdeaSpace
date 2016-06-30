@@ -2,6 +2,8 @@
 
 namespace App\Content; 
 
+use App\Field;
+
 class FieldTypeColor {
 
 
@@ -47,6 +49,29 @@ class FieldTypeColor {
     public function get_validation_rules_messages($validation_rules_messages, $field_id, $properties) {
 
         return $validation_rules_messages;
+    }
+
+
+    /**
+     * Create entry.
+     *
+     * @param String $content_id
+     * @param String $field_id
+     * @param String $type
+     * @param String $value
+     *
+     * @return True
+     */
+    public function create($content_id, $field_id, $type, $value) {
+
+        $field = new Field;
+        $field->content_id = $content_id;
+        $field->key = $field_id;
+        $field->type = $type;
+        $field->value = $value;
+        $field->save();
+
+        return true;
     }
 
 

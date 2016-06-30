@@ -9,6 +9,7 @@ use App\Content\FieldTypeTextarea;
 use App\Content\FieldTypeAudio;
 use App\Content\FieldTypeVideo;
 use App\Content\FieldTypeImage;
+use App\Content;
 use Log;
 
 class ContentType {
@@ -94,6 +95,36 @@ class ContentType {
         }
 
         return $validation_rules_messages;
+    }
+
+
+    /**
+     * Create entry, after validation of field values.
+     * 
+     * @param int $space_id
+     * @param String $contenttype_key
+     * @param Array $contenttype
+     * @param Array $request_all
+     *
+     * @return content id 
+     */
+    public function create($space_id, $contenttype_key, $contenttype, $request_all) {
+
+        $content = new Content;
+        $content->space_id = $space_id;
+        $content->key = $contenttype_key;        
+        $content->weight = 0;
+        $content->save();
+
+        foreach ($contenttype['#fields'] as $field_id => $properties) {
+
+            if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_id)) {
+
+                $this->fieldTypes[$properties['#type']]->save($content->id, $field_id, $properties['#type'], $request_all[$field_id]);
+            }
+        }
+
+        return $content->id;
     }
 
 

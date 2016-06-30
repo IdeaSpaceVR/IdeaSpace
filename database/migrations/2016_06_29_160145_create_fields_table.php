@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFieldDataTextTable extends Migration
+class CreateFieldsTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,14 @@ class CreateFieldDataTextTable extends Migration
      */
     public function up()
     {
-        Schema::create('field_data_text', function (Blueprint $table) {
+        Schema::create('fields', function (Blueprint $table) {
 
             $table->increments('id');
 
-            $table->integer('space_id');
-            $table->integer('field_control_id');
-            $table->longText('text');
+            $table->integer('content_id');
+            $table->string('key');
+            $table->string('type');
+            $table->text('value');
 
             $table->timestamps();
         });
@@ -31,6 +32,6 @@ class CreateFieldDataTextTable extends Migration
      */
     public function down()
     {
-        Schema::drop('field_data_text');
+        Schema::drop('fields');
     }
 }

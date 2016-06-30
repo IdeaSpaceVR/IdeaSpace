@@ -29,7 +29,7 @@ class SpaceContentAddController extends Controller {
     public function __construct(ContentType $ct) {
 
         $this->middleware('auth');
-        $this->middleware('register.theme.eventlistener');
+        //$this->middleware('register.theme.eventlistener');
         $this->contentType = $ct;
     }
 
@@ -126,24 +126,19 @@ class SpaceContentAddController extends Controller {
             if ($validator->fails()) {
                 /* process content type and fields */
                 //$vars = $this->contentType->process($config['#content-types'][$contenttype]);
-                //Log::debug($vars);
-                //$request->session()->flash('errors', $validator->getMessageBag());
-                //$request->session()->flash('vars', $vars);
-                //$request->flash();
-                //return response()->json(['redirect' => url('admin/space/' . $id . '/edit/' . $contenttype . '/add')]);
                 return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); //->with('vars', $vars);
             }
+
+
+            /* id = space id */
+            $content_id = $this->contentType->create($id, $contenttype, $config['#content-types'][$contenttype], $request->all());
 
         } else {
 
             abort(404);
         }
 
-
-        //$contenType->save();
-
-        /* space_uri should we shown in an url-friendly way */
-        return redirect('admin/space/' . $id . '/edit'); //->withInput($request->except('space_uri'))->with('space_uri', $space_uri)->with('alert-success', 'Space saved.');
+        return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/' . $content_id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
     }
 
 

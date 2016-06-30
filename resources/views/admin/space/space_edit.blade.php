@@ -28,6 +28,16 @@
     </div>
     @endif
 
+    @if (session('alert-error'))
+    <div class="row">
+        <div class="col-md-9" style="padding-left:35px">
+            <div class="alert alert-danger">
+            {!! session('alert-error') !!}
+            </div>
+        </div>
+    </div>
+    @endif
+
     <div class="row">
 
         <!-- mainbar //-->

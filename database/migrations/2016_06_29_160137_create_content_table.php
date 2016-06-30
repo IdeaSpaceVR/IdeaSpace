@@ -3,7 +3,7 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateFieldControlsTable extends Migration
+class CreateContentTable extends Migration
 {
     /**
      * Run the migrations.
@@ -12,13 +12,13 @@ class CreateFieldControlsTable extends Migration
      */
     public function up()
     {
-        Schema::create('field_controls', function (Blueprint $table) {
+        Schema::create('content', function (Blueprint $table) {
 
             $table->increments('id');
 
             $table->integer('space_id');
             $table->string('key');
-            $table->string('type');
+            $table->integer('weight');
 
             $table->timestamps();
         });
@@ -31,6 +31,6 @@ class CreateFieldControlsTable extends Migration
      */
     public function down()
     {
-        Schema::drop('field_controls');
+        Schema::drop('content');
     }
 }
