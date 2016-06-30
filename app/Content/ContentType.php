@@ -120,7 +120,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_id)) {
 
-                $this->fieldTypes[$properties['#type']]->save($content->id, $field_id, $properties['#type'], $request_all[$field_id]);
+                $this->fieldTypes[$properties['#type']]->create($content->id, $field_id, $properties['#type'], $request_all[$field_id]);
             }
         }
 
