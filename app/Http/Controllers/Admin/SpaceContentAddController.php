@@ -44,10 +44,15 @@ class SpaceContentAddController extends Controller {
      */
     public function content_add($id, $contenttype) {
 
-        $theme_id = session('theme-id');        
+        //$theme_id = session('theme-id');        
+        try {
+            $space = Space::where('id', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
 
         try {
-            $theme = Theme::where('id', $theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return redirect()->route('space_add_select_theme');
         }
@@ -119,14 +124,11 @@ class SpaceContentAddController extends Controller {
         if (array_has($config, '#content-types.' . $contenttype)) {
 
             $validation_rules_messages = $this->contentType->get_validation_rules_messages($request, $config['#content-types'][$contenttype]);
-            //Log::debug($validation_rules_messages['rules']);
-            //Log::debug($validation_rules_messages['messages']);
+
             $validator = Validator::make($request->all(), $validation_rules_messages['rules'], $validation_rules_messages['messages']);
 
             if ($validator->fails()) {
-                /* process content type and fields */
-                //$vars = $this->contentType->process($config['#content-types'][$contenttype]);
-                return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); //->with('vars', $vars);
+                return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); 
             }
 
 
@@ -138,7 +140,7 @@ class SpaceContentAddController extends Controller {
             abort(404);
         }
 
-        return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/' . $content_id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
+        return redirect('admin/space/' . $id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
     }
 
 
