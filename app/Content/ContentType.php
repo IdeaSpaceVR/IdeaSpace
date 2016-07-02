@@ -154,4 +154,30 @@ class ContentType {
     }
 
 
+    /**
+     * Update entry, after validation of field values.
+     * 
+     * @param int $content_id
+     * @param String $contenttype_key
+     * @param Array $contenttype
+     * @param Array $request_all
+     *
+     * @return content id 
+     */
+    public function update($content_id, $contenttype_key, $contenttype, $request_all) {
+
+        //$content = Content::where('id', $content_id)->first();
+
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+
+            if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
+
+                $this->fieldTypes[$properties['#type']]->save($content_id, $field_key, $properties['#type'], $request_all[$field_key]);
+            }
+        }
+
+        return true;
+    }
+
+
 }

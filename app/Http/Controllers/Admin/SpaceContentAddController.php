@@ -109,12 +109,15 @@ class SpaceContentAddController extends Controller {
      */
     public function content_add_submit(Request $request, $id, $contenttype) {
 
-        $theme_id = session('theme-id');        
-
-        //Log::debug($request->all());
+        //$theme_id = session('theme-id');        
+        try {
+            $space = Space::where('id', $id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
 
         try {
-            $theme = Theme::where('id', $theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return redirect()->route('space_add_select_theme');
         }

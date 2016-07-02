@@ -113,7 +113,39 @@ class SpaceContentEditController extends Controller {
      */
     public function content_edit_submit(Request $request, $space_id, $contenttype, $content_id) {
 
+        try {
+            $space = Space::where('id', $space_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
 
+        try {
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('space_add_select_theme');
+        }
+
+        $config = json_decode($theme->config, true);
+
+        if (array_has($config, '#content-types.' . $contenttype)) {
+
+            $validation_rules_messages = $this->contentType->get_validation_rules_messages($request, $config['#content-types'][$contenttype]);
+
+            $validator = Validator::make($request->all(), $validation_rules_messages['rules'], $validation_rules_messages['messages']);
+
+            if ($validator->fails()) {
+                return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput();
+            }
+
+
+            $this->contentType->update($content_id, $contenttype, $config['#content-types'][$contenttype], $request->all());
+
+        } else {
+
+           abort(404);
+        }
+
+        return redirect('admin/space/' . $space_id . '/edit')->with('alert-success', trans('space_content_edit_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']]));
     }
 
 
