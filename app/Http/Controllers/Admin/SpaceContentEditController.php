@@ -78,10 +78,11 @@ class SpaceContentEditController extends Controller {
 
         $form = array('form' => $vars);
 
-        $form['space_status'] = Space::STATUS_DRAFT;
+        //$form['space_status'] = Space::STATUS_DRAFT;
         $form['space_id'] = $space_id;
         $form['theme'] = $theme_mod;
         $form['contenttype_name'] = $contenttype;
+        $form['content_id'] = $content_id;
 
         $form['css'] = [
             asset('public/medium-editor/css/medium-editor.min.css'),

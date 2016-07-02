@@ -2,7 +2,7 @@
 
 return [
 
-    'add_new' => 'Add New',
+    'edit' => 'Edit',
     'field_errors' => 'There are errors in the fields below.',
 
 ];

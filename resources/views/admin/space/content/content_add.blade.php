@@ -12,7 +12,7 @@
     <div class="row">
         <div class="col-md-9" style="padding-left:35px">
             <div class="alert alert-danger">
-            {{ trans('template_space_add.field_errors') }}
+            {{ trans('template_content_add.field_errors') }}
             </div>
         </div>
     </div>

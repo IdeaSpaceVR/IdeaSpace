@@ -4,6 +4,7 @@ namespace App\Content;
 
 use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Log;
 
 class FieldTypeImage {
 
@@ -63,10 +64,8 @@ class FieldTypeImage {
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
         } catch (ModelNotFoundException $e) {
-            abort(404);
+            return $field_arr;
         }
-
-        $field_arr = [];
 
         $field_arr['#content'] = array('#value' => $field->value);
 

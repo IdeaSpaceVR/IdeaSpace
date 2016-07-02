@@ -76,7 +76,7 @@ class SpaceContentAddController extends Controller {
         $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
 
         $form = array('form' => $vars);
-        $form['space_status'] = Space::STATUS_DRAFT;
+        //$form['space_status'] = Space::STATUS_DRAFT;
         $form['space_id'] = $id;
         $form['theme'] = $theme_mod;
         $form['contenttype_name'] = $contenttype;
