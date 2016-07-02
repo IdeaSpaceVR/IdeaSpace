@@ -12,7 +12,8 @@ class FieldTypeTextarea {
     const CONTENTFORMAT_HTML_TEXT = 'html/text';
     const CONTENTFORMAT_TEXT = 'text';
 
-    private $template = 'admin.space.content.field_textarea';
+    private $template_add = 'admin.space.content.field_textarea_add';
+    private $template_edit = 'admin.space.content.field_textarea_edit';
 
 
     /**
@@ -25,14 +26,14 @@ class FieldTypeTextarea {
 
 
     /**
-     * Process.
+     * Prepare template.
      *
      * @param String $field_key
      * @param Array $properties
      *
      * @return Array
      */
-    public function process($field_key, $properties) {
+    public function prepare($field_key, $properties) {
 
         $field = [];
 
@@ -47,7 +48,7 @@ class FieldTypeTextarea {
         }
 
         $field = $properties;
-        $field['#template'] = $this->template;
+        $field['#template'] = $this->template_add;
 
         return $field;
     }
@@ -58,10 +59,16 @@ class FieldTypeTextarea {
      *
      * @param integer $content_id
      * @param String $field_key
+     * @param Array $properties
      *
      * @return Array
      */
-    public function load($content_id, $field_key) {
+    public function load($content_id, $field_key, $properties) {
+
+        $field_arr = [];
+
+        $field_arr = $this->prepare($field_key, $properties);
+        $field_arr['#template'] = $this->template_edit;
 
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();

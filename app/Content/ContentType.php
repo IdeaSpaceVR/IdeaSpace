@@ -43,19 +43,19 @@ class ContentType {
 
 
     /**
-     * Process a theme.
+     * Prepare a template.
      * 
      * @param Array $contenttype
      *
      * @return $vars
      */
-    public function process($contenttype) {
+    public function prepare($contenttype) {
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->process($field_key, $properties);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($field_key, $properties);
 
             } else {
 
@@ -68,7 +68,7 @@ class ContentType {
 
   
     /**
-     * Load content for a theme.
+     * Load content for a template.
      *
      * @param integer $content_id
      * @param Array $contenttype
@@ -81,8 +81,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->process($field_key, $properties);
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key, $properties);
 
             } else {
 
@@ -154,9 +153,5 @@ class ContentType {
         return $content->id;
     }
 
-    /*public function update() {
-  
-        // no need to create new Content, just save fields
-    }*/
 
 }

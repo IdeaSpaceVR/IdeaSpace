@@ -13,7 +13,7 @@ use Auth;
 use Validator;
 use Log;
 
-class SpaceContentAddController extends Controller {
+class SpaceContentEditController extends Controller {
 
 
     private $contentType;
@@ -35,18 +35,19 @@ class SpaceContentAddController extends Controller {
 
 
     /**
-     * The content add page.
+     * The content edit page.
      *
-     * @param int $id Space id.
+     * @param int $space_id Space id.
      * @param String $contenttype Name of content type.
+     * @param int $content_id Content id.
      *
      * @return Response
      */
-    public function content_add($id, $contenttype) {
+    public function content_edit($space_id, $contenttype, $content_id) {
 
         //$theme_id = session('theme-id');        
         try {
-            $space = Space::where('id', $id)->firstOrFail();
+            $space = Space::where('id', $space_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
@@ -61,8 +62,8 @@ class SpaceContentAddController extends Controller {
 
         if (array_has($config, '#content-types.' . $contenttype)) {
 
-            /* prepare content type and fields */
-            $vars = $this->contentType->prepare($config['#content-types'][$contenttype]);
+            /* load and process content type and field content */
+            $vars = $this->contentType->load($content_id, $config['#content-types'][$contenttype]);
 
         } else {
 
@@ -76,8 +77,9 @@ class SpaceContentAddController extends Controller {
         $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
 
         $form = array('form' => $vars);
+
         $form['space_status'] = Space::STATUS_DRAFT;
-        $form['space_id'] = $id;
+        $form['space_id'] = $space_id;
         $form['theme'] = $theme_mod;
         $form['contenttype_name'] = $contenttype;
 
@@ -94,53 +96,23 @@ class SpaceContentAddController extends Controller {
         ];
         //Log::debug($vars);
 
-        return response()->view('admin.space.content.content_add', $form);
+        return response()->view('admin.space.content.content_edit', $form);
     }
 
 
     /**
-     * Add content submission.
+     * Edit content submission.
      *
      * @param Request $request
-     * @param int $id Space id.
+     * @param int $space_id Space id.
      * @param String $contenttype Name of content type.
+     * @param int $content_id Content id.
      *
      * @return Response
      */
-    public function content_add_submit(Request $request, $id, $contenttype) {
-
-        $theme_id = session('theme-id');        
-
-        //Log::debug($request->all());
-
-        try {
-            $theme = Theme::where('id', $theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            return redirect()->route('space_add_select_theme');
-        }
-
-        $config = json_decode($theme->config, true);
-
-        if (array_has($config, '#content-types.' . $contenttype)) {
-
-            $validation_rules_messages = $this->contentType->get_validation_rules_messages($request, $config['#content-types'][$contenttype]);
-
-            $validator = Validator::make($request->all(), $validation_rules_messages['rules'], $validation_rules_messages['messages']);
-
-            if ($validator->fails()) {
-                return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); 
-            }
+    public function content_edit_submit(Request $request, $space_id, $contenttype, $content_id) {
 
 
-            /* id = space id */
-            $content_id = $this->contentType->create($id, $contenttype, $config['#content-types'][$contenttype], $request->all());
-
-        } else {
-
-            abort(404);
-        }
-
-        return redirect('admin/space/' . $id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
     }
 
 

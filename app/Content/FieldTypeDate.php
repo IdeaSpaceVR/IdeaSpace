@@ -8,7 +8,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 class FieldTypeDate {
 
 
-    private $template = 'admin.space.content.field_date';
+    private $template_add = 'admin.space.content.field_date_add';
+    private $template_edit = 'admin.space.content.field_date_edit';
 
 
     /**
@@ -21,18 +22,18 @@ class FieldTypeDate {
 
 
     /**
-     * Process.
+     * Prepare template.
      *
      * @param String $field_key
      * @param Array $properties
      *
      * @return Array
      */
-    public function process($field_key, $properties) {
+    public function prepare($field_key, $properties) {
 
         $field = [];
         $field = $properties;
-        $field['#template'] = $this->template;
+        $field['#template'] = $this->template_add;
 
         return $field;
     }
@@ -43,18 +44,22 @@ class FieldTypeDate {
      *
      * @param integer $content_id
      * @param String $field_key
+     * @param Array $properties
      *
      * @return Array
      */
-    public function load($content_id, $field_key) {
+    public function load($content_id, $field_key, $properties) {
+
+        $field_arr = [];
+
+        $field_arr = $this->prepare($field_key, $properties);
+        $field_arr['#template'] = $this->template_edit;
 
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
-
-        $field_arr = [];
 
         $field_arr['#content'] = array('#value' => $field->value);
 
