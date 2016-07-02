@@ -51,11 +51,38 @@ class ContentType {
      */
     public function process($contenttype) {
 
-        foreach ($contenttype['#fields'] as $field_id => $properties) {
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_id] = $this->fieldTypes[$properties['#type']]->process($field_id, $properties);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->process($field_key, $properties);
+
+            } else {
+
+                abort(404);
+            }
+        }
+
+        return $contenttype;
+    }
+
+  
+    /**
+     * Load content for a theme.
+     *
+     * @param integer $content_id
+     * @param Array $contenttype
+     *
+     * @return $vars
+     */
+    public function load($content_id, $contenttype) {
+
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+
+            if (array_has($this->fieldTypes, $properties['#type'])) {
+
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->process($field_key, $properties);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key);
 
             } else {
 
@@ -82,11 +109,11 @@ class ContentType {
             'messages' => []
         ];
 
-        foreach ($contenttype['#fields'] as $field_id => $properties) {
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $validation_rules_messages = $this->fieldTypes[$properties['#type']]->get_validation_rules_messages($validation_rules_messages, $field_id, $properties);
+                $validation_rules_messages = $this->fieldTypes[$properties['#type']]->get_validation_rules_messages($validation_rules_messages, $field_key, $properties);
 
             } else {
 
@@ -116,16 +143,20 @@ class ContentType {
         $content->weight = 0;
         $content->save();
 
-        foreach ($contenttype['#fields'] as $field_id => $properties) {
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
 
-            if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_id)) {
+            if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
 
-                $this->fieldTypes[$properties['#type']]->create($content->id, $field_id, $properties['#type'], $request_all[$field_id]);
+                $this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all[$field_key]);
             }
         }
 
         return $content->id;
     }
 
+    /*public function update() {
+  
+        // no need to create new Content, just save fields
+    }*/
 
 }
