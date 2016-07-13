@@ -21,5 +21,11 @@ return [
     'embed_code_help' => 'Copy the code and embed this space on any web site.',
     'version' => 'Version:',
     'author' => 'Author:',
+    'space_status' => 'Status:',
+    'updated' => 'Updated on:',
+    'published' => 'Published',
+    'draft' => 'Draft',
+    'move_to_trash' => 'Move to Trash',
+    'update' => 'Update',
 
 ];
