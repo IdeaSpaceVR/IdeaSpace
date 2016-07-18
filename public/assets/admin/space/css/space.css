@@ -1,3 +1,8 @@
 #space-delete {
   color: rgb(169, 68, 66);
 }
+
+.field-actions {
+  display: none;
+}
+

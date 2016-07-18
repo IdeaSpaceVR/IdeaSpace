@@ -13,6 +13,8 @@ use File;
 use Image;
 use Validator;
 use App\Space;
+use App\Content;
+use App\Field;
 use App\Content\ContentType;
 use App\FieldControl;
 use App\FieldDataImage;
@@ -43,6 +45,8 @@ class SpaceEditController extends Controller {
     /**
      * The space edit page.
      *
+     * @param String $id 
+     *
      * @return Response
      */
     public function space_edit($id) {
@@ -60,8 +64,29 @@ class SpaceEditController extends Controller {
             abort(404);
         }
 
+
         $vars = $this->process_theme($theme);
 
+        foreach ($vars['theme']['contenttypes'] as $contenttype_key => $contenttype_value) {
+
+            $content_vars[$contenttype_key] = $contenttype_value;
+            $content = Content::where('space_id', $space->id)->where('key', $contenttype_key)->get();
+
+            if (!$content->isEmpty()) {
+                foreach ($content->toArray() as $content_key => $content_value) {
+                    $content_vars[$contenttype_key]['content'][$content_key] = $content_value;
+                    $content_vars[$contenttype_key]['content'][$content_key]['title'] = 'TEST TITLE';
+                    /*$fields = Field::where('content_id', $content_value['id'])->get();
+                    if (!$fields->isEmpty()) {
+                        foreach ($fields->toArray() as $field_key => $field_value) {
+                            $content_vars[$contenttype_key]['content'][$content_key]['fields'][$field_key] = $field_value;
+                        }
+                    }*/
+                }
+            }
+        }
+        //Log::debug($content_vars); 
+        $vars['content'] = $content_vars;
         $vars['space'] = $space;
 
         /* needed for middleware: app/Http/Middleware/RegisterThemeEventListener.php */

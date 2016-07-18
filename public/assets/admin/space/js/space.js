@@ -44,5 +44,11 @@ jQuery(document).ready(function($) {
       });
     });
 
+    $('.field-title').hover(function() {
+        $(this).find('.field-actions').show();
+    }, function() {
+        $(this).find('.field-actions').hide();
+    });
+
 });
 

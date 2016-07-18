@@ -54,7 +54,11 @@
                 {!! $errors->has('space_uri')?$errors->first('space_uri', '<span class="help-block">:message</span>'):'' !!}
             </div>
 
-            @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes']])
+            @if (isset($content))
+                @include('admin.space.content.contentlist', ['contentlist' => $content])
+            @else
+                @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes']])
+            @endif
 
         </div>
 
@@ -73,26 +77,26 @@
                         <a href="{{ url($space->uri . '/preview') }}" target="_blank" role="button" class="btn btn-default pull-right" id="space-preview">Preview</a>
                     </div>
                     <div style="margin-top:10px">
-                        <div>Status: <strong>{{ ucwords($space->status) }}</strong>&nbsp;&nbsp;<a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">Edit</a></div>
-                        <div>Updated on: {{ $space->updated_time }}</div>
+                        <div>{{ trans('template_space_add_edit.space_status') }} <strong>{{ ucwords($space->status) }}</strong>&nbsp;&nbsp;<a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">{{ trans('template_space_add_edit.edit') }}</a></div>
+                        <div>{{ trans('template_space_add_edit.updated') }} {{ $space->updated_at }}</div>
                     </div>
                     <div class="collapse form-inline" id="space-status" style="margin-top:10px">
                         <div class="form-group">
                             <select name="space_status" class="form-control" style="width:150px">
-                                <option value="published" @if ($space->status == App\Space::STATUS_PUBLISHED) selected="selected" @endif>Published</option>
-                                <option value="draft" @if ($space->status == App\Space::STATUS_DRAFT) selected="selected" @endif>Draft</option>
+                                <option value="published" @if ($space->status == App\Space::STATUS_PUBLISHED) selected="selected" @endif>{{ trans('template_space_add_edit.published') }}</option>
+                                <option value="draft" @if ($space->status == App\Space::STATUS_DRAFT) selected="selected" @endif>{{ trans('template_space_add_edit.draft') }}</option>
                             </select>
                         </div>
                         <div class="form-group" style="margin-left:10px">
-                            <button class="btn btn-default" id="space-status-change" type="submit">OK</button>
+                            <button class="btn btn-default" id="space-status-change" type="submit">{{ trans('template_space_add_edit.ok') }}</button>
                         </div>
                         <div class="form-group" style="margin-left:10px">
-                            <a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">Cancel</a>
+                            <a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">{{ trans('template_space_add_edit.cancel') }}</a>
                         </div>
                     </div>
                     <div class="clearfix" style="margin-top:10px;position:relative;">
-                        <a href="{{ route('space_trash', ['id' => $space->id]) }}" id="space-move-trash" style="color:#c9302c;position:absolute;bottom:5px;left:0;">Move to Trash</a>
-                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-update">Update</button>
+                        <a href="{{ route('space_trash', ['id' => $space->id]) }}" id="space-move-trash" style="color:#c9302c;position:absolute;bottom:5px;left:0;">{{ trans('template_space_add_edit.move_to_trash') }}</a>
+                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-update">{{ trans('template_space_add_edit.update') }}</button>
                     </div>
                 </div>
             </div>
