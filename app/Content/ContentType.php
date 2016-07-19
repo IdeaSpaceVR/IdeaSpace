@@ -89,6 +89,10 @@ class ContentType {
             }
         }
 
+        /* load default content title */
+        $content = Content::where('id', $content_id)->first();
+        $contenttype['isvr_content_title'] = $content->title;
+
         return $contenttype;
     }
 
@@ -140,6 +144,7 @@ class ContentType {
         $content->space_id = $space_id;
         $content->key = $contenttype_key;        
         $content->weight = 0;
+        $content->title = $request_all['isvr_content_title'];
         $content->save();
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
@@ -166,7 +171,9 @@ class ContentType {
      */
     public function update($content_id, $contenttype_key, $contenttype, $request_all) {
 
-        //$content = Content::where('id', $content_id)->first();
+        $content = Content::where('id', $content_id)->first();
+        $content->title = $request_all['isvr_content_title'];
+        $content->save();
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 

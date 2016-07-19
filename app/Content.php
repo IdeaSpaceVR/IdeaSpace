@@ -19,7 +19,7 @@ class Content extends Model {
      * @var array
      */
     protected $fillable = [
-        'weight', 'key', 'space_id'
+        'weight', 'key', 'space_id', 'title'
     ];
 
 }

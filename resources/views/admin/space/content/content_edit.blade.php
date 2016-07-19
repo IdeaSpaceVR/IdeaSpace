@@ -33,6 +33,12 @@
         <!-- mainbar //-->
         <div class="col-md-9" style="padding-left:35px">
 
+            <div class="form-group {{ $errors->has('isvr_content_title')?'has-error':'' }}">
+            {!! Form::text('isvr_content_title', $form['isvr_content_title'], array('class'=>'form-control input-lg', 'placeholder'=> trans('template_content_add.content_title_placeholder'), 'maxlength' => '250')) !!}
+            <span class="info-block">{{ trans('template_content_add.content_title_info') }}</span>
+            {!! $errors->has('isvr_content_title')?$errors->first('isvr_content_title', '<span class="help-block">:message</span>'):'' !!}
+            </div>
+
             @foreach ($form['#fields'] as $field_id => $properties)
                 @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
             @endforeach        

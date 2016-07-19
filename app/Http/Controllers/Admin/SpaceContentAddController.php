@@ -128,6 +128,9 @@ class SpaceContentAddController extends Controller {
 
             $validation_rules_messages = $this->contentType->get_validation_rules_messages($request, $config['#content-types'][$contenttype]);
 
+            /* add content title rule and message */
+            $validation_rules_messages = $this->add_isvr_content_title_rules_messages($validation_rules_messages);
+
             $validator = Validator::make($request->all(), $validation_rules_messages['rules'], $validation_rules_messages['messages']);
 
             if ($validator->fails()) {
@@ -144,6 +147,35 @@ class SpaceContentAddController extends Controller {
         }
 
         return redirect('admin/space/' . $id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
+    }
+
+
+    /**
+     * Add rules and messages for content title.
+     * 
+     * @param Array $validation_rules_messages
+     *
+     * @return Array
+     */
+    function add_isvr_content_title_rules_messages($validation_rules_messages) { 
+
+        $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], 'isvr_content_title', 'required|max:250');
+
+        /* array_dot is flattens the array because $field_key . '.required' creates new array */
+        $validation_rules_messages['messages'] = array_dot(array_add(
+            $validation_rules_messages['messages'],
+            'isvr_content_title.required',
+            trans('space_content_add_controller.validation_required', ['label' => 'title'])
+        ));
+
+        /* array_dot flattens the array because $field_key . '.required' creates new array */
+        $validation_rules_messages['messages'] = array_dot(array_add(
+            $validation_rules_messages['messages'],
+            'isvr_content_title.max',
+            trans('space_content_add_controller.validation_max', ['label' => 'title', 'max' => '250'])
+        ));
+
+        return $validation_rules_messages;
     }
 
 

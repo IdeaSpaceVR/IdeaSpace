@@ -75,7 +75,6 @@ class SpaceEditController extends Controller {
             if (!$content->isEmpty()) {
                 foreach ($content->toArray() as $content_key => $content_value) {
                     $content_vars[$contenttype_key]['content'][$content_key] = $content_value;
-                    $content_vars[$contenttype_key]['content'][$content_key]['title'] = 'TEST TITLE';
                     /*$fields = Field::where('content_id', $content_value['id'])->get();
                     if (!$fields->isEmpty()) {
                         foreach ($fields->toArray() as $field_key => $field_value) {
