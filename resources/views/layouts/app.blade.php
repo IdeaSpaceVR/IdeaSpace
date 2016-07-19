@@ -76,7 +76,7 @@
                         <li class="hidden-lg hidden-md hidden-sm dropdown">
                             <a href="#" class="dropdown-toggle menu-has-submenu" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-btn fa-cube"></i> Spaces <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu" id="spaces-sub-xs">
-                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit') class="active" @endif role="presentation"><a href="{{ route('spaces_all') }}">All</a></li>
+                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') class="active" @endif role="presentation"><a href="{{ route('spaces_all') }}">All</a></li>
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif role="presentation"><a href="{{ route('space_add_select_theme') }}">Add New</a></li>
                         </ul>
                         </li>
@@ -119,8 +119,8 @@
             <div class="col-xs-1" id="sidebar-nav" role="navigation">
                 <ul class="nav nav-stacked sidebar-nav">
                     <li><a href="#" class="collapsed menu-has-submenu" data-toggle="collapse" data-target="#spaces-sub-md-lg"><i class="fa fa-btn fa-cube"></i> Spaces <span class="caret"></span></a>
-                        <ul class="nav collapse @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add' || Route::currentRouteName() == 'space_edit') in @endif" id="spaces-sub-md-lg">
-                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit') class="active" @endif><a href="{{ route('spaces_all') }}"><i class="fa fa-btn fa-cubes"></i> All</a></li>
+                        <ul class="nav collapse @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') in @endif" id="spaces-sub-md-lg">
+                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') class="active" @endif><a href="{{ route('spaces_all') }}"><i class="fa fa-btn fa-cubes"></i> All</a></li>
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif><a href="{{ route('space_add_select_theme') }}"><i class="fa fa-btn fa-pencil"></i> Add New</a></li>
                         </ul>
                     </li>
@@ -136,8 +136,8 @@
             <div id="sidebar-icons-nav" class="col-xs-1" role="navigation">
                 <ul class="nav nav-stacked sidebar-nav">
                     <li><a href="#" class="menu-has-submenu" data-toggle="collapse" data-target="#spaces-sub-sm"><i class="fa fa-btn fa-cube"></i><span class="caret"></span></a>
-                        <ul class="nav collapse @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add' || Route::currentRouteName() == 'space_edit') in @endif" id="spaces-sub-sm">
-                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit') class="active" @endif><a href="{{ route('spaces_all') }}"><i class="fa fa-btn fa-cubes"></i></a></li>
+                        <ul class="nav collapse @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') in @endif" id="spaces-sub-sm">
+                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') class="active" @endif><a href="{{ route('spaces_all') }}"><i class="fa fa-btn fa-cubes"></i></a></li>
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif><a href="{{ route('space_add_select_theme') }}"><i class="fa fa-btn fa-pencil"></i></a></li>
                         </ul>
                     </li>
