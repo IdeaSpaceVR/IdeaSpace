@@ -104,7 +104,7 @@ class FieldTypeTextfield {
                 trans('fieldtype_textfield.validation_required', ['label' => $properties['#label']])
             ));
 
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
+            /* array_dot flattens the array because $field_key . '.required' creates new array */
             $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'], 
                 $field_key . '.max', 
@@ -115,7 +115,7 @@ class FieldTypeTextfield {
 
             $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'max:' . $properties['#maxlength']); 
 
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
+            /* array_dot flattens the array because $field_key . '.required' creates new array */
             $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'], 
                 $field_key . '.max', 
