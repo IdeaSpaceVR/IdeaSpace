@@ -26,7 +26,7 @@
             <a href="{{ route('spaces_all') }}">@if (Route::currentRouteName() == 'spaces_all') <span class="spaces selected">{{ trans('template_spaces.all') }}</span> @else All @endif <span class="spaces @if (Route::currentRouteName() == 'spaces_all') selected @endif">({{ $number_spaces_all }})</span></a> | <a href="{{ route('spaces_published') }}">@if (Route::currentRouteName() == 'spaces_published') <span class="spaces selected">{{ trans('template_spaces.published') }}</span> @else Published @endif <span class="spaces @if (Route::currentRouteName() == 'spaces_published') selected @endif">({{ $number_spaces_published }})</span></a> | <a href="{{ route('spaces_deleted') }}">@if (Route::currentRouteName() == 'spaces_deleted') <span class="spaces selected">{{ trans('template_spaces.trash') }}</span> @else Trash @endif <span class="spaces @if (Route::currentRouteName() == 'spaces_deleted') selected @endif">({{ $number_spaces_deleted }})</span></a>
         </div>
 
-        <div class="table-responsive">
+        <div class="table-responsive" style="border:none">
 
             <table class="table table-striped">
                 <thead>

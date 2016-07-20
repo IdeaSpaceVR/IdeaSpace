@@ -13,7 +13,7 @@ foreach ($contentlist as $key => $value) {
         <?php
         if (isset($value['content'])) {
         ?>
-        <div class="table-responsive">
+        <div class="table-responsive" style="border:none">
             <table style="margin-top:20px" class="table table-striped">
                 <thead>
                     <tr>
