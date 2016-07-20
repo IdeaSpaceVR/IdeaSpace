@@ -84,13 +84,13 @@ class SpaceContentAddController extends Controller {
         $form['css'] = [
             asset('public/medium-editor/css/medium-editor.min.css'),
             asset('public/medium-editor/css/themes/bootstrap.min.css'),
-            asset('public/assets/admin/space/content/css/content_add.css'),
+            asset('public/assets/admin/space/content/css/content_add_edit_delete.css'),
         ];
 
         $form['js'] = [
             asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
             asset('public/medium-editor/js/medium-editor.min.js'),
-            asset('public/assets/admin/space/content/js/content_add.js'),
+            asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
         ];
         //Log::debug($vars);
 
