@@ -34,7 +34,7 @@
             @endforeach        
 
             <div class="form-group text-center">
-                <a href="{{ route('space_edit', ['id' => $space_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Cancel</a> <button type="button" class="btn btn-primary btn-lg content-add-save"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Save</button>
+                <a href="{{ route('space_edit', ['id' => $space_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('template_content_add.cancel') }}</a> <button type="button" class="btn btn-primary btn-lg content-add-save"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_content_add.save') }}</button>
             </div>
 
         </div>
