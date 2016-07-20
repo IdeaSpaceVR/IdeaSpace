@@ -54,6 +54,8 @@ Route::group(['middleware' => 'web'], function () {
   Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceContentAddController@content_add_submit']);
   Route::get('admin/space/{space_id}/edit/{contenttype}/{content_id}/edit', ['as' => 'content_edit', 'uses' => 'Admin\SpaceContentEditController@content_edit']);
   Route::post('admin/space/{space_id}/edit/{contenttype}/{content_id}/edit', ['as' => 'content_edit_submit', 'uses' => 'Admin\SpaceContentEditController@content_edit_submit']);
+  Route::get('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete', 'uses' => 'Admin\SpaceContentEditController@content_delete']);
+  Route::post('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete_submit', 'uses' => 'Admin\SpaceContentEditController@content_delete_submit']);
 
 
   Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);

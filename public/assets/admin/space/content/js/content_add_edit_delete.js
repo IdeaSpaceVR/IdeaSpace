@@ -95,4 +95,12 @@ jQuery(document).ready(function($) {
 
     });
 
+
+    $('.content-delete').click(function() {
+
+        $(this).addClass('disabled');
+        $('form').submit();
+    });
+
+
 });

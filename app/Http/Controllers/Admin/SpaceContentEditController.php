@@ -5,6 +5,8 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Theme;
 use App\Space;
+use App\Content;
+use App\Field;
 use App\Content\ContentType;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -87,17 +89,17 @@ class SpaceContentEditController extends Controller {
         $form['css'] = [
             asset('public/medium-editor/css/medium-editor.min.css'),
             asset('public/medium-editor/css/themes/bootstrap.min.css'),
-            asset('public/assets/admin/space/content/css/content_add.css'),
+            asset('public/assets/admin/space/content/css/content_add_edit_delete.css'),
         ];
 
         $form['js'] = [
             asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
             asset('public/medium-editor/js/medium-editor.min.js'),
-            asset('public/assets/admin/space/content/js/content_add.js'),
+            asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
         ];
         //Log::debug($vars);
 
-        return response()->view('admin.space.content.content_edit', $form);
+        return view('admin.space.content.content_edit', $form);
     }
 
 
@@ -150,6 +152,99 @@ class SpaceContentEditController extends Controller {
         }
 
         return redirect('admin/space/' . $space_id . '/edit')->with('alert-success', trans('space_content_edit_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']]));
+    }
+
+
+    /**
+     * The content delete page.
+     *
+     * @param int $space_id Space id.
+     * @param String $contenttype Name of content type.
+     * @param int $content_id Content id.
+     *
+     * @return Response
+     */
+    public function content_delete($space_id, $contenttype, $content_id) {
+
+        try {
+            $space = Space::where('id', $space_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        try {
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('space_add_select_theme');
+        }
+
+        try {
+            $content = Content::where('id', $content_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $config = json_decode($theme->config, true);
+
+        $theme_mod = array();
+        $theme_mod['theme-name'] = $config['#theme-name'];
+        $theme_mod['theme-version'] = $config['#theme-version'];
+        $theme_mod['theme-author-name'] = $config['#theme-author-name'];
+        $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
+
+        $vars['theme'] = $theme_mod;
+
+        $vars['title'] = $content->title;
+
+        $vars['space_id'] = $space_id;
+        $vars['contenttype_name'] = $contenttype;
+        $vars['content_id'] = $content_id;
+        $vars['label'] = $config['#content-types'][$contenttype]['#label'];
+
+        $vars['css'] = [
+            asset('public/medium-editor/css/medium-editor.min.css'),
+            asset('public/medium-editor/css/themes/bootstrap.min.css'),
+            asset('public/assets/admin/space/content/css/content_add_edit_delete.css'),
+        ];
+
+        $vars['js'] = [
+            asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
+            asset('public/medium-editor/js/medium-editor.min.js'),
+            asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
+        ];
+
+        return view('admin.space.content.content_delete', $vars);
+
+    }
+
+
+    /**
+     * Delete content submission.
+     *
+     * @param Request $request
+     * @param int $space_id Space id.
+     * @param String $contenttype Name of content type.
+     * @param int $content_id Content id.
+     *
+     * @return Response
+     */
+    public function content_delete_submit(Request $request, $space_id, $contenttype, $content_id) {
+
+        try {
+            $content = Content::where('id', $content_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $fields = Field::where('content_id', $content_id)->get();
+        foreach ($fields as $field) {
+          $field->delete();
+        }
+
+        $title = $content->title;
+        $content->delete();
+
+        return redirect('admin/space/' . $space_id . '/edit')->with('alert-success', trans('space_content_edit_controller.deleted', ['label' => $title]));
     }
 
 
