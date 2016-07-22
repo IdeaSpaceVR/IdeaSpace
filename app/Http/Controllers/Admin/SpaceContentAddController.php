@@ -94,7 +94,7 @@ class SpaceContentAddController extends Controller {
         ];
         //Log::debug($vars);
 
-        return response()->view('admin.space.content.content_add', $form);
+        return view('admin.space.content.content_add', $form);
     }
 
 
