@@ -67,6 +67,10 @@ class SpaceEditController extends Controller {
 
         $vars = $this->process_theme($theme);
 
+        /* jquery-ui for draggable and sortable table rows */
+        $vars['js'][] = asset('public/jquery-ui/jquery-ui.min.js');
+        $vars['js'][] = asset('public/jquery-ui-touch-punch/jquery.ui.touch-punch.min.js');
+
         foreach ($vars['theme']['contenttypes'] as $contenttype_key => $contenttype_value) {
 
             $content_vars[$contenttype_key] = $contenttype_value;
@@ -75,12 +79,6 @@ class SpaceEditController extends Controller {
             if (!$content->isEmpty()) {
                 foreach ($content->toArray() as $content_key => $content_value) {
                     $content_vars[$contenttype_key]['content'][$content_key] = $content_value;
-                    /*$fields = Field::where('content_id', $content_value['id'])->get();
-                    if (!$fields->isEmpty()) {
-                        foreach ($fields->toArray() as $field_key => $field_value) {
-                            $content_vars[$contenttype_key]['content'][$content_key]['fields'][$field_key] = $field_value;
-                        }
-                    }*/
                 }
             }
         }

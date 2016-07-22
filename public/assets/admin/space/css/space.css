@@ -6,3 +6,15 @@
   display: none;
 }
 
+.field-drag {
+  text-align: center;
+}
+
+.field-drag .fa {
+  margin-top: 14px;
+  color: #999999;
+  display: none;
+}
+.field-drag {
+  cursor: pointer;
+}

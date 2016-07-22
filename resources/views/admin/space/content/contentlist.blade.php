@@ -17,7 +17,8 @@ foreach ($contentlist as $key => $value) {
             <table style="margin-top:20px" class="table table-striped">
                 <thead>
                     <tr>
-                        <th style="width:80%">{{ trans('template_contentlist.title') }}</th>
+                        <th style="width:5%"></th>
+                        <th style="width:75%">{{ trans('template_contentlist.title') }}</th>
                         <th style="width:20%">{{ trans('template_contentlist.date') }}</th>
                     </tr>
                 </thead>
@@ -26,6 +27,10 @@ foreach ($contentlist as $key => $value) {
                         foreach ($value['content'] as $content) {
                     ?>
                     <tr>
+                        <td class="field-drag">
+                          <i class="fa fa-arrows" aria-hidden="true"></i>
+                          <input type="hidden" class="weight" value="{{ $content['weight'] }}">
+                        </td>
                         <td class="field-title">
                             <div><a style="font-weight:bold;word-wrap:break-word;" href="{{ route('content_edit', ['space_id' => $space->id, 'contenttype' => $key, 'content_id' => $content['id']]) }}">{{ $content['title'] }}</a></div>
                             <div>
