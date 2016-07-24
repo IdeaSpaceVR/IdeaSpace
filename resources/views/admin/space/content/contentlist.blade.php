@@ -2,6 +2,7 @@
 foreach ($contentlist as $key => $value) {
 ?>
 
+<a class="anchor" id="{{ $key }}"></a>
 <div class="panel panel-default">
   <div class="panel-heading">
     <h3 class="panel-title">{{ $value['label'] }}</h3>

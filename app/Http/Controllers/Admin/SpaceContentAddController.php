@@ -146,7 +146,7 @@ class SpaceContentAddController extends Controller {
             abort(404);
         }
 
-        return redirect('admin/space/' . $id . '/edit')->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
+        return redirect('admin/space/' . $id . '/edit#' . $contenttype)->with('alert-success', trans('space_content_add_controller.saved', ['label' => $config['#content-types'][$contenttype]['#label']])); 
     }
 
 
