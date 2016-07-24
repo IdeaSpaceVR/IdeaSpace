@@ -62,29 +62,44 @@ jQuery(document).ready(function($) {
 
   /* helper function to keep table row from collapsing when being sorted */
   var fixHelperModified = function(e, tr) {
-    var $originals = tr.children();
-    var $helper = tr.clone();
-    $helper.children().each(function(index) {
-      $(this).width($originals.eq(index).width())
-    });
-    return $helper;
+      var $originals = tr.children();
+      var $helper = tr.clone();
+      $helper.children().each(function(index) {
+          $(this).width($originals.eq(index).width())
+      });
+      return $helper;
   };
 
   /* make diagnosis table sortable */
   $('.table-responsive').each(function(i, obj) {
-    $(this).find('tbody').sortable({
-      helper: fixHelperModified,
-      stop: function(event, ui) {
-        weight_table($(this).find('table').class)
-      }
-    }).disableSelection();
+      $(this).find('tbody').sortable({
+          helper: fixHelperModified,
+          stop: function(event, ui) {
+              weight_table($(this))
+          }
+      }).disableSelection();
   });
 
-  function weight_table(tableID) {
-    $(tableID + ' tr').each(function() {
-      count = $(this).parent().children().index($(this)) + 1;
-      $(this).find('.weight').val(count);
-    });
+  function weight_table(tbody) {
+      var weight_order = [];
+      tbody.find('tr').each(function() {
+          count = $(this).parent().children().index($(this)) + 1;
+          //console.log(count);
+          $(this).find('.weight').val(count);
+          //weight_order[count] = $(this).find('.id').val();
+          weight_order.push({ 'id': $(this).find('.id').val(), 'weight': count }); 
+      });
+      /* submit */
+      $.ajax({
+          url: 'weight-order',
+          type: 'post',
+          cache: false,
+          headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
+          data: { 'space_id': $('input[name="space_id"]').val(), 'weight_order': weight_order },
+          success: function(return_data) {
+              /* do nothing */
+          }
+      });
   }
 
 

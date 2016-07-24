@@ -143,7 +143,11 @@ class ContentType {
         $content = new Content;
         $content->space_id = $space_id;
         $content->key = $contenttype_key;        
-        $content->weight = 0;
+
+        /* get lowest number and decrement */
+        $c = Content::where('space_id', $space_id)->where('key', $contenttype_key)->orderBy('weight', 'asc')->take(1)->first();
+        $content->weight = $c->weight - 1;
+
         $content->title = $request_all['isvr_content_title'];
         $content->save();
 

@@ -49,13 +49,22 @@ Route::group(['middleware' => 'web'], function () {
   Route::post('admin/space/{id}/edit', ['as' => 'space_edit_submit', 'uses' => 'Admin\SpaceEditController@space_edit_submit']);
   Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'space_edit_content_add_submit', 'uses' => 'Admin\SpaceEditController@space_edit_content_add_submit']);
 
+  /* space content weight order */
+  Route::post('admin/space/{space_id}/weight-order', ['as' => 'content_weight_order', 'uses' => 'Admin\SpaceContentEditController@content_weight_order_submit']);
+
   /* space content add */
   Route::get('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add', 'uses' => 'Admin\SpaceContentAddController@content_add']);
   Route::post('admin/space/{id}/edit/{contenttype}/add', ['as' => 'content_add_submit', 'uses' => 'Admin\SpaceContentAddController@content_add_submit']);
+
+  /* space content edit */
   Route::get('admin/space/{space_id}/edit/{contenttype}/{content_id}/edit', ['as' => 'content_edit', 'uses' => 'Admin\SpaceContentEditController@content_edit']);
   Route::post('admin/space/{space_id}/edit/{contenttype}/{content_id}/edit', ['as' => 'content_edit_submit', 'uses' => 'Admin\SpaceContentEditController@content_edit_submit']);
+
+  /* space content delete */
   Route::get('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete', 'uses' => 'Admin\SpaceContentEditController@content_delete']);
   Route::post('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete_submit', 'uses' => 'Admin\SpaceContentEditController@content_delete_submit']);
+
+  
 
 
   Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);

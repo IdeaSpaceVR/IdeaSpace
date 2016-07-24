@@ -29,7 +29,8 @@ foreach ($contentlist as $key => $value) {
                     <tr>
                         <td class="field-drag">
                           <i class="fa fa-arrows" aria-hidden="true"></i>
-                          <input type="hidden" class="weight" value="{{ $content['weight'] }}">
+                          <input type="hidden" name="id" class="id" value="{{ $content['id'] }}">
+                          <input type="hidden" name="weight" class="weight" value="{{ $content['weight'] }}">
                         </td>
                         <td class="field-title">
                             <div><a style="font-weight:bold;word-wrap:break-word;" href="{{ route('content_edit', ['space_id' => $space->id, 'contenttype' => $key, 'content_id' => $content['id']]) }}">{{ $content['title'] }}</a></div>

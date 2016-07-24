@@ -74,7 +74,7 @@ class SpaceEditController extends Controller {
         foreach ($vars['theme']['contenttypes'] as $contenttype_key => $contenttype_value) {
 
             $content_vars[$contenttype_key] = $contenttype_value;
-            $content = Content::where('space_id', $space->id)->where('key', $contenttype_key)->get();
+            $content = Content::where('space_id', $space->id)->where('key', $contenttype_key)->orderBy('weight', 'asc')->get();
 
             if (!$content->isEmpty()) {
                 foreach ($content->toArray() as $content_key => $content_value) {

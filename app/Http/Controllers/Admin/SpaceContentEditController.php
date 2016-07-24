@@ -249,6 +249,32 @@ class SpaceContentEditController extends Controller {
 
 
     /**
+     * Content weight order submission.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function content_weight_order_submit(Request $request) {
+
+        $space_id = $request->input('space_id');        
+        $weight_order = $request->input('weight_order');        
+        //Log::debug($weight_order);
+        foreach ($weight_order as $key => $val) {
+            try {
+            $content = Content::where('id', $val['id'])->firstOrFail();
+            $content->weight = $val['weight'];
+            $content->save();
+            } catch (ModelNotFoundException $e) {
+                /* do nothing */
+            }
+        }
+
+        return response()->json(['success' => 'true']); 
+    }
+
+
+    /**
      * Add rules and messages for content title.
      *
      * @param Array $validation_rules_messages
