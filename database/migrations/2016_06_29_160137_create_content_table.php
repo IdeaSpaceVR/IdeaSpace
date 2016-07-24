@@ -18,7 +18,7 @@ class CreateContentTable extends Migration
 
             $table->integer('space_id');
             $table->string('key');
-            $table->integer('weight');
+            $table->integer('weight')->default(0);
             $table->string('title');
 
             $table->timestamps();
