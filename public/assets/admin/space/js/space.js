@@ -97,7 +97,17 @@ jQuery(document).ready(function($) {
           headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
           data: { 'space_id': $('input[name="space_id"]').val(), 'weight_order': weight_order },
           success: function(return_data) {
-              /* do nothing */
+              if (return_data.success == 'true') {
+                  $('#space-edit-headline').after(
+                      '<div class="row">' + 
+                      '<div class="col-md-9" style="padding-left:35px">' + 
+                      '<div class="alert alert-success">' + 
+                      return_data.message + 
+                      '</div>' + 
+                      '</div>' + 
+                      '</div>');  
+                  $('.alert-success').delay(3000).fadeOut();
+              }
           }
       });
   }

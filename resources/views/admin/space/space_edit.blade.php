@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 style="padding-left:20px">{{ trans('template_space_add_edit.headline_edit_space') }}</h1>
+    <h1 id="space-edit-headline" style="padding-left:20px">{{ trans('template_space_add_edit.headline_edit_space') }}</h1>
 
     {!! Form::open(array('route' => array('space_edit', $space->id), 'method' => 'POST', 'autocomplete' => 'false')) !!}
 

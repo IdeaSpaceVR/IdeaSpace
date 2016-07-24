@@ -270,7 +270,7 @@ class SpaceContentEditController extends Controller {
             }
         }
 
-        return response()->json(['success' => 'true']); 
+        return response()->json(['success' => 'true', 'message' => trans('space_content_edit_controller.content_weight_order_saved')]); 
     }
 
 
