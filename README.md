@@ -26,7 +26,7 @@ https://www.ideaspacevr.org/documentation/master/contributions
 
 ### Roadmap
 
-0.4.0 release: Theme API will implement custom content types and fields. This enhancement will enable totally new VR Theme experiences!
+1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations... and much more.
 
 ### License
 
