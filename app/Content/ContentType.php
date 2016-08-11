@@ -21,6 +21,10 @@ class ContentType {
     const FIELD_TYPE_AUDIO = 'audio';
     const FIELD_TYPE_VIDEO = 'video';
     const FIELD_TYPE_IMAGE = 'image';
+    const FIELD_TYPE_PHOTOSPHERE = 'photosphere';
+    const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
+    const FIELD_TYPE_MODEL = 'model';
+
 
     private $fieldTypes;
 
