@@ -60,4 +60,6 @@
 
     {!! Form::close() !!}
 
+    @include('admin.asset_library.assets_modal')
+
 @endsection
