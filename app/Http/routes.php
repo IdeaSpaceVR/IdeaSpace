@@ -71,14 +71,6 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpacesController@space_delete']);
   Route::get('admin/space/{id}/restore', ['as' => 'space_restore', 'uses' => 'Admin\SpacesController@space_restore']);
 
-  /* make sure paths work on new spaces and space edits */
-// admin/assets/add -> asset lib in overlay, then insert
-
-  //Route::post('admin/space/{id}/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  //Route::post('admin/space/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  //Route::post('admin/space/{id}/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
-  //Route::post('admin/space/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
-
 
   /**
    * Themes
@@ -88,11 +80,24 @@ Route::group(['middleware' => 'web'], function () {
 
 
   /**
-   * Assets
+   * Asset library
    */  
-  Route::get('admin/assets', ['as' => 'assets', 'uses' => function() {
-    return view('admin.assets.assets');
-  }]);
+  Route::get('admin/assets', ['as' => 'assets', 'uses' => 'Admin\AssetLibraryController@index']);
+
+  Route::get('admin/assets/images', ['as' => 'asset_library_images', 'uses' => 'Admin\AssetLibraryImagesController@index']);
+  Route::get('admin/assets/photospheres', ['as' => 'asset_library_photospheres', 'uses' => 'Admin\AssetLibraryPhotospheresController@index']);
+  Route::get('admin/assets/videos', ['as' => 'asset_library_videos', 'uses' => 'Admin\AssetLibraryVideosController@index']);
+  Route::get('admin/assets/videospheres', ['as' => 'asset_library_videospheres', 'uses' => 'Admin\AssetLibraryVideospheresController@index']);
+  Route::get('admin/assets/audio', ['as' => 'asset_library_audio', 'uses' => 'Admin\AssetLibraryAudioController@index']);
+  Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
+
+  /* make sure paths work on new spaces and space edits */
+// admin/assets/add -> asset lib in overlay, then insert
+
+  //Route::post('admin/space/{id}/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
+  //Route::post('admin/space/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
+  //Route::post('admin/space/{id}/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
+  //Route::post('admin/space/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
 
 
   /**
