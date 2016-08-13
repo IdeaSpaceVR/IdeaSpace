@@ -1,23 +1,8 @@
-@extends('layouts.app')
 
-@section('title', 'IdeaSpace - Assets')
-
-@section('content')
-
-    <h1 style="padding-left:35px">Assets</h1>
 
     <div class="row" style="padding-left:35px">
 
         <div class="col-md-12">
-
-            <ul class="nav nav-tabs">
-                <li role="presentation" class="active"><a href="{{ route('asset_library_images') }}">{{ trans('template_asset_library.images') }}</a></li>
-                <li role="presentation"><a href="{{ route('asset_library_photospheres') }}">{{ trans('template_asset_library.photospheres') }}</a></li>
-                <li role="presentation"><a href="{{ route('asset_library_videos') }}">{{ trans('template_asset_library.videos') }}</a></li>
-                <li role="presentation"><a href="{{ route('asset_library_videospheres') }}">{{ trans('template_asset_library.videospheres') }}</a></li>
-                <li role="presentation"><a href="{{ route('asset_library_audio') }}">{{ trans('template_asset_library.audio') }}</a></li>
-                <li role="presentation"><a href="{{ route('asset_library_models') }}">{{ trans('template_asset_library.models') }}</a></li>
-            </ul>
 
             <a href="#upload"></a>
             <div id="upload-images" class="upload-images">
@@ -39,4 +24,3 @@
 
     </div>
 
-@endsection
