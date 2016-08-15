@@ -29,4 +29,6 @@ return [
     'or' => 'or',
     'open_file_browser' => 'Click to open File Browser',
 
+    'close' => 'Close',
+
 ];
