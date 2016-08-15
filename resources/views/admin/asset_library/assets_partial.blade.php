@@ -24,7 +24,7 @@
 
             <div class="tab-content">
 
-                <div role="tabpanel" class="tab-pane fade in active" id="images"></div>
+                <div role="tabpanel" class="tab-pane fade in active" id="images">@include('admin.asset_library.images')</div>
                 <div role="tabpanel" class="tab-pane fade" id="photospheres"></div>
                 <div role="tabpanel" class="tab-pane fade" id="videos"></div>
                 <div role="tabpanel" class="tab-pane fade" id="videospheres"></div>
