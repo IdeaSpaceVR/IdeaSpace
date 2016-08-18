@@ -13,9 +13,13 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Event;
 use Auth;
 use Validator;
+use App\Http\Controllers\Admin\AssetLibraryControllerTrait;
 use Log;
 
 class SpaceContentEditController extends Controller {
+
+
+    use AssetLibraryControllerTrait;
 
 
     private $contentType;
@@ -98,6 +102,13 @@ class SpaceContentEditController extends Controller {
             asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
             asset('public/assets/admin/asset-library/js/assets.js'),
         ];
+
+        /* needed for asset library: resources/views/admin/asset_library/assets_modal.blade.php */
+        $form['upload_max_filesize'] = $this->phpFileUploadSizeSettings();
+        $form['upload_max_filesize_tooltip'] = trans('asset_library_controller.upload_max_filesize_tooltip');
+        $form['post_max_size'] = $this->phpPostMaxSizeSettings();
+        $form['max_filesize_bytes'] = $this->phpFileUploadSizeInBytes();
+
         //Log::debug($vars);
 
         return view('admin.space.content.content_edit', $form);
