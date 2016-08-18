@@ -94,6 +94,7 @@ class SpaceContentEditController extends Controller {
             asset('public/medium-editor/css/medium-editor.min.css'),
             asset('public/medium-editor/css/themes/bootstrap.min.css'),
             asset('public/assets/admin/space/content/css/content_add_edit_delete.css'),
+            asset('public/assets/admin/asset-library/css/assets.css'),
         ];
 
         $form['js'] = [
