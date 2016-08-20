@@ -10,7 +10,7 @@ Software developers should have the possibility to create and share virtual real
 
 ## VR Themes
 
-Currently the latest release has 3 default themes: [Hello World](https://www.ideaspacevr.org/themes/hello-world-example-theme), [Web VR Photo Sphere Viewer](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-viewer-navigation-menu), [Photo Sphere Diver](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-diver-panorama).
+The latest release comes with 3 default themes: [Hello World](https://www.ideaspacevr.org/themes/hello-world-example-theme), [Web VR Photo Sphere Viewer](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-viewer-navigation-menu), [Photo Sphere Diver](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-diver-panorama).
 
 ## Download Latest Release
 
@@ -28,7 +28,7 @@ https://www.ideaspacevr.org/documentation/master/contributions
 
 ### Roadmap
 
-1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations... and much more.
+1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations and links... and much more.
 
 ### License
 
