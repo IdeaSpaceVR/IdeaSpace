@@ -94,7 +94,7 @@ jQuery(document).ready(function($) {
           url: 'weight-order',
           type: 'post',
           cache: false,
-          headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
+          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
           data: { 'space_id': $('input[name="space_id"]').val(), 'weight_order': weight_order },
           success: function(return_data) {
               if (return_data.success == 'true') {
