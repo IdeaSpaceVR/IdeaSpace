@@ -16,13 +16,11 @@ class CreateFilesTable extends Migration
 
             $table->increments('id');
 
-            $table->integer('user_id');
             $table->string('filename');
             $table->string('uri', 512);
             $table->string('filemime');
             $table->integer('filesize');
             $table->string('filename_orig');
-            $table->string('status');
 
             $table->timestamps();
         });
