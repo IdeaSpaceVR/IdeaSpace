@@ -4,7 +4,7 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Image extends Model
+class GenericImage extends Model
 {
 
     CONST IMAGE_STORAGE_PATH = 'public/assets/user/image/';

@@ -6,8 +6,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class GenericFile extends Model
 {
-    const STATUS_PUBLISHED = 'published';
 
+    const PREVIEW_FILE_SUFFIX = '_preview';
 
     /**
      * The table associated with the model.
@@ -22,7 +22,7 @@ class GenericFile extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'filename', 'uri', 'filemime', 'filesize', 'filename_orig', 'status'
+        'filename', 'uri', 'filemime', 'filesize', 'filename_orig'
     ];
 
 }
