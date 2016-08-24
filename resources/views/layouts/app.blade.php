@@ -22,6 +22,8 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="" />
 
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+
     <!-- Fonts -->
     <link href="{{ asset('public/font-awesome/css/font-awesome.min.css') }}" rel='stylesheet'>
     <link href="https://fonts.googleapis.com/css?family=Lato:100,300,400,700" rel='stylesheet' type='text/css'>
@@ -166,6 +168,9 @@
         </div>
     </div>
 
+    <script>
+    window.ideaspace_site_path = '{{ url('/') }}';
+    </script>
     <!-- jQuery first, then Bootstrap JS. -->
     <script src="{{ asset('public/jquery/jquery.min.js') }}"></script>
     <script src="{{ asset('public/bootstrap/js/bootstrap.min.js') }}"></script>

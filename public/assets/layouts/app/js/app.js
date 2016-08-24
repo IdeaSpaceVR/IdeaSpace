@@ -33,7 +33,7 @@ jQuery(document).ready(function($) {
 
   $.ajaxSetup({
     headers: {
-        'X-CSRF-TOKEN': $('input[name="_token"]').val()
+        'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
     }
   });
 });
