@@ -5,7 +5,7 @@ jQuery(document).ready(function($) {
         var self = this;
 
         $.ajax({
-            url: 'themes',
+            url: window.ideaspace_site_path + '/admin/themes',
             type: 'post',
             cache: false,
             headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
