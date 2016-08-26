@@ -32,12 +32,17 @@ class AssetLibraryController extends Controller {
     public function index() {
 
         $vars = [
-            'js' => array(asset('public/assets/admin/asset-library/js/assets.js')),
+            'js' => [
+                asset('public/jquery-file-uploader/dmuploader.js'),
+                asset('public/assets/admin/asset-library/js/images.js'), 
+                asset('public/assets/admin/asset-library/js/assets.js') 
+            ],
             'css' => array(asset('public/assets/admin/asset-library/css/assets.css')),
             'upload_max_filesize' => $this->phpFileUploadSizeSettings(),
             'upload_max_filesize_tooltip' => trans('asset_library_controller.upload_max_filesize_tooltip'),
             'post_max_size' => $this->phpPostMaxSizeSettings(),
-            'max_filesize_bytes' => $this->phpFileUploadSizeInBytes()
+            'max_filesize_bytes' => $this->phpFileUploadSizeInBytes(),
+            'images' => $this->get_all_images()
         ];
 
         return view('admin.asset_library.assets', $vars);

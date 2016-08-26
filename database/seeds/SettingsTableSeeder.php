@@ -25,7 +25,16 @@ class SettingsTableSeeder extends Seeder
                 'user_id' => 1, 
                 'namespace' => 'images', 
                 'key' => 'PREVIEW_IMAGE_WIDTH', 
-                'value' => 400
+                'value' => 512 
+            ]
+        ]);
+
+        DB::table('settings')->insert([
+            [
+                'user_id' => 1, 
+                'namespace' => 'images', 
+                'key' => 'THUMBNAIL_IMAGE_WIDTH', 
+                'value' => 300
             ]
         ]);
 

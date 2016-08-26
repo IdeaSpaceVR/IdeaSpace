@@ -26,7 +26,7 @@
                     </div>
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
-            </div><!-- upload-photospheres //-->
+            </div><!-- upload //-->
             <p class="help-block">{{ trans('template_asset_library_photospheres.nearest_power_of_two') }}</p>
 
         </div>

@@ -85,6 +85,9 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets', ['as' => 'assets', 'uses' => 'Admin\AssetLibraryController@index']);
 
   Route::get('admin/assets/images', ['as' => 'asset_library_images', 'uses' => 'Admin\AssetLibraryImagesController@index']);
+  Route::post('admin/assets/images/add', ['as' => 'asset_library_add_images', 'uses' => 'Admin\AssetLibraryImagesController@add_images']);
+  Route::get('admin/assets/images/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryImagesController@get_localization_strings']);
+
   Route::get('admin/assets/photospheres', ['as' => 'asset_library_photospheres', 'uses' => 'Admin\AssetLibraryPhotospheresController@index']);
   Route::get('admin/assets/videos', ['as' => 'asset_library_videos', 'uses' => 'Admin\AssetLibraryVideosController@index']);
   Route::get('admin/assets/videospheres', ['as' => 'asset_library_videospheres', 'uses' => 'Admin\AssetLibraryVideospheresController@index']);

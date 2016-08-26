@@ -12,15 +12,6 @@ class Theme extends Model
     const STATUS_INACTIVE = 'inactive';
     const STATUS_INACTIVE_TEXT = 'Install Theme';
     
-    const TYPE_IMAGES = 'images';
-    const TYPE_IMAGE = 'image';
-    const TYPE_TEXTINPUT = 'textinput';
-    const TYPE_TEXTAREA = 'textarea';
-    const TYPE_MODELS = 'models';
-    const TYPE_MODEL = 'model';
-    const TYPE_AUDIO = 'audio';
-    const TYPE_VIDEO = 'video';
-
     const THEMES_DIR = 'themes';
     const TEMPLATES_DIR = 'templates';
     const CONFIG_FILE = 'config.php';

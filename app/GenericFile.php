@@ -8,6 +8,7 @@ class GenericFile extends Model
 {
 
     const PREVIEW_FILE_SUFFIX = '_preview';
+    const THUMBNAIL_FILE_SUFFIX = '_thumbnail';
 
     /**
      * The table associated with the model.

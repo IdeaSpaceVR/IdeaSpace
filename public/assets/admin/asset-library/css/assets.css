@@ -38,4 +38,47 @@
   margin-bottom: 20px;
 }
 
+.file-upload-error {
+  color: #a94442;
+  padding: 10px 10px 10px 10px;
+}
+
+
+@media(max-width:767px) {
+    .files ul.list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      width: 100%;
+      text-align: center;
+    }
+}
+
+@media(min-width:768px) {
+    .files ul.list {
+      list-style: none;
+      padding: 0;
+      margin: 0 auto;
+      width: 100%;
+    }
+}
+
+@media(min-width:768px){
+    .files ul.list li.list-item {
+      display: inline-block;
+      vertical-align: top;
+      margin: 12px 24px 12px 0;
+      width: 180px;
+      height: 180px
+    }
+}
+
+@media(max-width:767px) {
+    .files ul.list li.list-item {
+      display: inline-block;
+      vertical-align: top;
+      margin: 12px 24px 12px 0;
+    }
+}
+
 

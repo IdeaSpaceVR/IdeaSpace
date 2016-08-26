@@ -12,7 +12,6 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         <span class="text">{{ trans('template_asset_library.open_file_browser') }}</span>
                         <input type="file" name="files[]" multiple>
-                        <!--input id="fileuploadtype" type="hidden" name="type" value=" $control['type'] "//-->
                     </button>
                     <div style="margin-top:15px">
                     @if ($upload_max_filesize != '') 
@@ -26,10 +25,35 @@
                     </div>
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
-            </div><!-- upload-images //-->
+            </div><!-- upload //-->
             <p class="help-block">{{ trans('template_asset_library_images.nearest_power_of_two') }}</p>
 
-        </div>
+        </div><!-- col-md-12 //-->
 
-    </div>
+    </div><!-- row //-->
+
+    <div class="files" data-file-counter="{{ ((count($images)>0)?count($images):0) }}">
+           
+        <ul class="list"> 
+        <?php 
+        $i = 0; 
+        foreach ($images as $image) { 
+        ?>
+            <li class="list-item">
+
+                <div id="file-{{ $i }}">
+
+                    <a href="#"><img class="img-thumbnail img-responsive" src="{{ $image['uri'] }}"></a>
+
+                </div>
+
+            </li>
+        <?php 
+        $i++; 
+        } 
+        ?>
+        </ul>
+
+    </div><!-- files //-->
+
 

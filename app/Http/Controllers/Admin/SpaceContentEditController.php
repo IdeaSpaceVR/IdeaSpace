@@ -101,7 +101,9 @@ class SpaceContentEditController extends Controller {
             asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
             asset('public/medium-editor/js/medium-editor.min.js'),
             asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
-            asset('public/assets/admin/asset-library/js/assets.js'),
+            asset('public/jquery-file-uploader/dmuploader.js'),
+            asset('public/assets/admin/asset-library/js/images.js'),
+            asset('public/assets/admin/asset-library/js/assets.js')
         ];
 
         /* needed for asset library: resources/views/admin/asset_library/assets_modal.blade.php */
@@ -109,6 +111,7 @@ class SpaceContentEditController extends Controller {
         $form['upload_max_filesize_tooltip'] = trans('asset_library_controller.upload_max_filesize_tooltip');
         $form['post_max_size'] = $this->phpPostMaxSizeSettings();
         $form['max_filesize_bytes'] = $this->phpFileUploadSizeInBytes();
+        $form['images'] = $this->get_all_images();
 
         //Log::debug($vars);
 

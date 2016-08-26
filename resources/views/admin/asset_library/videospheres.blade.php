@@ -26,7 +26,7 @@
                     </div>
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
-            </div>
+            </div><!-- upload //-->
 
         </div>
 
