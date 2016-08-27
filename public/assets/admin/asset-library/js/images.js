@@ -4,6 +4,15 @@ jQuery(document).ready(function($) {
     $('[data-toggle="tooltip"]').tooltip();
 
 
+    if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
+
+        $('.upload-area').find('input[type="file"]').removeAttr('multiple');
+        $('.upload-area').addClass('visible');
+        $('.upload-area').show();
+    }
+
+
+
     /*$(document).on('click', '.image-file-delete', function() {
 
         var ref_id = $(this).attr('id');

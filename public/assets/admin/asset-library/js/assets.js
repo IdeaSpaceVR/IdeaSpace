@@ -14,6 +14,7 @@ jQuery(document).ready(function($) {
         if (remotePageUrl !== '') {                
             $(currTabTarget).load(remotePageUrl, function() {
                 if (remoteScriptUrl !== '') {
+                    $('.upload-area .close').click(window.upload_area_close_handler);
                     $.getScript(remoteScriptUrl);
                 }
             });
@@ -23,9 +24,35 @@ jQuery(document).ready(function($) {
 
     $('.form-control-add-file button').on('click', function() {
 
-        var whichtab = $(this).data('opentab');
+        var whichtab = $(this).attr('data-opentab');
+        $('.asset-library-nav').find(whichtab).addClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).tab('show');
     });
 
 
+    var add_new_asset_handler = function() {
+
+        if ($('.upload-area').hasClass('visible')) {
+            $('.upload-area').removeClass('visible');
+            $('.upload-area').hide();
+        } else {
+            $('.upload-area').addClass('visible');
+            $('.upload-area').show();
+        }
+    };
+    window.add_new_asset_handler = add_new_asset_handler;
+    $('#add-new-asset').click(window.add_new_asset_handler);
+
+
+    var upload_area_close_handler = function() {
+
+        $('.upload-area').removeClass('visible');
+        $('.upload-area').hide();
+    };
+    window.upload_area_close_handler = upload_area_close_handler;
+    $('.upload-area .close').click(window.upload_area_close_handler);
+
+
 });
+
+

@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 style="padding-left:35px">Assets</h1>
+    <h1 style="padding-left:35px">Assets <button style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" type="button" id="add-new-asset">Add New</button></h1>
 
     <div class="row" style="padding-left:35px">
 

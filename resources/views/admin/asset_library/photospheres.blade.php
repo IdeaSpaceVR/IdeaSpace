@@ -1,13 +1,14 @@
 
-    <div class="row">
+    <div class="row upload-area" style="display:none">
 
         <div class="col-md-12">
 
             <a href="#upload"></a>
+            <button type="button" style="margin-right:7px;font-size:30px" class="close" aria-label="Close"><span aria-hidden="true">&times;</span></button>
             <div class="upload">
-                <div class="text">{{ trans('template_asset_library_photospheres.dragndrop_photospheres') }}</div>
+                <div style="margin-top:20px" class="text">{{ trans('template_asset_library_photospheres.dragndrop_photospheres') }}</div>
                 <div class="text">{{ trans('template_asset_library.or') }}</div>
-                <div class="browser">
+                <div style="margin-bottom:20px" class="browser">
                     <button type="button" class="btn btn-primary fileinput-button">
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         <span class="text">{{ trans('template_asset_library.open_file_browser') }}</span>

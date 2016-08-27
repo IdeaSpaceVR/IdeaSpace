@@ -1,7 +1,7 @@
 
             <ul class="nav nav-tabs asset-library-nav">
 
-                <li role="presentation" class="active">
+                <li role="presentation">
                     <a href="#images" id="images-tab" aria-controls="images" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_images') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/images.js') }}">{{ trans('template_asset_library.images') }}</a>
                 </li>
                 <li role="presentation">
