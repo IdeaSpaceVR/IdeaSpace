@@ -44,6 +44,14 @@ jQuery(document).ready(function($) {
       });
     });
 
+    /* touch */
+    $('.field-title a.title').click(function(e) {
+        e.preventDefault();
+        $('.field-title .field-actions').hide();
+        $(this).parent().parent().find('.field-actions').show();
+    });    
+
+    /* mouse */
     $('.field-title').hover(function() {
         $(this).find('.field-actions').show();
         $(this).parent().find('.fa').css('display', 'block');
@@ -60,57 +68,57 @@ jQuery(document).ready(function($) {
         $(this).find('.fa').hide();
     });
 
-  /* helper function to keep table row from collapsing when being sorted */
-  var fixHelperModified = function(e, tr) {
-      var $originals = tr.children();
-      var $helper = tr.clone();
-      $helper.children().each(function(index) {
-          $(this).width($originals.eq(index).width())
-      });
-      return $helper;
-  };
+    /* helper function to keep table row from collapsing when being sorted */
+    var fixHelperModified = function(e, tr) {
+        var $originals = tr.children();
+        var $helper = tr.clone();
+        $helper.children().each(function(index) {
+            $(this).width($originals.eq(index).width())
+        });
+        return $helper;
+    };
 
-  /* make diagnosis table sortable */
-  $('.table-responsive').each(function(i, obj) {
-      $(this).find('tbody').sortable({
-          helper: fixHelperModified,
-          stop: function(event, ui) {
-              weight_table($(this))
-          }
-      }).disableSelection();
-  });
+    /* make diagnosis table sortable */
+    $('.table-responsive').each(function(i, obj) {
+        $(this).find('tbody').sortable({
+            helper: fixHelperModified,
+            stop: function(event, ui) {
+                weight_table($(this))
+            }
+        }).disableSelection();
+    });
 
-  function weight_table(tbody) {
-      var weight_order = [];
-      tbody.find('tr').each(function() {
-          count = $(this).parent().children().index($(this)) + 1;
-          //console.log(count);
-          $(this).find('.weight').val(count);
-          //weight_order[count] = $(this).find('.id').val();
-          weight_order.push({ 'id': $(this).find('.id').val(), 'weight': count }); 
-      });
-      /* submit */
-      $.ajax({
-          url: 'weight-order',
-          type: 'post',
-          cache: false,
-          headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
-          data: { 'space_id': $('input[name="space_id"]').val(), 'weight_order': weight_order },
-          success: function(return_data) {
-              if (return_data.success == 'true') {
-                  $('#space-edit-headline').after(
-                      '<div class="row">' + 
-                      '<div class="col-md-9" style="padding-left:35px">' + 
-                      '<div class="alert alert-success">' + 
-                      return_data.message + 
-                      '</div>' + 
-                      '</div>' + 
-                      '</div>');  
-                  $('.alert-success').delay(3000).fadeOut();
-              }
-          }
-      });
-  }
+    function weight_table(tbody) {
+        var weight_order = [];
+        tbody.find('tr').each(function() {
+            count = $(this).parent().children().index($(this)) + 1;
+            //console.log(count);
+            $(this).find('.weight').val(count);
+            //weight_order[count] = $(this).find('.id').val();
+            weight_order.push({ 'id': $(this).find('.id').val(), 'weight': count }); 
+        });
+        /* submit */
+        $.ajax({
+            url: 'weight-order',
+            type: 'post',
+            cache: false,
+            headers: { 'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content') },
+            data: { 'space_id': $('input[name="space_id"]').val(), 'weight_order': weight_order },
+            success: function(return_data) {
+                if (return_data.success == 'true') {
+                    $('#space-edit-headline').after(
+                        '<div class="row">' + 
+                        '<div class="col-md-9" style="padding-left:35px">' + 
+                        '<div class="alert alert-success">' + 
+                        return_data.message + 
+                        '</div>' + 
+                        '</div>' + 
+                        '</div>');  
+                    $('.alert-success').delay(3000).fadeOut();
+                }
+            }
+        });
+    }
 
 
 });
