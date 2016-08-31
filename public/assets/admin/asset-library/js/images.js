@@ -5,12 +5,60 @@ jQuery(document).ready(function($) {
 
 
     if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
-
+        /* when opened from space content edit page, allow single file uploads and show upload area */
         $('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
+
+        $('.files .insert-link').show();
+
+    } else {
+        /* when opened from assets menu, set active class on images tab */
+        $('.asset-library-nav').find('#images-tab').parent().addClass('active');
     }
 
+
+    /* touch */
+    var list_item_menu_click_handler = function() {
+        $('.files .list-item').find('.menu').hide();
+        $(this).find('.menu').show();
+    };
+    window.list_item_menu_click_handler = list_item_menu_click_handler;
+    $('.files .list-item').click(window.list_item_menu_click_handler);
+
+
+    /* mouse */
+    var list_item_menu_hover_in_handler = function() {
+        $(this).find('.menu').show();
+    };
+    var list_item_menu_hover_out_handler = function() {
+        $(this).find('.menu').hide();
+    };
+    window.list_item_menu_hover_in_handler = list_item_menu_hover_in_handler;
+    window.list_item_menu_hover_out_handler = list_item_menu_hover_out_handler;
+    $('.files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
+
+
+    var list_item_edit_click_handler = function(e) {
+        e.preventDefault();
+        var image_id = $(e.target).parent().parent().attr('data-image-id');
+
+        $('#asset-details .modal-body').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/edit', function() {
+            $('#asset-details').modal('show');
+        });
+    };
+    window.list_item_edit_click_handler = list_item_edit_click_handler;
+    $('.files .list-item .edit').click(window.list_item_edit_click_handler);
+
+
+    /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog; only when opened from space content edit page */
+    $('#asset-details').on('hidden.bs.modal', function(e) {
+        if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
+            $('body').addClass('modal-open');
+        }
+    });
+
+  
 
 
     /*$(document).on('click', '.image-file-delete', function() {
@@ -75,7 +123,7 @@ jQuery(document).ready(function($) {
 
             var template = 
             '<li class="list-item">' +
-                '<div id="file-' + id + '">' +
+                '<div id="file-' + id + '" class="wrapper">' +
                     '<div class="progress progress-striped active" style="margin-top:80px">' +
                         '<div class="progress-bar" role="progressbar" style="width:0%">' +
                             '<span class="sr-only">0%</span>' +
@@ -105,7 +153,21 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#file-' + id).html('<a href="#"><img class="img-thumbnail img-responsive" src="' + data.uri + '"></a>'); 
+                $('#file-' + id).html('<img class="img-thumbnail img-responsive" src="' + data.uri + '">'); 
+                $('#file-' + id).attr('data-image-id', data.image_id);
+                $('#file-' + id).append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
+                    '<a href="#" class="view-in-vr">'+localization_strings['view_in_vr']+'</a> | ' + 
+                    '<a href="#" class="edit">'+localization_strings['edit']+'</a> ' +
+                    '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+
+                $('.files .list-item').click(window.list_item_menu_handler);
+                $('.files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
+                $('.files .list-item .edit').click(window.list_item_edit_click_handler);
+
+                /* show insert link when opened from space edit content page */
+                if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
+                    $('.files .insert-link').show();
+                } 
 
           } else if (data.status == 'error') {
 

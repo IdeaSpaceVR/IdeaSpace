@@ -45,8 +45,7 @@ jQuery(document).ready(function($) {
     });
 
     /* touch */
-    $('.field-title a.title').click(function(e) {
-        e.preventDefault();
+    $('.field-title .title').click(function(e) {
         $('.field-title .field-actions').hide();
         $(this).parent().parent().find('.field-actions').show();
     });    

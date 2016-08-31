@@ -1,9 +1,8 @@
 jQuery(document).ready(function($) {
 
     /* touch */
-    $('.space-title a.title').click(function(e) {
-        e.preventDefault();
-        $('.space-title a').parent().parent().find('.space-actions').hide();
+    $('.space-title .title').click(function(e) {
+        $('.space-title .title').parent().parent().find('.space-actions').hide();
         $(this).parent().parent().find('.space-actions').show();
     });
 

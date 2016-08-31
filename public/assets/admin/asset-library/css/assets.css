@@ -67,9 +67,9 @@
     .files ul.list li.list-item {
       display: inline-block;
       vertical-align: top;
-      margin: 12px 24px 12px 0;
-      width: 180px;
-      height: 180px
+      padding: 0px 24px 48px 24px;
+      width: 200px;
+      height: 200px
     }
 }
 
@@ -77,8 +77,15 @@
     .files ul.list li.list-item {
       display: inline-block;
       vertical-align: top;
-      margin: 12px 24px 12px 0;
+      padding: 0 24px 48px 24px;
+      width: 300px;
+      height: 300px
     }
+}
+
+#asset-details {
+    /* modal dialog on top of modal dialog */
+    z-index: 1070; 
 }
 
 

@@ -13,7 +13,6 @@
                         <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
                         <span class="text">{{ trans('template_asset_library.open_file_browser') }}</span>
                         <input type="file" name="files[]" multiple>
-                        <!--input id="fileuploadtype" type="hidden" name="type" value=" $control['type'] "//-->
                     </button>
                     <div style="margin-top:15px">
                     @if ($upload_max_filesize != '')

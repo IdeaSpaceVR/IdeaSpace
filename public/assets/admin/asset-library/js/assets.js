@@ -27,6 +27,13 @@ jQuery(document).ready(function($) {
         var whichtab = $(this).attr('data-opentab');
         $('.asset-library-nav').find(whichtab).addClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).tab('show');
+
+        /* when opened from space content edit page, allow single file uploads and show upload area */
+        $('.upload-area').find('input[type="file"]').removeAttr('multiple');
+        $('.upload-area').addClass('visible');
+        $('.upload-area').show();
+        
+        $('.files .insert-link').show();
     });
 
 

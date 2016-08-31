@@ -16,9 +16,9 @@
                 <li role="presentation">
                     <a href="#audio" id="audio-tab" aria-controls="audio" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_audio') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/audio.js') }}">{{ trans('template_asset_library.audio') }}</a>
                 </li>
-                <!--li role="presentation">
+                <li role="presentation">
                     <a href="#models" id="models-tab" aria-controls="models" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_models') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/models.js') }}">{{ trans('template_asset_library.models') }}</a>
-                </li//-->
+                </li>
 
             </ul>
 
@@ -29,7 +29,7 @@
                 <div role="tabpanel" class="tab-pane fade" id="videos"></div>
                 <div role="tabpanel" class="tab-pane fade" id="videospheres"></div>
                 <div role="tabpanel" class="tab-pane fade" id="audio"></div>
-                <!--div role="tabpanel" class="tab-pane fade" id="models"></div//-->
+                <div role="tabpanel" class="tab-pane fade" id="models"></div>
 
             </div><!-- tab-content //-->
 

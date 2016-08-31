@@ -48,7 +48,8 @@
                     <tr>
                         <td><input id="" type="checkbox" name="space[]" value=""></td>
                         <td class="space-title">
-                            <div><a style="font-weight:bold;word-wrap:break-word;" href="{{ route('space_edit', ['id' => $space->id]) }}">{{ $space->title }}</a></div>
+                            <!--div><a style="font-weight:bold;word-wrap:break-word;" href="#" class="title">{{ $space->title }}</a></div//-->
+                            <div class="title" style="font-weight:bold;word-wrap:break-word;">{{ $space->title }}</div>
                             @if ($space->status == App\Space::STATUS_TRASH) 
                             <span class="space-actions"><a style="font-size:14px" href="{{ route('space_restore', ['id' => $space->id]) }}">{{ trans('template_spaces.restore') }}</a> <span style="font-size:14px;color:#999999">|</span> <a href="{{ route('space_delete', ['id' => $space->id]) }}" style="font-size:14px;color:#c9302c;">{{ trans('template_spaces.delete_permanently') }}</a> 
                             @else 

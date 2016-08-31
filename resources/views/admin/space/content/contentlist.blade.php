@@ -34,7 +34,7 @@ foreach ($contentlist as $key => $value) {
                           <input type="hidden" name="weight" class="weight" value="{{ $content['weight'] }}">
                         </td>
                         <td class="field-title">
-                            <div><a style="font-weight:bold;word-wrap:break-word;" href="#" class="title">{{ $content['title'] }}</a></div>
+                            <div style="font-weight:bold;word-wrap:break-word;" class="title">{{ $content['title'] }}</div>
                             <div>
                                 <span class="field-actions"><a style="font-size:14px" href="{{ route('content_edit', ['space_id' => $space->id, 'contenttype' => $key, 'content_id' => $content['id']]) }}">{{ trans('template_contentlist.edit') }}</a> <span style="font-size:14px;color:#999999">|</span> <a href="{{ route('content_delete', ['space_id' => $space->id, 'contenttype' => $key, 'content_id' => $content['id']]) }}" style="font-size:14px;color:#c9302c;">{{ trans('template_contentlist.delete') }}</a></span>
                             </div>
