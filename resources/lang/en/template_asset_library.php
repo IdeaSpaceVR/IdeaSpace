@@ -11,8 +11,7 @@ return [
     'or' => 'or',
     'open_file_browser' => 'Click to open File Browser',
     'assets' => 'Assets',
-    'edit_asset' => 'Edit Asset Details',
-    'close' => 'Close',
     'add_new' => 'Add New',
+    'close' => 'Close',
 
 ];

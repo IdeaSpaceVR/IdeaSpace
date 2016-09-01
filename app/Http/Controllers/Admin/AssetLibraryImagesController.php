@@ -9,6 +9,7 @@ use App\GenericFile;
 use App\GenericImage;
 use App\Setting;
 use Auth;
+use File;
 use Log;
 
 class AssetLibraryImagesController extends Controller {
@@ -126,7 +127,7 @@ class AssetLibraryImagesController extends Controller {
     /**
      * Images upload via jQuery.
      *
-     * @param Request
+     * @param Request $request
      *
      * @return Response
      */
@@ -173,7 +174,7 @@ class AssetLibraryImagesController extends Controller {
             'filename_orig' => $filename_orig
         ]);
 
-        GenericImage::create([
+        $genericImage = GenericImage::create([
             'user_id' => $user->id,
             'file_id' => $newFile->id,
             'caption' => '',
@@ -202,7 +203,8 @@ class AssetLibraryImagesController extends Controller {
         return response()->json([
             'status' => 'success', 
             'uri' => asset($thumbnail_image_uri), 
-            'ref_id' => $newFile->id]);
+            'image_id' => $genericImage->id
+        ]);
     }
 
 
@@ -217,9 +219,133 @@ class AssetLibraryImagesController extends Controller {
             'file_type_error' => trans('asset_library_images_controller.file_type_error'),
             'file_size_error' => trans('asset_library_images_controller.file_size_error'),
             'file_ext_error' => trans('asset_library_images_controller.file_ext_error'),
+            'view_in_vr' => trans('template_asset_library_images.view_in_vr'),
+            'edit' => trans('template_asset_library_images.edit'),
+            'insert' => trans('template_asset_library_images.insert'),
+            'save' => trans('template_asset_library_images.save'),
+            'saved' => trans('template_asset_library_images.saved'),
         ]);
     }
 
+
+    /**
+     * Image edit page.
+     *
+     * @param int $image_id
+     *
+     * @return Response
+     */
+    public function image_edit($image_id) {
+
+        if ($image_id == null) {
+            abort(404);
+        }
+
+        try {
+            $genericImage = GenericImage::where('id', $image_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        try {
+            $genericFile = GenericFile::where('id', $genericImage->file_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $vars = [];
+        $vars['id'] = $genericImage->id;        
+        $vars['caption'] = $genericImage->caption;        
+        $vars['description'] = $genericImage->description;        
+        $vars['dimensions'] = $genericImage->width . ' x ' . $genericImage->height;        
+        $vars['uploaded_on'] = $genericImage->created_at->format('F d, Y'); 
+        $vars['file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';        
+        $vars['file_type'] = $genericFile->filemime;        
+        $vars['image_id'] = $image_id;        
+        $vars['uri'] = asset($genericFile->uri);        
+
+        /*$vars = [
+            'js' => [
+                asset('public/jquery-file-uploader/dmuploader.js'),
+                asset('public/assets/admin/asset-library/js/assets.js')
+            ],
+            'css' => array(asset('public/assets/admin/asset-library/css/assets.css')),
+            'upload_max_filesize' => $this->phpFileUploadSizeSettings(),
+            'upload_max_filesize_tooltip' => trans('asset_library_controller.upload_max_filesize_tooltip'),
+            'post_max_size' => $this->phpPostMaxSizeSettings(),
+            'max_filesize_bytes' => $this->phpFileUploadSizeInBytes(),
+            'images' => $this->get_all_images()
+        ];*/
+
+        return view('admin.asset_library.image_edit', $vars);
+    }
+
+
+    /**
+     * Image edit save.
+     *
+     * @param Request $request
+     * @param int $image_id
+     *
+     * @return Response
+     */
+    public function image_edit_save(Request $request, $image_id) {
+
+        if ($image_id == null || $request->has('caption') === false || $request->has('description') === false) {
+            abort(404);
+        }
+
+        try {
+            $genericImage = GenericImage::where('id', $image_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+        
+        $genericImage->caption = $request->input('caption');
+        $genericImage->description = $request->input('description');
+        $genericImage->save(); 
+
+        return response()->json(['status' => 'success']);
+    }
+
+
+    /**
+     * Image edit delete.
+     *
+     * @param Request $request
+     * @param int $image_id
+     *
+     * @return Response
+     */
+    public function image_edit_delete(Request $request, $image_id) {
+
+        if ($image_id == null) {
+            abort(404);
+        }
+
+        try {
+            $genericImage = GenericImage::where('id', $image_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        try {
+            $genericFile = GenericFile::where('id', $genericImage->file_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $uri = $genericFile->uri;
+        $thumbnail_uri = $this->get_file_name($uri, GenericFile::THUMBNAIL_FILE_SUFFIX);
+
+        File::delete($uri);
+        File::delete($thumbnail_uri);
+
+        $genericImage->delete(); 
+        $genericFile->delete(); 
+
+        return response()->json(['status' => 'success', 'image_id' => $image_id]);
+    }
 
 }
 

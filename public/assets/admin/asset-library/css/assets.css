@@ -83,6 +83,10 @@
     }
 }
 
+.files ul.list li.list-item img {
+    cursor: pointer;
+}
+
 #asset-details {
     /* modal dialog on top of modal dialog */
     z-index: 1070; 

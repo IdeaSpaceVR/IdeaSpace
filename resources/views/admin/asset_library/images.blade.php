@@ -44,7 +44,9 @@
 
                 <div id="file-{{ $i }}" class="wrapper" data-image-id="{{ $image['id'] }}">
 
-                    <img class="img-thumbnail img-responsive" src="{{ $image['uri'] }}">
+                    <div>
+                        <img class="img-thumbnail img-responsive edit" src="{{ $image['uri'] }}">
+                    </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
                         <a href="#" class="view-in-vr">{{ trans('template_asset_library_images.view_in_vr') }}</a> | <a href="#" class="edit">{{ trans('template_asset_library_images.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_images.insert') }}</a></span>

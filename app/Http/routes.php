@@ -87,6 +87,9 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets/images', ['as' => 'asset_library_images', 'uses' => 'Admin\AssetLibraryImagesController@index']);
   Route::post('admin/assets/images/add', ['as' => 'asset_library_add_images', 'uses' => 'Admin\AssetLibraryImagesController@add_images']);
   Route::get('admin/assets/images/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryImagesController@get_localization_strings']);
+  Route::get('admin/assets/image/{image_id}/edit', ['as' => 'asset_library_image_edit', 'uses' => 'Admin\AssetLibraryImagesController@image_edit']);
+  Route::post('admin/assets/image/{image_id}/save', ['as' => 'asset_library_image_save', 'uses' => 'Admin\AssetLibraryImagesController@image_edit_save']);
+  Route::post('admin/assets/image/{image_id}/delete', ['as' => 'asset_library_image_delete', 'uses' => 'Admin\AssetLibraryImagesController@image_edit_delete']);
 
   Route::get('admin/assets/photospheres', ['as' => 'asset_library_photospheres', 'uses' => 'Admin\AssetLibraryPhotospheresController@index']);
   Route::get('admin/assets/videos', ['as' => 'asset_library_videos', 'uses' => 'Admin\AssetLibraryVideosController@index']);
@@ -94,8 +97,6 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets/audio', ['as' => 'asset_library_audio', 'uses' => 'Admin\AssetLibraryAudioController@index']);
   Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
 
-  /* make sure paths work on new spaces and space edits */
-// admin/assets/add -> asset lib in overlay, then insert
 
   //Route::post('admin/space/{id}/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
   //Route::post('admin/space/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
