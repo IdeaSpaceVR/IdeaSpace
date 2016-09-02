@@ -52,7 +52,7 @@ jQuery(document).ready(function($) {
             $('#asset-details .save-btn').click(window.image_edit_save_btn_click_handler);
             $('#asset-details #caption').on('keydown', window.reset_save_btn_handler);
             $('#asset-details #description').on('keydown', window.reset_save_btn_handler);
-            $('#asset-details .delete-btn').click(window.image_edit_delete_btn_click_handler);
+            $('#asset-details .delete-link').click(window.image_edit_delete_btn_click_handler);
 
             if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();
@@ -128,7 +128,7 @@ jQuery(document).ready(function($) {
         });
     };
     window.image_edit_delete_btn_click_handler = image_edit_delete_btn_click_handler;
-    $('#asset-details .delete-btn').click(window.image_edit_delete_btn_click_handler);
+    $('#asset-details .delete-link').click(window.image_edit_delete_btn_click_handler);
 
 
     var localization_strings = {};

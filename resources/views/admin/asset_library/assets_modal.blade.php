@@ -1,5 +1,5 @@
 
-@include('admin.asset_library.asset_edit_modal')
+@include('admin.asset_library.asset_details_modal')
 
 <div class="modal fade" id="assets" tabindex="-1" role="dialog" aria-labelledby="assets">
     <div class="modal-dialog modal-lg" role="document" style="width:96%">

@@ -21,6 +21,6 @@ return [
     'save' => 'Save',
     'saved' => 'Saved',
     'insert' => 'Insert',
-    'delete' => 'Delete',
+    'delete_permanently' => 'Delete Permanently',
 
 ];

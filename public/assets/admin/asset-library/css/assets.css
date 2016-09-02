@@ -92,4 +92,17 @@
     z-index: 1070; 
 }
 
+.delete-link {
+    margin-right: 20px;
+    text-decoration: underline;
+    color: #c9302c;
+    cursor: pointer;
+}
+
+a.delete-link:hover {
+    text-decoration: underline;
+    color: #c9302c;
+}
+
+
 
