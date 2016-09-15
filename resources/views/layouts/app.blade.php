@@ -42,6 +42,16 @@
       }
     } 
     ?>
+
+    <?php 
+    if (isset($js_header)) {
+      foreach ($js_header as $j_h) { 
+    ?>
+    <script src="<?php echo $j_h; ?>" type="text/javascript"></script>
+    <?php 
+      }
+    } 
+    ?>
 </head>
 <body id="app-layout">
     <nav class="navbar navbar-inverse navbar-fixed-top">
