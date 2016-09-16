@@ -118,21 +118,52 @@ trait AssetLibraryControllerTrait {
             $width = $image->width();
         }
 
-        if (!$this->is_power_of_two($width)) {
-            $width = $this->nearest_power_of_two($width);
+        $height = $image->height();
+
+
+        if ($this->is_power_of_two($width) && $this->is_power_of_two($height)) {
+
+            $image->destroy();
+            return ['width' => $width, 'height' => $height];
         }
 
-        $image->resize($width, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
+
+        if ($width > $height) {
+
+            $width = $this->nearest_power_of_two($width);
+            $image->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $height = $this->nearest_power_of_two($image->height());
+            /* crop and resize */
+            $image->fit($width, $height);
+
+        } else if ($width == $height) {
+
+            $width = $this->nearest_power_of_two($width);
+            $image->resize($width, null, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $height = $image->height();
+
+        } else if ($width < $height) {
+
+            $height = $this->nearest_power_of_two($height);
+            $image->resize(null, $height, function ($constraint) {
+                $constraint->aspectRatio();
+            });
+            $width = $this->nearest_power_of_two($image->width());
+            /* crop and resize */
+            $image->fit($width, $height);
+        }
+
+        Log::debug($width . ' ' . $height);
 
         if ($image_quality == null) {
             $image->save($new_image_uri);
         } else {
             $image->save($new_image_uri, $image_quality);
         }
-
-        $height = $image->height();
 
         $image->destroy();
 
@@ -201,7 +232,7 @@ trait AssetLibraryControllerTrait {
      */ 
     function nearest_power_of_two($value) {
 
-        return pow(2, round(log($value) / M_LN2));
+        return pow(2, floor(log($value) / log(2)));
     }
 
 

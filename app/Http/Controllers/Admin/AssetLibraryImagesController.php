@@ -37,6 +37,10 @@ class AssetLibraryImagesController extends Controller {
     public function index() {
 
         $vars = [
+            /*'js_header' => [
+                asset('public/aframe/aframe.min.js'),
+                asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js')
+            ],*/
             'js' => [
                 asset('public/jquery-file-uploader/dmuploader.js'),
                 asset('public/assets/admin/asset-library/js/assets.js')
@@ -264,19 +268,6 @@ class AssetLibraryImagesController extends Controller {
         $vars['image_id'] = $image_id;        
         $vars['uri'] = asset($genericFile->uri);        
 
-        /*$vars = [
-            'js' => [
-                asset('public/jquery-file-uploader/dmuploader.js'),
-                asset('public/assets/admin/asset-library/js/assets.js')
-            ],
-            'css' => array(asset('public/assets/admin/asset-library/css/assets.css')),
-            'upload_max_filesize' => $this->phpFileUploadSizeSettings(),
-            'upload_max_filesize_tooltip' => trans('asset_library_controller.upload_max_filesize_tooltip'),
-            'post_max_size' => $this->phpPostMaxSizeSettings(),
-            'max_filesize_bytes' => $this->phpFileUploadSizeInBytes(),
-            'images' => $this->get_all_images()
-        ];*/
-
         return view('admin.asset_library.image_edit', $vars);
     }
 
@@ -345,6 +336,66 @@ class AssetLibraryImagesController extends Controller {
         $genericFile->delete(); 
 
         return response()->json(['status' => 'success', 'image_id' => $image_id]);
+    }
+
+
+    /**
+     * Image vr view page.
+     *
+     * @param int $image_id
+     *
+     * @return Response
+     */
+    public function image_vr_view($image_id) {
+
+        if ($image_id == null) {
+            abort(404);
+        }
+
+        try {
+            $genericImage = GenericImage::where('id', $image_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        try {
+            $genericFile = GenericFile::where('id', $genericImage->file_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+
+        /* calculate aspect ratio for a-frame */
+        $width = $genericImage->width;
+        $height = $genericImage->height;
+        if ($width > $height) {
+            $width_meter = $width / $height;
+            $height_meter = 1;
+        } else if ($width < $height) {
+            $height_meter = $height / $width;
+            $width_meter = 1;
+        } else if ($width == $height) {
+            $width_meter = 1;
+            $height_meter = 1;
+        }
+
+
+        $vars = [];
+        $vars['id'] = $genericImage->id;        
+        //$vars['caption'] = $genericImage->caption;        
+        //$vars['description'] = $genericImage->description;        
+        $vars['dimensions'] = $genericImage->width . ' x ' . $genericImage->height;        
+        $vars['width'] = $width;        
+        $vars['height'] = $height;        
+        $vars['width_meter'] = $width_meter;        
+        $vars['height_meter'] = $height_meter;   
+        $vars['uploaded_on'] = $genericImage->created_at->format('F d, Y'); 
+        $vars['file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';        
+        $vars['file_type'] = $genericFile->filemime;        
+        $vars['image_id'] = $image_id;        
+        $vars['uri'] = asset($genericFile->uri);        
+
+        return view('admin.asset_library.image_vr_view', $vars);
     }
 
 }
