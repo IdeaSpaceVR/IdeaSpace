@@ -40,12 +40,15 @@ jQuery(document).ready(function($) {
     $('.files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
 
 
-    /* show image detail */
+    /* show image edit page */
     var list_item_edit_click_handler = function(e) {
         e.preventDefault();
-        var image_id = $(e.target).parent().parent().attr('data-image-id');
+        var image_id = $(e.target).attr('data-image-id');
 
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/edit', function() {
+
+            /* allow switching views */
+            $('#asset-details .vr-view').click(window.list_item_vr_view_click_handler);
 
             $('#asset-details').modal('show');
 
@@ -63,7 +66,40 @@ jQuery(document).ready(function($) {
     $('.files .list-item .edit').click(window.list_item_edit_click_handler);
 
 
-    /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog; only when opened from space content edit page */
+    /* show image vr view page */
+    var list_item_vr_view_click_handler = function(e) {
+        e.preventDefault();
+        var image_id = $(e.target).attr('data-image-id');
+
+        $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/vr-view', function() {
+
+            /* allow switching views */
+            $('#asset-details .edit-image').click(window.list_item_edit_click_handler);
+
+            /* set height dynamically, because of mobile */
+            $('#asset-details .modal-body a-scene').css('max-height', '600px');        
+            $('#asset-details .modal-body a-scene').css('height', $(window).height() * 0.6);        
+
+            $('#asset-details').on('shown.bs.modal', function() {
+                /* trigger resize event, otherwise canvas is not showing up */
+                var evt = window.document.createEvent('UIEvents'); 
+                evt.initUIEvent('resize', true, false, window, 0); 
+                window.dispatchEvent(evt);
+            });
+
+            $('#asset-details').modal('show');
+
+            if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').show();
+            }
+        });
+    };
+    window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
+    $('.files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+
+    /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog; 
+       only when opened from space content edit page */
     $('#asset-details').on('hidden.bs.modal', function(e) {
         if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
             $('body').addClass('modal-open');
@@ -194,13 +230,18 @@ jQuery(document).ready(function($) {
                 $('#file-' + id).html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '"></div>'); 
                 $('#file-' + id).attr('data-image-id', data.image_id);
                 $('#file-' + id).append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
-                    '<a href="#" class="view-in-vr">'+localization_strings['view_in_vr']+'</a> | ' + 
-                    '<a href="#" class="edit">'+localization_strings['edit']+'</a> ' +
+                    '<a href="#" class="vr-view" data-image-id="'+data.image_id+'">'+localization_strings['view_in_vr']+'</a> | ' + 
+                    '<a href="#" class="edit" data-image-id="'+data.image_id+'">'+localization_strings['edit']+'</a> ' +
                     '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
 
-                $('.files .list-item').click(window.list_item_menu_handler);
+                $('.files .list-item').unbind('click');
+                $('.files .list-item').click(window.list_item_menu_click_handler);
+                $('.files .list-item').unbind('hover');
                 $('.files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
+                $('.files .list-item .edit').unbind('click');
                 $('.files .list-item .edit').click(window.list_item_edit_click_handler);
+                $('.files .list-item .vr-view').unbind('click');
+                $('.files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
 
                 /* show insert link when opened from space edit content page */
                 if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {

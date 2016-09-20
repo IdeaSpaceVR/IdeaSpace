@@ -49,7 +49,7 @@
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="view-in-vr">{{ trans('template_asset_library_images.view_in_vr') }}</a> | <a href="#" class="edit">{{ trans('template_asset_library_images.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_images.insert') }}</a></span>
+                        <a href="#" class="vr-view" data-image-id="{{ $image['id'] }}">{{ trans('template_asset_library_images.vr_view') }}</a> | <a href="#" class="edit" data-image-id="{{ $image['id'] }}">{{ trans('template_asset_library_images.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_images.insert') }}</a></span>
                     </div>
 
                 </div>

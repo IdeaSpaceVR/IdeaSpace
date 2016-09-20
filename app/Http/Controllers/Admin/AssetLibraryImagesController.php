@@ -37,10 +37,11 @@ class AssetLibraryImagesController extends Controller {
     public function index() {
 
         $vars = [
-            /*'js_header' => [
+            'js_header' => [
                 asset('public/aframe/aframe.min.js'),
-                asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js')
-            ],*/
+                asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
+                asset('public/assets/admin/asset-library/js/scene-floor-grid-aframe-comp.js')
+            ],
             'js' => [
                 asset('public/jquery-file-uploader/dmuploader.js'),
                 asset('public/assets/admin/asset-library/js/assets.js')
