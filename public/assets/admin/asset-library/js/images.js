@@ -48,13 +48,18 @@ jQuery(document).ready(function($) {
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/edit', function() {
 
             /* allow switching views */
+            $('#asset-details .vr-view').unbind('click');
             $('#asset-details .vr-view').click(window.list_item_vr_view_click_handler);
 
             $('#asset-details').modal('show');
 
+            $('#asset-details .save-btn').unbind('click');
             $('#asset-details .save-btn').click(window.image_edit_save_btn_click_handler);
+            $('#asset-details #caption').unbind('keydown');
             $('#asset-details #caption').on('keydown', window.reset_save_btn_handler);
+            $('#asset-details #description').unbind('keydown');
             $('#asset-details #description').on('keydown', window.reset_save_btn_handler);
+            $('#asset-details .delete-link').unbind('click');
             $('#asset-details .delete-link').click(window.image_edit_delete_btn_click_handler);
 
             if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
@@ -74,6 +79,7 @@ jQuery(document).ready(function($) {
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/vr-view', function() {
 
             /* allow switching views */
+            $('#asset-details .edit-image').unbind('click');
             $('#asset-details .edit-image').click(window.list_item_edit_click_handler);
 
             /* set height dynamically, because of mobile */
