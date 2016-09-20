@@ -97,6 +97,12 @@ class SpaceContentEditController extends Controller {
             asset('public/assets/admin/asset-library/css/assets.css'),
         ];
 
+        $form['js_header'] = [
+            asset('public/aframe/aframe.min.js'),
+            asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
+            asset('public/assets/admin/asset-library/js/scene-floor-grid-aframe-comp.js')
+        ];
+
         $form['js'] = [
             asset('public/vanilla-color-picker/vanilla-color-picker.min.js'),
             asset('public/medium-editor/js/medium-editor.min.js'),
