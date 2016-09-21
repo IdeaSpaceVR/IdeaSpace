@@ -15,7 +15,7 @@
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
                 </a-assets>
 
-                <a-image position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}"></a-image>
+                <a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}"></a-image>
 
                 <a-entity 
                     position="0 1.6 -4"
@@ -49,17 +49,19 @@
             </div>
      
             <div class="form-group">
-                <label for="distance">{{ trans('template_asset_library_images.distance_to_image') }}</label>
-                <select class="form-control" id="distance">
-                    <option>{{ trans('template_asset_library_images.1_meter') }}</option>
-                    <option>{{ trans('template_asset_library_images.2_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.3_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.4_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.5_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.7_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.10_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.15_meters') }}</option>
-                    <option>{{ trans('template_asset_library_images.20_meters') }}</option>
+                <label for="distance-to-image">{{ trans('template_asset_library_images.distance_to_image') }}</label>
+                <select class="form-control" id="distance-to-image">
+                    <option value="0.5">{{ trans('template_asset_library_images.0_5_meters') }}</option>
+                    <option value="1" selected="selected">{{ trans('template_asset_library_images.1_meter') }}</option>
+                    <option value="1.5">{{ trans('template_asset_library_images.1_5_meters') }}</option>
+                    <option value="2">{{ trans('template_asset_library_images.2_meters') }}</option>
+                    <option value="3">{{ trans('template_asset_library_images.3_meters') }}</option>
+                    <option value="4">{{ trans('template_asset_library_images.4_meters') }}</option>
+                    <option value="5">{{ trans('template_asset_library_images.5_meters') }}</option>
+                    <option value="7">{{ trans('template_asset_library_images.7_meters') }}</option>
+                    <option value="10">{{ trans('template_asset_library_images.10_meters') }}</option>
+                    <option value="15">{{ trans('template_asset_library_images.15_meters') }}</option>
+                    <option value="20">{{ trans('template_asset_library_images.20_meters') }}</option>
                 </select>
             </div>
 

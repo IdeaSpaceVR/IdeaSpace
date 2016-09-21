@@ -8,7 +8,7 @@
     <div class="row">
         <div class="col-md-8">
       
-            <img class="img-responsive" src="{{ $uri }}">
+            <img class="img-responsive center-block" src="{{ $uri }}">
       
         </div><!-- col-md-8 //-->
 

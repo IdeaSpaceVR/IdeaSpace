@@ -98,6 +98,13 @@ jQuery(document).ready(function($) {
             if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();
             }
+
+            /* update camera distance to image */
+            $('#asset-details #distance-to-image').unbind('change');
+            $('#asset-details #distance-to-image').change(function() {
+                $('#asset-details #vr-view-image').attr('position', '0 1.6 -'+$(this).val());
+            });
+
         });
     };
     window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
