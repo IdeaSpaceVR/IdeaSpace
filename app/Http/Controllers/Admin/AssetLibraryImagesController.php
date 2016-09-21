@@ -59,77 +59,6 @@ class AssetLibraryImagesController extends Controller {
 
 
     /**
-     * Delete an image via jQuery.
-     *
-     * @return Response
-     */
-    public function space_media_images_delete(Request $request) {
-
-        if ($request->has('image_id') && $request->has('ref_id')) {
-
-            $image_id = $request->input('image_id');
-            $image_id = substr(strrchr($image_id, '-'), 1);
-
-            $ref_id = $request->input('ref_id');
-            $ref_id = substr(strrchr($ref_id, '-'), 1);
-
-            $user = Auth::user();
-
-            try {
-                $genericFile = GenericFile::where('id', $ref_id)->where('user_id', $user->id)->firstOrFail();
-            } catch (ModelNotFoundException $e) {
-                return redirect()->route('space_add');
-            }
-
-            try {
-                $field_data_image = FieldDataImage::where('file_id', $ref_id)->firstOrFail();
-                $field_data_image->delete();
-                $field_control = FieldControl::where('id', $field_data_image->field_control_id)->firstOrFail();
-                if ($field_control->type == Theme::TYPE_IMAGES) {
-                    /* of type images but no images in field data images table anymore, field control entry can be deleted as well */
-                    try {
-                        FieldDataImage::where('space_id', $field_data_image->space_id)->firstOrFail();
-                    } catch (ModelNotFoundException $e) {
-                        $field_control->delete();
-                    }
-                }
-            } catch (ModelNotFoundException $e) {
-
-            }
-
-            if (File::exists($genericFile->uri)) {
-
-                File::delete($genericFile->uri);
-
-                /* delete preview images */
-                //$thumbnail_uri = substr($genericFile->uri, 0, strrpos($genericFile->uri, '.')) . '_preview' . substr($genericFile->uri, strrpos($genericFile->uri, '.'));
-                $image_preview_uri = $this->get_file_name($genericFile->uri, '_preview');
-                if (File::exists($image_preview_uri)) {
-                    File::delete($image_preview_uri);
-                }
-
-                /* delete thumbnails */
-                //$thumbnail_uri = substr($genericFile->uri, 0, strrpos($genericFile->uri, '.')) . '_thumb' . substr($genericFile->uri, strrpos($genericFile->uri, '.'));
-                $thumbnail_uri = $this->get_file_name($genericFile->uri, '_thumb');
-                if (File::exists($thumbnail_uri)) {
-                    File::delete($thumbnail_uri);
-                }
-
-                $genericFile->delete();
-
-                return response()->json(['status' => 'success', 'message' => 'Image file deleted.', 'image_id' => $image_id]);
-
-            } else {
-                return response()->json(['status' => 'error', 'message' => 'There was an error when deleting the image.', 'image_id' => $image_id]);
-            }
-
-        } else {
-            return response()->json(['status' => 'error', 'message' => 'There was an error when deleting the image.', 'image_id' => $image_id]);
-        }
-    }
-
-
-    /**
      * Images upload via jQuery.
      *
      * @param Request $request
@@ -398,6 +327,7 @@ class AssetLibraryImagesController extends Controller {
 
         return view('admin.asset_library.image_vr_view', $vars);
     }
+
 
 }
 
