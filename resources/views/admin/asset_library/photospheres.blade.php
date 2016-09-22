@@ -29,7 +29,38 @@
             </div><!-- upload //-->
             <p class="help-block">{{ trans('template_asset_library_photospheres.nearest_power_of_two') }}</p>
 
-        </div>
+        </div><!-- col-md-12 //-->
 
-    </div>
+    </div><!-- row //-->
+
+    <div class="files" data-file-counter="{{ ((count($photospheres)>0)?count($photospheres):0) }}">
+
+        <ul class="list">
+        <?php
+        $i = 0;
+        foreach ($photospheres as $photosphere) {
+        ?>
+            <li class="list-item">
+
+                <div id="file-{{ $i }}" class="wrapper" data-photosphere-id="{{ $photosphere['id'] }}">
+
+                    <div>
+                        <img class="img-thumbnail img-responsive edit" src="{{ $photosphere['uri'] }}">
+                    </div>
+
+                    <div class="menu" style="text-align:center;margin-top:5px;display:none">
+                        <a href="#" class="vr-view" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.vr_view') }}</a> | <a href="#" class="edit" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_photospheres.insert') }}</a></span>
+                    </div>
+
+                </div>
+
+            </li>
+        <?php
+        $i++;
+        }
+        ?>
+        </ul>
+
+    </div><!-- files //-->
+
 

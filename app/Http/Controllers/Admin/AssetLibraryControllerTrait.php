@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Theme;
 use App\GenericFile;
 use App\GenericImage;
+use App\Photosphere;
 use Image;
 use Log;
 
@@ -157,7 +158,7 @@ trait AssetLibraryControllerTrait {
             $image->fit($width, $height);
         }
 
-        Log::debug($width . ' ' . $height);
+        //Log::debug($width . ' ' . $height);
 
         if ($image_quality == null) {
             $image->save($new_image_uri);
@@ -278,6 +279,26 @@ trait AssetLibraryControllerTrait {
         }
         //Log::debug($images_result);
         return $images_result;
+    }
+
+
+    /**
+     * Get all photo spheres.
+     *
+     * @return Array
+     */
+    private function get_all_photospheres() {
+
+        $photospheres = Photosphere::orderBy('updated_at', 'desc')->get();
+        $photospheres_result = [];
+        foreach ($photospheres as $photosphere) {
+            $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+            $psphere_result['id'] = $photosphere->id;
+            $psphere_result['uri'] = asset($this->get_file_name($genericFile->uri, GenericFile::THUMBNAIL_FILE_SUFFIX));
+            $photospheres_result[] = $psphere_result;
+        }
+        //Log::debug($images_result);
+        return $photospheres_result;
     }
 
 

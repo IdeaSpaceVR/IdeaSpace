@@ -93,16 +93,17 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets/image/{image_id}/vr-view', ['as' => 'asset_library_image_vr_view', 'uses' => 'Admin\AssetLibraryImagesController@image_vr_view']);
 
   Route::get('admin/assets/photospheres', ['as' => 'asset_library_photospheres', 'uses' => 'Admin\AssetLibraryPhotospheresController@index']);
+  Route::post('admin/assets/photospheres/add', ['as' => 'asset_library_add_photospheres', 'uses' => 'Admin\AssetLibraryPhotospheresController@add_photospheres']);
+  Route::get('admin/assets/photospheres/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryPhotospheresController@get_localization_strings']);
+  Route::get('admin/assets/photosphere/{photosphere_id}/edit', ['as' => 'asset_library_photosphere_edit', 'uses' => 'Admin\AssetLibraryPhotospheresController@photosphere_edit']);
+  Route::post('admin/assets/photosphere/{photosphere_id}/save', ['as' => 'asset_library_photosphere_save', 'uses' => 'Admin\AssetLibraryPhotospheresController@photosphere_edit_save']);
+  Route::post('admin/assets/photosphere/{photosphere_id}/delete', ['as' => 'asset_library_photosphere_delete', 'uses' => 'Admin\AssetLibraryPhotospheresController@photosphere_edit_delete']);
+  Route::get('admin/assets/photosphere/{photosphere_id}/vr-view', ['as' => 'asset_library_photosphere_vr_view', 'uses' => 'Admin\AssetLibraryPhotospheresController@photosphere_vr_view']);
+
   Route::get('admin/assets/videos', ['as' => 'asset_library_videos', 'uses' => 'Admin\AssetLibraryVideosController@index']);
   Route::get('admin/assets/videospheres', ['as' => 'asset_library_videospheres', 'uses' => 'Admin\AssetLibraryVideospheresController@index']);
   Route::get('admin/assets/audio', ['as' => 'asset_library_audio', 'uses' => 'Admin\AssetLibraryAudioController@index']);
   Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
-
-
-  //Route::post('admin/space/{id}/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  //Route::post('admin/space/assets/images/add', ['as' => 'space_media_images_add', 'uses' => 'Admin\SpaceController@space_media_images_add']);
-  //Route::post('admin/space/{id}/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
-  //Route::post('admin/space/assets/images/delete', ['as' => 'space_media_images_delete', 'uses' => 'Admin\SpaceController@space_media_images_delete']);
 
 
   /**
