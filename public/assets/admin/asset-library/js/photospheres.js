@@ -14,7 +14,7 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').show();
 
     } else {
-        /* when opened from assets menu, set active class on images tab */
+        /* when opened from assets menu, set active class on photo spheres tab */
         $('.asset-library-nav').find('#photospheres-tab').parent().addClass('active');
     }
 
@@ -213,14 +213,6 @@ jQuery(document).ready(function($) {
                 '</div>' +
             '</li>';
 
-            //var i = $('#photospheres #photosphere-files').attr('file-counter');
-            //if (!i) {
-                //$('files').empty();
-                //i = 0;
-            //}
-            //i++;
-
-            //$('#photospheres .files').attr('file-counter', i);
             $('#photospheres .files ul').prepend(template);
         },
         onComplete: function() {
@@ -234,9 +226,9 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#photospheres #file-' + id).html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '"></div>');
-                $('#photospheres #file-' + id).attr('data-photosphere-id', data.image_id);
-                $('#photospheres #file-' + id).append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
+                $('#photospheres #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '"></div>');
+                $('#photospheres #file-' + id + ':first').attr('data-photosphere-id', data.photosphere_id);
+                $('#photospheres #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['view_in_vr']+'</a> | ' +
                     '<a href="#" class="edit" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['edit']+'</a> ' +
                     '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');

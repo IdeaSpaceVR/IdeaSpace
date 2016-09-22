@@ -129,13 +129,13 @@ class AssetLibraryPhotospheresController extends Controller {
         return response()->json([
             'status' => 'success',
             'uri' => asset($thumbnail_image_uri),
-            'image_id' => $photosphere->id
+            'photosphere_id' => $photosphere->id
         ]);
     }
 
 
     /**
-     * Get localization strings for image uploading ajax script.
+     * Get localization strings for photo sphere uploading ajax script.
      *
      * @return Array
      */
@@ -230,7 +230,7 @@ class AssetLibraryPhotospheresController extends Controller {
      *
      * @return Response
      */
-    public function photosphere_edit_delete(Request $request, $image_id) {
+    public function photosphere_edit_delete(Request $request, $photosphere_id) {
 
         if ($photosphere_id == null) {
             abort(404);
