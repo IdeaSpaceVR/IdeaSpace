@@ -37,16 +37,6 @@ class AssetLibraryImagesController extends Controller {
     public function index() {
 
         $vars = [
-            'js_header' => [
-                asset('public/aframe/aframe.min.js'),
-                asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
-                asset('public/assets/admin/asset-library/js/scene-floor-grid-aframe-comp.js')
-            ],
-            'js' => [
-                asset('public/jquery-file-uploader/dmuploader.js'),
-                asset('public/assets/admin/asset-library/js/assets.js')
-            ],
-            'css' => array(asset('public/assets/admin/asset-library/css/assets.css')),
             'upload_max_filesize' => $this->phpFileUploadSizeSettings(),
             'upload_max_filesize_tooltip' => trans('asset_library_controller.upload_max_filesize_tooltip'),
             'post_max_size' => $this->phpPostMaxSizeSettings(),

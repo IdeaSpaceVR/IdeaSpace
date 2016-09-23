@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#images #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '"></div>'); 
+                $('#images #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '" data-image-id="'+data.image_id+'"></div>'); 
                 $('#images #file-' + id + ':first').attr('data-image-id', data.image_id);
                 $('#images #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-image-id="'+data.image_id+'">'+localization_strings['view_in_vr']+'</a> | ' + 

@@ -9,11 +9,13 @@
         <div class="col-md-8">
 
             <!-- a-frame //-->
-            <a-scene embedded scene-floor-grid style="width:100%">
+            <a-scene embedded style="width:100%">
 
                 <a-assets>
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
                 </a-assets>
+
+                <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
                 <a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}"></a-image>
 

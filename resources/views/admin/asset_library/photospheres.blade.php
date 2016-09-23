@@ -45,7 +45,7 @@
                 <div id="file-{{ $i }}" class="wrapper" data-photosphere-id="{{ $photosphere['id'] }}">
 
                     <div>
-                        <img class="img-thumbnail img-responsive edit" src="{{ $photosphere['uri'] }}">
+                        <img class="img-thumbnail img-responsive edit" src="{{ $photosphere['uri'] }}" data-photosphere-id="{{ $photosphere['id'] }}">
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">

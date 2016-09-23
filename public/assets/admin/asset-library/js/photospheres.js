@@ -226,7 +226,7 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#photospheres #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '"></div>');
+                $('#photospheres #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '" data-photosphere-id="'+data.photosphere_id+'"></div>');
                 $('#photospheres #file-' + id + ':first').attr('data-photosphere-id', data.photosphere_id);
                 $('#photospheres #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['view_in_vr']+'</a> | ' +

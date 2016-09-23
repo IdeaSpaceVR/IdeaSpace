@@ -45,7 +45,7 @@
                 <div id="file-{{ $i }}" class="wrapper" data-image-id="{{ $image['id'] }}">
 
                     <div>
-                        <img class="img-thumbnail img-responsive edit" src="{{ $image['uri'] }}">
+                        <img class="img-thumbnail img-responsive edit" src="{{ $image['uri'] }}" data-image-id="{{ $image['id'] }}">
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
