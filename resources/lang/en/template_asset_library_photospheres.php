@@ -16,7 +16,6 @@ return [
     'dimensions' => 'Dimensions:',
     'edit_photosphere' => 'Edit Photo Sphere Details',
     'close' => 'Close',
-    'view_in_vr' => 'View in VR',
     'save' => 'Save',
     'saved' => 'Saved',
     'insert' => 'Insert',

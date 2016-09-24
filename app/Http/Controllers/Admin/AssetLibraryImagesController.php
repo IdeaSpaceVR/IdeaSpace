@@ -143,7 +143,7 @@ class AssetLibraryImagesController extends Controller {
             'file_type_error' => trans('asset_library_images_controller.file_type_error'),
             'file_size_error' => trans('asset_library_images_controller.file_size_error'),
             'file_ext_error' => trans('asset_library_images_controller.file_ext_error'),
-            'view_in_vr' => trans('template_asset_library_images.view_in_vr'),
+            'vr_view' => trans('template_asset_library_images.vr_view'),
             'edit' => trans('template_asset_library_images.edit'),
             'insert' => trans('template_asset_library_images.insert'),
             'save' => trans('template_asset_library_images.save'),

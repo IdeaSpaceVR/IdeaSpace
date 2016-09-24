@@ -235,7 +235,7 @@ jQuery(document).ready(function($) {
                 $('#images #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '" data-image-id="'+data.image_id+'"></div>'); 
                 $('#images #file-' + id + ':first').attr('data-image-id', data.image_id);
                 $('#images #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
-                    '<a href="#" class="vr-view" data-image-id="'+data.image_id+'">'+localization_strings['view_in_vr']+'</a> | ' + 
+                    '<a href="#" class="vr-view" data-image-id="'+data.image_id+'">'+localization_strings['vr_view']+'</a> | ' + 
                     '<a href="#" class="edit" data-image-id="'+data.image_id+'">'+localization_strings['edit']+'</a> ' +
                     '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
 

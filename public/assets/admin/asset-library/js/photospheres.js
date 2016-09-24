@@ -229,7 +229,7 @@ jQuery(document).ready(function($) {
                 $('#photospheres #file-' + id + ':first').html('<div><img class="edit img-thumbnail img-responsive" src="' + data.uri + '" data-photosphere-id="'+data.photosphere_id+'"></div>');
                 $('#photospheres #file-' + id + ':first').attr('data-photosphere-id', data.photosphere_id);
                 $('#photospheres #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
-                    '<a href="#" class="vr-view" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['view_in_vr']+'</a> | ' +
+                    '<a href="#" class="vr-view" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['vr_view']+'</a> | ' +
                     '<a href="#" class="edit" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['edit']+'</a> ' +
                     '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
 

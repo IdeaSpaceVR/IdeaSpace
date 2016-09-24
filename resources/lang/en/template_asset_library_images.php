@@ -16,7 +16,6 @@ return [
     'dimensions' => 'Dimensions:',
     'edit_image' => 'Edit Image Details',
     'close' => 'Close',
-    'view_in_vr' => 'View in VR',
     'save' => 'Save',
     'saved' => 'Saved',
     'insert' => 'Insert',

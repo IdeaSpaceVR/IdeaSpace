@@ -135,7 +135,7 @@ class AssetLibraryPhotospheresController extends Controller {
             'file_type_error' => trans('asset_library_photospheres_controller.file_type_error'),
             'file_size_error' => trans('asset_library_photospheres_controller.file_size_error'),
             'file_ext_error' => trans('asset_library_photospheres_controller.file_ext_error'),
-            'view_in_vr' => trans('template_asset_library_photospheres.view_in_vr'),
+            'vr_view' => trans('template_asset_library_photospheres.vr_view'),
             'edit' => trans('template_asset_library_photospheres.edit'),
             'insert' => trans('template_asset_library_photospheres.insert'),
             'save' => trans('template_asset_library_photospheres.save'),
