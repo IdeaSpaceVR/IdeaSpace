@@ -21,8 +21,9 @@ AFRAME.registerComponent('load-photosphere', {
                 document.querySelector('#image-loading').setAttribute('visible', false);
                 document.querySelector('#image-loading-anim').stop();
 
-                el.setAttribute('material', 'src', '#img');
+                el.setAttribute('src', '#img');
                 document.querySelector('#scene-floor-grid').setAttribute('visible', false);
+                document.querySelector('#default-sky').setAttribute('visible', false);
                 el.setAttribute('visible', true);
             }
         }(this.el));

@@ -15,16 +15,11 @@
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
                 </a-assets>
 
+                <a-sky id="default-sky" color="#000000"></a-sky>
+
                 <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
-                <a-entity 
-                    load-photosphere="src: {{ $uri }}" 
-                    visible="false" 
-                    geometry="primitive: sphere; radius: 5000; segmentsWidth: 64; segmentsHeight: 64"
-                    material="shader: flat; side: double; color: #FFFFFF"
-                    scale="-1 1 1"
-                    rotation="0 -60 0">
-                </a-entity>
+                <a-sky load-photosphere="src: {{ $uri }}" visible="false"></a-sky>
 
                 <a-entity 
                     position="0 1.6 -4"
@@ -40,8 +35,6 @@
                         id="image-loading-anim">
                     </a-animation>
                 </a-entity>
-
-                <a-sky color="#000000"></a-sky>
 
             </a-scene>      
             <!-- a-frame //-->

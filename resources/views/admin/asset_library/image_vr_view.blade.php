@@ -15,6 +15,8 @@
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
                 </a-assets>
 
+                <a-sky color="#000000"></a-sky>
+
                 <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
                 <a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}"></a-image>
@@ -33,8 +35,6 @@
                         id="image-loading-anim">
                     </a-animation>
                 </a-entity>
-
-                <a-sky color="#000000"></a-sky>
 
             </a-scene>      
             <!-- a-frame //-->
