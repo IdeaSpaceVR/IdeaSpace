@@ -6,7 +6,6 @@ use DateTime;
 use Carbon\Carbon;
 use Illuminate\Database\Connection;
 use Illuminate\Queue\Jobs\DatabaseJob;
-use Illuminate\Database\Query\Expression;
 use Illuminate\Contracts\Queue\Queue as QueueContract;
 
 class DatabaseQueue extends Queue implements QueueContract
@@ -160,12 +159,10 @@ class DatabaseQueue extends Queue implements QueueContract
     {
         $queue = $this->getQueue($queue);
 
-        if (! is_null($this->expire)) {
-            $this->releaseJobsThatHaveBeenReservedTooLong($queue);
-        }
+        $this->database->beginTransaction();
 
         if ($job = $this->getNextAvailableJob($queue)) {
-            $this->markJobAsReserved($job->id);
+            $job = $this->markJobAsReserved($job);
 
             $this->database->commit();
 
@@ -178,27 +175,6 @@ class DatabaseQueue extends Queue implements QueueContract
     }
 
     /**
-     * Release the jobs that have been reserved for too long.
-     *
-     * @param  string  $queue
-     * @return void
-     */
-    protected function releaseJobsThatHaveBeenReservedTooLong($queue)
-    {
-        $expired = Carbon::now()->subSeconds($this->expire)->getTimestamp();
-
-        $this->database->table($this->table)
-                    ->where('queue', $this->getQueue($queue))
-                    ->where('reserved', 1)
-                    ->where('reserved_at', '<=', $expired)
-                    ->update([
-                        'reserved' => 0,
-                        'reserved_at' => null,
-                        'attempts' => new Expression('attempts + 1'),
-                    ]);
-    }
-
-    /**
      * Get the next available job for the queue.
      *
      * @param  string|null  $queue
@@ -206,13 +182,13 @@ class DatabaseQueue extends Queue implements QueueContract
      */
     protected function getNextAvailableJob($queue)
     {
-        $this->database->beginTransaction();
-
         $job = $this->database->table($this->table)
                     ->lockForUpdate()
                     ->where('queue', $this->getQueue($queue))
-                    ->where('reserved', 0)
-                    ->where('available_at', '<=', $this->getTime())
+                    ->where(function ($query) {
+                        $this->isAvailable($query);
+                        $this->isReservedButExpired($query);
+                    })
                     ->orderBy('id', 'asc')
                     ->first();
 
@@ -220,16 +196,54 @@ class DatabaseQueue extends Queue implements QueueContract
     }
 
     /**
-     * Mark the given job ID as reserved.
+     * Modify the query to check for available jobs.
      *
-     * @param  string  $id
+     * @param  \Illuminate\Database\Query\Builder  $query
      * @return void
      */
-    protected function markJobAsReserved($id)
+    protected function isAvailable($query)
     {
-        $this->database->table($this->table)->where('id', $id)->update([
-            'reserved' => 1, 'reserved_at' => $this->getTime(),
+        $query->where(function ($query) {
+            $query->where('reserved', 0);
+            $query->where('available_at', '<=', $this->getTime());
+        });
+    }
+
+    /**
+     * Modify the query to check for jobs that are reserved but have expired.
+     *
+     * @param  \Illuminate\Database\Query\Builder  $query
+     * @return void
+     */
+    protected function isReservedButExpired($query)
+    {
+        $expiration = Carbon::now()->subSeconds($this->expire)->getTimestamp();
+
+        $query->orWhere(function ($query) use ($expiration) {
+            $query->where('reserved', 1);
+            $query->where('reserved_at', '<=', $expiration);
+        });
+    }
+
+    /**
+     * Mark the given job ID as reserved.
+     *
+     * @param \stdClass $job
+     * @return \stdClass
+     */
+    protected function markJobAsReserved($job)
+    {
+        $job->reserved = 1;
+        $job->attempts = $job->attempts + 1;
+        $job->reserved_at = $this->getTime();
+
+        $this->database->table($this->table)->where('id', $job->id)->update([
+            'reserved' => $job->reserved,
+            'reserved_at' => $job->reserved_at,
+            'attempts' => $job->attempts,
         ]);
+
+        return $job;
     }
 
     /**
@@ -241,7 +255,13 @@ class DatabaseQueue extends Queue implements QueueContract
      */
     public function deleteReserved($queue, $id)
     {
-        $this->database->table($this->table)->where('id', $id)->delete();
+        $this->database->beginTransaction();
+
+        if ($this->database->table($this->table)->lockForUpdate()->find($id)) {
+            $this->database->table($this->table)->where('id', $id)->delete();
+        }
+
+        $this->database->commit();
     }
 
     /**
@@ -270,12 +290,12 @@ class DatabaseQueue extends Queue implements QueueContract
     {
         return [
             'queue' => $queue,
-            'payload' => $payload,
             'attempts' => $attempts,
             'reserved' => 0,
             'reserved_at' => null,
             'available_at' => $availableAt,
             'created_at' => $this->getTime(),
+            'payload' => $payload,
         ];
     }
 

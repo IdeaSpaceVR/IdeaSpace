@@ -334,12 +334,61 @@ class Connection implements ConnectionInterface
 
             $statement->execute($me->prepareBindings($bindings));
 
+            $fetchMode = $me->getFetchMode();
             $fetchArgument = $me->getFetchArgument();
+            $fetchConstructorArgument = $me->getFetchConstructorArgument();
 
-            return isset($fetchArgument) ?
-                $statement->fetchAll($me->getFetchMode(), $fetchArgument, $me->getFetchConstructorArgument()) :
-                $statement->fetchAll($me->getFetchMode());
+            if ($fetchMode === PDO::FETCH_CLASS && ! isset($fetchArgument)) {
+                $fetchArgument = 'StdClass';
+                $fetchConstructorArgument = null;
+            }
+
+            return isset($fetchArgument)
+                ? $statement->fetchAll($fetchMode, $fetchArgument, $fetchConstructorArgument)
+                : $statement->fetchAll($fetchMode);
         });
+    }
+
+    /**
+     * Run a select statement against the database and returns a generator.
+     *
+     * @param  string  $query
+     * @param  array  $bindings
+     * @param  bool  $useReadPdo
+     * @return \Generator
+     */
+    public function cursor($query, $bindings = [], $useReadPdo = true)
+    {
+        $statement = $this->run($query, $bindings, function ($me, $query, $bindings) use ($useReadPdo) {
+            if ($me->pretending()) {
+                return [];
+            }
+
+            $statement = $this->getPdoForSelect($useReadPdo)->prepare($query);
+
+            $fetchMode = $me->getFetchMode();
+            $fetchArgument = $me->getFetchArgument();
+            $fetchConstructorArgument = $me->getFetchConstructorArgument();
+
+            if ($fetchMode === PDO::FETCH_CLASS && ! isset($fetchArgument)) {
+                $fetchArgument = 'StdClass';
+                $fetchConstructorArgument = null;
+            }
+
+            if (isset($fetchArgument)) {
+                $statement->setFetchMode($fetchMode, $fetchArgument, $fetchConstructorArgument);
+            } else {
+                $statement->setFetchMode($fetchMode);
+            }
+
+            $statement->execute($me->prepareBindings($bindings));
+
+            return $statement;
+        });
+
+        while ($record = $statement->fetch()) {
+            yield $record;
+        }
     }
 
     /**
@@ -516,13 +565,20 @@ class Connection implements ConnectionInterface
      * Start a new database transaction.
      *
      * @return void
+     * @throws Exception
      */
     public function beginTransaction()
     {
         ++$this->transactions;
 
         if ($this->transactions == 1) {
-            $this->getPdo()->beginTransaction();
+            try {
+                $this->getPdo()->beginTransaction();
+            } catch (Exception $e) {
+                --$this->transactions;
+
+                throw $e;
+            }
         } elseif ($this->transactions > 1 && $this->queryGrammar->supportsSavepoints()) {
             $this->getPdo()->exec(
                 $this->queryGrammar->compileSavepoint('trans'.$this->transactions)
@@ -543,7 +599,7 @@ class Connection implements ConnectionInterface
             $this->getPdo()->commit();
         }
 
-        --$this->transactions;
+        $this->transactions = max(0, $this->transactions - 1);
 
         $this->fireConnectionEvent('committed');
     }
@@ -628,6 +684,10 @@ class Connection implements ConnectionInterface
         try {
             $result = $this->runQueryCallback($query, $bindings, $callback);
         } catch (QueryException $e) {
+            if ($this->transactions >= 1) {
+                throw $e;
+            }
+
             $result = $this->tryAgainIfCausedByLostConnection(
                 $e, $query, $bindings, $callback
             );

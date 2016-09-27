@@ -58,7 +58,7 @@ class ReflectionCaster
         }
 
         $prefix = Caster::PREFIX_DYNAMIC;
-        unset($a['name'], $a[$prefix.'0'], $a[$prefix.'this'], $a[$prefix.'parameter'], $a[Caster::PREFIX_VIRTUAL.'extra']);
+        unset($a['name'], $a[$prefix.'this'], $a[$prefix.'parameter'], $a[Caster::PREFIX_VIRTUAL.'extra']);
 
         return $a;
     }
@@ -220,12 +220,11 @@ class ReflectionCaster
                 if ($c->hasType()) {
                     $a[$prefix.'typeHint'] = $c->getType()->__toString();
                 }
-            } elseif ($c->isArray()) {
-                $a[$prefix.'typeHint'] = 'array';
-            } elseif (method_exists($c, 'isCallable') && $c->isCallable()) {
-                $a[$prefix.'typeHint'] = 'callable';
-            } elseif ($v = $c->getClass()) {
-                $a[$prefix.'typeHint'] = $v->name;
+            } else {
+                $v = explode(' ', $c->__toString(), 6);
+                if (isset($v[5]) && 0 === strspn($v[4], '.&$')) {
+                    $a[$prefix.'typeHint'] = $v[4];
+                }
             }
         } catch (\ReflectionException $e) {
             if (preg_match('/^Class ([^ ]++) does not exist$/', $e->getMessage(), $m)) {

@@ -238,6 +238,8 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
             return $adapter->getClient()->getObjectUrl($adapter->getBucket(), $path);
         } elseif ($adapter instanceof LocalAdapter) {
             return '/storage/'.$path;
+        } elseif (method_exists($adapter, 'getUrl')) {
+            return $adapter->getUrl($path);
         } else {
             throw new RuntimeException('This driver does not support retrieving URLs.');
         }
@@ -358,7 +360,6 @@ class FilesystemAdapter implements FilesystemContract, CloudFilesystemContract
         switch ($visibility) {
             case FilesystemContract::VISIBILITY_PUBLIC:
                 return AdapterInterface::VISIBILITY_PUBLIC;
-
             case FilesystemContract::VISIBILITY_PRIVATE:
                 return AdapterInterface::VISIBILITY_PRIVATE;
         }

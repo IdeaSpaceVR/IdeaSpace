@@ -2,6 +2,7 @@
 
 namespace Illuminate\Foundation\Auth;
 
+use Illuminate\Support\Str;
 use Illuminate\Http\Request;
 use Illuminate\Mail\Message;
 use Illuminate\Support\Facades\Auth;
@@ -10,6 +11,18 @@ use Illuminate\Support\Facades\Password;
 trait ResetsPasswords
 {
     use RedirectsUsers;
+
+    /**
+     * Get the name of the guest middleware.
+     *
+     * @return string
+     */
+    protected function guestMiddleware()
+    {
+        $guard = $this->getGuard();
+
+        return $guard ? 'guest:'.$guard : 'guest';
+    }
 
     /**
      * Display the form to request a password reset link.
@@ -58,22 +71,56 @@ trait ResetsPasswords
      */
     public function sendResetLinkEmail(Request $request)
     {
-        $this->validate($request, ['email' => 'required|email']);
+        $this->validateSendResetLinkEmail($request);
 
         $broker = $this->getBroker();
 
-        $response = Password::broker($broker)->sendResetLink($request->only('email'), function (Message $message) {
-            $message->subject($this->getEmailSubject());
-        });
+        $response = Password::broker($broker)->sendResetLink(
+            $this->getSendResetLinkEmailCredentials($request),
+            $this->resetEmailBuilder()
+        );
 
         switch ($response) {
             case Password::RESET_LINK_SENT:
                 return $this->getSendResetLinkEmailSuccessResponse($response);
-
             case Password::INVALID_USER:
             default:
                 return $this->getSendResetLinkEmailFailureResponse($response);
         }
+    }
+
+    /**
+     * Validate the request of sending reset link.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return void
+     */
+    protected function validateSendResetLinkEmail(Request $request)
+    {
+        $this->validate($request, ['email' => 'required|email']);
+    }
+
+    /**
+     * Get the needed credentials for sending the reset link.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function getSendResetLinkEmailCredentials(Request $request)
+    {
+        return $request->only('email');
+    }
+
+    /**
+     * Get the Closure which is used to build the password reset email message.
+     *
+     * @return \Closure
+     */
+    protected function resetEmailBuilder()
+    {
+        return function (Message $message) {
+            $message->subject($this->getEmailSubject());
+        };
     }
 
     /**
@@ -169,11 +216,14 @@ trait ResetsPasswords
      */
     public function reset(Request $request)
     {
-        $this->validate($request, $this->getResetValidationRules());
-
-        $credentials = $request->only(
-            'email', 'password', 'password_confirmation', 'token'
+        $this->validate(
+            $request,
+            $this->getResetValidationRules(),
+            $this->getResetValidationMessages(),
+            $this->getResetValidationCustomAttributes()
         );
+
+        $credentials = $this->getResetCredentials($request);
 
         $broker = $this->getBroker();
 
@@ -184,7 +234,6 @@ trait ResetsPasswords
         switch ($response) {
             case Password::PASSWORD_RESET:
                 return $this->getResetSuccessResponse($response);
-
             default:
                 return $this->getResetFailureResponse($request, $response);
         }
@@ -205,6 +254,39 @@ trait ResetsPasswords
     }
 
     /**
+     * Get the password reset validation messages.
+     *
+     * @return array
+     */
+    protected function getResetValidationMessages()
+    {
+        return [];
+    }
+
+    /**
+     * Get the password reset validation custom attributes.
+     *
+     * @return array
+     */
+    protected function getResetValidationCustomAttributes()
+    {
+        return [];
+    }
+
+    /**
+     * Get the password reset credentials from the request.
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return array
+     */
+    protected function getResetCredentials(Request $request)
+    {
+        return $request->only(
+            'email', 'password', 'password_confirmation', 'token'
+        );
+    }
+
+    /**
      * Reset the given user's password.
      *
      * @param  \Illuminate\Contracts\Auth\CanResetPassword  $user
@@ -213,9 +295,10 @@ trait ResetsPasswords
      */
     protected function resetPassword($user, $password)
     {
-        $user->password = bcrypt($password);
-
-        $user->save();
+        $user->forceFill([
+            'password' => bcrypt($password),
+            'remember_token' => Str::random(60),
+        ])->save();
 
         Auth::guard($this->getGuard())->login($user);
     }

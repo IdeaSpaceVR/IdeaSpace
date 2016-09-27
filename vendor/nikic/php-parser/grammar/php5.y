@@ -9,9 +9,15 @@ start:
     top_statement_list                                      { $$ = $this->handleNamespaces($1); }
 ;
 
-top_statement_list:
-      top_statement_list top_statement                      { pushNormalizing($1, $2); }
+top_statement_list_ex:
+      top_statement_list_ex top_statement                   { pushNormalizing($1, $2); }
     | /* empty */                                           { init(); }
+;
+
+top_statement_list:
+      top_statement_list_ex
+          { makeNop($nop, $this->lookaheadStartAttributes);
+            if ($nop !== null) { $1[] = $nop; } $$ = $1; }
 ;
 
 reserved_non_modifiers:
@@ -124,9 +130,15 @@ class_const:
     identifier '=' static_scalar                            { $$ = Node\Const_[$1, $3]; }
 ;
 
-inner_statement_list:
-      inner_statement_list inner_statement                  { pushNormalizing($1, $2); }
+inner_statement_list_ex:
+      inner_statement_list_ex inner_statement               { pushNormalizing($1, $2); }
     | /* empty */                                           { init(); }
+;
+
+inner_statement_list:
+      inner_statement_list_ex
+          { makeNop($nop, $this->lookaheadStartAttributes);
+            if ($nop !== null) { $1[] = $nop; } $$ = $1; }
 ;
 
 inner_statement:
@@ -138,7 +150,7 @@ inner_statement:
 ;
 
 non_empty_statement:
-      '{' inner_statement_list '}'                          { $$ = $2; }
+      '{' inner_statement_list '}'                          { $$ = $2; prependLeadingComments($$); }
     | T_IF parentheses_expr statement elseif_list else_single
           { $$ = Stmt\If_[$2, ['stmts' => toArray($3), 'elseifs' => $4, 'else' => $5]]; }
     | T_IF parentheses_expr ':' inner_statement_list new_elseif_list new_else_single T_ENDIF ';'
@@ -171,12 +183,15 @@ non_empty_statement:
     | T_THROW expr ';'                                      { $$ = Stmt\Throw_[$2]; }
     | T_GOTO T_STRING ';'                                   { $$ = Stmt\Goto_[$2]; }
     | T_STRING ':'                                          { $$ = Stmt\Label[$1]; }
+    | expr error                                            { $$ = $1; }
     | error                                                 { $$ = array(); /* means: no statement */ }
 ;
 
 statement:
       non_empty_statement                                   { $$ = $1; }
-    | ';'                                                   { $$ = array(); /* means: no statement */ }
+    | ';'
+          { makeNop($$, $this->startAttributeStack[#1]);
+            if ($$ === null) $$ = array(); /* means: no statement */ }
 ;
 
 catches:
@@ -574,7 +589,10 @@ expr:
     | T_OBJECT_CAST expr                                    { $$ = Expr\Cast\Object_ [$2]; }
     | T_BOOL_CAST expr                                      { $$ = Expr\Cast\Bool_   [$2]; }
     | T_UNSET_CAST expr                                     { $$ = Expr\Cast\Unset_  [$2]; }
-    | T_EXIT exit_expr                                      { $$ = Expr\Exit_        [$2]; }
+    | T_EXIT exit_expr
+          { $attrs = attributes();
+            $attrs['kind'] = strtolower($1) === 'exit' ? Expr\Exit_::KIND_EXIT : Expr\Exit_::KIND_DIE;
+            $$ = new Expr\Exit_($2, $attrs); }
     | '@' expr                                              { $$ = Expr\ErrorSuppress[$2]; }
     | scalar                                                { $$ = $1; }
     | array_expr                                            { $$ = $1; }
@@ -602,14 +620,19 @@ yield_expr:
 ;
 
 array_expr:
-      T_ARRAY '(' array_pair_list ')'                       { $$ = Expr\Array_[$3]; }
-    | '[' array_pair_list ']'                               { $$ = Expr\Array_[$2]; }
+      T_ARRAY '(' array_pair_list ')'
+          { $attrs = attributes(); $attrs['kind'] = Expr\Array_::KIND_LONG;
+            $$ = new Expr\Array_($3, $attrs); }
+    | '[' array_pair_list ']'
+          { $attrs = attributes(); $attrs['kind'] = Expr\Array_::KIND_SHORT;
+            $$ = new Expr\Array_($2, $attrs); }
 ;
 
 scalar_dereference:
       array_expr '[' dim_offset ']'                         { $$ = Expr\ArrayDimFetch[$1, $3]; }
     | T_CONSTANT_ENCAPSED_STRING '[' dim_offset ']'
-          { $$ = Expr\ArrayDimFetch[Scalar\String_[Scalar\String_::parse($1, false)], $3]; }
+          { $attrs = attributes(); $attrs['kind'] = strKind($1);
+            $$ = Expr\ArrayDimFetch[new Scalar\String_(Scalar\String_::parse($1), $attrs), $3]; }
     | constant '[' dim_offset ']'                           { $$ = Expr\ArrayDimFetch[$1, $3]; }
     | scalar_dereference '[' dim_offset ']'                 { $$ = Expr\ArrayDimFetch[$1, $3]; }
     /* alternative array syntax missing intentionally */
@@ -720,9 +743,11 @@ ctor_arguments:
 ;
 
 common_scalar:
-      T_LNUMBER                                             { $$ = Scalar\LNumber[Scalar\LNumber::parse($1)]; }
+      T_LNUMBER                                             { $$ = Scalar\LNumber::fromString($1, attributes(), true); }
     | T_DNUMBER                                             { $$ = Scalar\DNumber[Scalar\DNumber::parse($1)]; }
-    | T_CONSTANT_ENCAPSED_STRING                            { $$ = Scalar\String_[Scalar\String_::parse($1, false)]; }
+    | T_CONSTANT_ENCAPSED_STRING
+          { $attrs = attributes(); $attrs['kind'] = strKind($1);
+            $$ = new Scalar\String_(Scalar\String_::parse($1, false), $attrs); }
     | T_LINE                                                { $$ = Scalar\MagicConst\Line[]; }
     | T_FILE                                                { $$ = Scalar\MagicConst\File[]; }
     | T_DIR                                                 { $$ = Scalar\MagicConst\Dir[]; }
@@ -732,9 +757,11 @@ common_scalar:
     | T_FUNC_C                                              { $$ = Scalar\MagicConst\Function_[]; }
     | T_NS_C                                                { $$ = Scalar\MagicConst\Namespace_[]; }
     | T_START_HEREDOC T_ENCAPSED_AND_WHITESPACE T_END_HEREDOC
-          { $$ = Scalar\String_[Scalar\String_::parseDocString($1, $2, false)]; }
+          { $attrs = attributes(); setDocStringAttrs($attrs, $1);
+            $$ = new Scalar\String_(Scalar\String_::parseDocString($1, $2, false), $attrs); }
     | T_START_HEREDOC T_END_HEREDOC
-          { $$ = Scalar\String_['']; }
+          { $attrs = attributes(); setDocStringAttrs($attrs, $1);
+            $$ = new Scalar\String_('', $attrs); }
 ;
 
 static_scalar:
@@ -792,9 +819,11 @@ scalar:
       common_scalar                                         { $$ = $1; }
     | constant                                              { $$ = $1; }
     | '"' encaps_list '"'
-          { parseEncapsed($2, '"', false); $$ = Scalar\Encapsed[$2]; }
+          { $attrs = attributes(); $attrs['kind'] = Scalar\String_::KIND_DOUBLE_QUOTED;
+            parseEncapsed($2, '"', true); $$ = new Scalar\Encapsed($2, $attrs); }
     | T_START_HEREDOC encaps_list T_END_HEREDOC
-          { parseEncapsedDoc($2, false); $$ = Scalar\Encapsed[$2]; }
+          { $attrs = attributes(); setDocStringAttrs($attrs, $1);
+            parseEncapsedDoc($2, true); $$ = new Scalar\Encapsed($2, $attrs); }
 ;
 
 static_array_pair_list:

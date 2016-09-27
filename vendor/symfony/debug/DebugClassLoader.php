@@ -42,7 +42,26 @@ class DebugClassLoader
         $this->isFinder = is_array($classLoader) && method_exists($classLoader[0], 'findFile');
 
         if (!isset(self::$caseCheck)) {
-            self::$caseCheck = false !== stripos(PHP_OS, 'win') ? (false !== stripos(PHP_OS, 'darwin') ? 2 : 1) : 0;
+            $file = file_exists(__FILE__) ? __FILE__ : rtrim(realpath('.'), DIRECTORY_SEPARATOR);
+            $i = strrpos($file, DIRECTORY_SEPARATOR);
+            $dir = substr($file, 0, 1 + $i);
+            $file = substr($file, 1 + $i);
+            $test = strtoupper($file) === $file ? strtolower($file) : strtoupper($file);
+            $test = realpath($dir.$test);
+
+            if (false === $test || false === $i) {
+                // filesystem is case sensitive
+                self::$caseCheck = 0;
+            } elseif (substr($test, -strlen($file)) === $file) {
+                // filesystem is case insensitive and realpath() normalizes the case of characters
+                self::$caseCheck = 1;
+            } elseif (false !== stripos(PHP_OS, 'darwin')) {
+                // on MacOSX, HFS+ is case insensitive but realpath() doesn't normalize the case of characters
+                self::$caseCheck = 2;
+            } else {
+                // filesystem case checks failed, fallback to disabling them
+                self::$caseCheck = 0;
+            }
         }
     }
 
@@ -162,17 +181,17 @@ class DebugClassLoader
                             break;
                     }
                 }
-                $parent = $refl->getParentClass();
+                $parent = get_parent_class($class);
 
-                if (!$parent || strncmp($ns, $parent->name, $len)) {
-                    if ($parent && isset(self::$deprecated[$parent->name]) && strncmp($ns, $parent->name, $len)) {
-                        @trigger_error(sprintf('The %s class extends %s that is deprecated %s', $name, $parent->name, self::$deprecated[$parent->name]), E_USER_DEPRECATED);
+                if (!$parent || strncmp($ns, $parent, $len)) {
+                    if ($parent && isset(self::$deprecated[$parent]) && strncmp($ns, $parent, $len)) {
+                        @trigger_error(sprintf('The %s class extends %s that is deprecated %s', $name, $parent, self::$deprecated[$parent]), E_USER_DEPRECATED);
                     }
 
                     $parentInterfaces = array();
                     $deprecatedInterfaces = array();
                     if ($parent) {
-                        foreach ($parent->getInterfaceNames() as $interface) {
+                        foreach (class_implements($parent) as $interface) {
                             $parentInterfaces[$interface] = 1;
                         }
                     }
