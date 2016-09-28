@@ -86,6 +86,8 @@ jQuery(document).ready(function($) {
             $('#asset-details .modal-body a-scene').css('max-height', '600px');        
             $('#asset-details .modal-body a-scene').css('height', $(window).height() * 0.6);        
 
+            $('#asset-details').unbind('hide.bs.modal');
+            $('#asset-details').unbind('shown.bs.modal');
             $('#asset-details').on('shown.bs.modal', function() {
                 /* trigger resize event, otherwise canvas is not showing up */
                 var evt = window.document.createEvent('UIEvents'); 

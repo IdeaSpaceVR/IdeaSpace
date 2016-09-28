@@ -101,9 +101,36 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets/photosphere/{photosphere_id}/vr-view', ['as' => 'asset_library_photosphere_vr_view', 'uses' => 'Admin\AssetLibraryPhotospheresController@photosphere_vr_view']);
 
   Route::get('admin/assets/videos', ['as' => 'asset_library_videos', 'uses' => 'Admin\AssetLibraryVideosController@index']);
+  Route::post('admin/assets/videos/add', ['as' => 'asset_library_add_videos', 'uses' => 'Admin\AssetLibraryVideosController@add_videos']);
+  Route::get('admin/assets/videos/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryVideosController@get_localization_strings']);
+  Route::get('admin/assets/video/{video_id}/edit', ['as' => 'asset_library_video_edit', 'uses' => 'Admin\AssetLibraryVideosController@video_edit']);
+  Route::post('admin/assets/video/{video_id}/save', ['as' => 'asset_library_video_save', 'uses' => 'Admin\AssetLibraryVideosController@video_edit_save']);
+  Route::post('admin/assets/video/{video_id}/delete', ['as' => 'asset_library_video_delete', 'uses' => 'Admin\AssetLibraryVideosController@video_edit_delete']);
+  Route::get('admin/assets/video/{video_id}/vr-view', ['as' => 'asset_library_video_vr_view', 'uses' => 'Admin\AssetLibraryVideosController@video_vr_view']);
+
   Route::get('admin/assets/videospheres', ['as' => 'asset_library_videospheres', 'uses' => 'Admin\AssetLibraryVideospheresController@index']);
+  Route::post('admin/assets/videospheres/add', ['as' => 'asset_library_add_videospheres', 'uses' => 'Admin\AssetLibraryVideospheresController@add_videospheres']);
+  Route::get('admin/assets/videospheres/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryVideospheresController@get_localization_strings']);
+  Route::get('admin/assets/videosphere/{videosphere_id}/edit', ['as' => 'asset_library_videosphere_edit', 'uses' => 'Admin\AssetLibraryVideospheresController@videosphere_edit']);
+  Route::post('admin/assets/videosphere/{videosphere_id}/save', ['as' => 'asset_library_videosphere_save', 'uses' => 'Admin\AssetLibraryVideospheresController@videosphere_edit_save']);
+  Route::post('admin/assets/videosphere/{videosphere_id}/delete', ['as' => 'asset_library_videosphere_delete', 'uses' => 'Admin\AssetLibraryVideospheresController@videosphere_edit_delete']);
+  Route::get('admin/assets/videosphere/{videosphere_id}/vr-view', ['as' => 'asset_library_videosphere_vr_view', 'uses' => 'Admin\AssetLibraryVideospheresController@videosphere_vr_view']);
+
   Route::get('admin/assets/audio', ['as' => 'asset_library_audio', 'uses' => 'Admin\AssetLibraryAudioController@index']);
+  Route::post('admin/assets/audio/add', ['as' => 'asset_library_add_audio', 'uses' => 'Admin\AssetLibraryAudioController@add_audio']);
+  Route::get('admin/assets/audio/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryAudioController@get_localization_strings']);
+  Route::get('admin/assets/audio/{audio_id}/edit', ['as' => 'asset_library_audio_edit', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit']);
+  Route::post('admin/assets/audio/{audio_id}/save', ['as' => 'asset_library_audio_save', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit_save']);
+  Route::post('admin/assets/audio/{audio_id}/delete', ['as' => 'asset_library_audio_delete', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit_delete']);
+  Route::get('admin/assets/audio/{audio_id}/vr-view', ['as' => 'asset_library_audio_vr_view', 'uses' => 'Admin\AssetLibraryAudioController@audio_vr_view']);
+
   Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
+  Route::post('admin/assets/models/add', ['as' => 'asset_library_add_model', 'uses' => 'Admin\AssetLibraryModelsController@add_model']);
+  Route::get('admin/assets/models/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryModelsController@get_localization_strings']);
+  Route::get('admin/assets/models/{model_id}/edit', ['as' => 'asset_library_model_edit', 'uses' => 'Admin\AssetLibraryModelsController@model_edit']);
+  Route::post('admin/assets/models/{model_id}/save', ['as' => 'asset_library_model_save', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_save']);
+  Route::post('admin/assets/models/{model_id}/delete', ['as' => 'asset_library_model_delete', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_delete']);
+  Route::get('admin/assets/models/{model_id}/vr-view', ['as' => 'asset_library_model_vr_view', 'uses' => 'Admin\AssetLibraryModelsController@model_vr_view']);
 
 
   /**

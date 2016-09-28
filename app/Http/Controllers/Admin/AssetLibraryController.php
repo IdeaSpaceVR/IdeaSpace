@@ -36,6 +36,8 @@ class AssetLibraryController extends Controller {
                 asset('public/aframe/aframe.min.js'),
                 asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
                 asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),
+                asset('public/assets/admin/asset-library/js/load-video-aframe-comp.js'),
+                asset('public/assets/admin/asset-library/js/load-videosphere-aframe-comp.js'),
                 asset('public/assets/admin/asset-library/js/scene-floor-grid-aframe-comp.js')
             ],
             'js' => [

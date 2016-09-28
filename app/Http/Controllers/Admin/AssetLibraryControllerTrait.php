@@ -6,6 +6,10 @@ use App\Theme;
 use App\GenericFile;
 use App\GenericImage;
 use App\Photosphere;
+use App\Video;
+use App\Videosphere;
+use App\Audio;
+//use App\Model;
 use Image;
 use Log;
 
@@ -273,6 +277,7 @@ trait AssetLibraryControllerTrait {
         $images_result = [];
         foreach ($images as $image) {
             $genericFile = GenericFile::where('id', $image->file_id)->first();
+            $img_result = [];
             $img_result['id'] = $image->id;
             $img_result['uri'] = asset($this->get_file_name($genericFile->uri, GenericFile::THUMBNAIL_FILE_SUFFIX));
             $images_result[] = $img_result;
@@ -293,12 +298,78 @@ trait AssetLibraryControllerTrait {
         $photospheres_result = [];
         foreach ($photospheres as $photosphere) {
             $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+            $psphere_result = [];
             $psphere_result['id'] = $photosphere->id;
             $psphere_result['uri'] = asset($this->get_file_name($genericFile->uri, GenericFile::THUMBNAIL_FILE_SUFFIX));
             $photospheres_result[] = $psphere_result;
         }
-        //Log::debug($images_result);
+
         return $photospheres_result;
+    }
+
+
+    /**
+     * Get all videos.
+     *
+     * @return Array
+     */
+    private function get_all_videos() {
+
+        $videos = Video::orderBy('updated_at', 'desc')->get();
+        $videos_result = [];
+        foreach ($videos as $video) {
+            $genericFile = GenericFile::where('id', $video->file_id)->first();
+            $video_result = [];
+            $video_result['id'] = $video->id;
+            $video_result['uri'] = asset($genericFile->uri);
+            //$video_result['width'] = $video->width;
+            //$video_result['height'] = $video->height;
+            $videos_result[] = $video_result;
+        }
+
+        return $videos_result;
+    }
+
+
+    /**
+     * Get all video spheres.
+     *
+     * @return Array
+     */
+    private function get_all_videospheres() {
+
+        $videospheres = Videosphere::orderBy('updated_at', 'desc')->get();
+        $videospheres_result = [];
+        foreach ($videospheres as $videosphere) {
+            $genericFile = GenericFile::where('id', $videosphere->file_id)->first();
+            $videosphere_result = [];
+            $videosphere_result['id'] = $videosphere->id;
+            $videosphere_result['uri'] = asset($genericFile->uri);
+            $videospheres_result[] = $videosphere_result;
+        }
+
+        return $videospheres_result;
+    }
+
+
+    /**
+     * Get all audio files.
+     *
+     * @return Array
+     */
+    private function get_all_audiofiles() {
+
+        $audiofiles = Audio::orderBy('updated_at', 'desc')->get();
+        $audiofiles_result = [];
+        foreach ($audiofiles as $audiofile) {
+            $genericFile = GenericFile::where('id', $audiofile->file_id)->first();
+            $audiofile_result = [];
+            $audiofile_result['id'] = $audiofile->id;
+            $audiofile_result['uri'] = asset($genericFile->uri);
+            $audiofiles_result[] = $audiofile_result;
+        }
+
+        return $audiofiles_result;
     }
 
 
