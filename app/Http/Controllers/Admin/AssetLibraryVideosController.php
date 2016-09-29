@@ -243,7 +243,7 @@ class AssetLibraryVideosController extends Controller {
         $genericFile->delete();
 
         return response()->json(['status' => 'success', 'video_id' => $video_id]);
-   }
+    }
 
 
     /**

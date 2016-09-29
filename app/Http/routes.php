@@ -122,7 +122,6 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/assets/audio/{audio_id}/edit', ['as' => 'asset_library_audio_edit', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit']);
   Route::post('admin/assets/audio/{audio_id}/save', ['as' => 'asset_library_audio_save', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit_save']);
   Route::post('admin/assets/audio/{audio_id}/delete', ['as' => 'asset_library_audio_delete', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit_delete']);
-  Route::get('admin/assets/audio/{audio_id}/vr-view', ['as' => 'asset_library_audio_vr_view', 'uses' => 'Admin\AssetLibraryAudioController@audio_vr_view']);
 
   Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
   Route::post('admin/assets/models/add', ['as' => 'asset_library_add_model', 'uses' => 'Admin\AssetLibraryModelsController@add_model']);
