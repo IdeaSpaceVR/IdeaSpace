@@ -11,6 +11,9 @@ jQuery(document).ready(function($) {
         var remotePageUrl = $(this).attr('data-tab-remote');
         var remoteScriptUrl = $(this).attr('data-tab-remote-script');
 
+        $('.upload-area').removeClass('visible');
+        $('.upload-area').hide();
+
         if (remotePageUrl !== '') {                
             $(currTabTarget).load(remotePageUrl, function() {
                 if (remoteScriptUrl !== '') {
@@ -25,6 +28,7 @@ jQuery(document).ready(function($) {
     $('.form-control-add-file button').on('click', function() {
 
         var whichtab = $(this).attr('data-opentab');
+        $('.asset-library-nav').find('.auto-opentab').removeClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).addClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).tab('show');
 

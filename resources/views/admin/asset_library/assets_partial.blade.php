@@ -14,10 +14,10 @@
                     <a href="#videospheres" id="videospheres-tab" aria-controls="videospheres" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_videospheres') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/videospheres.js') }}">{{ trans('template_asset_library.videospheres') }}</a>
                 </li>
                 <li role="presentation">
-                    <a href="#audio" id="audio-tab" aria-controls="audio" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_audio') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/audio.js') }}">{{ trans('template_asset_library.audio') }}</a>
+                    <a href="#models" id="models-tab" aria-controls="models" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_models') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/models.js') }}">{{ trans('template_asset_library.models') }}</a>
                 </li>
                 <li role="presentation">
-                    <a href="#models" id="models-tab" aria-controls="models" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_models') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/models.js') }}">{{ trans('template_asset_library.models') }}</a>
+                    <a href="#audio" id="audio-tab" aria-controls="audio" role="tab" data-toggle="tab" data-tab-remote="{{ route('asset_library_audio') }}" data-tab-remote-script="{{ asset('public/assets/admin/asset-library/js/audio.js') }}">{{ trans('template_asset_library.audio') }}</a>
                 </li>
 
             </ul>
@@ -28,8 +28,8 @@
                 <div role="tabpanel" class="tab-pane fade" id="photospheres"></div>
                 <div role="tabpanel" class="tab-pane fade" id="videos"></div>
                 <div role="tabpanel" class="tab-pane fade" id="videospheres"></div>
-                <div role="tabpanel" class="tab-pane fade" id="audio"></div>
                 <div role="tabpanel" class="tab-pane fade" id="models"></div>
+                <div role="tabpanel" class="tab-pane fade" id="audio"></div>
 
             </div><!-- tab-content //-->
 
