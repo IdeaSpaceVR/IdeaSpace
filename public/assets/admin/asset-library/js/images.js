@@ -267,14 +267,17 @@ jQuery(document).ready(function($) {
             $('#images #file-' + i).html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
+            $('#images').find('#file-error').remove();
             $('#images').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_type_error'] + '</div>');
             $("#images #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#images #file-type-error").remove(); });
         },
         onFileSizeError: function(file) {
+            $('#images').find('#file-error').remove();
             $('#images').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_size_error'] + '</div>');
             $("#images #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#images #file-type-error").remove(); });
         },
         onFileExtError: function(file) {
+            $('#images').find('#file-error').remove();
             $('#images').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_ext_error'] + '</div>');
             $("#images #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#images #file-type-error").remove(); });
         },

@@ -149,7 +149,7 @@ jQuery(document).ready(function($) {
     $('#audio .upload').dmUploader({
         url: window.ideaspace_site_path + '/admin/assets/audio/add',
         dataType: 'json',
-        allowedTypes: 'audio/mpeg',
+        allowedTypes: 'audio/*',
         maxFileSize: $('#audio #max_filesize_bytes').val(),
         extraData: {},
         extFilter: 'mp3',
@@ -188,7 +188,7 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#audio #file-' + id + ':first').html('<div><audio class="img-thumbnail" controls="controls" data-audio-id="'+data.audio_id+'">' +
+                $('#audio #file-' + id + ':first').html('<div><audio controls="controls" data-audio-id="'+data.audio_id+'">' +
                     '<source src="' + data.uri + '" type="audio/mpeg"></audio></div>');
                 $('#audio #file-' + id + ':first').attr('data-audio-id', data.audio_id);
                 $('#audio #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
@@ -221,14 +221,17 @@ jQuery(document).ready(function($) {
             $('#audio #file-' + i).html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
+            $('#audio').find('#file-error').remove();
             $('#audio').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_type_error'] + '</div>');
             $("#audio #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#audio #file-type-error").remove(); });
         },
         onFileSizeError: function(file) {
+            $('#audio').find('#file-error').remove();
             $('#audio').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_size_error'] + '</div>');
             $("#audio #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#audio #file-type-error").remove(); });
         },
         onFileExtError: function(file) {
+            $('#audio').find('#file-error').remove();
             $('#audio').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_ext_error'] + '</div>');
             $("#audio #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#audio #file-type-error").remove(); });
         },

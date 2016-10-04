@@ -269,14 +269,17 @@ jQuery(document).ready(function($) {
             $('#videospheres #file-' + i).html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
+            $('#videospheres').find('#file-error').remove();
             $('#videospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_type_error'] + '</div>');
             $("#videospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#videospheres #file-type-error").remove(); });
         },
         onFileSizeError: function(file) {
+            $('#videospheres').find('#file-error').remove();
             $('#videospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_size_error'] + '</div>');
             $("#videospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#videospheres #file-type-error").remove(); });
         },
         onFileExtError: function(file) {
+            $('#videospheres').find('#file-error').remove();
             $('#videospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_ext_error'] + '</div>');
             $("#videospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#videospheres #file-type-error").remove(); });
         },

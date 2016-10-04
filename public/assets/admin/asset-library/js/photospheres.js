@@ -261,14 +261,17 @@ jQuery(document).ready(function($) {
             $('#photospheres #file-' + i).html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
+            $('#photospheres').find('#file-error').remove();
             $('#photospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_type_error'] + '</div>');
             $("#photospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#photospheres #file-type-error").remove(); });
         },
         onFileSizeError: function(file) {
+            $('#photospheres').find('#file-error').remove();
             $('#photospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_size_error'] + '</div>');
             $("#photospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#photospheres #file-type-error").remove(); });
         },
         onFileExtError: function(file) {
+            $('#photospheres').find('#file-error').remove();
             $('#photospheres').prepend('<div id="file-error" class="alert alert-danger" role="alert">\'' + file.name + '\' ' + localization_strings['file_ext_error'] + '</div>');
             $("#photospheres #file-error").fadeTo(7000, 500).slideUp(500, function() { $("#photospheres #file-type-error").remove(); });
         },
