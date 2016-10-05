@@ -9,7 +9,7 @@ use App\Photosphere;
 use App\Video;
 use App\Videosphere;
 use App\Audio;
-//use App\Model;
+use App\Model3D;
 use Image;
 use Log;
 
@@ -19,7 +19,7 @@ trait AssetLibraryControllerTrait {
     private $mime_types = [
         'image' => ['image/gif', 'image/jpeg', 'image/png'],
         'video' => ['video/mp4'],
-        'audio' => ['audio/mpeg'],
+        'audio' => ['audio/mpeg', 'audio/mp3', 'audio/x-wav', 'audio/wav'],
         'model' => ['application/octet-stream'],
         ];
 
@@ -370,6 +370,27 @@ trait AssetLibraryControllerTrait {
         }
 
         return $audiofiles_result;
+    }
+
+
+    /**
+     * Get all models.
+     *
+     * @return Array
+     */
+    private function get_all_models() {
+
+        $models = Model3D::orderBy('updated_at', 'desc')->get();
+        $models_result = [];
+        foreach ($models as $model) {
+            $genericFile = GenericFile::where('id', $model->file_id)->first();
+            $model_result = [];
+            $model_result['id'] = $model->id;
+            $model_result['uri'] = asset($genericFile->uri);
+            $models_result[] = $model_result;
+        }
+
+        return $models_result;
     }
 
 

@@ -152,7 +152,7 @@ jQuery(document).ready(function($) {
         allowedTypes: 'audio/*',
         maxFileSize: $('#audio #max_filesize_bytes').val(),
         extraData: {},
-        extFilter: 'mp3',
+        extFilter: 'mp3;wav',
         onInit: function() {
             $('#audio .upload').click(function(e) {
                 if (e.currentTarget === this && e.target.nodeName !== 'INPUT') {

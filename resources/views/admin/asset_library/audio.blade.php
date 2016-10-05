@@ -44,7 +44,7 @@
                 <div id="file-{{ $i }}" class="wrapper" data-audio-id="{{ $audio['id'] }}">
 
                     <div>
-                        <audio class="img-thumbnail" controls="controls" data-audio-id="{{ $audio['id'] }}">
+                        <audio controls="controls" data-audio-id="{{ $audio['id'] }}">
                             <source src="{{ $audio['uri'] }}" type="audio/mpeg">
                         </audio>
                     </div>
