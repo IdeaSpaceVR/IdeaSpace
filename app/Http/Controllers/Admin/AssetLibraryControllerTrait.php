@@ -20,7 +20,7 @@ trait AssetLibraryControllerTrait {
         'image' => ['image/gif', 'image/jpeg', 'image/png'],
         'video' => ['video/mp4'],
         'audio' => ['audio/mpeg', 'audio/mp3', 'audio/x-wav', 'audio/wav'],
-        'model' => ['application/octet-stream'],
+        'model' => ['text/plain', 'model/vnd.collada+xml', 'application/octet-stream', 'application/xml'],
         ];
 
 
@@ -94,7 +94,7 @@ trait AssetLibraryControllerTrait {
      * @return True if valid, false otherwise.
      */
     private function validateMimeType($file, $type) {
-
+Log::debug($file->getMimeType());
         $mime_types = $this->mime_types[$type];
         foreach ($mime_types as $mime_type) {
             if ($mime_type === $file->getMimeType()) {
@@ -383,7 +383,7 @@ trait AssetLibraryControllerTrait {
         $models = Model3D::orderBy('updated_at', 'desc')->get();
         $models_result = [];
         foreach ($models as $model) {
-            $genericFile = GenericFile::where('id', $model->file_id)->first();
+            $genericFile = GenericFile::where('id', $model->file_id_0)->first();
             $model_result = [];
             $model_result['id'] = $model->id;
             $model_result['uri'] = asset($genericFile->uri);
