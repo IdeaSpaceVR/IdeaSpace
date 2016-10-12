@@ -194,7 +194,7 @@ class AssetLibraryPhotospheresController extends Controller {
      */
     public function photosphere_edit_save(Request $request, $photosphere_id) {
 
-        if ($photosphere_id == null || $request->has('caption') === false || $request->has('description') === false) {
+        if ($photosphere_id == null) {
             abort(404);
         }
 

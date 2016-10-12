@@ -202,7 +202,7 @@ class AssetLibraryImagesController extends Controller {
      */
     public function image_edit_save(Request $request, $image_id) {
 
-        if ($image_id == null || $request->has('caption') === false || $request->has('description') === false) {
+        if ($image_id == null) { 
             abort(404);
         }
 

@@ -191,7 +191,7 @@ class AssetLibraryVideospheresController extends Controller {
      */
     public function videosphere_edit_save(Request $request, $videosphere_id) {
 
-        if ($videosphere_id == null || $request->has('caption') === false || $request->has('description') === false) {
+        if ($videosphere_id == null) {
             abort(404);
         }
 

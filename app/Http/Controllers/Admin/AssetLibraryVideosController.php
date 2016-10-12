@@ -191,7 +191,7 @@ class AssetLibraryVideosController extends Controller {
      */
     public function video_edit_save(Request $request, $video_id) {
 
-        if ($video_id == null || $request->has('caption') === false || $request->has('description') === false) {
+        if ($video_id == null) {
             abort(404);
         }
 

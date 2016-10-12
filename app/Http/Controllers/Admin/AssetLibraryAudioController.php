@@ -185,7 +185,7 @@ class AssetLibraryAudioController extends Controller {
      */
     public function audio_edit_save(Request $request, $audio_id) {
 
-        if ($audio_id == null || $request->has('caption') === false || $request->has('description') === false) {
+        if ($audio_id == null) {
             abort(404);
         }
 
