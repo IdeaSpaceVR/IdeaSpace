@@ -47,6 +47,7 @@
                         <audio controls="controls" data-audio-id="{{ $audio['id'] }}">
                             <source src="{{ $audio['uri'] }}" type="audio/mpeg">
                         </audio>
+                        <div>{{ $audio['caption'] }}</div>
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">

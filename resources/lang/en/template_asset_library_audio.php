@@ -7,6 +7,7 @@ return [
     'edit' => 'Edit',
     'insert' => 'Insert',
     'caption' => 'Caption',
+    'caption_help' => 'Enter a short caption to identify your audio file.',
     'description' => 'Description',
     'file_name' => 'File name:',
     'file_type' => 'File type:',

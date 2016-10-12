@@ -28,6 +28,7 @@
             <div class="form-group">
                 <label for="caption">{{ trans('template_asset_library_audio.caption') }}</label>
                 <textarea class="form-control" rows="3" id="caption">{{ $caption }}</textarea>
+                <span class="help-block">{{ trans('template_asset_library_audio.caption_help') }}</span>
             </div>
             <div class="form-group">
                 <label for="description">{{ trans('template_asset_library_audio.description') }}</label>
