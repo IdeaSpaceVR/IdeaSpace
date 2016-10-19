@@ -11,6 +11,7 @@ use App\Videosphere;
 use App\Audio;
 use App\Model3D;
 use Image;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Log;
 
 trait AssetLibraryControllerTrait {
@@ -20,7 +21,7 @@ trait AssetLibraryControllerTrait {
         'image' => ['image/gif', 'image/jpeg', 'image/png'],
         'video' => ['video/mp4'],
         'audio' => ['audio/mpeg', 'audio/mp3', 'audio/x-wav', 'audio/wav'],
-        'model' => ['text/plain', 'model/vnd.collada+xml', 'application/octet-stream', 'application/xml'],
+        'model' => ['text/plain', 'model/vnd.collada+xml', 'application/octet-stream', 'application/xml', 'image/jpeg', 'image/png', 'image/gif'],
         ];
 
 
@@ -94,7 +95,7 @@ trait AssetLibraryControllerTrait {
      * @return True if valid, false otherwise.
      */
     private function validateMimeType($file, $type) {
-Log::debug($file->getMimeType());
+
         $mime_types = $this->mime_types[$type];
         foreach ($mime_types as $mime_type) {
             if ($mime_type === $file->getMimeType()) {
@@ -366,6 +367,7 @@ Log::debug($file->getMimeType());
             $audiofile_result = [];
             $audiofile_result['id'] = $audiofile->id;
             $audiofile_result['uri'] = asset($genericFile->uri);
+            $audiofile_result['caption'] = str_limit($audiofile->caption, 40);
             $audiofiles_result[] = $audiofile_result;
         }
 
@@ -374,7 +376,7 @@ Log::debug($file->getMimeType());
 
 
     /**
-     * Get all models.
+     * Get all models (model preview images).
      *
      * @return Array
      */
@@ -383,15 +385,79 @@ Log::debug($file->getMimeType());
         $models = Model3D::orderBy('updated_at', 'desc')->get();
         $models_result = [];
         foreach ($models as $model) {
+            try {
+                /* get model preview image, if available */
+                $genericFile = GenericFile::where('id', $model->file_id_preview)->firstOrFail();
+                $model_result = [];
+                $model_result['id'] = $model->id;
+                $model_result['uri'] = asset($genericFile->uri);
+
+                $models_result[] = $model_result;
+
+            } catch (ModelNotFoundException $e) {
+
+                $model_result = [];
+                $model_result['id'] = $model->id;
+                $model_result['uri'] = asset('public/assets/admin/asset-library/images/model-screenshot-broken.png');
+
+                $models_result[] = $model_result;
+            }
+
+        }
+
+        return $models_result;
+    }
+
+
+/*    private function get_all_models() {
+
+        $models = Model3D::orderBy('updated_at', 'desc')->get();
+        $models_result = [];
+        foreach ($models as $model) {
             $genericFile = GenericFile::where('id', $model->file_id_0)->first();
             $model_result = [];
             $model_result['id'] = $model->id;
-            $model_result['uri'] = asset($genericFile->uri);
+
+            $file = pathinfo($genericFile->filename);
+
+            switch (strtolower($file['extension'])) {
+                case Model3D::FILE_EXTENSION_DAE:
+                    $model_result['is_dae'] = true;
+                    $model_result['uri'] = asset($genericFile->uri);
+                    break;
+                case Model3D::FILE_EXTENSION_OBJ:
+                    if (!is_null($model->file_id_1)) {
+                        $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                        $model_result['is_obj_mtl'] = true;
+                        $model_result['obj_uri'] = asset($genericFile->uri);
+                        $model_result['mtl_uri'] = asset($mtlFile->uri);
+                    } else {
+                        $model_result['is_obj'] = true;
+                        $model_result['obj_uri'] = asset($genericFile->uri);
+                    }
+                    break;
+                case Model3D::FILE_EXTENSION_MTL:
+                    if (!is_null($model->file_id_1)) {
+                        $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                        $model_result['is_obj_mtl'] = true;
+                        $model_result['mtl_uri'] = asset($genericFile->uri);
+                        $model_result['obj_uri'] = asset($mtlFile->uri);
+                    } else {
+                        $model_result['is_mtl'] = true;
+                        $model_result['mtl_uri'] = asset($genericFile->uri);
+                    }
+                    break;
+                case Model3D::FILE_EXTENSION_PLY:
+                    $model_result['is_ply'] = true;
+                    $model_result['uri'] = asset($genericFile->uri);
+                    break;
+            }
             $models_result[] = $model_result;
         }
 
         return $models_result;
     }
+*/
 
 
     /**

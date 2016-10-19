@@ -27,8 +27,40 @@
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
             </div><!-- upload //-->
+            <p class="help-block">{{ trans('template_asset_library_models.supported_model_formats') }}</p>
+            <p class="help-block">{{ trans('template_asset_library_models.obj_mtl_model_info') }}</p>
 
-        </div>
+        </div><!-- col-md-12 //-->
 
-    </div>
+    </div><!-- row //-->
+
+    <div class="files" data-file-counter="{{ ((count($models)>0)?count($models):0) }}">
+
+        <ul class="list">
+        <?php
+        $i = 0;
+        foreach ($models as $model) {
+        ?>
+            <li class="list-item">
+
+                <div id="file-{{ $i }}" class="wrapper" data-model-id="{{ $model['id'] }}">
+       
+                    <div>
+                        <img class="img-thumbnail img-responsive edit" src="{{ $model['uri'] }}" data-model-id="{{ $model['id'] }}">
+                    </div> 
+
+                    <div class="menu" style="text-align:center;margin-top:5px;display:none">
+                        <a href="#" class="vr-view" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.vr_view') }}</a> | <a href="#" class="edit" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_models.insert') }}</a></span>
+                    </div>
+
+                </div>
+
+            </li>
+        <?php
+        $i++;
+        }
+        ?>
+        </ul>
+
+    </div><!-- files //-->
 

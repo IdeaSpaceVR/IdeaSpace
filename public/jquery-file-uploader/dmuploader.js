@@ -219,6 +219,10 @@
     // Form Data
     var fd = new FormData();
     fd.append(widget.settings.fileName, file);
+    
+    // IdeaSpaceVR: append id for models upload controller
+    fd.append('queue_id', widget.queuePos);
+    fd.append('queue_length', widget.queue.length);
 
     // Return from client function (default === undefined)
     var can_continue = widget.settings.onBeforeUpload.call(widget.element, widget.queuePos);

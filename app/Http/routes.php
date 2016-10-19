@@ -124,12 +124,14 @@ Route::group(['middleware' => 'web'], function () {
   Route::post('admin/assets/audio/{audio_id}/delete', ['as' => 'asset_library_audio_delete', 'uses' => 'Admin\AssetLibraryAudioController@audio_edit_delete']);
 
   Route::get('admin/assets/models', ['as' => 'asset_library_models', 'uses' => 'Admin\AssetLibraryModelsController@index']);
-  Route::post('admin/assets/models/add', ['as' => 'asset_library_add_model', 'uses' => 'Admin\AssetLibraryModelsController@add_model']);
+  Route::post('admin/assets/models/add', ['as' => 'asset_library_add_model', 'uses' => 'Admin\AssetLibraryModelsController@add_models']);
   Route::get('admin/assets/models/get-localization-strings', ['as' => 'asset_library_get_localization_strings', 'uses' => 'Admin\AssetLibraryModelsController@get_localization_strings']);
-  Route::get('admin/assets/models/{model_id}/edit', ['as' => 'asset_library_model_edit', 'uses' => 'Admin\AssetLibraryModelsController@model_edit']);
-  Route::post('admin/assets/models/{model_id}/save', ['as' => 'asset_library_model_save', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_save']);
-  Route::post('admin/assets/models/{model_id}/delete', ['as' => 'asset_library_model_delete', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_delete']);
-  Route::get('admin/assets/models/{model_id}/vr-view', ['as' => 'asset_library_model_vr_view', 'uses' => 'Admin\AssetLibraryModelsController@model_vr_view']);
+  Route::get('admin/assets/model/{model_id}/get-embed-code', ['as' => 'asset_library_model_get_embed_code', 'uses' => 'Admin\AssetLibraryModelsController@get_embed_code']);
+  Route::get('admin/assets/model/{model_id}/edit', ['as' => 'asset_library_model_edit', 'uses' => 'Admin\AssetLibraryModelsController@model_edit']);
+  Route::post('admin/assets/model/{model_id}/save', ['as' => 'asset_library_model_save', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_save']);
+  Route::post('admin/assets/model/{model_id}/delete', ['as' => 'asset_library_model_delete', 'uses' => 'Admin\AssetLibraryModelsController@model_edit_delete']);
+  Route::get('admin/assets/model/{model_id}/vr-view', ['as' => 'asset_library_model_vr_view', 'uses' => 'Admin\AssetLibraryModelsController@model_vr_view']);
+  Route::post('admin/assets/model/save-image', ['as' => 'asset_library_model_save_image', 'uses' => 'Admin\AssetLibraryModelsController@save_image']);
 
 
   /**

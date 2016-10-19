@@ -65,6 +65,7 @@
 
 @media(min-width:768px){
     #images .files ul.list li.list-item, 
+    #models .files ul.list li.list-item, 
     #photospheres .files ul.list li.list-item {
       display: inline-block;
       vertical-align: top;
@@ -84,13 +85,14 @@
       display: inline-block;
       vertical-align: top;
       padding: 20px 24px 48px 24px;
-      width: 200px;
+      width: 350px;
       height: 140px;
     }
 }
 
 @media(max-width:767px) {
     #images .files ul.list li.list-item, 
+    #models .files ul.list li.list-item, 
     #photospheres .files ul.list li.list-item {
       display: inline-block;
       vertical-align: top;

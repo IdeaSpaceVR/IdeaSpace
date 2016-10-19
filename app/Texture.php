@@ -4,18 +4,19 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class GenericFile extends Model
+class Texture extends Model
 {
 
-    const PREVIEW_FILE_SUFFIX = '_preview';
-    const THUMBNAIL_FILE_SUFFIX = '_thumbnail';
+    CONST FILE_EXTENSION_PNG = 'png';
+    CONST FILE_EXTENSION_JPG = 'jpg';
+    CONST FILE_EXTENSION_GIF = 'gif';
 
     /**
      * The table associated with the model.
      *
      * @var string
      */
-    protected $table = 'files';
+    protected $table = 'textures';
 
     /**
      * The attributes that are mass assignable.
@@ -23,7 +24,7 @@ class GenericFile extends Model
      * @var array
      */
     protected $fillable = [
-        'user_id', 'filename', 'uri', 'filemime', 'filesize', 'filename_orig'
+        'user_id', 'file_id', 'model_id', 'data'
     ];
 
 }
