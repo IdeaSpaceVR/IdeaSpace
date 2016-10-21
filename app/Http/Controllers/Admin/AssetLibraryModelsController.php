@@ -409,13 +409,13 @@ class AssetLibraryModelsController extends Controller {
 
 
     /**
-     * Get model embed code.
+     * Get model preview code.
      *
      * @param int $model_id
      *
      * @return Array
      */
-    public function get_embed_code($model_id) {
+    public function get_model_preview_code($model_id) {
 
         if (is_null($model_id)) {
             abort(404);
@@ -443,7 +443,7 @@ class AssetLibraryModelsController extends Controller {
                 $vars = [
                     'model_dae' => asset($genericFile->uri)
                 ];
-                return view('admin.asset_library.model_dae', $vars);        
+                return view('admin.asset_library.model_dae_preview', $vars);        
 
             case Model3D::FILE_EXTENSION_OBJ:
 
@@ -454,7 +454,7 @@ class AssetLibraryModelsController extends Controller {
                             'model_obj' => asset($genericFile->uri),
                             'model_mtl' => asset($mtlFile->uri)
                         ];
-                        return view('admin.asset_library.model_obj_mtl', $vars);        
+                        return view('admin.asset_library.model_obj_mtl_preview', $vars);        
 
                     } catch (ModelNotFoundException $e) {
                     } 
@@ -462,7 +462,7 @@ class AssetLibraryModelsController extends Controller {
                 $vars = [
                     'model_obj' => asset($genericFile->uri)
                 ];
-                return view('admin.asset_library.model_obj_mtl', $vars);        
+                return view('admin.asset_library.model_obj_mtl_preview', $vars);        
 
             case Model3D::FILE_EXTENSION_MTL:
 
@@ -473,7 +473,7 @@ class AssetLibraryModelsController extends Controller {
                             'model_mtl' => asset($genericFile->uri),
                             'model_obj' => asset($mtlFile->uri)
                         ];
-                        return view('admin.asset_library.model_obj_mtl', $vars);        
+                        return view('admin.asset_library.model_obj_mtl_preview', $vars);        
 
                     } catch (ModelNotFoundException $e) {
                     } 
@@ -481,14 +481,14 @@ class AssetLibraryModelsController extends Controller {
                 $vars = [
                     'model_mtl' => asset($genericFile->uri)
                 ];
-                return view('admin.asset_library.model_obj_mtl', $vars);        
+                return view('admin.asset_library.model_obj_mtl_preview', $vars);        
 
             case Model3D::FILE_EXTENSION_PLY:
 
                 $vars = [
                     'model_ply' => asset($genericFile->uri)
                 ];
-                return view('admin.asset_library.model_ply', $vars);        
+                return view('admin.asset_library.model_ply_preview', $vars);        
 
         }
 
@@ -539,162 +539,264 @@ class AssetLibraryModelsController extends Controller {
 
         return response()->json([
             'status' => 'success',
+            'model_id' => $model->id,
             'uri' => asset($uri)
         ]); 
     }
 
 
     /**
-     * Video edit page.
+     * Model edit page.
      *
-     * @param int $video_id
+     * @param int $model_id
      *
      * @return Response
      */
-    /*public function video_edit($video_id) {
+    public function model_edit($model_id) {
 
-        if ($video_id == null) {
+        if ($model_id == null) {
             abort(404);
         }
 
         try {
-            $video = Video::where('id', $video_id)->firstOrFail();
+            $model = Model3D::where('id', $model_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
-        try {
-            $genericFile = GenericFile::where('id', $video->file_id)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            abort(404);
-        }
+        $genericFile = GenericFile::where('id', $model->file_id_0)->first();
 
         $vars = [];
-        $vars['id'] = $video->id;
-        $vars['caption'] = $video->caption;
-        $vars['description'] = $video->description;
-        $vars['dimensions'] = $video->width . ' x ' . $video->height;
-        $vars['duration'] = $video->duration;
-        $vars['uploaded_on'] = $video->created_at->format('F d, Y');
-        $vars['file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
-        $vars['file_type'] = $genericFile->filemime;
-        $vars['video_id'] = $video_id;
-        $vars['uri'] = asset($genericFile->uri);
+        $vars['is_dae'] = false;
+        $vars['is_obj_mtl'] = false;
+        $vars['is_obj'] = false;
+        $vars['is_mtl'] = false;
+        $vars['is_ply'] = false;
 
-        return view('admin.asset_library.video_edit', $vars);
-    }*/
+        $model_file_extension = '';
+
+        $file = pathinfo($genericFile->filename);
+
+        switch (strtolower($file['extension'])) {
+            case Model3D::FILE_EXTENSION_DAE:
+                $vars['is_dae'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_DAE;
+                break;
+            case Model3D::FILE_EXTENSION_OBJ:
+                if (!is_null($model->file_id_1)) {
+                    $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                    $vars['is_obj_mtl'] = true;
+                    $vars['obj_uri'] = asset($genericFile->uri);
+                    $vars['mtl_uri'] = asset($mtlFile->uri);
+                    $model_file_extension = Model3D::FILE_EXTENSION_OBJ;
+                } else {
+                    $vars['is_obj'] = true;
+                    $vars['obj_uri'] = asset($genericFile->uri);
+                }
+                break;
+            case Model3D::FILE_EXTENSION_MTL:
+                if (!is_null($model->file_id_1)) {
+                    $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                    $vars['is_obj_mtl'] = true;
+                    $vars['mtl_uri'] = asset($genericFile->uri);
+                    $vars['obj_uri'] = asset($mtlFile->uri);
+                    $model_file_extension = Model3D::FILE_EXTENSION_OBJ;
+                } else {
+                    $vars['is_mtl'] = true;
+                    $vars['mtl_uri'] = asset($genericFile->uri);
+                }
+                break;
+
+              case Model3D::FILE_EXTENSION_PLY:
+                $vars['is_ply'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_PLY;
+                break;
+        }
+
+
+        $vars['id'] = $model->id;
+        $vars['caption'] = $model->caption;
+        $vars['description'] = $model->description;
+        $vars['uploaded_on'] = $model->created_at->format('F d, Y');
+        $vars['model_file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
+        $vars['model_file_type'] = $genericFile->filemime . (($model_file_extension!='')?' ( *.' . $model_file_extension . ' )':'');
+
+        return view('admin.asset_library.model_edit', $vars);
+    }
 
 
     /**
-     * Video edit save.
+     * Model edit save.
      *
      * @param Request $request
-     * @param int $video_id
+     * @param int $model_id
      *
      * @return Response
      */
-    /*public function video_edit_save(Request $request, $video_id) {
+    public function model_edit_save(Request $request, $model_id) {
 
-        if ($video_id == null) {
+        if ($model_id == null) {
             abort(404);
         }
 
         try {
-            $video = Video::where('id', $video_id)->firstOrFail();
+            $model = Model3D::where('id', $model_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
-        $video->caption = $request->input('caption');
-        $video->description = $request->input('description');
-        $video->save();
+        $model->caption = $request->input('caption');
+        $model->description = $request->input('description');
+
+        /* keep the aspect ratio */
+        $model->data = json_encode(array('scale' => $request->input('scale') . ' ' . $request->input('scale') . ' ' . $request->input('scale')));
+
+        $model->save();
 
         return response()->json(['status' => 'success']);
-    }*/
+    }
 
 
     /**
-     * Video edit delete.
+     * Model edit delete.
      *
      * @param Request $request
-     * @param int $video_id
+     * @param int $model_id
      *
      * @return Response
      */
-    /*public function video_edit_delete(Request $request, $video_id) {
+    public function model_edit_delete(Request $request, $model_id) {
 
-        if ($video_id == null) {
+        if ($model_id == null) {
             abort(404);
         }
 
         try {
-            $video = Video::where('id', $video_id)->firstOrFail();
+            $model = Model3D::where('id', $model_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
         try {
-            $genericFile = GenericFile::where('id', $video->file_id)->firstOrFail();
+            $genericFile = GenericFile::where('id', $model->file_id_0)->firstOrFail();
+            File::delete($genericFile->uri);
+            $genericFile->delete();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
-        $uri = $genericFile->uri;
+        try {
+            $genericFile = GenericFile::where('id', $model->file_id_1)->firstOrFail();
+            File::delete($genericFile->uri);
+            $genericFile->delete();
+        } catch (ModelNotFoundException $e) {
+            /* no problem */
+        }
 
-        File::delete($uri);
+        try {
+            $genericFile = GenericFile::where('id', $model->file_id_preview)->firstOrFail();
+            File::delete($genericFile->uri);
+            $genericFile->delete();
+        } catch (ModelNotFoundException $e) {
+            /* no problem */
+        }
 
-        $video->delete();
-        $genericFile->delete();
+        $textures = Texture::where('model_id', $model->id)->get();
+        foreach ($textures as $texture) {
+            try {
+                $genericFile = GenericFile::where('id', $texture->file_id)->firstOrFail();
+                File::delete($genericFile->uri);
+                $genericFile->delete();
+            } catch (ModelNotFoundException $e) {
+                /* no problem */
+            }
+        }
 
-        return response()->json(['status' => 'success', 'video_id' => $video_id]);
-    }*/
+        $model->delete();
+
+        return response()->json(['status' => 'success', 'model_id' => $model_id]);
+    }
 
 
     /**
-     * Video vr view page.
+     * Model vr view page.
      *
-     * @param int $video_id
+     * @param int $model_id
      *
      * @return Response
      */
-    /*public function video_vr_view($video_id) {
+    public function model_vr_view($model_id) {
 
-// old code from get_all_models() from Trait?
-
-
-        if ($video_id == null) {
+        if ($model_id == null) {
             abort(404);
         }
 
         try {
-            $video = Video::where('id', $video_id)->firstOrFail();
+            $model = Model3D::where('id', $model_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
-        try {
-            $genericFile = GenericFile::where('id', $video->file_id)->firstOrFail();
-        } catch (ModelNotFoundException $e) {
-            abort(404);
-        }
+        $genericFile = GenericFile::where('id', $model->file_id_0)->first();
 
-  
         $vars = [];
-        $vars['id'] = $video->id;
-        $vars['dimensions'] = $video->width . ' x ' . $video->height;
-        $vars['duration'] = $video->duration;
-        $vars['width'] = $width;
-        $vars['height'] = $height;
-        $vars['width_meter'] = $width_meter;
-        $vars['height_meter'] = $height_meter;
-        $vars['uploaded_on'] = $video->created_at->format('F d, Y');
-        $vars['file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
-        $vars['file_type'] = $genericFile->filemime;
-        $vars['video_id'] = $video_id;
-        $vars['uri'] = asset($genericFile->uri);
+        $vars['is_dae'] = false;
+        $vars['is_obj_mtl'] = false;
+        $vars['is_obj'] = false;
+        $vars['is_mtl'] = false;
+        $vars['is_ply'] = false;
 
-        return view('admin.asset_library.video_vr_view', $vars);
-    }*/
+        $model_file_extension = '';
+
+        $file = pathinfo($genericFile->filename);
+
+        switch (strtolower($file['extension'])) {
+            case Model3D::FILE_EXTENSION_DAE:
+                $vars['is_dae'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_DAE;
+                break;
+            case Model3D::FILE_EXTENSION_OBJ:
+                if (!is_null($model->file_id_1)) {
+                    $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                    $vars['is_obj_mtl'] = true;
+                    $vars['obj_uri'] = asset($genericFile->uri);
+                    $vars['mtl_uri'] = asset($mtlFile->uri);
+                    $model_file_extension = Model3D::FILE_EXTENSION_OBJ;
+                } else {
+                    $vars['is_obj'] = true;
+                    $vars['obj_uri'] = asset($genericFile->uri);
+                }
+                break;
+            case Model3D::FILE_EXTENSION_MTL:
+                if (!is_null($model->file_id_1)) {
+                    $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
+                    $vars['is_obj_mtl'] = true;
+                    $vars['mtl_uri'] = asset($genericFile->uri);
+                    $vars['obj_uri'] = asset($mtlFile->uri);
+                    $model_file_extension = Model3D::FILE_EXTENSION_OBJ;
+                } else {
+                    $vars['is_mtl'] = true;
+                    $vars['mtl_uri'] = asset($genericFile->uri);
+                }
+                break;
+
+              case Model3D::FILE_EXTENSION_PLY:
+                $vars['is_ply'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_PLY;
+                break;
+        }
+
+        $vars['id'] = $model->id;
+        $vars['uploaded_on'] = $model->created_at->format('F d, Y');
+        $vars['model_file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
+        $vars['model_file_type'] = $genericFile->filemime . (($model_file_extension!='')?' ( *.' . $model_file_extension . ' )':'');
+
+        return view('admin.asset_library.model_vr_view', $vars);
+    }
 
 
 }

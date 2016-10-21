@@ -51,6 +51,18 @@ jQuery(document).ready(function($) {
             $('#asset-details .vr-view').unbind('click');
             $('#asset-details .vr-view').click(window.list_item_vr_view_click_handler);
 
+            /* set height dynamically, because of mobile */
+            $('#asset-details .modal-body a-scene').css('max-height', '600px');
+            $('#asset-details .modal-body a-scene').css('height', $(window).height() * 0.6);
+
+            $('#asset-details').unbind('shown.bs.modal');
+            $('#asset-details').on('shown.bs.modal', function() {
+                /* trigger resize event, otherwise canvas is not showing up */
+                var evt = window.document.createEvent('UIEvents');
+                evt.initUIEvent('resize', true, false, window, 0);
+                window.dispatchEvent(evt);
+            });
+
             $('#asset-details').modal('show');
 
             $('#asset-details .save-btn').unbind('click');
@@ -92,14 +104,6 @@ jQuery(document).ready(function($) {
                 var evt = window.document.createEvent('UIEvents');
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
-            });
-
-            $('#asset-details').unbind('hide.bs.modal');
-            $('#asset-details').on('hide.bs.modal', function() {
-                var model = document.querySelector('#model');
-                if (model !== undefined && model !== null) {
-                    model.pause();
-                }
             });
 
             $('#asset-details').modal('show');
@@ -242,9 +246,9 @@ jQuery(document).ready(function($) {
 
                 $('#models #file-0:first').attr('data-model-id', data.model_id);
 
-                $('#models #file-0:first').load(window.ideaspace_site_path + '/admin/assets/model/'+data.model_id+'/get-embed-code', function() {
+                $('#models #file-0:first').load(window.ideaspace_site_path + '/admin/assets/model/'+data.model_id+'/get-model-preview-code', function() {
 
-                    var scene = document.querySelector('a-scene');
+                    var scene = document.querySelector('#preview-scene');
                     if (scene.renderStarted) {
                         create_image();
                     } else {
@@ -255,23 +259,24 @@ jQuery(document).ready(function($) {
 
                         scene.addEventListener('model-loaded', function(e) {
 
-                            var scene = document.querySelector('a-scene'); 
-
                             /* convert camera fov degrees to radians */
                             var fov = scene.camera.fov * (Math.PI / 180);
-                            var model = document.querySelector('#model');
+                            var model = document.querySelector('#preview-model');
                             var box = new THREE.Box3().setFromObject(model.getObject3D('mesh'));
 
                             //var objectSize = Math.max(box.max.x, box.max.y);
                             var objectSize = Math.max(box.size().x, box.size().y);
 
                             var distance = Math.abs(objectSize / Math.sin(fov / 2));
-                            model.setAttribute('position', {x: 0, y: 0, z: -distance});
+                            //model.setAttribute('position', {x: 0, y: 0, z: -distance});
+                            var camera = document.querySelector('#preview-camera');
+                            camera.setAttribute('position', {x: 0, y: box.size().y / 2, z: distance});
 
 
                             /* workaround since model-loaded is emitted before model is shown in scene */
                             setTimeout(function() {
 
+                                //var canvasData = scene.renderer.domElement.toDataURL('image/png');
                                 var canvasData = scene.renderer.domElement.toDataURL('image/png');
 
                                 $.ajax({
@@ -292,10 +297,10 @@ jQuery(document).ready(function($) {
                                         $('#models .files .list-item').click(window.list_item_menu_click_handler);
                                         $('#models .files .list-item').unbind('hover');
                                         $('#models .files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
-                                        $('#models .files .list-item .edit').unbind('click');
-                                        $('#models .files .list-item .edit').click(window.list_item_edit_click_handler);
                                         $('#models .files .list-item .vr-view').unbind('click');
                                         $('#models .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+                                        $('#models .files .list-item .edit').unbind('click');
+                                        $('#models .files .list-item .edit').click(window.list_item_edit_click_handler);
 
                                         /* show insert link when opened from space edit content page */
                                         if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
