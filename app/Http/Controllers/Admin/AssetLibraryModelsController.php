@@ -615,10 +615,17 @@ class AssetLibraryModelsController extends Controller {
                 break;
         }
 
+        $model_data = json_decode($model->data, true);
+        if (is_null($model_data)) {
+            $scale = '1.0 1.0 1.0';
+        } else {
+            $scale = (array_key_exists('scale', $model_data)?$model_data['scale']:'1.0 1.0 1.0');
+        }
 
         $vars['id'] = $model->id;
         $vars['caption'] = $model->caption;
         $vars['description'] = $model->description;
+        $vars['scale'] = $scale;
         $vars['uploaded_on'] = $model->created_at->format('F d, Y');
         $vars['model_file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
         $vars['model_file_type'] = $genericFile->filemime . (($model_file_extension!='')?' ( *.' . $model_file_extension . ' )':'');
@@ -651,7 +658,7 @@ class AssetLibraryModelsController extends Controller {
         $model->description = $request->input('description');
 
         /* keep the aspect ratio */
-        $model->data = json_encode(array('scale' => $request->input('scale') . ' ' . $request->input('scale') . ' ' . $request->input('scale')));
+        $model->data = json_encode(array('scale' => $request->input('scale')));
 
         $model->save();
 
@@ -790,7 +797,15 @@ class AssetLibraryModelsController extends Controller {
                 break;
         }
 
+        $model_data = json_decode($model->data, true);
+        if (is_null($model_data)) {
+            $scale = '1.0 1.0 1.0';
+        } else {
+            $scale = (array_key_exists('scale', $model_data)?$model_data['scale']:'1.0 1.0 1.0');
+        }
+
         $vars['id'] = $model->id;
+        $vars['scale'] = $scale;
         $vars['uploaded_on'] = $model->created_at->format('F d, Y');
         $vars['model_file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
         $vars['model_file_type'] = $genericFile->filemime . (($model_file_extension!='')?' ( *.' . $model_file_extension . ' )':'');

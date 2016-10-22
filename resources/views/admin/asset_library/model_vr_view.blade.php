@@ -1,6 +1,6 @@
 <div class="modal-header">
     <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-    <h2 class="modal-title">{{ trans('template_asset_library_models.edit_model') }} <button style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary vr-view" type="button" data-model-id="{{ $id }}"><span class="glyphicon glyphicon-sunglasses" aria-hidden="true"></span> {{ trans('template_asset_library_models.vr_view') }}</button></h2>
+    <h2 class="modal-title">{{ trans('template_asset_library_models.vr_view') }} <button style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary edit-model" type="button" data-model-id="{{ $id }}"><span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_models.edit_model') }}</button></h2>
 </div>
 
 <div class="modal-body">
@@ -48,20 +48,30 @@
                     <option value="10">{{ trans('template_asset_library_models.10_meters') }}</option>
                     <option value="15">{{ trans('template_asset_library_models.15_meters') }}</option>
                     <option value="20">{{ trans('template_asset_library_models.20_meters') }}</option>
+                    <option value="30">{{ trans('template_asset_library_models.30_meters') }}</option>
+                    <option value="40">{{ trans('template_asset_library_models.40_meters') }}</option>
                 </select>
             </div>
 
             <div class="form-group">
                 <label for="user-height">{{ trans('template_asset_library_models.user_height') }}</label>
-                <select class="form-control" id="distance-to-model">
-                    <option value="0.5">{{ trans('template_asset_library_models.0_5_meters') }}</option>
-                    <option value="1">{{ trans('template_asset_library_models.1_meter') }}</option>
+                <select class="form-control" id="user-height">
+                    <option value="0">{{ trans('template_asset_library_models.0_meters') }}</option>
+                    <option value="1.6" selected="selected">{{ trans('template_asset_library_models.1_6_meters') }}</option>
+                    <option value="2.0">{{ trans('template_asset_library_models.2_meters') }}</option>
+                    <option value="3.0">{{ trans('template_asset_library_models.3_meters') }}</option>
+                    <option value="4.0">{{ trans('template_asset_library_models.4_meters') }}</option>
+                    <option value="5.0">{{ trans('template_asset_library_models.5_meters') }}</option>
                 </select>
             </div>
 
-            <div class="form-group">
-                <label for="rotate-model">{{ trans('template_asset_library_models.rotate') }}</label>
-                <input class="form-control" type="checkbox" id="rotate-model" value="rotate">
+            <div class="form-group" style="margin-top:30px">
+                <div class="checkbox">
+                    <label style="font-weight:700">
+                        <input id="rotate-model" type="checkbox" value="rotate"> 
+                        {{ trans('template_asset_library_models.rotate') }}
+                    </label>
+                </div>
             </div>
 
       </div><!-- col-md-4 //-->

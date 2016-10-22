@@ -77,6 +77,13 @@ jQuery(document).ready(function($) {
             if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();
             }
+
+            /* update model scale */
+            $('#asset-details #scale').unbind('change');
+            $('#asset-details #scale').change(function() {
+                $('#asset-details #model').attr('scale', $(this).val() + ' ' + $(this).val() + ' ' + $(this).val());
+            });
+
         });
     };
     window.list_item_edit_click_handler = list_item_edit_click_handler;
@@ -115,7 +122,23 @@ jQuery(document).ready(function($) {
             /* update camera distance to model */
             $('#asset-details #distance-to-model').unbind('change');
             $('#asset-details #distance-to-model').change(function() {
-                $('#asset-details #vr-view-model').attr('position', '0 1.6 -'+$(this).val());
+                $('#asset-details #camera').attr('position', '0 '+$('#asset-details #user-height').val()+' '+$(this).val());
+            });
+
+            /* update user height */
+            $('#asset-details #user-height').unbind('change');
+            $('#asset-details #user-height').change(function() {
+                $('#asset-details #camera').attr('position', '0 '+$(this).val()+' '+$('#asset-details #distance-to-model').val());
+            });
+
+            /* rotation animation */
+            $('#asset-details #rotate-model').unbind('change');
+            $('#asset-details #rotate-model').change(function() {
+                if (this.checked) {
+                    document.querySelector('#model').emit('start-rotation');
+                } else {
+                    document.querySelector('#model').emit('stop-rotation');
+                }
             });
 
         });
@@ -139,6 +162,7 @@ jQuery(document).ready(function($) {
         var data = {};
         data.caption = $('#asset-details #caption').val();
         data.description = $('#asset-details #description').val();
+        data.scale = $('#asset-details #scale').val();
 
         $.ajax({
             url: window.ideaspace_site_path + '/admin/assets/model/'+$(this).attr('data-model-id')+'/save',
