@@ -109,7 +109,7 @@ class AssetLibraryModelsController extends Controller {
                 return response()->json(['status' => 'error', 'message' => trans('asset_library_models_controller.file_directory_creation_error')]);
             }
         }
-
+Log::debug('queue id: '.$queue_id);
         $success = $file->move(Model3D::MODEL_STORAGE_PATH . $randomDirName, $newName);
         if (!$success) {
             return response()->json(['status' => 'error', 'message' => trans('asset_library_models_controller.file_moving_error')]);
@@ -497,7 +497,7 @@ class AssetLibraryModelsController extends Controller {
 
 
     /**
-     * Save model as image. 
+     * Save model as preview image. 
      *
      * @param Request $request
      *
@@ -511,14 +511,17 @@ class AssetLibraryModelsController extends Controller {
 
         $filteredData = str_replace('data:image/png;base64,', '', $request->input('canvasData'));
         $filteredData = str_replace(' ', '+', $filteredData);
-
         $unencoded = base64_decode($filteredData);
+
+        $model = Model3D::where('id', $request->input('model_id'))->first();
+        $genericFile = GenericFile::where('id', $model->file_id_0)->first();
+        $f = pathinfo($genericFile->uri);
 
         $filename = str_random(40) . '_preview.png';
 
         $image = Image::make($unencoded);
 
-        $uri = Model3D::MODEL_STORAGE_PATH . $filename; 
+        $uri = $f['dirname'] . '/' . $filename; 
 
         $image->save($uri);
 
@@ -533,7 +536,6 @@ class AssetLibraryModelsController extends Controller {
             'filename_orig' => $filename
         ]);        
 
-        $model = Model3D::where('id', $request->input('model_id'))->first();
         $model->file_id_preview = $genericFile->id;
         $model->save();
 
@@ -688,6 +690,7 @@ class AssetLibraryModelsController extends Controller {
 
         try {
             $genericFile = GenericFile::where('id', $model->file_id_0)->firstOrFail();
+            $f = pathinfo($genericFile->uri);
             File::delete($genericFile->uri);
             $genericFile->delete();
         } catch (ModelNotFoundException $e) {
@@ -716,10 +719,14 @@ class AssetLibraryModelsController extends Controller {
                 $genericFile = GenericFile::where('id', $texture->file_id)->firstOrFail();
                 File::delete($genericFile->uri);
                 $genericFile->delete();
+                $texture->delete();
             } catch (ModelNotFoundException $e) {
                 /* no problem */
             }
         }
+
+        $directory = $f['dirname'];
+        File::deleteDirectory($directory);
 
         $model->delete();
 

@@ -82,6 +82,7 @@ jQuery(document).ready(function($) {
             $('#asset-details #scale').unbind('change');
             $('#asset-details #scale').change(function() {
                 $('#asset-details #model').attr('scale', $(this).val() + ' ' + $(this).val() + ' ' + $(this).val());
+                $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
             });
 
         });
@@ -182,7 +183,6 @@ jQuery(document).ready(function($) {
     $('#asset-details .save-btn').click(window.model_edit_save_btn_click_handler);
 
 
-    /* caption and description text areas */
     var reset_save_btn_handler = function(e) {
         $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
     };
@@ -264,7 +264,7 @@ jQuery(document).ready(function($) {
             $('#models #file-0:first').find('div.progress-bar').width(percent);
             $('#models #file-0:first').find('span.sr-only').html(percent);
         },
-        onUploadSuccess: function(id, data){
+        onUploadSuccess: function(id, data) {
 
             if (data.status == 'success') {
 

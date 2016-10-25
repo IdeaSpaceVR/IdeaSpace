@@ -110,6 +110,9 @@
       evt.preventDefault();
       var files = evt.originalEvent.dataTransfer.files;
 
+widget.queue = new Array();
+widget.queuePos = -1;
+widget.queueRunning = false;
       widget.queueFiles(files);
     });
 
@@ -117,6 +120,9 @@
     widget.element.find('input[type=file]').on('change', function(evt){
       var files = evt.target.files;
 
+widget.queue = new Array();
+widget.queuePos = -1;
+widget.queueRunning = false;
       widget.queueFiles(files);
 
       $(this).val('');
@@ -206,7 +212,7 @@
 
       widget.settings.onComplete.call(widget.element);
 
-      // Wait until new files are droped
+      // Wait until new files are dropped
       widget.queuePos = (widget.queue.length - 1);
 
       widget.queueRunning = false;
