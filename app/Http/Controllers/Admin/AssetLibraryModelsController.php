@@ -91,17 +91,17 @@ class AssetLibraryModelsController extends Controller {
         }
 
         /* do not allow uploading single image files */
-        if ($queue_length == 1 && (strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_PNG)) {  
+        if ($queue_length == 1 && (strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_PNG)) {  
             return response()->json([
                 'status' => 'success-ongoing'
             ]); 
         }
-        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG) { 
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_JPG) { 
             return response()->json([
                 'status' => 'success-ongoing'
             ]); 
         }
-        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF) {
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_GIF) {
             return response()->json([
                 'status' => 'success-ongoing'
             ]); 
