@@ -75,12 +75,45 @@ class AssetLibraryModelsController extends Controller {
             return response()->json(['status' => 'error', 'message' => trans('asset_library_models_controller.wrong_file_type')]);
         }
 
+
+        /* do not allow uploading a single mtl file */
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Model3D::FILE_EXTENSION_MTL) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+
+        /* do not allow uploading a single obj file */
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Model3D::FILE_EXTENSION_OBJ) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+
+        /* do not allow uploading single image files */
+        if ($queue_length == 1 && (strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_PNG)) {  
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG) { 
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+  
+
         $filename_orig = $file->getClientOriginalName();
 
         /* do not rename texture files, as these are referenced in model files */
-        if ($file->getClientOriginalExtension() != Texture::FILE_EXTENSION_PNG && 
-            $file->getClientOriginalExtension() != Texture::FILE_EXTENSION_JPG &&
-            $file->getClientOriginalExtension() != Texture::FILE_EXTENSION_GIF) {
+        if (strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_PNG && 
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG &&
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF) {
             do {
                 $newName = str_random(60) . '.' . strtolower($file->getClientOriginalExtension());
                 $existingName = GenericFile::where('filename', $newName)->first();
@@ -109,7 +142,7 @@ class AssetLibraryModelsController extends Controller {
                 return response()->json(['status' => 'error', 'message' => trans('asset_library_models_controller.file_directory_creation_error')]);
             }
         }
-Log::debug('queue id: '.$queue_id);
+
         $success = $file->move(Model3D::MODEL_STORAGE_PATH . $randomDirName, $newName);
         if (!$success) {
             return response()->json(['status' => 'error', 'message' => trans('asset_library_models_controller.file_moving_error')]);
