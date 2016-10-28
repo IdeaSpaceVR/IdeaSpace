@@ -45,13 +45,14 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var image_id = $(e.target).attr('data-image-id');
 
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
+
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/edit', function() {
 
             /* allow switching views */
             $('#asset-details .vr-view').unbind('click');
             $('#asset-details .vr-view').click(window.list_item_vr_view_click_handler);
-
-            $('#asset-details').modal('show');
 
             $('#asset-details .save-btn').unbind('click');
             $('#asset-details .save-btn').click(window.image_edit_save_btn_click_handler);
@@ -76,6 +77,9 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var image_id = $(e.target).attr('data-image-id');
 
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
+
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/image/' + image_id + '/vr-view', function() {
 
             /* allow switching views */
@@ -94,8 +98,6 @@ jQuery(document).ready(function($) {
                 evt.initUIEvent('resize', true, false, window, 0); 
                 window.dispatchEvent(evt);
             });
-
-            $('#asset-details').modal('show');
 
             if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();

@@ -44,14 +44,15 @@ jQuery(document).ready(function($) {
     var list_item_edit_click_handler = function(e) {
         e.preventDefault();
         var videosphere_id = $(e.target).attr('data-videosphere-id');
+  
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
 
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/videosphere/' + videosphere_id + '/edit', function() {
 
             /* allow switching views */
             $('#asset-details .vr-view').unbind('click');
             $('#asset-details .vr-view').click(window.list_item_vr_view_click_handler);
-
-            $('#asset-details').modal('show');
 
             $('#asset-details .save-btn').unbind('click');
             $('#asset-details .save-btn').click(window.videosphere_edit_save_btn_click_handler);
@@ -75,6 +76,9 @@ jQuery(document).ready(function($) {
     var list_item_vr_view_click_handler = function(e) {
         e.preventDefault();
         var videosphere_id = $(e.target).attr('data-videosphere-id');
+
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
 
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/videosphere/' + videosphere_id + '/vr-view', function() {
 
@@ -101,8 +105,6 @@ jQuery(document).ready(function($) {
                     video.pause();
                 }
             });
-
-            $('#asset-details').modal('show');
 
             if ($('.asset-library-nav').find('#videospheres-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();

@@ -45,9 +45,10 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var audio_id = $(e.target).attr('data-audio-id');
 
-        $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/audio/' + audio_id + '/edit', function() {
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
 
-            $('#asset-details').modal('show');
+        $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/audio/' + audio_id + '/edit', function() {
 
             $('#asset-details .save-btn').unbind('click');
             $('#asset-details .save-btn').click(window.audio_edit_save_btn_click_handler);

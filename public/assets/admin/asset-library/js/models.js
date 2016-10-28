@@ -45,6 +45,9 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var model_id = $(e.target).attr('data-model-id');
 
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
+
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/model/' + model_id + '/edit', function() {
 
             /* allow switching views */
@@ -62,8 +65,6 @@ jQuery(document).ready(function($) {
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
             });
-
-            $('#asset-details').modal('show');
 
             $('#asset-details .save-btn').unbind('click');
             $('#asset-details .save-btn').click(window.model_edit_save_btn_click_handler);
@@ -96,6 +97,9 @@ jQuery(document).ready(function($) {
         e.preventDefault();
         var model_id = $(e.target).attr('data-model-id');
 
+        $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
+        $('#asset-details').modal('show');
+
         $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/model/' + model_id + '/vr-view', function() {
 
             /* allow switching views */
@@ -113,8 +117,6 @@ jQuery(document).ready(function($) {
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
             });
-
-            $('#asset-details').modal('show');
 
             if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
                 $('#asset-details .insert-btn').show();
