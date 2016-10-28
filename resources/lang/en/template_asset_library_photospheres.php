@@ -21,5 +21,5 @@ return [
     'insert' => 'Insert',
     'delete_permanently' => 'Delete Permanently',
     'vr_view' => 'VR View',
-
+    'no_photospheres' => 'No photo spheres added yet.',
 ];

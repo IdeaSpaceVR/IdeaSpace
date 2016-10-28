@@ -74,5 +74,6 @@ return [
     'scale_1_8' => '1.8',
     'scale_1_9' => '1.9',
     'scale_2_0' => '2.0',
+    'no_models' => 'No models added yet.',
 
 ];

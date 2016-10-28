@@ -21,5 +21,6 @@ return [
     'saved' => 'Saved',
     'insert' => 'Insert',
     'delete_permanently' => 'Delete Permanently',
+    'no_audio' => 'No audio files added yet.',
 
 ];

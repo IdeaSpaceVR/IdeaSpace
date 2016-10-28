@@ -34,6 +34,12 @@
 
     <div class="files" data-file-counter="{{ ((count($audio_files)>0)?count($audio_files):0) }}">
 
+        @if (count($audio_files) == 0)
+            <div class="no-content">
+                {{ trans('template_asset_library_audio.no_audio') }}
+            </div>
+        @endif
+
         <ul class="list">
         <?php
         $i = 0;

@@ -210,6 +210,8 @@ jQuery(document).ready(function($) {
         },
         onNewFile: function(id, file) {
 
+            $('#images .files .no-content').hide();
+
             var template = 
             '<li class="list-item">' +
                 '<div id="file-' + id + '" class="wrapper">' +
@@ -249,6 +251,10 @@ jQuery(document).ready(function($) {
                 $('#images .files .list-item .edit').click(window.list_item_edit_click_handler);
                 $('#images .files .list-item .vr-view').unbind('click');
                 $('#images .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+                /* hide upload area */
+                $('.upload-area').removeClass('visible');
+                $('.upload-area').hide();
 
                 /* show insert link when opened from space edit content page */
                 if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {

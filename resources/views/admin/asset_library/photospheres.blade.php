@@ -35,6 +35,12 @@
 
     <div class="files" data-file-counter="{{ ((count($photospheres)>0)?count($photospheres):0) }}">
 
+        @if (count($photospheres) == 0)
+            <div class="no-content">
+                {{ trans('template_asset_library_photospheres.no_photospheres') }}
+            </div>
+        @endif
+
         <ul class="list">
         <?php
         $i = 0;

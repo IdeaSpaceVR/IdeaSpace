@@ -35,6 +35,12 @@
 
     <div class="files" data-file-counter="{{ ((count($videospheres)>0)?count($videospheres):0) }}">
 
+        @if (count($videospheres) == 0)
+            <div class="no-content">
+                {{ trans('template_asset_library_videospheres.no_videospheres') }}
+            </div>
+        @endif
+
         <ul class="list">
         <?php
         $i = 0;

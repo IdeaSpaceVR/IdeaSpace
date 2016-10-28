@@ -34,7 +34,13 @@
     </div><!-- row //-->
 
     <div class="files" data-file-counter="{{ ((count($images)>0)?count($images):0) }}">
-           
+          
+        @if (count($images) == 0) 
+            <div class="no-content">
+                {{ trans('template_asset_library_images.no_images') }}
+            </div>
+        @endif
+ 
         <ul class="list"> 
         <?php 
         $i = 0; 

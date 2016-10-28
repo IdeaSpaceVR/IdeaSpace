@@ -34,6 +34,12 @@
 
     <div class="files" data-file-counter="{{ ((count($videos)>0)?count($videos):0) }}">
 
+        @if (count($videos) == 0)
+            <div class="no-content">
+                {{ trans('template_asset_library_videos.no_videos') }}
+            </div>
+        @endif
+
         <ul class="list">
         <?php
         $i = 0;

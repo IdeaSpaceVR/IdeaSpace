@@ -33,5 +33,5 @@ return [
     '10_meters' => '10 meters',
     '15_meters' => '15 meters',
     '20_meters' => '20 meters',
-
+    'no_images' => 'No images added yet.',
 ];

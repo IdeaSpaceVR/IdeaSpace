@@ -36,6 +36,12 @@
 
     <div class="files" data-file-counter="{{ ((count($models)>0)?count($models):0) }}">
 
+        @if (count($models) == 0)
+            <div class="no-content">
+                {{ trans('template_asset_library_models.no_models') }}
+            </div>
+        @endif
+
         <ul class="list">
         <?php
         $i = 0;
