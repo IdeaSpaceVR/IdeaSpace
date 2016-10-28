@@ -125,7 +125,7 @@
 
     @else
 
-    <div class="container-fluid">
+    <div class="container-fluid" style="min-height:600px">
         <div class="row">
             <!-- sidebar -->
             <div class="col-xs-1" id="sidebar-nav" role="navigation">
