@@ -3,9 +3,9 @@
 return [
 
     'max' => 'Max.',
-    'characters' => 'characters',
-    'optional' => 'Optional field',
-    'formatted_text' => 'Formatted text',
-    'plain_text' => 'Plain text',
+    'characters' => 'Zeichen',
+    'optional' => 'Optionales Feld',
+    'formatted_text' => 'Formatierter Text',
+    'plain_text' => 'Klartext',
 
 ];

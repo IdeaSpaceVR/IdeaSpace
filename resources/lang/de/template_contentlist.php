@@ -2,10 +2,10 @@
 
 return [
 
-    'add' => 'Add',
-    'date' => 'Date',
-    'title' => 'Title',
-    'edit' => 'Edit',
-    'delete' => 'Delete',
+    'add' => 'Hinzufügen',
+    'date' => 'Datum',
+    'title' => 'Titel',
+    'edit' => 'Bearbeiten',
+    'delete' => 'Löschen',
 
 ];

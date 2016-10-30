@@ -2,6 +2,6 @@
 
 return [
 
-    'installed' => 'Installed',
+    'installed' => 'Installiert',
 
 ];

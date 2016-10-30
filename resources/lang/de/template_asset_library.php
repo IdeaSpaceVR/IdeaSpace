@@ -2,16 +2,16 @@
 
 return [
 
-    'images' => 'Images',
-    'photospheres' => 'Photo Spheres',
+    'images' => 'Bilder',
+    'photospheres' => 'Foto Spheres',
     'videos' => 'Videos',
     'videospheres' => 'Video Spheres',
     'audio' => 'Audio',
-    'models' => 'Models',
-    'or' => 'or',
-    'open_file_browser' => 'Click to open File Browser',
+    'models' => 'Modelle',
+    'or' => 'oder',
+    'open_file_browser' => 'Klick um den Dateibrowser zu öffnen',
     'assets' => 'Assets',
-    'add_new' => 'Add New',
-    'close' => 'Close',
+    'add_new' => 'Neu hinzufügen',
+    'close' => 'Schließen',
 
 ];

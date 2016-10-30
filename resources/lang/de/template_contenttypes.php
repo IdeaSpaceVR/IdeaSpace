@@ -2,6 +2,6 @@
 
 return [
 
-    'add' => 'Add',
+    'add' => 'Hinzufügen',
 
 ];
