@@ -91,17 +91,12 @@ ul li.active>a {
   }
 }
 
+.btn-primary.focus,
+.btn-primary:focus,
 .btn-primary {
   background-color: #0080e5;
   border-color: #0080e5;
 }
 
-/*.btn-primary:hover,
-.btn-primary:focus,
-.btn-primary:active, 
-.btn-primary.active {
-  background-color: red;
-  border-color: red;
-}*/
 
 
