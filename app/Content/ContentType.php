@@ -23,7 +23,7 @@ class ContentType {
     const FIELD_TYPE_IMAGE = 'image';
     const FIELD_TYPE_PHOTOSPHERE = 'photosphere';
     const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
-    const FIELD_TYPE_MODEL = 'model';
+    const FIELD_TYPE_MODEL3D = 'model3d';
 
 
     private $fieldTypes;
@@ -39,6 +39,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_VIDEO] = new FieldTypeVideo('public/assets/user/video/');
         $this->fieldTypes[ContentType::FIELD_TYPE_AUDIO] = new FieldTypeAudio('public/assets/user/audio/');
         $this->fieldTypes[ContentType::FIELD_TYPE_IMAGE] = new FieldTypeImage('public/assets/user/image/');
+        $this->fieldTypes[ContentType::FIELD_TYPE_MODEL3D] = new FieldTypeModel3D('public/assets/user/model/');
         $this->fieldTypes[ContentType::FIELD_TYPE_COLOR] = new FieldTypeColor();
         $this->fieldTypes[ContentType::FIELD_TYPE_DATE] = new FieldTypeDate();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTFIELD] = new FieldTypeTextfield();

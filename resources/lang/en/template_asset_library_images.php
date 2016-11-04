@@ -15,6 +15,8 @@ return [
     'file_size' => 'File size:',
     'dimensions' => 'Dimensions:',
     'edit_image' => 'Edit Image Details',
+    'edit_image_btn' => 'Edit Image',
+    'remove_image_btn' => 'Remove Image',
     'close' => 'Close',
     'save' => 'Save',
     'saved' => 'Saved',

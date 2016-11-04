@@ -25,15 +25,19 @@ jQuery(document).ready(function($) {
     });
 
 
-    $('.form-control-add-file button').on('click', function() {
+    $('.form-control-add-file button').on('click', function(e) {
 
         var whichtab = $(this).attr('data-opentab');
         $('.asset-library-nav').find('.auto-opentab').removeClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).addClass('auto-opentab');
         $('.asset-library-nav').find(whichtab).tab('show');
 
+        /* needed for insert operation */
+        window.open_asset_library_ref = $(this).parent().parent();
+
         /* when opened from space content edit page, allow single file uploads and show upload area */
-        $('.upload-area').find('input[type="file"]').removeAttr('multiple');
+        /* UPDATE: multiple file uploads needed for 3D model and texture files */
+        //$('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
         

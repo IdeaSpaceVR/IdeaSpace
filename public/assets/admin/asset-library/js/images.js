@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
 
         $('#images .files .insert-link').show();
         $('#asset-details .insert-btn').show();
+        $('#images .files .list-item .insert').unbind('click');
+        $('#images .files .list-item .insert').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').unbind('click');
+        $('#asset-details .insert-btn').click(window.insert_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on images tab */
@@ -113,6 +117,35 @@ jQuery(document).ready(function($) {
     };
     window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
     $('#images .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+
+    /* insert link and insert button */
+    var insert_click_handler = function(e) {
+
+        var image_id = $(e.target).attr('data-image-id');
+        window.open_asset_library_ref.find('.image-id').val(image_id); 
+        window.open_asset_library_ref.find('.image-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.image-add').hide();
+        window.open_asset_library_ref.find('.image-edit').show();
+
+        document.location.hash = '#' + window.open_asset_library_ref.parent().attr('id'); 
+
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-image-btn').click(window.remove_image);
+    };
+    window.insert_click_handler = insert_click_handler;
+    $('#images .files .list-item .insert').click(window.insert_click_handler);
+    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* hide image from space content edit page */
+    var remove_image = function(e) {
+        window.open_asset_library_ref.find('.image-id').val(''); 
+        window.open_asset_library_ref.find('.image-add').show();
+        window.open_asset_library_ref.find('.image-edit').hide();
+    };    
+    window.remove_image = remove_image;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog; 
@@ -243,7 +276,7 @@ jQuery(document).ready(function($) {
                 $('#images #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-image-id="'+data.image_id+'">'+localization_strings['vr_view']+'</a> | ' + 
                     '<a href="#" class="edit" data-image-id="'+data.image_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-image-id="'+data.image_id+'">'+localization_strings['insert']+'</a></span></div>');
 
                 $('#images .files .list-item').unbind('click');
                 $('#images .files .list-item').click(window.list_item_menu_click_handler);
@@ -262,6 +295,10 @@ jQuery(document).ready(function($) {
                 if ($('.asset-library-nav').find('#images-tab').hasClass('auto-opentab')) {
                     $('#images .files .insert-link').show();
                     $('#asset-details .insert-btn').show();
+                    $('#images .files .list-item .insert').unbind('click');
+                    $('#images .files .list-item .insert').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').unbind('click');
+                    $('#asset-details .insert-btn').click(window.insert_click_handler);
                 } 
 
           } else if (data.status == 'error') {
