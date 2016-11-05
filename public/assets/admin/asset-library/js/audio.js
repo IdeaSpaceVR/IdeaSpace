@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
 
         $('#audio .files .insert-link').show();
         $('#asset-details .insert-btn').show();
+        $('#audio .files .list-item .insert').unbind('click');
+        $('#audio .files .list-item .insert').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').unbind('click');
+        $('#asset-details .insert-btn').click(window.insert_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on audio tab */
@@ -66,6 +70,35 @@ jQuery(document).ready(function($) {
     };
     window.list_item_edit_click_handler = list_item_edit_click_handler;
     $('#audio .files .list-item .edit').click(window.list_item_edit_click_handler);
+
+
+    /* insert link and insert button */
+    var insert_click_handler = function(e) {
+
+        var audio_id = $(e.target).attr('data-audio-id');
+        window.open_asset_library_ref.find('.audio-id').val(audio_id);
+        window.open_asset_library_ref.find('.audio-placeholder').html('<audio class="center-block" controls="controls"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="audio/mpeg"></audio>');
+        window.open_asset_library_ref.find('.audio-add').hide();
+        window.open_asset_library_ref.find('.audio-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-audio-btn').click(window.remove_audio);
+    };
+    window.insert_click_handler = insert_click_handler;
+    $('#audio .files .list-item .insert').click(window.insert_click_handler);
+    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* hide audio from space content edit page */
+    var remove_audio = function(e) {
+        window.open_asset_library_ref.find('.audio-id').val('');
+        window.open_asset_library_ref.find('.audio-add').show();
+        window.open_asset_library_ref.find('.audio-edit').hide();
+    };
+    window.remove_audio = remove_audio;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
@@ -196,7 +229,7 @@ jQuery(document).ready(function($) {
                 $('#audio #file-' + id + ':first').attr('data-audio-id', data.audio_id);
                 $('#audio #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="edit" data-audio-id="'+data.audio_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-audio-id="'+data.audio_id+'">'+localization_strings['insert']+'</a></span></div>');
 
                 $('#audio .files .list-item').unbind('click');
                 $('#audio .files .list-item').click(window.list_item_menu_click_handler);
@@ -215,6 +248,10 @@ jQuery(document).ready(function($) {
                 if ($('.asset-library-nav').find('#audio-tab').hasClass('auto-opentab')) {
                     $('#audio .files .insert-link').show();
                     $('#asset-details .insert-btn').show();
+                    $('#audio .files .list-item .insert').unbind('click');
+                    $('#audio .files .list-item .insert').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').unbind('click');
+                    $('#asset-details .insert-btn').click(window.insert_click_handler);
                 }
 
           } else if (data.status == 'error') {

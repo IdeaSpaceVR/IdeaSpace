@@ -128,7 +128,7 @@ jQuery(document).ready(function($) {
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
-        document.location.hash = '#' + window.open_asset_library_ref.parent().attr('id'); 
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
 
         $('#assets').modal('hide');
 

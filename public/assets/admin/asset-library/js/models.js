@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
 
         $('#models .files .insert-link').show();
         $('#asset-details .insert-btn').show();
+        $('#models .files .list-item .insert').unbind('click');
+        $('#models .files .list-item .insert').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').unbind('click');
+        $('#asset-details .insert-btn').click(window.insert_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on models tab */
@@ -148,6 +152,35 @@ jQuery(document).ready(function($) {
     };
     window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
     $('#models .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+
+    /* insert link and insert button */
+    var insert_click_handler = function(e) {
+
+        var model_id = $(e.target).attr('data-model-id');
+        window.open_asset_library_ref.find('.model-id').val(model_id);
+        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.model-add').hide();
+        window.open_asset_library_ref.find('.model-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-model-btn').click(window.remove_model);
+    };
+    window.insert_click_handler = insert_click_handler;
+    $('#models .files .list-item .insert').click(window.insert_click_handler);
+    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* hide model from space content edit page */
+    var remove_model = function(e) {
+        window.open_asset_library_ref.find('.model-id').val('');
+        window.open_asset_library_ref.find('.model-add').show();
+        window.open_asset_library_ref.find('.model-edit').hide();
+    };
+    window.remove_model = remove_model;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
@@ -320,7 +353,7 @@ jQuery(document).ready(function($) {
                                         $('#models #file-0:first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                                             '<a href="#" class="vr-view" data-model-id="'+data.model_id+'">'+localization_strings['vr_view']+'</a> | ' +
                                             '<a href="#" class="edit" data-model-id="'+data.model_id+'">'+localization_strings['edit']+'</a> ' +
-                                            '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+                                            '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-model-id="'+data.model_id+'">'+localization_strings['insert']+'</a></span></div>');
 
                                         $('#models .files .list-item').unbind('click');
                                         $('#models .files .list-item').click(window.list_item_menu_click_handler);
@@ -339,6 +372,10 @@ jQuery(document).ready(function($) {
                                         if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
                                             $('#models .files .insert-link').show();
                                             $('#asset-details .insert-btn').show();
+                                            $('#models .files .list-item .insert').unbind('click');
+                                            $('#models .files .list-item .insert').click(window.insert_click_handler);
+                                            $('#asset-details .insert-btn').unbind('click');
+                                            $('#asset-details .insert-btn').click(window.insert_click_handler);
                                         }
 
                                     } else {

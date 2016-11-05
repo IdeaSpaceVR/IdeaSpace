@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
 
         $('#photospheres .files .insert-link').show();
         $('#asset-details .insert-btn').show();
+        $('#photospheres .files .list-item .insert').unbind('click');
+        $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').unbind('click');
+        $('#asset-details .insert-btn').click(window.insert_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on photo spheres tab */
@@ -107,6 +111,35 @@ jQuery(document).ready(function($) {
     };
     window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
     $('#photospheres .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+
+    /* insert link and insert button */
+    var insert_click_handler = function(e) {
+
+        var photosphere_id = $(e.target).attr('data-photosphere-id');
+        window.open_asset_library_ref.find('.photosphere-id').val(photosphere_id);
+        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.photosphere-add').hide();
+        window.open_asset_library_ref.find('.photosphere-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-photosphere-btn').click(window.remove_photosphere);
+    };
+    window.insert_click_handler = insert_click_handler;
+    $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
+    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* hide photosphere from space content edit page */
+    var remove_photosphere = function(e) {
+        window.open_asset_library_ref.find('.photosphere-id').val('');
+        window.open_asset_library_ref.find('.photosphere-add').show();
+        window.open_asset_library_ref.find('.photosphere-edit').hide();
+    };
+    window.remove_photosphere = remove_photosphere;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
@@ -237,7 +270,7 @@ jQuery(document).ready(function($) {
                 $('#photospheres #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['vr_view']+'</a> | ' +
                     '<a href="#" class="edit" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-photosphere-id="'+data.photosphere_id+'">'+localization_strings['insert']+'</a></span></div>');
 
                 $('#photospheres .files .list-item').unbind('click');
                 $('#photospheres .files .list-item').click(window.list_item_menu_click_handler);
@@ -256,6 +289,10 @@ jQuery(document).ready(function($) {
                 if ($('.asset-library-nav').find('#photospheres-tab').hasClass('auto-opentab')) {
                     $('#photospheres .files .insert-link').show();
                     $('#asset-details .insert-btn').show();
+                    $('#photospheres .files .list-item .insert').unbind('click');
+                    $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').unbind('click');
+                    $('#asset-details .insert-btn').click(window.insert_click_handler);
                 }
 
           } else if (data.status == 'error') {

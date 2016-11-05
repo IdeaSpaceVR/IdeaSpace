@@ -12,6 +12,10 @@ jQuery(document).ready(function($) {
 
         $('#videos .files .insert-link').show();
         $('#asset-details .insert-btn').show();
+        $('#videos .files .list-item .insert').unbind('click');
+        $('#videos .files .list-item .insert').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').unbind('click');
+        $('#asset-details .insert-btn').click(window.insert_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on videos tab */
@@ -120,6 +124,35 @@ jQuery(document).ready(function($) {
     };
     window.list_item_vr_view_click_handler = list_item_vr_view_click_handler;
     $('#videos .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+
+    /* insert link and insert button */
+    var insert_click_handler = function(e) {
+
+        var video_id = $(e.target).attr('data-video-id');
+        window.open_asset_library_ref.find('.video-id').val(video_id);
+        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.video-add').hide();
+        window.open_asset_library_ref.find('.video-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-video-btn').click(window.remove_video);
+    };
+    window.insert_click_handler = insert_click_handler;
+    $('#videos .files .list-item .insert').click(window.insert_click_handler);
+    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* hide video from space content edit page */
+    var remove_video = function(e) {
+        window.open_asset_library_ref.find('.video-id').val('');
+        window.open_asset_library_ref.find('.video-add').show();
+        window.open_asset_library_ref.find('.video-edit').hide();
+    };
+    window.remove_video = remove_video;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
@@ -251,7 +284,7 @@ jQuery(document).ready(function($) {
                 $('#videos #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
                     '<a href="#" class="vr-view" data-video-id="'+data.video_id+'">'+localization_strings['vr_view']+'</a> | ' +
                     '<a href="#" class="edit" data-video-id="'+data.video_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert">'+localization_strings['insert']+'</a></span></div>');
+                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-video-id="'+data.video_id+'">'+localization_strings['insert']+'</a></span></div>');
 
                 $('#videos .files .list-item').unbind('click');
                 $('#videos .files .list-item').click(window.list_item_menu_click_handler);
@@ -270,6 +303,10 @@ jQuery(document).ready(function($) {
                 if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
                     $('#videos .files .insert-link').show();
                     $('#asset-details .insert-btn').show();
+                    $('#videos .files .list-item .insert').unbind('click');
+                    $('#videos .files .list-item .insert').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').unbind('click');
+                    $('#asset-details .insert-btn').click(window.insert_click_handler);
                 }
 
           } else if (data.status == 'error') {
