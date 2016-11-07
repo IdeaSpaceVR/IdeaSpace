@@ -14,6 +14,8 @@ AFRAME.registerComponent('load-image', {
 
                 var image_elem = document.createElement('img');
                 image_elem.setAttribute('id', 'img');
+                /* class is needed for inserting image when insert button is clicked */
+                image_elem.setAttribute('class', 'target-image');
                 image_elem.setAttribute('src', this.src);
                 var assets = document.querySelector('a-assets');
                 assets.appendChild(image_elem);

@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
         $('#videos .files .list-item .insert').unbind('click');
         $('#videos .files .list-item .insert').click(window.insert_click_handler);
         $('#asset-details .insert-btn').unbind('click');
-        $('#asset-details .insert-btn').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on videos tab */
@@ -68,6 +68,8 @@ jQuery(document).ready(function($) {
             $('#asset-details .delete-link').click(window.video_edit_delete_btn_click_handler);
 
             if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
         });
@@ -111,6 +113,8 @@ jQuery(document).ready(function($) {
             });
 
             if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
 
@@ -126,7 +130,7 @@ jQuery(document).ready(function($) {
     $('#videos .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
 
 
-    /* insert link and insert button */
+    /* insert link */
     var insert_click_handler = function(e) {
 
         var video_id = $(e.target).attr('data-video-id');
@@ -143,7 +147,26 @@ jQuery(document).ready(function($) {
     };
     window.insert_click_handler = insert_click_handler;
     $('#videos .files .list-item .insert').click(window.insert_click_handler);
-    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* insert button */
+    var insert_btn_click_handler = function(e) {
+
+        var video_id = $(e.target).attr('data-video-id');
+        window.open_asset_library_ref.find('.video-id').val(video_id);
+        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.video-add').hide();
+        window.open_asset_library_ref.find('.video-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#asset-details').modal('hide');
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-video-btn').click(window.remove_video);
+    };
+    window.insert_btn_click_handler = insert_btn_click_handler;
+    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
 
     /* hide video from space content edit page */
@@ -306,7 +329,7 @@ jQuery(document).ready(function($) {
                     $('#videos .files .list-item .insert').unbind('click');
                     $('#videos .files .list-item .insert').click(window.insert_click_handler);
                     $('#asset-details .insert-btn').unbind('click');
-                    $('#asset-details .insert-btn').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 }
 
           } else if (data.status == 'error') {

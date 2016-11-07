@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
         $('#photospheres .files .list-item .insert').unbind('click');
         $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
         $('#asset-details .insert-btn').unbind('click');
-        $('#asset-details .insert-btn').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on photo spheres tab */
@@ -68,6 +68,8 @@ jQuery(document).ready(function($) {
             $('#asset-details .delete-link').click(window.photosphere_edit_delete_btn_click_handler);
 
             if ($('.asset-library-nav').find('#photospheres-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
         });
@@ -104,6 +106,8 @@ jQuery(document).ready(function($) {
             });
 
             if ($('.asset-library-nav').find('#photospheres-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
 
@@ -113,7 +117,7 @@ jQuery(document).ready(function($) {
     $('#photospheres .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
 
 
-    /* insert link and insert button */
+    /* insert link */
     var insert_click_handler = function(e) {
 
         var photosphere_id = $(e.target).attr('data-photosphere-id');
@@ -130,7 +134,26 @@ jQuery(document).ready(function($) {
     };
     window.insert_click_handler = insert_click_handler;
     $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
-    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+
+    /* insert button */
+    var insert_btn_click_handler = function(e) {
+
+        var photosphere_id = $(e.target).attr('data-photosphere-id');
+        window.open_asset_library_ref.find('.photosphere-id').val(photosphere_id);
+        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('.target-image').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.photosphere-add').hide();
+        window.open_asset_library_ref.find('.photosphere-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#asset-details').modal('hide');
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-photosphere-btn').click(window.remove_photosphere);
+    };
+    window.insert_btn_click_handler = insert_btn_click_handler;
+    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
 
     /* hide photosphere from space content edit page */
@@ -292,7 +315,7 @@ jQuery(document).ready(function($) {
                     $('#photospheres .files .list-item .insert').unbind('click');
                     $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
                     $('#asset-details .insert-btn').unbind('click');
-                    $('#asset-details .insert-btn').click(window.insert_click_handler);
+                    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 }
 
           } else if (data.status == 'error') {

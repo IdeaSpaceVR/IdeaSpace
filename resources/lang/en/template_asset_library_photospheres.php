@@ -15,6 +15,8 @@ return [
     'file_size' => 'File size:',
     'dimensions' => 'Dimensions:',
     'edit_photosphere' => 'Edit Photo Sphere Details',
+    'edit_photosphere_btn' => 'Edit Photo Sphere',
+    'remove_photosphere_btn' => 'Remove Photo Sphere',
     'close' => 'Close',
     'save' => 'Save',
     'saved' => 'Saved',

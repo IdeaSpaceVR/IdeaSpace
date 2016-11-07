@@ -16,6 +16,8 @@ return [
     'dimensions' => 'Dimensions:',
     'duration' => 'Duration:',
     'edit_videosphere' => 'Edit Video Sphere Details',
+    'edit_videosphere_btn' => 'Edit Video Sphere',
+    'remove_videosphere_btn' => 'Remove Video Sphere',
     'close' => 'Close',
     'save' => 'Save',
     'saved' => 'Saved',

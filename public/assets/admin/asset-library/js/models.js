@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
         $('#models .files .list-item .insert').unbind('click');
         $('#models .files .list-item .insert').click(window.insert_click_handler);
         $('#asset-details .insert-btn').unbind('click');
-        $('#asset-details .insert-btn').click(window.insert_click_handler);
+        $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
     } else {
         /* when opened from assets menu, set active class on models tab */
@@ -80,6 +80,8 @@ jQuery(document).ready(function($) {
             $('#asset-details .delete-link').click(window.model_edit_delete_btn_click_handler);
 
             if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
 
@@ -123,6 +125,8 @@ jQuery(document).ready(function($) {
             });
 
             if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
+                $('#asset-details .insert-btn').unbind('click');
+                $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                 $('#asset-details .insert-btn').show();
             }
 
@@ -154,7 +158,7 @@ jQuery(document).ready(function($) {
     $('#models .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
 
 
-    /* insert link and insert button */
+    /* insert link */
     var insert_click_handler = function(e) {
 
         var model_id = $(e.target).attr('data-model-id');
@@ -171,7 +175,26 @@ jQuery(document).ready(function($) {
     };
     window.insert_click_handler = insert_click_handler;
     $('#models .files .list-item .insert').click(window.insert_click_handler);
-    $('#asset-details .insert-btn').click(window.insert_click_handler);
+
+    
+    /* insert button */
+    var insert_btn_click_handler = function(e) {
+
+        var model_id = $(e.target).attr('data-model-id');
+        window.open_asset_library_ref.find('.model-id').val(model_id);
+        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.model-add').hide();
+        window.open_asset_library_ref.find('.model-edit').show();
+
+        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+
+        $('#asset-details').modal('hide');
+        $('#assets').modal('hide');
+
+        window.open_asset_library_ref.find('.remove-model-btn').click(window.remove_model);
+    };
+    window.insert_btn_click_handler = insert_btn_click_handler;
+    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
 
     /* hide model from space content edit page */
@@ -375,7 +398,7 @@ jQuery(document).ready(function($) {
                                             $('#models .files .list-item .insert').unbind('click');
                                             $('#models .files .list-item .insert').click(window.insert_click_handler);
                                             $('#asset-details .insert-btn').unbind('click');
-                                            $('#asset-details .insert-btn').click(window.insert_click_handler);
+                                            $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
                                         }
 
                                     } else {

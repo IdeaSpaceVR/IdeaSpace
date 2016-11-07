@@ -16,6 +16,8 @@ return [
     'dimensions' => 'Dimensions:',
     'duration' => 'Duration:',
     'edit_audio' => 'Edit Audio Details',
+    'edit_audio_btn' => 'Edit Audio File',
+    'remove_audio_btn' => 'Remove Audio File',
     'close' => 'Close',
     'save' => 'Save',
     'saved' => 'Saved',

@@ -14,6 +14,8 @@ return [
     'model_file_size' => 'File size:',
     'uploaded_on' => 'Uploaded on:',
     'model_edit' => 'Edit Model Details',
+    'edit_model_btn' => 'Edit Model',
+    'remove_model_btn' => 'Remove Model',
     'close' => 'Close',
     'save' => 'Save',
     'saved' => 'Saved',
