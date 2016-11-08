@@ -6,11 +6,11 @@ use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 //use Log;
 
-class FieldTypeImage {
+class FieldTypePhotosphere {
 
 
-    private $template_add = 'admin.space.content.field_image_add';
-    private $template_edit = 'admin.space.content.field_image_edit';
+    private $template_add = 'admin.space.content.field_photosphere_add';
+    private $template_edit = 'admin.space.content.field_photosphere_edit';
     private $storage_path;
 
 

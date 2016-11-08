@@ -8,7 +8,7 @@
 
         <div class="videosphere-add">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#videospheres-tab">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_videospheres.add_video') }}
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_videospheres.add_videosphere') }}
             </button>
         </div>
 

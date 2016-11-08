@@ -8,7 +8,10 @@ use App\Content\FieldTypeTextfield;
 use App\Content\FieldTypeTextarea;
 use App\Content\FieldTypeAudio;
 use App\Content\FieldTypeVideo;
+use App\Content\FieldTypeVideosphere;
 use App\Content\FieldTypeImage;
+use App\Content\FieldTypePhotosphere;
+use App\Content\FieldTypeModel3D;
 use App\Content;
 use Log;
 
@@ -19,12 +22,11 @@ class ContentType {
     const FIELD_TYPE_TEXTFIELD = 'textfield';
     const FIELD_TYPE_TEXTAREA = 'textarea';
     const FIELD_TYPE_AUDIO = 'audio';
-    const FIELD_TYPE_VIDEO = 'video';
     const FIELD_TYPE_IMAGE = 'image';
     const FIELD_TYPE_PHOTOSPHERE = 'photosphere';
+    const FIELD_TYPE_VIDEO = 'video';
     const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
     const FIELD_TYPE_MODEL3D = 'model3d';
-
 
     private $fieldTypes;
 
@@ -37,9 +39,11 @@ class ContentType {
     public function __construct() {
 
         $this->fieldTypes[ContentType::FIELD_TYPE_VIDEO] = new FieldTypeVideo('public/assets/user/video/');
+        $this->fieldTypes[ContentType::FIELD_TYPE_VIDEOSPHERE] = new FieldTypeVideosphere('public/assets/user/videosphere/');
         $this->fieldTypes[ContentType::FIELD_TYPE_AUDIO] = new FieldTypeAudio('public/assets/user/audio/');
         $this->fieldTypes[ContentType::FIELD_TYPE_IMAGE] = new FieldTypeImage('public/assets/user/image/');
-        $this->fieldTypes[ContentType::FIELD_TYPE_MODEL3D] = new FieldTypeModel3D('public/assets/user/model/');
+        $this->fieldTypes[ContentType::FIELD_TYPE_PHOTOSPHERE] = new FieldTypePhotosphere('public/assets/user/photosphere/');
+        $this->fieldTypes[ContentType::FIELD_TYPE_MODEL3D] = new FieldTypeModel3D('public/assets/user/model3d/');
         $this->fieldTypes[ContentType::FIELD_TYPE_COLOR] = new FieldTypeColor();
         $this->fieldTypes[ContentType::FIELD_TYPE_DATE] = new FieldTypeDate();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTFIELD] = new FieldTypeTextfield();
@@ -64,7 +68,8 @@ class ContentType {
 
             } else {
 
-                abort(404);
+                /* ignore unknown field type */
+                Log::debug('Unknown field type in found: ' . $properties['#type']);
             }
         }
 

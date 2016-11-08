@@ -4,13 +4,12 @@ namespace App\Content;
 
 use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-//use Log;
 
-class FieldTypeImage {
+class FieldTypeVideosphere {
 
 
-    private $template_add = 'admin.space.content.field_image_add';
-    private $template_edit = 'admin.space.content.field_image_edit';
+    private $template_add = 'admin.space.content.field_videosphere_add';
+    private $template_edit = 'admin.space.content.field_videosphere_edit';
     private $storage_path;
 
 

@@ -113,6 +113,7 @@ class SpaceContentAddController extends Controller {
         $form['upload_max_filesize_tooltip'] = trans('asset_library_controller.upload_max_filesize_tooltip');
         $form['post_max_size'] = $this->phpPostMaxSizeSettings();
         $form['max_filesize_bytes'] = $this->phpFileUploadSizeInBytes();
+        $form['images'] = $this->get_all_images();
         //Log::debug($vars);
 
         return view('admin.space.content.content_add', $form);
