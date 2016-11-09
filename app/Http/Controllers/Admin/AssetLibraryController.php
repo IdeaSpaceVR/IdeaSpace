@@ -43,8 +43,8 @@ class AssetLibraryController extends Controller {
             ],
             'js' => [
                 asset('public/jquery-file-uploader/dmuploader.js'),
+                asset('public/assets/admin/asset-library/js/assets.js'),
                 asset('public/assets/admin/asset-library/js/images.js'), 
-                asset('public/assets/admin/asset-library/js/assets.js')
             ],
             'css' => array(asset('public/assets/admin/asset-library/css/assets.css')),
             'upload_max_filesize' => $this->phpFileUploadSizeSettings(),
