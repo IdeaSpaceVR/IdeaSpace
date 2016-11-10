@@ -17,10 +17,10 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').unbind('click');
         $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
-    } else {
+    } //else {
         /* when opened from assets menu, set active class on audio tab */
-        $('.asset-library-nav').find('#audio-tab').parent().addClass('active');
-    }
+        //$('.asset-library-nav').find('#audio-tab').parent().addClass('active');
+    //}
 
 
     /* touch */
@@ -302,8 +302,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
-
+    });
 
 });
 

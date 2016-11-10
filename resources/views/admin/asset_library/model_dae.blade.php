@@ -1,5 +1,5 @@
 <!-- a-frame //-->
-<a-scene embedded>
+<a-scene reset-camera embedded>
 
     <a-assets>
         <a-asset-item id="model-dae" src="{{ $model_dae }}"></a-asset-item>

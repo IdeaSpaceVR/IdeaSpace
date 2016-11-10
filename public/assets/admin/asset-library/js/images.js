@@ -147,8 +147,7 @@ jQuery(document).ready(function($) {
 
         var image_id = $(e.target).attr('data-image-id');
         window.open_asset_library_ref.find('.image-id').val(image_id); 
-        /* .target-image is set in load-image component (in vr view)  */
-        window.open_asset_library_ref.find('.image-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('.target-image').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.image-placeholder').html('<img src="' + $('#images .files .list-item').find('img[data-image-id=' + image_id + ']').attr('src') + '" class="img-responsive center-block">');
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
@@ -352,7 +351,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
+    });
 
 });
 

@@ -17,10 +17,10 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').unbind('click');
         $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
-    } else {
+    } //else {
         /* when opened from assets menu, set active class on videospheres tab */
-        $('.asset-library-nav').find('#videospheres-tab').parent().addClass('active');
-    }
+        //$('.asset-library-nav').find('#videospheres-tab').parent().addClass('active');
+    //}
 
 
     /* touch */
@@ -48,7 +48,7 @@ jQuery(document).ready(function($) {
     var list_item_edit_click_handler = function(e) {
         e.preventDefault();
         var videosphere_id = $(e.target).attr('data-videosphere-id');
-  
+
         $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
         $('#asset-details').modal('show');
 
@@ -127,7 +127,7 @@ jQuery(document).ready(function($) {
     /* insert link */
     var insert_click_handler = function(e) {
 
-        var videosphere = $(e.target).attr('data-videosphere-id');
+        var videosphere_id = $(e.target).attr('data-videosphere-id');
         window.open_asset_library_ref.find('.videosphere-id').val(videosphere_id);
         window.open_asset_library_ref.find('.videosphere-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
         window.open_asset_library_ref.find('.videosphere-add').hide();
@@ -146,9 +146,9 @@ jQuery(document).ready(function($) {
     /* insert button */
     var insert_btn_click_handler = function(e) {
 
-        var videosphere = $(e.target).attr('data-videosphere-id');
+        var videosphere_id = $(e.target).attr('data-videosphere-id');
         window.open_asset_library_ref.find('.videosphere-id').val(videosphere_id);
-        window.open_asset_library_ref.find('.videosphere-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.videosphere-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $('#videospheres .files .list-item').find('video[data-videosphere-id=' + videosphere_id + ']').find('source').attr('src') + '" type="video/mp4"></video>');
         window.open_asset_library_ref.find('.videosphere-add').hide();
         window.open_asset_library_ref.find('.videosphere-edit').show();
 
@@ -295,7 +295,7 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#videospheres #file-' + id + ':first').html('<div><video class="edit img-thumbnail" width="152" height="152" preload="metadata" data-video-id="'+data.videosphere_id+'">' +
+                $('#videospheres #file-' + id + ':first').html('<div><video class="edit img-thumbnail" width="152" height="152" preload="metadata" data-videosphere-id="'+data.videosphere_id+'">' +
                     '<source src="' + data.uri + '" type="video/mp4"></video></div>');
                 $('#videospheres #file-' + id + ':first').attr('data-videosphere-id', data.videosphere_id);
                 $('#videospheres #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
@@ -353,8 +353,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
-
+    });
 
 });
 

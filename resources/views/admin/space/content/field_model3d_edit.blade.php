@@ -7,14 +7,14 @@
         <input type="hidden" value="" class="model-id">
 
         <div class="model-add">
-            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#model-tab">
+            <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#models-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_models.add_model') }}
             </button>
         </div>
 
         <div class="model-edit" style="display:none">
             <div class="model-placeholder" style="margin-bottom:10px"></div>
-            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#model-tab">
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#models-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_models.edit_model_btn') }}
             </button>
             <button type="button" class="btn btn-primary remove-model-btn">

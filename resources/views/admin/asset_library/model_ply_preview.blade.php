@@ -2,7 +2,7 @@
 <div style="width:300px;height:300px;visibility:hidden">
 
     <!-- a-frame //-->
-    <a-scene id="preview-scene" embedded>
+    <a-scene reset-camera id="preview-scene" embedded>
 
         <a-assets>
             <a-asset-item id="preview-plyModel" src="{{ $model_ply }}"></a-asset-item>

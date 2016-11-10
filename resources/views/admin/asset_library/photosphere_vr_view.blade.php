@@ -9,11 +9,15 @@
         <div class="col-md-8">
 
             <!-- a-frame //-->
-            <a-scene embedded style="width:100%">
+            <a-scene reset-camera embedded style="width:100%">
 
                 <a-assets>
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
                 </a-assets>
+
+                <a-entity>
+                    <a-camera></a-camera>
+                </a-entity>
 
                 <a-sky id="default-sky" color="#000000"></a-sky>
 

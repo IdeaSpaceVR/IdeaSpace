@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Model3D extends Model
 {
 
-    CONST MODEL_STORAGE_PATH = 'public/assets/user/model/';
+    CONST MODEL_STORAGE_PATH = 'public/assets/user/model3d/';
     CONST FILE_EXTENSION_DAE = 'dae';
     CONST FILE_EXTENSION_OBJ = 'obj';
     CONST FILE_EXTENSION_MTL = 'mtl';

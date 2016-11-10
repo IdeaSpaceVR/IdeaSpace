@@ -17,10 +17,10 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').unbind('click');
         $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
-    } else {
+    } //else {
         /* when opened from assets menu, set active class on models tab */
-        $('.asset-library-nav').find('#models-tab').parent().addClass('active');
-    }
+        //$('.asset-library-nav').find('#models-tab').parent().addClass('active');
+    //}
 
 
     /* touch */
@@ -176,13 +176,13 @@ jQuery(document).ready(function($) {
     window.insert_click_handler = insert_click_handler;
     $('#models .files .list-item .insert').click(window.insert_click_handler);
 
-    
+
     /* insert button */
     var insert_btn_click_handler = function(e) {
 
         var model_id = $(e.target).attr('data-model-id');
         window.open_asset_library_ref.find('.model-id').val(model_id);
-        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $('#models .files .list-item').find('img[data-model-id=' + model_id + ']').attr('src') + '" class="img-responsive center-block">');
         window.open_asset_library_ref.find('.model-add').hide();
         window.open_asset_library_ref.find('.model-edit').show();
 
@@ -349,19 +349,16 @@ jQuery(document).ready(function($) {
                             var model = document.querySelector('#preview-model');
                             var box = new THREE.Box3().setFromObject(model.getObject3D('mesh'));
 
-                            //var objectSize = Math.max(box.max.x, box.max.y);
                             var objectSize = Math.max(box.size().x, box.size().y);
 
                             var distance = Math.abs(objectSize / Math.sin(fov / 2));
-                            //model.setAttribute('position', {x: 0, y: 0, z: -distance});
+
                             var camera = document.querySelector('#preview-camera');
                             camera.setAttribute('position', {x: 0, y: box.size().y / 2, z: distance});
-
 
                             /* workaround since model-loaded is emitted before model is shown in scene */
                             setTimeout(function() {
 
-                                //var canvasData = scene.renderer.domElement.toDataURL('image/png');
                                 var canvasData = scene.renderer.domElement.toDataURL('image/png');
 
                                 $.ajax({
@@ -450,8 +447,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
-
+    });
 
 });
 

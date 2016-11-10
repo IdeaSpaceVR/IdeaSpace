@@ -1,5 +1,5 @@
 <!-- a-frame //-->
-<a-scene embedded>
+<a-scene reset-camera embedded>
 
     <a-assets>
         <a-asset-item id="plyModel" src="{{ $model_ply }}"></a-asset-item>

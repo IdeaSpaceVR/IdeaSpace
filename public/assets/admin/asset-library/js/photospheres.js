@@ -17,10 +17,10 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').unbind('click');
         $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
-    } else {
+    } //else {
         /* when opened from assets menu, set active class on photo spheres tab */
-        $('.asset-library-nav').find('#photospheres-tab').parent().addClass('active');
-    }
+        //$('.asset-library-nav').find('#photospheres-tab').parent().addClass('active');
+    //}
 
 
     /* touch */
@@ -141,7 +141,7 @@ jQuery(document).ready(function($) {
 
         var photosphere_id = $(e.target).attr('data-photosphere-id');
         window.open_asset_library_ref.find('.photosphere-id').val(photosphere_id);
-        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('.target-image').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $('#photospheres .files .list-item').find('img[data-photosphere-id=' + photosphere_id + ']').attr('src') + '" class="img-responsive center-block">');
         window.open_asset_library_ref.find('.photosphere-add').hide();
         window.open_asset_library_ref.find('.photosphere-edit').show();
 
@@ -345,8 +345,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
-
+    });
 
 });
 

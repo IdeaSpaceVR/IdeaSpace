@@ -17,10 +17,10 @@ jQuery(document).ready(function($) {
         $('#asset-details .insert-btn').unbind('click');
         $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
-    } else {
+    } //else {
         /* when opened from assets menu, set active class on videos tab */
-        $('.asset-library-nav').find('#videos-tab').parent().addClass('active');
-    }
+        //$('.asset-library-nav').find('#videos-tab').parent().addClass('active');
+    //}
 
 
     /* touch */
@@ -154,7 +154,7 @@ jQuery(document).ready(function($) {
 
         var video_id = $(e.target).attr('data-video-id');
         window.open_asset_library_ref.find('.video-id').val(video_id);
-        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $('#videos .files .list-item').find('video[data-video-id=' + video_id + ']').find('source').attr('src') + '" type="video/mp4"></video>');
         window.open_asset_library_ref.find('.video-add').hide();
         window.open_asset_library_ref.find('.video-edit').show();
 
@@ -359,8 +359,7 @@ jQuery(document).ready(function($) {
         },
         onFallbackMode: function(message) {
         }
-      });
-
+    });
 
 });
 
