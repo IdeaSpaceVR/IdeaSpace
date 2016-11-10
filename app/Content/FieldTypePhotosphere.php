@@ -103,17 +103,24 @@ class FieldTypePhotosphere {
         try {
             /* there is only one field key per content (id) */
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
-            $field->value = $value;
-            $field->save();
+
+            if (!empty($value)) {
+                $field->value = $value;
+                $field->save();
+            } else {
+                $field->delete();
+            }
 
         } catch (ModelNotFoundException $e) {
 
-            $field = new Field;
-            $field->content_id = $content_id;
-            $field->key = $field_key;
-            $field->type = $type;
-            $field->value = $value;
-            $field->save();
+            if (!empty($value)) {
+                $field = new Field;
+                $field->content_id = $content_id;
+                $field->key = $field_key;
+                $field->type = $type;
+                $field->value = $value;
+                $field->save();
+            }
         }
 
         return true;

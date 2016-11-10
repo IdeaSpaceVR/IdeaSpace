@@ -57,7 +57,7 @@
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="vr-view" data-videosphere-id="{{ $videosphere['id'] }}">{{ trans('template_asset_library_videospheres.vr_view') }}</a> | <a href="#" class="edit" data-videosphere-id="{{ $videosphere['id'] }}">{{ trans('template_asset_library_videospheres.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_videospheres.insert') }}</a></span>
+                        <a href="#" class="vr-view" data-videosphere-id="{{ $videosphere['id'] }}">{{ trans('template_asset_library_videospheres.vr_view') }}</a> | <a href="#" class="edit" data-videosphere-id="{{ $videosphere['id'] }}">{{ trans('template_asset_library_videospheres.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert" data-videosphere-id="{{ $videosphere['id'] }}">{{ trans('template_asset_library_videospheres.insert') }}</a></span>
                     </div>
 
                 </div>

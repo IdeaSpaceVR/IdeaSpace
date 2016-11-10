@@ -56,7 +56,7 @@
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="vr-view" data-video-id="{{ $video['id'] }}">{{ trans('template_asset_library_videos.vr_view') }}</a> | <a href="#" class="edit" data-video-id="{{ $video['id'] }}">{{ trans('template_asset_library_videos.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_videos.insert') }}</a></span>
+                        <a href="#" class="vr-view" data-video-id="{{ $video['id'] }}">{{ trans('template_asset_library_videos.vr_view') }}</a> | <a href="#" class="edit" data-video-id="{{ $video['id'] }}">{{ trans('template_asset_library_videos.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert" data-video-id="{{ $video['id'] }}">{{ trans('template_asset_library_videos.insert') }}</a></span>
                     </div>
 
                 </div>

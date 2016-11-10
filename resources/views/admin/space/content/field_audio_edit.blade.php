@@ -4,7 +4,7 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" class="audio-id">
+        <input type="hidden" value="" name="{{ $field_id }}" class="audio-id">
 
         <div class="audio-add">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">

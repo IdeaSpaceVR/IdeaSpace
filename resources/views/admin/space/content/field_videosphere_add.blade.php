@@ -4,7 +4,7 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" class="videosphere-id">
+        <input type="hidden" value="" name="{{ $field_id }}" class="videosphere-id">
 
         <div class="videosphere-add">
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#videospheres-tab">

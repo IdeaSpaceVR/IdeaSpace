@@ -57,7 +57,7 @@
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="edit" data-audio-id="{{ $audio['id'] }}">{{ trans('template_asset_library_audio.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_audio.insert') }}</a></span>
+                        <a href="#" class="edit" data-audio-id="{{ $audio['id'] }}">{{ trans('template_asset_library_audio.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert" data-audio-id="{{ $audio['id'] }}">{{ trans('template_asset_library_audio.insert') }}</a></span>
                     </div>
 
                 </div>

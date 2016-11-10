@@ -55,7 +55,7 @@
                     </div>
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="vr-view" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.vr_view') }}</a> | <a href="#" class="edit" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_photospheres.insert') }}</a></span>
+                        <a href="#" class="vr-view" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.vr_view') }}</a> | <a href="#" class="edit" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert" data-photosphere-id="{{ $photosphere['id'] }}">{{ trans('template_asset_library_photospheres.insert') }}</a></span>
                     </div>
 
                 </div>

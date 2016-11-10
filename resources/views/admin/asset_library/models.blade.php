@@ -56,7 +56,7 @@
                     </div> 
 
                     <div class="menu" style="text-align:center;margin-top:5px;display:none">
-                        <a href="#" class="vr-view" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.vr_view') }}</a> | <a href="#" class="edit" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert">{{ trans('template_asset_library_models.insert') }}</a></span>
+                        <a href="#" class="vr-view" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.vr_view') }}</a> | <a href="#" class="edit" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.edit') }}</a> <span class="insert-link" style="display:none">| <a href="#" class="insert" data-model-id="{{ $model['id'] }}">{{ trans('template_asset_library_models.insert') }}</a></span>
                     </div>
 
                 </div>
