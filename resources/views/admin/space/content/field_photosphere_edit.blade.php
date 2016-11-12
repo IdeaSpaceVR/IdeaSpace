@@ -4,16 +4,16 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" name="{{ $field_id }}" class="photosphere-id">
+        <input type="hidden" value="@if (isset($form['#content']['#id'])) {{ $form['#content']['#id'] }} @endif" name="{{ $field_id }}" class="photosphere-id">
 
-        <div class="photosphere-add">
+        <div class="photosphere-add" @if (isset($form['#content']['#value'])) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#photospheres-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_photospheres.add_photosphere') }}
             </button>
         </div>
 
-        <div class="photosphere-edit" style="display:none">
-            <div class="photosphere-placeholder" style="margin-bottom:10px"></div>
+        <div class="photosphere-edit" @if (!isset($form['#content']['#value'])) style="display:none" @endif>
+            <div class="photosphere-placeholder" style="margin-bottom:10px"><img src="@if (isset($form['#content']['#value'])) {{ $form['#content']['#value'] }} @endif" class="img-responsive center-block"></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#photospheres-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_photospheres.edit_photosphere_btn') }}
             </button>
@@ -27,4 +27,6 @@
     {!! $errors->has($field_id)?$errors->first($field_id, '<span class="help-block">:message</span>'):'' !!}
 </div>
 
-
+@push('field_type_scripts')
+    <script src="{{ asset('public/assets/admin/space/content/js/field_photosphere_edit.js') }}" type="text/javascript"></script>
+@endpush

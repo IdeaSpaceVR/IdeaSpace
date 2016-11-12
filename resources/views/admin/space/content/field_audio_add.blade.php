@@ -13,7 +13,7 @@
         </div>
 
         <div class="audio-edit" style="display:none">
-            <div class="audio-placeholder" style="margin-bottom:10px"></div>
+            <div class="audio-placeholder" style="margin-bottom:10px"><audio class="center-block" controls="controls"><source src="" type="audio/mpeg"></audio></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_audio.edit_audio_btn') }}
             </button>
@@ -27,4 +27,6 @@
     {!! $errors->has($field_id)?$errors->first($field_id, '<span class="help-block">:message</span>'):'' !!}
 </div>
 
-
+@push('field_type_scripts')
+    <script src="{{ asset('public/assets/admin/space/content/js/field_audio_add.js') }}" type="text/javascript"></script>
+@endpush

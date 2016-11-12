@@ -13,7 +13,7 @@
         </div>
 
         <div class="videosphere-edit" style="display:none">
-            <div class="videosphere-placeholder" style="margin-bottom:10px"></div>
+            <div class="videosphere-placeholder" style="margin-bottom:10px"><video class="edit img-thumbnail center-block" width="300" height="auto" preload="metadata"><source src="" type="video/mp4"></video></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#videospheres-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_videospheres.edit_videosphere_btn') }}
             </button>
@@ -27,4 +27,6 @@
     {!! $errors->has($field_id)?$errors->first($field_id, '<span class="help-block">:message</span>'):'' !!}
 </div>
 
-
+@push('field_type_scripts')
+    <script src="{{ asset('public/assets/admin/space/content/js/field_videosphere_add.js') }}" type="text/javascript"></script>
+@endpush

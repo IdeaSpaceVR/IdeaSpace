@@ -196,5 +196,7 @@
     } 
     ?>
 
+    @stack('field_type_scripts')
+
 </body>
 </html>

@@ -4,6 +4,8 @@ namespace App\Content;
 
 use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\Model3D;
+use App\GenericFile;
 
 class FieldTypeModel3D {
 
@@ -59,6 +61,8 @@ class FieldTypeModel3D {
 
         $field_arr = $this->prepare($field_key, $properties);
         $field_arr['#template'] = $this->template_edit;
+        $field_arr['#content'] = array('#value' => null);
+        $field_arr['#content'] = array('#id' => null);
 
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
@@ -66,7 +70,16 @@ class FieldTypeModel3D {
             return $field_arr;
         }
 
-        $field_arr['#content'] = array('#value' => $field->value);
+        try {
+            $model = Model3D::where('id', $field->value)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return $field_arr;
+        }
+
+        $genericFile = GenericFile::where('id', $model->file_id_preview)->first();
+
+        $field_arr['#content']['#value'] = asset($genericFile->uri);
+        $field_arr['#content']['#id'] = $model->id;
 
         return $field_arr;
     }

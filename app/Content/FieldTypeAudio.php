@@ -4,6 +4,8 @@ namespace App\Content;
 
 use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use App\GenericFile;
+use App\Audio;
 use Log;
 
 class FieldTypeAudio {
@@ -60,6 +62,8 @@ class FieldTypeAudio {
 
         $field_arr = $this->prepare($field_key, $properties);
         $field_arr['#template'] = $this->template_edit;
+        $field_arr['#content'] = array('#value' => null);
+        $field_arr['#content'] = array('#id' => null);
 
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
@@ -67,7 +71,16 @@ class FieldTypeAudio {
             return $field_arr;
         }
 
-        $field_arr['#content'] = array('#value' => $field->value);
+        try {
+            $audio = Audio::where('id', $field->value)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return $field_arr;
+        }
+
+        $genericFile = GenericFile::where('id', $audio->file_id)->first();
+
+        $field_arr['#content']['#value'] = asset($genericFile->uri);
+        $field_arr['#content']['#id'] = $audio->id;
 
         return $field_arr;
     }

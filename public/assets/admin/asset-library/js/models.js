@@ -163,15 +163,13 @@ jQuery(document).ready(function($) {
 
         var model_id = $(e.target).attr('data-model-id');
         window.open_asset_library_ref.find('.model-id').val(model_id);
-        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.model-placeholder img').attr('src', $(e.target).parent().parent().parent().find('img').attr('src'));
         window.open_asset_library_ref.find('.model-add').hide();
         window.open_asset_library_ref.find('.model-edit').show();
 
         $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
 
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-model-btn').click(window.remove_model);
     };
     window.insert_click_handler = insert_click_handler;
     $('#models .files .list-item .insert').click(window.insert_click_handler);
@@ -182,7 +180,7 @@ jQuery(document).ready(function($) {
 
         var model_id = $(e.target).attr('data-model-id');
         window.open_asset_library_ref.find('.model-id').val(model_id);
-        window.open_asset_library_ref.find('.model-placeholder').html('<img src="' + $('#models .files .list-item').find('img[data-model-id=' + model_id + ']').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.model-placeholder img').attr('src', $('#models .files .list-item').find('img[data-model-id=' + model_id + ']').attr('src'));
         window.open_asset_library_ref.find('.model-add').hide();
         window.open_asset_library_ref.find('.model-edit').show();
 
@@ -190,20 +188,9 @@ jQuery(document).ready(function($) {
 
         $('#asset-details').modal('hide');
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-model-btn').click(window.remove_model);
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
-
-
-    /* hide model from space content edit page */
-    var remove_model = function(e) {
-        window.open_asset_library_ref.find('.model-id').val('');
-        window.open_asset_library_ref.find('.model-add').show();
-        window.open_asset_library_ref.find('.model-edit').hide();
-    };
-    window.remove_model = remove_model;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;

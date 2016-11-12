@@ -135,15 +135,14 @@ jQuery(document).ready(function($) {
 
         var video_id = $(e.target).attr('data-video-id');
         window.open_asset_library_ref.find('.video-id').val(video_id);
-        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $(e.target).parent().parent().parent().find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.video-placeholder video source').attr('src', $(e.target).parent().parent().parent().find('source').attr('src'));
+        window.open_asset_library_ref.find('.video-placeholder video')[0].load();
         window.open_asset_library_ref.find('.video-add').hide();
         window.open_asset_library_ref.find('.video-edit').show();
 
         $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
 
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-video-btn').click(window.remove_video);
     };
     window.insert_click_handler = insert_click_handler;
     $('#videos .files .list-item .insert').click(window.insert_click_handler);
@@ -154,7 +153,8 @@ jQuery(document).ready(function($) {
 
         var video_id = $(e.target).attr('data-video-id');
         window.open_asset_library_ref.find('.video-id').val(video_id);
-        window.open_asset_library_ref.find('.video-placeholder').html('<video class="edit img-thumbnail center-block" width="152" height="152" preload="metadata"><source src="' + $('#videos .files .list-item').find('video[data-video-id=' + video_id + ']').find('source').attr('src') + '" type="video/mp4"></video>');
+        window.open_asset_library_ref.find('.video-placeholder video source').attr('src', $('#videos .files .list-item').find('video[data-video-id=' + video_id + ']').find('source').attr('src'));
+        window.open_asset_library_ref.find('.video-placeholder video')[0].load();
         window.open_asset_library_ref.find('.video-add').hide();
         window.open_asset_library_ref.find('.video-edit').show();
 
@@ -162,20 +162,9 @@ jQuery(document).ready(function($) {
 
         $('#asset-details').modal('hide');
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-video-btn').click(window.remove_video);
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
-
-
-    /* hide video from space content edit page */
-    var remove_video = function(e) {
-        window.open_asset_library_ref.find('.video-id').val('');
-        window.open_asset_library_ref.find('.video-add').show();
-        window.open_asset_library_ref.find('.video-edit').hide();
-    };
-    window.remove_video = remove_video;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;

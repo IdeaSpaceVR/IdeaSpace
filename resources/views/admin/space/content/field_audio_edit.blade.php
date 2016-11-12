@@ -4,16 +4,16 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" name="{{ $field_id }}" class="audio-id">
+        <input type="hidden" value="@if (isset($form['#content']['#id'])) {{ $form['#content']['#id'] }} @endif" name="{{ $field_id }}" class="audio-id">
 
-        <div class="audio-add">
+        <div class="audio-add" @if (isset($form['#content']['#value'])) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_audio.add_audio') }}
             </button>
         </div>
 
-        <div class="audio-edit" style="display:none">
-            <div class="audio-placeholder" style="margin-bottom:10px"></div>
+        <div class="audio-edit" @if (!isset($form['#content']['#value'])) style="display:none" @endif>
+            <div class="audio-placeholder" style="margin-bottom:10px"><audio class="center-block" controls="controls"><source src="@if (isset($form['#content']['#value'])) {{ $form['#content']['#value'] }} @endif" type="audio/mpeg"></audio></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_audio.edit_audio_btn') }}
             </button>
@@ -27,4 +27,6 @@
     {!! $errors->has($field_id)?$errors->first($field_id, '<span class="help-block">:message</span>'):'' !!}
 </div>
 
-
+@push('field_type_scripts')
+    <script src="{{ asset('public/assets/admin/space/content/js/field_audio_edit.js') }}" type="text/javascript"></script>
+@endpush

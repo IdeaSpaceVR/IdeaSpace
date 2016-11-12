@@ -128,15 +128,13 @@ jQuery(document).ready(function($) {
 
         var image_id = $(e.target).attr('data-image-id');
         window.open_asset_library_ref.find('.image-id').val(image_id); 
-        window.open_asset_library_ref.find('.image-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.image-placeholder img').attr('src', $(e.target).parent().parent().parent().find('img').attr('src'));
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
         $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
 
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-image-btn').click(window.remove_image);
     };
     window.insert_click_handler = insert_click_handler;
     $('#images .files .list-item .insert').click(window.insert_click_handler);
@@ -147,7 +145,7 @@ jQuery(document).ready(function($) {
 
         var image_id = $(e.target).attr('data-image-id');
         window.open_asset_library_ref.find('.image-id').val(image_id); 
-        window.open_asset_library_ref.find('.image-placeholder').html('<img src="' + $('#images .files .list-item').find('img[data-image-id=' + image_id + ']').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.image-placeholder img').attr('src', $('#images .files .list-item').find('img[data-image-id=' + image_id + ']').attr('src'));
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
@@ -155,20 +153,9 @@ jQuery(document).ready(function($) {
 
         $('#asset-details').modal('hide');
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-image-btn').click(window.remove_image);
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
-
-
-    /* hide image from space content edit page */
-    var remove_image = function(e) {
-        window.open_asset_library_ref.find('.image-id').val(''); 
-        window.open_asset_library_ref.find('.image-add').show();
-        window.open_asset_library_ref.find('.image-edit').hide();
-    };    
-    window.remove_image = remove_image;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog; 

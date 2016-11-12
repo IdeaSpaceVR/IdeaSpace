@@ -122,15 +122,13 @@ jQuery(document).ready(function($) {
 
         var photosphere_id = $(e.target).attr('data-photosphere-id');
         window.open_asset_library_ref.find('.photosphere-id').val(photosphere_id);
-        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $(e.target).parent().parent().parent().find('img').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.photosphere-placeholder img').attr('src', $(e.target).parent().parent().parent().find('img').attr('src'));
         window.open_asset_library_ref.find('.photosphere-add').hide();
         window.open_asset_library_ref.find('.photosphere-edit').show();
 
         $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
 
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-photosphere-btn').click(window.remove_photosphere);
     };
     window.insert_click_handler = insert_click_handler;
     $('#photospheres .files .list-item .insert').click(window.insert_click_handler);
@@ -141,7 +139,7 @@ jQuery(document).ready(function($) {
 
         var photosphere_id = $(e.target).attr('data-photosphere-id');
         window.open_asset_library_ref.find('.photosphere-id').val(photosphere_id);
-        window.open_asset_library_ref.find('.photosphere-placeholder').html('<img src="' + $('#photospheres .files .list-item').find('img[data-photosphere-id=' + photosphere_id + ']').attr('src') + '" class="img-responsive center-block">');
+        window.open_asset_library_ref.find('.photosphere-placeholder img').attr('src', $('#photospheres .files .list-item').find('img[data-photosphere-id=' + photosphere_id + ']').attr('src'));
         window.open_asset_library_ref.find('.photosphere-add').hide();
         window.open_asset_library_ref.find('.photosphere-edit').show();
 
@@ -149,20 +147,9 @@ jQuery(document).ready(function($) {
 
         $('#asset-details').modal('hide');
         $('#assets').modal('hide');
-
-        window.open_asset_library_ref.find('.remove-photosphere-btn').click(window.remove_photosphere);
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
-
-
-    /* hide photosphere from space content edit page */
-    var remove_photosphere = function(e) {
-        window.open_asset_library_ref.find('.photosphere-id').val('');
-        window.open_asset_library_ref.find('.photosphere-add').show();
-        window.open_asset_library_ref.find('.photosphere-edit').hide();
-    };
-    window.remove_photosphere = remove_photosphere;
 
 
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
