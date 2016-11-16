@@ -52,7 +52,7 @@ class ContentType {
 
 
     /**
-     * Prepare a template.
+     * Prepare a template, content add, first time.
      * 
      * @param Array $contenttype
      *
@@ -73,12 +73,23 @@ class ContentType {
             }
         }
 
+        /* reduce field type scripts */
+        $field_type_scripts = [];
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+          if (!array_key_exists($properties['#type'], $field_type_scripts) && array_key_exists('#template_script', $properties)) {
+            $field_type_scripts[$properties['#type']] = asset($properties['#template_script']);
+          }
+        }
+        $field_type_scripts = array_values($field_type_scripts);
+
+        $contenttype['field_type_scripts'] = $field_type_scripts;
+
         return $contenttype;
     }
 
   
     /**
-     * Load content for a template.
+     * Load content for a template, content edit.
      *
      * @param integer $content_id
      * @param Array $contenttype
@@ -99,9 +110,21 @@ class ContentType {
             }
         }
 
+
+        /* reduce field type scripts */
+        $field_type_scripts = [];
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+          if (!array_key_exists($properties['#type'], $field_type_scripts) && array_key_exists('#template_script', $properties)) {
+            $field_type_scripts[$properties['#type']] = asset($properties['#template_script']);
+          }
+        }
+        $field_type_scripts = array_values($field_type_scripts);
+
+
         /* load default content title */
         $content = Content::where('id', $content_id)->first();
         $contenttype['isvr_content_title'] = $content->title;
+        $contenttype['field_type_scripts'] = $field_type_scripts;
 
         return $contenttype;
     }

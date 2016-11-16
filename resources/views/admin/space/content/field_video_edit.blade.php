@@ -27,6 +27,3 @@
     {!! $errors->has($field_id)?$errors->first($field_id, '<span class="help-block">:message</span>'):'' !!}
 </div>
 
-@push('field_type_scripts')
-    <script src="{{ asset('public/assets/admin/space/content/js/field_video_edit.js') }}" type="text/javascript"></script>
-@endpush

@@ -13,6 +13,8 @@ class FieldTypeImage {
 
     private $template_add = 'admin.space.content.field_image_add';
     private $template_edit = 'admin.space.content.field_image_edit';
+    private $template_add_script = 'public/assets/admin/space/content/js/field_image_add.js';
+    private $template_edit_script = 'public/assets/admin/space/content/js/field_image_edit.js';
     private $storage_path;
 
 
@@ -42,6 +44,7 @@ class FieldTypeImage {
         $field = [];
         $field = $properties;
         $field['#template'] = $this->template_add;
+        $field['#template_script'] = $this->template_add_script;
 
         return $field;
     }
@@ -62,6 +65,7 @@ class FieldTypeImage {
 
         $field_arr = $this->prepare($field_key, $properties);
         $field_arr['#template'] = $this->template_edit;
+        $field_arr['#template_script'] = $this->template_edit_script;
         $field_arr['#content'] = array('#value' => null);
         $field_arr['#content'] = array('#id' => null);
 

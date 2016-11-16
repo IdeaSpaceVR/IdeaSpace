@@ -110,6 +110,9 @@ class SpaceContentAddController extends Controller {
             asset('public/assets/admin/asset-library/js/assets.js'),
         ];
 
+        $form['js'] = array_merge($form['js'], $vars['field_type_scripts']);
+        unset($vars['field_type_scripts']);
+
         /* needed for asset library: resources/views/admin/asset_library/assets_modal.blade.php */
         $form['upload_max_filesize'] = $this->phpFileUploadSizeSettings();
         $form['upload_max_filesize_tooltip'] = trans('asset_library_controller.upload_max_filesize_tooltip');
