@@ -149,7 +149,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $validation_rules_messages = $this->fieldTypes[$properties['#type']]->get_validation_rules_messages($validation_rules_messages, $field_key, $properties);
+                $validation_rules_messages = $this->fieldTypes[$properties['#type']]->get_validation_rules_messages($request, $validation_rules_messages, $field_key, $properties);
 
             } else {
 
@@ -190,7 +190,8 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
 
-                $this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all[$field_key]);
+                //$this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all[$field_key]);
+                $this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all);
             }
         }
 
@@ -218,7 +219,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
 
-                $this->fieldTypes[$properties['#type']]->save($content_id, $field_key, $properties['#type'], $request_all[$field_key]);
+                $this->fieldTypes[$properties['#type']]->save($content_id, $field_key, $properties['#type'], $request_all);
             }
         }
 

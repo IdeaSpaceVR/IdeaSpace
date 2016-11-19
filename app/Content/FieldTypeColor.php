@@ -70,13 +70,14 @@ class FieldTypeColor {
     /**
      * Get validation rules and messages.
      *
+     * @param Request $request
      * @param Array $validation_rules_messages
      * @param String $field_key
      * @param Array $properties
      *
      * @return Array
      */
-    public function get_validation_rules_messages($validation_rules_messages, $field_key, $properties) {
+    public function get_validation_rules_messages($request, $validation_rules_messages, $field_key, $properties) {
 
         return $validation_rules_messages;
     }
@@ -88,16 +89,16 @@ class FieldTypeColor {
      * @param String $content_id
      * @param String $field_key
      * @param String $type
-     * @param String $value
+     * @param Array $request_all
      *
      * @return True
      */
-    public function save($content_id, $field_key, $type, $value) {
+    public function save($content_id, $field_key, $type, $request_all) {
 
         try {
             /* there is only one field key per content (id) */
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
-            $field->value = $value;
+            $field->value = $request_all[$field_key];
             $field->save();
 
         } catch (ModelNotFoundException $e) {
@@ -106,7 +107,7 @@ class FieldTypeColor {
             $field->content_id = $content_id;
             $field->key = $field_key;
             $field->type = $type;
-            $field->value = $value;
+            $field->value = $request_all[$field_key];
             $field->save();
         }
 

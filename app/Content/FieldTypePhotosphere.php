@@ -95,13 +95,64 @@ class FieldTypePhotosphere {
     /**
      * Get validation rules and messages.
      *
+     * @param Request $request
      * @param Array $validation_rules_messages
      * @param String $field_key
      * @param Array $properties
      *
      * @return Array
      */
-    public function get_validation_rules_messages($validation_rules_messages, $field_key, $properties) {
+    public function get_validation_rules_messages($request, $validation_rules_messages, $field_key, $properties) {
+
+        /* a proper mime type validation has been done during asset library upload */
+
+        $file_extensions = '';
+        foreach ($properties['#file-extension'] as $file_ext) {
+            $file_extensions .= $file_ext . ',';
+        }
+        $file_extensions = substr($file_extensions, 0, -1);
+
+        if ($request->input($field_key) != '' ) {
+
+            $field_value = trim($request->input($field_key));
+            $photosphere = Photosphere::where('id', $field_value)->first();
+            $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+
+            $path_parts = pathinfo($genericFile->filename);
+            $request->merge([$field_key => $path_parts['extension']]);
+            /* needed if we want to store the file id instead of the extension */
+            $request->request->add([$field_key . '__photosphere_id' => $field_value]);
+        }
+
+        if ($properties['#required']) {
+
+            $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'required|in:' . $file_extensions);
+
+            /* array_dot is flattens the array because $field_key . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
+                $validation_rules_messages['messages'],
+                $field_key . '.required',
+                trans('fieldtype_photosphere.validation_required', ['label' => $properties['#label']])
+            ));
+
+            /* array_dot flattens the array because $field_key . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
+                $validation_rules_messages['messages'],
+                $field_key . '.in',
+                trans('fieldtype_photosphere.validation_in', ['label' => $properties['#label'], 'file_extensions' => implode(', ', explode(',', $file_extensions))])
+            ));
+
+        } else {
+
+            $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'in:' . $file_extensions);
+
+            /* array_dot flattens the array because $field_key . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
+                $validation_rules_messages['messages'],
+                $field_key . '.in',
+                trans('fieldtype_photosphere.validation_in', ['label' => $properties['#label'], 'file_extensions' => implode(', ', explode(',', $file_extensions))])
+            ));
+        }
 
         return $validation_rules_messages;
     }
@@ -113,18 +164,18 @@ class FieldTypePhotosphere {
      * @param String $content_id
      * @param String $field_key
      * @param String $type
-     * @param String $value
+     * @param Array $request_all
      *
      * @return True
      */
-    public function save($content_id, $field_key, $type, $value) {
+    public function save($content_id, $field_key, $type, $request_all) {
 
         try {
             /* there is only one field key per content (id) */
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
 
-            if (!empty($value)) {
-                $field->value = $value;
+            if (array_has($request_all, $field_key . '__photosphere_id')) {
+                $field->value = $request_all[$field_key . '__photosphere_id'];
                 $field->save();
             } else {
                 $field->delete();
@@ -132,12 +183,12 @@ class FieldTypePhotosphere {
 
         } catch (ModelNotFoundException $e) {
 
-            if (!empty($value)) {
+            if (array_has($request_all, $field_key . '__photosphere_id')) {
                 $field = new Field;
                 $field->content_id = $content_id;
                 $field->key = $field_key;
                 $field->type = $type;
-                $field->value = $value;
+                $field->value = $request_all[$field_key . '__photosphere_id'];
                 $field->save();
             }
         }
