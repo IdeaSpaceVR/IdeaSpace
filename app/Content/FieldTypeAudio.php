@@ -110,7 +110,7 @@ class FieldTypeAudio {
         }
         $file_extensions = substr($file_extensions, 0, -1);
 
-        if ($request->input($field_key) != '' ) {
+        if ($request->input($field_key) != '') {
 
             $field_value = trim($request->input($field_key));
             $audio = Audio::where('id', $field_value)->first();
@@ -120,6 +120,8 @@ class FieldTypeAudio {
             $request->merge([$field_key => $path_parts['extension']]);
             /* needed if we want to store the file id instead of the extension */
             $request->request->add([$field_key . '__audio_id' => $field_value]);
+            /* needed if we want to retrieve the old input in case of validation error */
+            $request->request->add([$field_key . '__audio_src' => asset($genericFile->uri)]);
         }
 
         if ($properties['#required']) {

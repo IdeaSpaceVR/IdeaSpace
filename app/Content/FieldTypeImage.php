@@ -122,6 +122,9 @@ class FieldTypeImage {
             $request->merge([$field_key => $path_parts['extension']]);
             /* needed if we want to store the file id instead of the extension */
             $request->request->add([$field_key . '__image_id' => $field_value]);
+            /* needed if we want to retrieve the old input in case of validation error */
+            $genericFileThumbnail = substr($genericFile->uri, 0, strrpos($genericFile->uri, '.')) . GenericFile::THUMBNAIL_FILE_SUFFIX . substr($genericFile->uri, strrpos($genericFile->uri, '.'));
+            $request->request->add([$field_key . '__image_src' => asset($genericFileThumbnail)]);
         }
 
 

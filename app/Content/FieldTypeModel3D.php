@@ -124,10 +124,14 @@ class FieldTypeModel3D {
                 $path_parts = pathinfo($genericFile->filename);
             }
 
+            $genericFilePreview = GenericFile::where('id', $model->file_id_preview)->first();
+
             $request->merge([$field_key => $path_parts['extension']]);
 
             /* needed if we want to store the file id instead of the extension */
             $request->request->add([$field_key . '__model3d_id' => $field_value]);
+            /* needed if we want to retrieve the old input in case of validation error */
+            $request->request->add([$field_key . '__model3d_src' => asset($genericFilePreview->uri)]);
         }
 
       

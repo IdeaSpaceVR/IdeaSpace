@@ -4,16 +4,16 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" name="{{ $field_id }}" class="model-id">
+        <input type="hidden" value="{{ old($field_id . '__model3d_id') }}" name="{{ $field_id }}" class="model-id">
 
-        <div class="model-add">
+        <div class="model-add" @if (old($field_id . '__model3d_id') !== null) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#models-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_models.add_model') }}
             </button>
         </div>
 
-        <div class="model-edit" style="display:none">
-            <div class="model-placeholder" style="margin-bottom:10px"><img src="" class="img-responsive center-block"></div>
+        <div class="model-edit" @if (old($field_id . '__model3d_id') === null) style="display:none" @endif>
+            <div class="model-placeholder" style="margin-bottom:10px"><img src="{{ old($field_id . '__model3d_src') }}" class="img-responsive center-block"></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#models-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_models.edit_model_btn') }}
             </button>

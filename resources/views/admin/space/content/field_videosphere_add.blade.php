@@ -4,16 +4,16 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" name="{{ $field_id }}" class="videosphere-id">
+        <input type="hidden" value="{{ old($field_id . '__videosphere_id') }}" name="{{ $field_id }}" class="videosphere-id">
 
-        <div class="videosphere-add">
+        <div class="videosphere-add" @if (old($field_id . '__videosphere_id') !== null) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#videospheres-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_videospheres.add_videosphere') }}
             </button>
         </div>
 
-        <div class="videosphere-edit" style="display:none">
-            <div class="videosphere-placeholder" style="margin-bottom:10px"><video class="edit img-thumbnail center-block" width="300" height="auto" preload="metadata"><source src="" type="video/mp4"></video></div>
+        <div class="videosphere-edit" @if (old($field_id . '__videosphere_id') === null) style="display:none" @endif>
+            <div class="videosphere-placeholder" style="margin-bottom:10px"><video class="edit img-thumbnail center-block" width="300" height="auto" preload="metadata"><source src="{{ old($field_id . '__videosphere_src') }}" type="video/mp4"></video></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#videospheres-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_videospheres.edit_videosphere_btn') }}
             </button>

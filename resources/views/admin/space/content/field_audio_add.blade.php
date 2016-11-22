@@ -4,16 +4,16 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="" name="{{ $field_id }}" class="audio-id">
+        <input type="hidden" value="{{ old($field_id . '__audio_id') }}" name="{{ $field_id }}" class="audio-id">
 
-        <div class="audio-add">
+        <div class="audio-add" @if (old($field_id . '__audio_id') !== null) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('template_asset_library_audio.add_audio') }}
             </button>
         </div>
 
-        <div class="audio-edit" style="display:none">
-            <div class="audio-placeholder" style="margin-bottom:10px"><audio class="center-block" controls="controls"><source src="" type="audio/mpeg"></audio></div>
+        <div class="audio-edit" @if (old($field_id . '__audio_id') === null) style="display:none" @endif>
+            <div class="audio-placeholder" style="margin-bottom:10px"><audio class="center-block" controls="controls"><source src="{{ old($field_id . '__audio_src') }}" type="audio/mpeg"></audio></div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#assets" data-opentab="#audio-tab">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('template_asset_library_audio.edit_audio_btn') }}
             </button>

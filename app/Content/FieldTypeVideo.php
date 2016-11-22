@@ -119,6 +119,8 @@ class FieldTypeVideo {
             $request->merge([$field_key => $path_parts['extension']]);
             /* needed if we want to store the file id instead of the extension */
             $request->request->add([$field_key . '__video_id' => $field_value]);
+            /* needed if we want to retrieve the old input in case of validation error */
+            $request->request->add([$field_key . '__video_src' => asset($genericFile->uri)]);
         }
 
         if ($properties['#required']) {
