@@ -9,7 +9,6 @@ jQuery(document).ready(function($) {
         $('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
-
         $('#videospheres .files .insert-link').show();
         $('#asset-details .insert-btn').show();
         $('#videospheres .files .list-item .insert').unbind('click');
@@ -139,6 +138,7 @@ jQuery(document).ready(function($) {
         $('#assets').modal('hide');
     };
     window.insert_click_handler = insert_click_handler;
+    $('#videospheres .files .list-item .insert').unbind('click');
     $('#videospheres .files .list-item .insert').click(window.insert_click_handler);
 
 
@@ -158,6 +158,7 @@ jQuery(document).ready(function($) {
         $('#assets').modal('hide');
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
+    $('#asset-details .insert-btn').unbind('click');
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
 

@@ -137,6 +137,7 @@ jQuery(document).ready(function($) {
         $('#assets').modal('hide');
     };
     window.insert_click_handler = insert_click_handler;
+    $('#images .files .list-item .insert').unbind('click');
     $('#images .files .list-item .insert').click(window.insert_click_handler);
 
 
@@ -155,6 +156,7 @@ jQuery(document).ready(function($) {
         $('#assets').modal('hide');
     };
     window.insert_btn_click_handler = insert_btn_click_handler;
+    $('#asset-details .insert-btn').unbind('click');
     $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
 
 
