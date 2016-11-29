@@ -19,7 +19,7 @@ class Field extends Model {
      * @var array
      */
     protected $fillable = [
-        'content_id', 'key', 'type', 'value'
+        'content_id', 'key', 'type', 'data', 'meta_data'
     ];
 
 }

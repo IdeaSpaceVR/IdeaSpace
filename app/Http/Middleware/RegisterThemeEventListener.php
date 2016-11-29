@@ -5,7 +5,7 @@ namespace App\Http\Middleware;
 use Closure;
 use App\Theme;
 use File;
-use Log;
+//use Log;
 
 class RegisterThemeEventListener
 {
@@ -20,14 +20,12 @@ class RegisterThemeEventListener
      */
     public function handle($request, Closure $next)
     {
-        $theme_id = session('theme-id');
+        $themes = Theme::where('status', Theme::STATUS_ACTIVE)->get(); 
 
-        if ($theme_id != '' && $theme_id != null) {
+        foreach ($themes as $theme) {
 
-            $theme = Theme::where('id', $theme_id)->first(); 
-
-            if ($theme != null && $theme->status == Theme::STATUS_ACTIVE && File::exists($theme->root_dir . '/' . Theme::FUNCTIONS_FILE)) {
-                require $theme->root_dir . '/' . Theme::FUNCTIONS_FILE;
+            if (File::exists($theme->root_dir . '/' . Theme::FUNCTIONS_FILE)) {
+                require_once $theme->root_dir . '/' . Theme::FUNCTIONS_FILE;
             } 
         }
         

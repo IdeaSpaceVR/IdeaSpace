@@ -190,8 +190,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
 
-                //$this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all[$field_key]);
-                $this->fieldTypes[$properties['#type']]->save($content->id, $field_key, $properties['#type'], $request_all);
+                $this->fieldTypes[$properties['#type']]->save($space_id, $content->id, $field_key, $properties['#type'], $request_all);
             }
         }
 
@@ -219,11 +218,46 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
 
-                $this->fieldTypes[$properties['#type']]->save($content_id, $field_key, $properties['#type'], $request_all);
+                $this->fieldTypes[$properties['#type']]->save($content->space_id, $content_id, $field_key, $properties['#type'], $request_all);
             }
         }
 
         return true;
+    }
+
+
+    /**
+     * Delete content.
+     *
+     * @param integer $content_id
+     * @param Array $contenttype
+     *
+     * @return $vars
+     */
+    public function delete($content_id, $contenttype) {
+
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+
+            if (array_has($this->fieldTypes, $properties['#type'])) {
+
+                $this->fieldTypes[$properties['#type']]->delete($content_id, $field_key, $properties);
+
+            } else {
+
+                abort(404);
+            }
+        }
+
+        try {
+            $content = Content::where('id', $content_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $title = $content->title;
+        $content->delete();
+
+        return $title;
     }
 
 

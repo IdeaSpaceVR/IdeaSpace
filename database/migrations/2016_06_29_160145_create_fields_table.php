@@ -19,7 +19,8 @@ class CreateFieldsTable extends Migration
             $table->integer('content_id');
             $table->string('key');
             $table->string('type');
-            $table->text('value');
+            $table->text('data');
+            $table->text('meta_data')->nullable();
 
             $table->timestamps();
         });

@@ -33,7 +33,7 @@ class SpaceContentAddController extends Controller {
     public function __construct(ContentType $ct) {
 
         $this->middleware('auth');
-        //$this->middleware('register.theme.eventlistener');
+        $this->middleware('register.theme.eventlistener');
         $this->contentType = $ct;
     }
 

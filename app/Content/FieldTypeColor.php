@@ -61,7 +61,7 @@ class FieldTypeColor {
             return $field_arr;
         }
 
-        $field_arr['#content'] = array('#value' => $field->value);
+        $field_arr['#content'] = array('#value' => $field->data);
 
         return $field_arr;
     }
@@ -86,19 +86,20 @@ class FieldTypeColor {
     /**
      * Save entry.
      *
-     * @param String $content_id
+     * @param int $space_id
+     * @param int $content_id
      * @param String $field_key
      * @param String $type
      * @param Array $request_all
      *
      * @return True
      */
-    public function save($content_id, $field_key, $type, $request_all) {
+    public function save($space_id, $content_id, $field_key, $type, $request_all) {
 
         try {
             /* there is only one field key per content (id) */
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
-            $field->value = $request_all[$field_key];
+            $field->data = $request_all[$field_key];
             $field->save();
 
         } catch (ModelNotFoundException $e) {
@@ -107,11 +108,31 @@ class FieldTypeColor {
             $field->content_id = $content_id;
             $field->key = $field_key;
             $field->type = $type;
-            $field->value = $request_all[$field_key];
+            $field->data = $request_all[$field_key];
             $field->save();
         }
 
         return true;
+    }
+
+
+    /**
+     * Delete content.
+     *
+     * @param integer $content_id
+     * @param String $field_key
+     * @param Array $properties
+     *
+     * @return Array
+     */
+    public function delete($content_id, $field_key, $properties) {
+
+        try {
+            $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return;
+        }
+        $field->delete();
     }
 
 

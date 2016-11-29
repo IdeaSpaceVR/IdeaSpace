@@ -35,7 +35,7 @@ class SpaceContentEditController extends Controller {
     public function __construct(ContentType $ct) {
 
         $this->middleware('auth');
-        //$this->middleware('register.theme.eventlistener');
+        $this->middleware('register.theme.eventlistener');
         $this->contentType = $ct;
     }
 
@@ -51,7 +51,6 @@ class SpaceContentEditController extends Controller {
      */
     public function content_edit($space_id, $contenttype, $content_id) {
 
-        //$theme_id = session('theme-id');        
         try {
             $space = Space::where('id', $space_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
@@ -259,18 +258,28 @@ class SpaceContentEditController extends Controller {
     public function content_delete_submit(Request $request, $space_id, $contenttype, $content_id) {
 
         try {
-            $content = Content::where('id', $content_id)->firstOrFail();
+            $space = Space::where('id', $space_id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
 
-        $fields = Field::where('content_id', $content_id)->get();
-        foreach ($fields as $field) {
-          $field->delete();
+        try {
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return redirect()->route('space_add_select_theme');
         }
 
-        $title = $content->title;
-        $content->delete();
+        $config = json_decode($theme->config, true);
+
+        if (array_has($config, '#content-types.' . $contenttype)) {
+
+            /* delete content and field content */
+            $title = $this->contentType->delete($content_id, $config['#content-types'][$contenttype]);
+
+        } else {
+
+            abort(404);
+        }
 
         return redirect('admin/space/' . $space_id . '/edit')->with('alert-success', trans('space_content_edit_controller.deleted', ['label' => $title]));
     }
