@@ -6,6 +6,11 @@ use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use App\Photosphere;
 use App\GenericFile;
+use App\Space;
+use App\Theme;
+use Image;
+use Event;
+use File;
 //use Log;
 
 class FieldTypePhotosphere {
@@ -179,9 +184,35 @@ class FieldTypePhotosphere {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
 
             if (array_has($request_all, $field_key . '__photosphere_id')) {
+                $old_data = $field->data;
                 $field->data = $request_all[$field_key . '__photosphere_id'];
                 $field->save();
+
+                /* delete generated images for this field, because file changed */
+                $photosphere = Photosphere::where('id', $old_data)->first();
+                $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+                $pathinfo = pathinfo($genericFile->uri);
+                $meta_data = json_decode($field->meta_data, true);
+                if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
+                    foreach ($meta_data['theme_generated_images'] as $image_info) {
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+                    }
+                }
+
+                $first_or_updated = true;
+
             } else {
+
+                /* delete generated images for this field */
+                $photosphere = Photosphere::where('id', $field->data)->first();
+                $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+                $pathinfo = pathinfo($genericFile->uri);
+                $meta_data = json_decode($field->meta_data, true);
+                if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
+                    foreach ($meta_data['theme_generated_images'] as $image_info) {
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+                    }
+                }
                 $field->delete();
             }
 
@@ -194,7 +225,32 @@ class FieldTypePhotosphere {
                 $field->type = $type;
                 $field->data = $request_all[$field_key . '__photosphere_id'];
                 $field->save();
+
+                $first_or_updated = true;
             }
+        }
+
+
+        if ($first_or_updated) {
+
+            $photosphere = Photosphere::where('id', $field->data)->first();
+            $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+
+            $space = Space::where('id', $space_id)->first();
+            $theme = Theme::where('id', $space->theme_id)->first();
+            $config = json_decode($theme->config, true);
+
+            $image = Image::make($genericFile->uri);
+
+            /* fire events defined in theme functions.php */
+            $image_settings = Event::fire($config['#theme-key'] . '.' . $field_key, $image);
+            $image->destroy();
+
+            /* defined in app/Helpers/* */
+            $images_info = generate_images($genericFile->uri, $image_settings, $content_id);
+
+            $field->meta_data = json_encode($images_info);
+            $field->save();
         }
 
         return true;
@@ -216,6 +272,23 @@ class FieldTypePhotosphere {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
         } catch (ModelNotFoundException $e) {
             return;
+        }
+
+        try {
+            $photosphere = Photosphere::where('id', $field->data)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return;
+        }
+
+        $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+
+        /* delete generated images for this field */
+        $pathinfo = pathinfo($genericFile->uri);
+        $meta_data = json_decode($field->meta_data, true);
+        if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
+            foreach ($meta_data['theme_generated_images'] as $image_info) {
+                File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+            }
         }
         $field->delete();
     }

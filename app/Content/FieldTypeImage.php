@@ -201,7 +201,6 @@ class FieldTypeImage {
                     $meta_data = json_decode($field->meta_data, true);
                     if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
                         foreach ($meta_data['theme_generated_images'] as $image_info) {            
-                            //Log::debug($pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
                             File::delete(GenericImage::IMAGE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
                         }
                     }
