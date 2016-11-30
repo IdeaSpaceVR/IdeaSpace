@@ -22,6 +22,8 @@ class Theme extends Model
     const TEMPLATES_SCENE_FILE = 'scene.blade.php';
     const TEMPLATES_ASSETS_FILE = 'assets.blade.php';
 
+    const INFINITE = 'infinite';
+
     /**
      * The table associated with the model.
      *

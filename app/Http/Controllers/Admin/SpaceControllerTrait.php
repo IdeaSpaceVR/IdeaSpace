@@ -31,7 +31,8 @@ trait SpaceControllerTrait {
 
             $theme_mod['contenttypes'][$key] = [
                 'label' => $value['#label'],
-                'description' => $value['#description']
+                'description' => $value['#description'],
+                'max_values' => intval($value['#max-values'])
                 ];
         }
 

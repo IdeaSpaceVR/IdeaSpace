@@ -12,6 +12,7 @@ use Event;
 use Auth;
 use Validator;
 use App\Http\Controllers\Admin\AssetLibraryControllerTrait;
+use App\Content;
 use Log;
 
 class SpaceContentAddController extends Controller {
@@ -69,9 +70,18 @@ class SpaceContentAddController extends Controller {
             $vars = $this->contentType->prepare($config['#content-types'][$contenttype]);
 
         } else {
-
             abort(404);
         }
+
+
+        if ($config['#content-types'][$contenttype]['#max-values'] != Theme::INFINITE) {
+
+            $content_count = Content::where('space_id', $space->id)->where('key', $contenttype)->count();
+            if (isset($content_count) && $config['#content-types'][$contenttype]['#max-values'] <= $content_count) {
+                abort(404);
+            }
+        }
+
 
         $theme_mod = array();
         $theme_mod['theme-name'] = $config['#theme-name'];
