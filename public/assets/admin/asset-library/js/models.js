@@ -198,9 +198,13 @@ jQuery(document).ready(function($) {
     /* keep possibility to scroll on asset library modal dialog after closing asset detail modal dialog;
        only when opened from space content edit page */
     $('#asset-details').on('hidden.bs.modal', function(e) {
-        if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) {
+        if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab') && $('#assets').css('display') != 'none') {
             $('body').addClass('modal-open');
         }
+    });
+
+    $('#assets').on('hidden.bs.modal', function(e) {
+        $('body').removeClass('modal-open');
     });
 
 
