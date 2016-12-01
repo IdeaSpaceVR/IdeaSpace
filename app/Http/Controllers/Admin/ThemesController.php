@@ -105,7 +105,7 @@ class ThemesController extends Controller
             $theme_mod['status'] = $theme->status;          
             $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?Theme::STATUS_ACTIVE:'');          
             $theme_mod['status_aria_pressed'] = (($theme->status==Theme::STATUS_ACTIVE)?'true':'false');          
-            $theme_mod['status_text'] = (($theme->status==Theme::STATUS_ACTIVE)?THEME::STATUS_ACTIVE_TEXT:Theme::STATUS_INACTIVE_TEXT);          
+            $theme_mod['status_text'] = (($theme->status==Theme::STATUS_ACTIVE)?trans('template_themes_config.uninstall'):trans('template_themes_config.install_theme'));          
             $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);          
             $themes_mod[] = $theme_mod;
         }
@@ -129,10 +129,10 @@ class ThemesController extends Controller
         $all = $request->all();
         //Log::debug($all); 
 
-        if (array_has($all, 'id') && array_has($all, 'status_text')) {   
+        if (array_has($all, 'id') && array_has($all, 'theme_status')) {   
 
             $theme = Theme::where('id', $all['id'])->first();
-            $theme->status = (($all['status_text']==Theme::STATUS_ACTIVE_TEXT)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE);
+            $theme->status = (($all['theme_status']==Theme::STATUS_ACTIVE)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE);
 
             if ($theme->status == Theme::STATUS_INACTIVE) { 
                 /* delete config */
@@ -148,9 +148,9 @@ class ThemesController extends Controller
             }
             $theme->save();
 
-            $response_status_text = (($all['status_text']==Theme::STATUS_ACTIVE_TEXT)?Theme::STATUS_INACTIVE_TEXT:Theme::STATUS_ACTIVE_TEXT); 
+            $response_status_text = (($all['theme_status']==Theme::STATUS_INACTIVE)?trans('template_themes_config.uninstall'):trans('template_themes_config.install_theme')); 
             //Log::debug($response_status_text);
-            return response()->json(['status_text' => $response_status_text]);
+            return response()->json(['status_text' => $response_status_text, 'status' => $theme->status]);
 
         } else {
             abort(404);

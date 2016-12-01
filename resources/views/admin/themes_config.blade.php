@@ -21,18 +21,18 @@
                 <div class="caption">
                     <h3 class="name">{{ $theme['theme-name'] }}</h3>
                     @if ($theme['status_aria_pressed'] == 'true')
-                    <span class="label label-success installed" style="font-size:100%">{{ trans('template_themes_config.installed') }}</span>
+                    <span class="label label-success installed" style="font-size:100%"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</span>
                     @else
-                    <span class="label label-success installed" style="font-size:100%;display:none">{{ trans('template_themes_config.installed') }}</span>
+                    <span class="label label-success installed" style="font-size:100%;display:none"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</span>
                     @endif
-                    <h5><strong>Version:</strong> {{ $theme['theme-version'] }}</h5>
-                    <h5><strong>Author:</strong> {{ $theme['theme-author-name'] }}</h5>
+                    <h5><strong>{{ trans('template_themes_config.version') }}</strong> {{ $theme['theme-version'] }}</h5>
+                    <h5><strong>{{ trans('template_themes_config.author') }}</strong> {{ $theme['theme-author-name'] }}</h5>
                     <h5><a href="{{ $theme['theme-homepage'] }}" target="_blank">{{ $theme['theme-homepage'] }}</a></h5>
                     <p>{{ $theme['theme-description'] }}</p>
                     @foreach ($theme['theme-compatibility'] as $theme_comp)
-                    <span class="label label-info">{{ $theme_comp }}</span>
+                    <span class="label label-info" style="display:inline-block">{{ $theme_comp }}</span>
                     @endforeach
-                    <p style="margin-top:20px"><button type="button" class="theme-btn btn btn-primary {{ $theme['status_class'] }}" data-toggle="button" aria-pressed="{{ $theme['status_aria_pressed'] }}" autocomplete="off">{{ $theme['status_text'] }}</button></p>
+                    <p style="margin-top:20px"><button type="button" class="theme-btn btn btn-primary {{ $theme['status_class'] }}" data-toggle="button" aria-pressed="{{ $theme['status_aria_pressed'] }}" autocomplete="off" data-theme-status="{{ $theme['status'] }}">{{ $theme['status_text'] }}</button></p>
                 </div>
             </div>
         </div>

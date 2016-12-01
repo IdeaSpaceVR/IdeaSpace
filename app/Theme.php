@@ -8,9 +8,7 @@ class Theme extends Model
 {
 
     const STATUS_ACTIVE = 'active';
-    const STATUS_ACTIVE_TEXT = 'Uninstall';
     const STATUS_INACTIVE = 'inactive';
-    const STATUS_INACTIVE_TEXT = 'Install Theme';
     
     const THEMES_DIR = 'themes';
     const TEMPLATES_DIR = 'templates';

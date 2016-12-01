@@ -9,9 +9,10 @@ jQuery(document).ready(function($) {
             type: 'post',
             cache: false,
             headers: { 'X-CSRF-TOKEN': $('input[name=_token]').val() },
-            data: {'id': $(self).parent().parent().parent().parent().find('input[type=hidden]').val(), 'status_text': $(self).html() },
+            data: {'id': $(self).parent().parent().parent().parent().find('input[type=hidden]').val(), 'theme_status': $(self).attr('data-theme-status') },
             success: function(data) {
                 $(self).html(data.status_text);
+                $(self).attr('data-theme-status', data.status);
                 if ($(self).parent().parent().find('.installed').css('display') == 'inline') {
                     $(self).parent().parent().find('.installed').hide(); 
                 } else {
