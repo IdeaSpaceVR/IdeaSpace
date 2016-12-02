@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1>Space Settings</h1>
+    <h1>{{ trans('template_space_settings.space_settings') }}</h1>
 
     {!! Form::open(array('route' => 'space_settings', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
@@ -21,7 +21,7 @@
     <div class="row" style="margin-top:20px">
 
         <div class="col-md-2">
-            <label for="front-page-display" class="control-label">Front Page Displays</label>
+            <label for="front-page-display" class="control-label">{{ trans('template_space_settings.frontpage_displays') }}</label>
         </div>
         <div class="col-md-10">
             <div class="row">
@@ -29,7 +29,7 @@
                     <div class="radio">
                         <label>
                         {!! Form::radio('front-page-display', 'latest-spaces', $latest_spaces_checked) !!}
-                        Your latest spaces
+                        {{ trans('template_space_settings.your_latest_spaces') }}
                         </label>
                     </div>
                 </div>
@@ -39,7 +39,7 @@
                     <div class="radio">
                         <label>
                         {!! Form::radio('front-page-display', 'one-space', $one_space_checked) !!}
-                        One space (select below)
+                        {{ trans('template_space_settings.one_space_select_below') }}
                         </label>
                     </div>
                 </div>
@@ -60,7 +60,7 @@
 
     <div class="row" style="margin-top:20px">
         <div class="col-md-10 col-md-offset-2">
-        <button type="submit" class="btn btn-primary">Save Changes</button>
+        <button type="submit" class="btn btn-primary">{{ trans('template_space_settings.save_changes') }}</button>
         </div>
     </div>
 
