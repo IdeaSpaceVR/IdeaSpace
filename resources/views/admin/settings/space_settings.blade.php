@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'IdeaSpace - Settings')
+@section('title', 'IdeaSpace')
 
 @section('content')
 

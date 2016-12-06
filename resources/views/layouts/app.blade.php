@@ -88,8 +88,8 @@
                         <li class="hidden-lg hidden-md hidden-sm dropdown">
                             <a href="#" class="dropdown-toggle menu-has-submenu" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-btn fa-cube"></i> Spaces <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu" id="spaces-sub-xs">
-                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') class="active" @endif role="presentation"><a href="{{ route('spaces_all') }}">All</a></li>
-                            <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif role="presentation"><a href="{{ route('space_add_select_theme') }}">Add New</a></li>
+                            <li @if (Route::currentRouteName() == 'spaces_all' || Route::currentRouteName() == 'space_edit' || Route::currentRouteName() == 'content_add' || Route::currentRouteName() == 'content_edit') class="active" @endif role="presentation"><a href="{{ route('spaces_all') }}"><i class="fa fa-btn fa-cubes"></i> All</a></li>
+                            <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif role="presentation"><a href="{{ route('space_add_select_theme') }}"><i class="fa fa-btn fa-pencil"></i> Add New</a></li>
                         </ul>
                         </li>
                         <li class="hidden-lg hidden-md hidden-sm @if (Route::currentRouteName() == 'assets') active @endif" role="presentation"><a href="{{ route('assets') }}"><i class="fa fa-btn fa-image"></i> Assets</a></li>
@@ -97,7 +97,8 @@
                         <li class="hidden-lg hidden-md hidden-sm dropdown">
                             <a href="#" class="dropdown-toggle menu-has-submenu" data-toggle="dropdown" role="button" aria-expanded="false"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
                         <ul class="dropdown-menu" role="menu" id="spaces-sub-xs">
-                            <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif role="presentation"><a href="{{ route('space_settings') }}">Space</a></li>
+                            <li @if (Route::currentRouteName() == 'general_settings') class="active" @endif role="presentation"><a href="{{ route('general_settings') }}"><i class="fa fa-btn fa-cog"></i> General</a></li>
+                            <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif role="presentation"><a href="{{ route('space_settings') }}"><i class="fa fa-btn fa-cube"></i> Space</a></li>
                         </ul>
                         </li>
                         <li class="dropdown">
@@ -139,7 +140,8 @@
                     <li @if (Route::currentRouteName() == 'assets') class="active" @endif><a href="{{ route('assets') }}"><i class="fa fa-btn fa-image"></i> Assets</a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i> Themes</a></li>   
                     <li><a href="#" class="collapsed menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-md-lg"><i class="fa fa-btn fa-cogs"></i> Settings <span class="caret"></span></a>
-                      <ul class="nav collapse @if (Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-md-lg">
+                      <ul class="nav collapse @if (Route::currentRouteName() == 'general_settings' || Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-md-lg">
+                        <li @if (Route::currentRouteName() == 'general_settings') class="active" @endif><a href="{{ route('general_settings') }}"><i class="fa fa-btn fa-cog"></i> General</a></li>
                         <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif><a href="{{ route('space_settings') }}"><i class="fa fa-btn fa-cube"></i> Space</a></li>
                       </ul>
                     </li>
@@ -156,7 +158,8 @@
                     <li><a href="#"><i class="fa fa-btn fa-image"></i></a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i></a></li>   
                     <li><a href="#" class="menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-sm"><i class="fa fa-btn fa-cogs"></i><span class="caret"></span></a></li>
-                        <ul class="nav collapse @if (Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-sm">
+                        <ul class="nav collapse @if (Route::currentRouteName() == 'general_settings' || Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-sm">
+                            <li @if (Route::currentRouteName() == 'general_settings') class="active" @endif><a href="{{ route('general_settings') }}"><i class="fa fa-btn fa-cog"></i></a></li>
                             <li @if (Route::currentRouteName() == 'space_settings') class="active" @endif><a href="{{ route('space_settings') }}"><i class="fa fa-btn fa-cube"></i></a></li>
                         </ul>
                     </li>

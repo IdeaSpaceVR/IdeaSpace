@@ -1,6 +1,6 @@
 @extends('layouts.app')
 
-@section('title', 'IdeaSpace')
+@section('title', 'IdeaSpace - Dashboard')
 
 @section('content')
     <div class="row">

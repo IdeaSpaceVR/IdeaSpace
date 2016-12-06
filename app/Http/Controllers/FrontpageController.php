@@ -45,6 +45,7 @@ class FrontpageController extends Controller
         } else {
 
             $setting = Setting::where('key', 'front-page-display')->first();
+            $title_setting = Setting::where('key', 'site-title')->first();
 
             /* if there are suddenly no published spaces anymore, change setting and show default front page */
             $spaces = Space::where('status', Space::STATUS_PUBLISHED)->orderBy('updated_at', 'desc')->simplePaginate(5);
@@ -54,7 +55,7 @@ class FrontpageController extends Controller
                     $setting->value = 'latest-spaces';
                     $setting->save();
                 }
-                return view('frontpage.welcome_frontpage');
+                return view('frontpage.welcome_frontpage', ['title' => $title_setting->value]);
             }
 
 
@@ -69,9 +70,11 @@ class FrontpageController extends Controller
 
                     $content = space_embed_code('/' . $space->uri, '100%', '100%'); 
 
-                    return view('frontpage.onespace_frontpage', 
-                        ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
-                        'content' => $content]);
+                    return view('frontpage.onespace_frontpage', [
+                        'css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
+                        'content' => $content,
+                        'title' => $title_setting->value
+                    ]);
                 }
             
                 /* show space on full page */ 
@@ -84,9 +87,11 @@ class FrontpageController extends Controller
 
                 /* show latest spaces on front page */
 
-                return view('frontpage.latest_spaces_frontpage', 
-                    ['css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
-                    'spaces' => $spaces]);
+                return view('frontpage.latest_spaces_frontpage', [
+                    'css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
+                    'spaces' => $spaces,
+                    'title' => $title_setting->value
+                ]);
             }
         }
     }

@@ -153,8 +153,10 @@ Route::group(['middleware' => 'web'], function () {
   /**
    * Settings
    */
-  Route::get('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\SpaceSettingsController@index']);
-  Route::post('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\SpaceSettingsController@save']);
+  Route::get('admin/settings/general', ['as' => 'general_settings', 'uses' => 'Admin\Settings\GeneralSettingsController@index']);
+  Route::post('admin/settings/general', ['as' => 'general_settings', 'uses' => 'Admin\Settings\GeneralSettingsController@save']);
+  Route::get('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\Settings\SpaceSettingsController@index']);
+  Route::post('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\Settings\SpaceSettingsController@save']);
 
 
 

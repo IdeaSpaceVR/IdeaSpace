@@ -14,36 +14,9 @@ class SettingsTableSeeder extends Seeder
         DB::table('settings')->insert([
             [
                 'user_id' => 1, 
-                'namespace' => 'images', 
-                'key' => 'IMAGE_QUALITY', 
-                'value' => 90 /* same default value as Intervention Image default value */
-            ]
-        ]);
-
-        DB::table('settings')->insert([
-            [
-                'user_id' => 1, 
-                'namespace' => 'images', 
-                'key' => 'PHOTOSPHERE_QUALITY', 
-                'value' => 90 /* same default value as Intervention Image default value */
-            ]
-        ]);
-
-        DB::table('settings')->insert([
-            [
-                'user_id' => 1, 
-                'namespace' => 'images', 
-                'key' => 'PREVIEW_IMAGE_WIDTH', 
-                'value' => 512 
-            ]
-        ]);
-
-        DB::table('settings')->insert([
-            [
-                'user_id' => 1, 
-                'namespace' => 'images', 
-                'key' => 'THUMBNAIL_IMAGE_WIDTH', 
-                'value' => 300
+                'namespace' => 'system', 
+                'key' => 'site-title', 
+                'value' => 'IdeaSpace'
             ]
         ]);
 
