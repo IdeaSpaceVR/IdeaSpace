@@ -1,15 +1,15 @@
 @extends('layouts.app')
 
-@section('title', 'IdeaSpace - Dashboard')
+@section('title', 'IdeaSpace')
 
 @section('content')
     <div class="row">
         <div class="col-md-12">
             <div class="panel panel-default">
-                <div class="panel-heading">Dashboard</div>
+                <div class="panel-heading">{{ trans('template_dashboard.dashboard') }}</div>
 
                 <div class="panel-body">
-                    You are logged in!
+TEST TEST
                 </div>
             </div>
         </div>
