@@ -32,7 +32,7 @@
                     @foreach ($theme['theme-compatibility'] as $theme_comp)
                     <span class="label label-info" style="display:inline-block">{{ $theme_comp }}</span>
                     @endforeach
-                    <p style="margin-top:20px"><button type="button" class="theme-btn btn btn-primary {{ $theme['status_class'] }}" data-toggle="button" aria-pressed="{{ $theme['status_aria_pressed'] }}" autocomplete="off" data-theme-status="{{ $theme['status'] }}">{{ $theme['status_text'] }}</button></p>
+                    <p style="margin-top:20px"><button type="button" class="theme-btn btn @if($theme['status']==\App\Theme::STATUS_ERROR) btn-danger @else btn-primary @endif {{ $theme['status_class'] }}" data-toggle="button" aria-pressed="{{ $theme['status_aria_pressed'] }}" autocomplete="off" data-theme-status="{{ $theme['status'] }}" @if($theme['status']==\App\Theme::STATUS_ERROR) disabled="disabled" @endif>{{ $theme['status_text'] }}</button></p>
                 </div>
             </div>
         </div>

@@ -9,6 +9,7 @@ use App\Video;
 
 class FieldTypeVideo {
 
+    use FieldTypeTrait;
 
     private $template_add = 'admin.space.content.field_video_add';
     private $template_edit = 'admin.space.content.field_video_edit';
@@ -214,6 +215,26 @@ class FieldTypeVideo {
             return;
         }
         $field->delete();
+    }
+
+
+    /**
+     * Validate theme config field.
+     *
+     * @param Array $field
+     *
+     * @return True if valid, false otherwise.
+     */
+    public function validateThemeFieldType($field) {
+
+        $mandatoryKeys = [
+            '#label' => 'string',
+            '#description' => 'string',
+            '#help' => 'string',
+            '#required' => 'boolean',
+            '#file-extension' => 'array'];
+
+        return $this->validateFieldType($mandatoryKeys, $field);
     }
 
 

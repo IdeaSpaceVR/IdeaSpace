@@ -9,6 +9,7 @@ use App\GenericFile;
 
 class FieldTypeModel3D {
 
+    use FieldTypeTrait;
 
     private $template_add = 'admin.space.content.field_model3d_add';
     private $template_edit = 'admin.space.content.field_model3d_edit';
@@ -226,6 +227,26 @@ class FieldTypeModel3D {
             return;
         }
         $field->delete();
+    }
+
+
+    /**
+     * Validate theme config field.
+     *
+     * @param Array $field
+     *
+     * @return True if valid, false otherwise.
+     */
+    public function validateThemeFieldType($field) {
+
+        $mandatoryKeys = [
+            '#label' => 'string',
+            '#description' => 'string',
+            '#help' => 'string',
+            '#required' => 'boolean',
+            '#file-extension' => 'array'];
+  
+        return $this->validateFieldType($mandatoryKeys, $field);
     }
 
 

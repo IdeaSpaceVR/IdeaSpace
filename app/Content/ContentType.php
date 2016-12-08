@@ -28,7 +28,8 @@ class ContentType {
     const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
     const FIELD_TYPE_MODEL3D = 'model3d';
 
-    private $fieldTypes;
+    public $fieldTypes;
+
 
     /**
      * Create a new content type instance.

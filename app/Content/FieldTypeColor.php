@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class FieldTypeColor {
 
+    use FieldTypeTrait;
 
     private $template_add = 'admin.space.content.field_color_add';
     private $template_edit = 'admin.space.content.field_color_edit';
@@ -133,6 +134,25 @@ class FieldTypeColor {
             return;
         }
         $field->delete();
+    }
+
+
+    /**
+     * Validate theme config field.
+     *
+     * @param Array $field
+     *
+     * @return True if valid, false otherwise.
+     */
+    public function validateThemeFieldType($field) {
+
+        $mandatoryKeys = [
+            '#label' => 'string',
+            '#description' => 'string',
+            '#help' => 'string',
+            '#required' => 'boolean'];
+
+        return $this->validateFieldType($mandatoryKeys, $field);
     }
 
 

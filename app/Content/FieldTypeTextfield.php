@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class FieldTypeTextfield {
 
+    use FieldTypeTrait;
+
     const DEFAULT_MAXLENGTH = 524288;
     const CONTENTFORMAT_HTML_TEXT = 'html/text';
     const CONTENTFORMAT_TEXT = 'text';
@@ -178,6 +180,27 @@ class FieldTypeTextfield {
             return;
         }
         $field->delete();
+    }
+
+
+    /**
+     * Validate theme config field.
+     *
+     * @param Array $field
+     *
+     * @return True if valid, false otherwise.
+     */
+    public function validateThemeFieldType($field) {
+
+        $mandatoryKeys = [
+            '#label' => 'string',
+            '#description' => 'string',
+            '#help' => 'string',
+            '#required' => 'boolean',
+            '#maxlength' => 'number',
+            '#contentformat' => 'string'];
+
+        return $this->validateFieldType($mandatoryKeys, $field);
     }
 
 

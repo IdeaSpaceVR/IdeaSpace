@@ -9,6 +9,7 @@ class Theme extends Model
 
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
+    const STATUS_ERROR = 'error';
     
     const THEMES_DIR = 'themes';
     const TEMPLATES_DIR = 'templates';

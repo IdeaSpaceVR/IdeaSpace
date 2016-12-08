@@ -8,56 +8,54 @@ use App\Theme;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Auth;
+use App\Content\ContentType;
 use File;
 use Log;
 
-class ThemesController extends Controller
-{
+class ThemesController extends Controller {
+
+    private $contentType;
+
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(ContentType $ct) {
+
         $this->middleware('auth');
+        $this->contentType = $ct;
     }
 
     /**
-     * Search theme directory for available themes and show status (active or inactive).
+     * Search theme directory for available and valid themes and 
+     * indicate status (active or inactive).
      *
      * @return Response
      */
-    public function index()
-    {
+    public function index() {
+
         $user = Auth::user();
 
         try {
             $directories = File::directories(Theme::THEMES_DIR);
         } catch (InvalidArgumentException $e) {
-
         }  
       
         foreach ($directories as $directory) {
 
-            /* if theme does not exist in DB yet, create it */ 
-            try {
+            /* if theme is invalid, there is no creation nor update of theme, but it will be removed from DB */
+            if ($this->theme_validation($directory) == true) {
 
-                $theme = Theme::where('root_dir', $directory)->firstOrFail(); 
+                /* if theme does not exist in DB yet, create it */ 
+                try {
 
-            } catch (ModelNotFoundException $e) {
+                    $theme = Theme::where('root_dir', $directory)->firstOrFail(); 
 
-                /* check files (minimal set of files) */
-                /* if theme is incomplete, it won't show up in list of available themes */
-                if (File::exists($directory . '/' . Theme::CONFIG_FILE) && 
-                    File::exists($directory . '/' . Theme::FUNCTIONS_FILE) &&
-                    File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_INDEX_FILE) &&
-                    File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_SCENE_FILE) &&
-                    File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_ASSETS_FILE) &&
-                    File::exists($directory . '/' . Theme::SCREENSHOT_FILE)) {
+                } catch (ModelNotFoundException $e) {
 
-                    $contents = (require_once($directory . '/' . Theme::CONFIG_FILE));
+                    $contents = (require($directory . '/' . Theme::CONFIG_FILE));
 
                     $theme = Theme::create([
                         'root_dir' => $directory,
@@ -66,21 +64,36 @@ class ThemesController extends Controller
                         'config' => json_encode($contents)
                     ]);
 
-                } 
-            }
-        
-            try {
-                /* add config contents after previous deactivation of theme (which empties config field) */
-                $theme = Theme::where('root_dir', $directory)->where('config', '')->firstOrFail(); 
-                if (File::exists($directory . '/' . Theme::CONFIG_FILE)) {
-                    $contents = (require_once($directory . '/' . Theme::CONFIG_FILE));
+                }
+            
+                try {
+
+                    /* add config contents after previous deactivation of theme (which empties config field) */
+                    $theme = Theme::where('root_dir', $directory)->firstOrFail(); 
+                    $contents = (require($directory . '/' . Theme::CONFIG_FILE));
                     $theme->config = json_encode($contents);
+
+                    /* theme passed validation but has error status */
+                    if ($theme->status == Theme::STATUS_ERROR) {
+                        $theme->status = Theme::STATUS_INACTIVE;
+                    }
                     $theme->save();    
+
+                } catch (ModelNotFoundException $e) {
                 }
 
-            } catch (ModelNotFoundException $e) {
-            }
-        }
+            } else {
+
+                try {
+                    $theme = Theme::where('root_dir', $directory)->firstOrFail();
+                    $theme->status = Theme::STATUS_ERROR;
+                    $theme->save();
+                } catch (ModelNotFoundException $e) {
+                }
+
+            } /* if */
+
+        } /* foreach */
 
 
         $themes = Theme::all();
@@ -89,7 +102,13 @@ class ThemesController extends Controller
         foreach ($themes as $theme) {      
             $config = json_decode($theme->config, true);
 
-            //Log::debug($config);
+            if ($theme->status==Theme::STATUS_ACTIVE) {
+                $status_text = trans('template_themes_config.uninstall');
+            } else if ($theme->status==Theme::STATUS_INACTIVE) {
+                $status_text = trans('template_themes_config.install_theme');
+            } else {
+                $status_text = trans('template_themes_config.invalid_theme');
+            }
 
             $theme_mod = array();
             $theme_mod['id'] = $theme->id;          
@@ -105,7 +124,7 @@ class ThemesController extends Controller
             $theme_mod['status'] = $theme->status;          
             $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?Theme::STATUS_ACTIVE:'');          
             $theme_mod['status_aria_pressed'] = (($theme->status==Theme::STATUS_ACTIVE)?'true':'false');          
-            $theme_mod['status_text'] = (($theme->status==Theme::STATUS_ACTIVE)?trans('template_themes_config.uninstall'):trans('template_themes_config.install_theme'));          
+            $theme_mod['status_text'] = $status_text;          
             $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);          
             $themes_mod[] = $theme_mod;
         }
@@ -124,27 +143,23 @@ class ThemesController extends Controller
      *
      * @return Response
      */
-    public function submit(Request $request)
-    {
+    public function submit(Request $request) {
+
         $all = $request->all();
         //Log::debug($all); 
 
         if (array_has($all, 'id') && array_has($all, 'theme_status')) {   
 
             $theme = Theme::where('id', $all['id'])->first();
+
             $theme->status = (($all['theme_status']==Theme::STATUS_ACTIVE)?Theme::STATUS_INACTIVE:Theme::STATUS_ACTIVE);
 
             if ($theme->status == Theme::STATUS_INACTIVE) { 
                 /* delete config */
                 $theme->config = '';
             } else {
-                if (File::exists($theme->root_dir . '/config.php')) {
-                    $contents = (require_once($theme->root_dir . '/config.php'));
-                    $theme->config = json_encode($contents);
-                }
-                /*if (File::exists($theme->root_dir . '/functions.php')) {
-                    $contents = (require_once($theme->root_dir . '/functions.php'));
-                }*/
+                $contents = (require($theme->root_dir . '/' . Theme::CONFIG_FILE));
+                $theme->config = json_encode($contents);
             }
             $theme->save();
 
@@ -156,6 +171,94 @@ class ThemesController extends Controller
             abort(404);
         }
     }
+
+
+    /**
+     * Theme validation.
+     *
+     * @param String $directory The theme directory. 
+     *
+     * @return True if valid, false otherwise.
+     */
+    private function theme_validation($directory) {
+
+        if (File::exists($directory . '/' . Theme::CONFIG_FILE) &&
+            File::exists($directory . '/' . Theme::FUNCTIONS_FILE) &&
+            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_INDEX_FILE) &&
+            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_SCENE_FILE) &&
+            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_ASSETS_FILE) &&
+            File::exists($directory . '/' . Theme::SCREENSHOT_FILE)) {
+
+                $config = (require($directory . '/' . Theme::CONFIG_FILE));
+
+                if (array_has($config, '#theme-name') && strlen($config['#theme-name']) > 0 && 
+                    array_has($config, '#theme-key') && strlen($config['#theme-key']) > 0 &&
+                    array_has($config, '#theme-version') && strlen($config['#theme-version']) > 0 &&
+                    array_has($config, '#theme-description') && strlen($config['#theme-description']) > 0 &&
+                    array_has($config, '#theme-author-name') && strlen($config['#theme-author-name']) > 0 &&
+                    array_has($config, '#theme-author-email') && strlen($config['#theme-author-email']) > 0 &&
+                    array_has($config, '#theme-homepage') && strlen($config['#theme-homepage']) > 0 &&
+                    array_has($config, '#theme-keywords') && strlen($config['#theme-keywords']) > 0 &&
+                    array_has($config, '#theme-compatibility') && strlen($config['#theme-compatibility']) > 0 &&
+                    array_has($config, '#content-types')) {
+
+                    $all_content_types = array_only($config, ['#content-types']);
+                    foreach ($all_content_types as $content_types) {
+
+                        foreach ($content_types as $content_type) {
+
+                            if (array_has($content_type, '#label') && strlen($content_type['#label']) > 0 &&
+                                array_has($content_type, '#description') && strlen($content_type['#description']) > 0 && 
+                                array_has($content_type, '#max-values') && strlen($content_type['#max-values']) > 0 && 
+                                array_has($content_type, '#fields')) {
+
+                                $all_fields = array_only($content_type, ['#fields']);
+
+                                foreach ($all_fields as $fields) {
+
+                                    foreach ($fields as $field) {
+
+                                        if (array_has($this->contentType->fieldTypes, $field['#type'])) {
+
+                                            $return_value = $this->contentType->fieldTypes[$field['#type']]->validateThemeFieldType($field);      
+                                            if ($return_value == false) {
+                                                Log::debug('THEME: wrong or missing field parameter for type ' . $field['#type'] . ' (field:' . key($fields) . ') in config.php file in directory ' . $directory);
+                                                return false;
+                                            }
+
+                                        } else {
+                                            Log::debug('THEME: wrong or unknown field type in config.php file in directory ' . $directory);
+                                            return false;
+                                        }
+
+                                    } /* foreach */
+
+                                } /* foreach */
+
+                            } else {
+                                Log::debug('THEME: wrong or missing config parameter for content type in config.php file in directory ' . $directory);
+                                return false;
+                            } 
+
+                        } /* foreach */
+
+                    } /* foreach */
+
+                } else { 
+
+                    Log::debug('THEME: wrong or missing config parameter in config.php file in directory ' . $directory);
+                    return false;
+                }
+
+        } else {
+
+            Log::debug('THEME: mandatory theme file missing in ' . $directory);
+            return false;
+        }
+    
+        return true;
+    }
+
 
 }
 
