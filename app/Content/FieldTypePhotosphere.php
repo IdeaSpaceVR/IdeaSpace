@@ -194,9 +194,9 @@ class FieldTypePhotosphere {
                 $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
                 $pathinfo = pathinfo($genericFile->uri);
                 $meta_data = json_decode($field->meta_data, true);
-                if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
-                    foreach ($meta_data['theme_generated_images'] as $image_info) {
-                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+                if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
+                    foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
                     }
                 }
 
@@ -209,9 +209,9 @@ class FieldTypePhotosphere {
                 $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
                 $pathinfo = pathinfo($genericFile->uri);
                 $meta_data = json_decode($field->meta_data, true);
-                if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
-                    foreach ($meta_data['theme_generated_images'] as $image_info) {
-                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+                if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
+                    foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
                     }
                 }
                 $field->delete();
@@ -248,7 +248,7 @@ class FieldTypePhotosphere {
             $image->destroy();
 
             /* defined in app/Helpers/* */
-            $images_info = generate_images($genericFile->uri, $image_settings, $content_id);
+            $images_info = generate_images($genericFile->uri, $image_settings, $field->id);
 
             $field->meta_data = json_encode($images_info);
             $field->save();
@@ -286,9 +286,9 @@ class FieldTypePhotosphere {
         /* delete generated images for this field */
         $pathinfo = pathinfo($genericFile->uri);
         $meta_data = json_decode($field->meta_data, true);
-        if (!is_null($meta_data) && array_key_exists('theme_generated_images', $meta_data)) {
-            foreach ($meta_data['theme_generated_images'] as $image_info) {
-                File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $pathinfo['filename'] . '_' . $image_info . '.' . $pathinfo['extension']);
+        if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
+            foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+                File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
             }
         }
         $field->delete();
@@ -312,6 +312,42 @@ class FieldTypePhotosphere {
             '#file-extension' => 'array'];
 
         return $this->validateFieldType($mandatoryKeys, $field);
+    }
+
+
+    /**
+     * Load content for theme.
+     *
+     * @param Field $field
+     *
+     * @return Array
+     */
+    public function loadContent($field) {
+
+        $content_arr = [];
+
+        $photosphere = Photosphere::where('id', $field->data)->first();
+        $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+        $pathinfo = pathinfo($genericFile->uri);
+
+        $meta_data_json = $field->meta_data;
+
+        if (!is_null($meta_data_json)) {
+            $meta_data = json_decode($meta_data_json, true);
+            foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+
+                $content_arr[$image_info]['#uri']['#value'] = Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value;
+            }
+        }
+
+        $content_arr['#type'] = $field->type;
+        $content_arr['#caption'] = $field->caption;
+        $content_arr['#description'] = $field->description;
+        $content_arr['#width'] = $field->width;
+        $content_arr['#height'] = $field->height;
+        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        return $content_arr;
     }
 
 

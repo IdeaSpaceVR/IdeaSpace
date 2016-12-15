@@ -156,4 +156,22 @@ class FieldTypeDate {
     }
 
 
+    /**
+     * Load content for theme.
+     *
+     * @param Field $field
+     *
+     * @return Array
+     */
+    public function loadContent($field) {
+
+        $content_arr = [];
+
+        $content_arr['#type'] = $field->type;
+        $content_arr['#value'] = $field->data;
+
+        return $content_arr;
+    }
+
+
 }

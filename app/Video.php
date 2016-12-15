@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Video extends Model
 {
 
-    CONST VIDEO_STORAGE_PATH = 'public/assets/user/video/';
+    CONST VIDEO_STORAGE_PATH = 'public/assets/user/videos/';
 
     /**
      * The table associated with the model.

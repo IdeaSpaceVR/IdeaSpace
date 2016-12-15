@@ -250,4 +250,40 @@ class FieldTypeModel3D {
     }
 
 
+    /**
+     * Load content for theme.
+     *
+     * @param Field $field
+     *
+     * @return Array
+     */
+    public function loadContent($field) {
+
+        $content_arr = [];
+
+        $model = Model3D::where('id', $field->data)->first();
+
+        $genericFile_0 = GenericFile::where('id', $model->file_id_0)->first();
+        $pathinfo_0 = pathinfo($genericFile_0->uri);        
+
+        $content_arr[0]['#uri']['#value'] = asset($genericFile_0->uri);
+        $content_arr[0]['#uri']['#filetype'] = $pathinfo_0['extension'];
+
+        try {
+            $genericFile_1 = GenericFile::where('id', $model->file_id_1)->firstOrFail();
+            $pathinfo_1 = pathinfo($genericFile_1->uri);        
+
+            $content_arr[1]['#uri']['#value'] = asset($genericFile_1->uri);
+            $content_arr[1]['#uri']['#filetype'] = $pathinfo_1['extension'];
+        } catch (ModelNotFoundException $e) {
+        }
+
+        $content_arr['#type'] = $field->type;
+        $content_arr['#caption'] = $field->caption;
+        $content_arr['#description'] = $field->description;
+
+        return $content_arr;
+    }
+
+
 }

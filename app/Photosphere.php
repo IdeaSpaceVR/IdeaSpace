@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Photosphere extends Model
 {
 
-    CONST PHOTOSPHERE_STORAGE_PATH = 'public/assets/user/photosphere/';
+    CONST PHOTOSPHERE_STORAGE_PATH = 'public/assets/user/photospheres/';
 
     /**
      * The table associated with the model.

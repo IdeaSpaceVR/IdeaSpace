@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class GenericImage extends Model
 {
 
-    CONST IMAGE_STORAGE_PATH = 'public/assets/user/image/';
+    CONST IMAGE_STORAGE_PATH = 'public/assets/user/images/';
 
     /**
      * The table associated with the model.

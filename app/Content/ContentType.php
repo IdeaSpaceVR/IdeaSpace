@@ -13,6 +13,7 @@ use App\Content\FieldTypeImage;
 use App\Content\FieldTypePhotosphere;
 use App\Content\FieldTypeModel3D;
 use App\Content;
+use App\Field;
 use Log;
 
 class ContentType {
@@ -259,6 +260,28 @@ class ContentType {
         $content->delete();
 
         return $title;
+    }
+
+
+    /**
+     * Load content for a theme.
+     *
+     * @param integer $content_id
+     *
+     * @return $vars
+     */
+    public function loadContent($content_id) {
+
+        $content_arr = [];
+
+        $fields = Field::where('content_id', $content_id)->get();
+
+        foreach ($fields as $field) {
+
+            $content_arr[$field->key] = $this->fieldTypes[$field->type]->loadContent($field);
+        }
+
+        return $content_arr;
     }
 
 

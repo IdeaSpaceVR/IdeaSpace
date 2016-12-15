@@ -8,7 +8,6 @@ use Illuminate\Http\Request;
 use Schema;
 use App\Setting;
 use App\Space;
-use App\SpaceTrait;
 use App\Theme;
 use Auth;
 

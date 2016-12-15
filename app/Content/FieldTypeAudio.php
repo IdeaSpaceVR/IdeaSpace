@@ -239,4 +239,26 @@ class FieldTypeAudio {
     }
 
 
+    /**
+     * Load content for theme.
+     *
+     * @param Field $field
+     *
+     * @return Array
+     */
+    public function loadContent($field) {
+
+        $content_arr = [];
+
+        $audio = Audio::where('id', $field->data)->first();
+        $genericFile = GenericFile::where('id', $audio->file_id)->first();
+
+        $content_arr['#type'] = $field->type;
+        $content_arr['#caption'] = $field->caption;
+        $content_arr['#description'] = $field->description;
+        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        return $content_arr;
+    }
+
 }

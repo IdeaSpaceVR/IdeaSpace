@@ -239,4 +239,30 @@ class FieldTypeVideosphere {
     }
 
 
+    /**
+     * Load content for theme.
+     *
+     * @param Field $field
+     *
+     * @return Array
+     */
+    public function loadContent($field) {
+
+        $content_arr = [];
+
+        $videosphere = Videosphere::where('id', $field->data)->first();
+        $genericFile = GenericFile::where('id', $videosphere->file_id)->first();
+
+        $content_arr['#type'] = $field->type;
+        $content_arr['#caption'] = $field->caption;
+        $content_arr['#description'] = $field->description;
+        $content_arr['#width'] = $field->width;
+        $content_arr['#height'] = $field->height;
+        $content_arr['#duration'] = $field->duration;
+        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        return $content_arr;
+    }
+
+
 }

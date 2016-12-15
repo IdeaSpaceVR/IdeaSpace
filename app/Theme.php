@@ -23,6 +23,8 @@ class Theme extends Model
 
     const INFINITE = 'infinite';
 
+    const THEME_GENERATED_IMAGES = 'theme_generated_images';
+
     /**
      * The table associated with the model.
      *

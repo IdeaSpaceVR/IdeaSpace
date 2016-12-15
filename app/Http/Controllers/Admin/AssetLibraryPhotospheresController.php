@@ -83,8 +83,7 @@ class AssetLibraryPhotospheresController extends Controller {
 
 
         /* image width and height must be power of two; resize image if needed; keep aspect ratio */
-        $img_quality_setting = Setting::where('key', 'PHOTOSPHERE_QUALITY')->first();
-        $width_height_arr = $this->create_image($uri, $uri, $img_quality_setting->value);
+        $width_height_arr = $this->create_image($uri, $uri);
 
 
         $user = Auth::user();
@@ -110,10 +109,9 @@ class AssetLibraryPhotospheresController extends Controller {
 
 
         /* thumbnail images are shown in the asset library and space content edit pages; they are not stored in DB */
-        $setting = Setting::where('key', 'THUMBNAIL_IMAGE_WIDTH')->first();
         $newNameThumbnail = $this->get_file_name($newName, GenericFile::THUMBNAIL_FILE_SUFFIX);
         $thumbnail_image_uri = Photosphere::PHOTOSPHERE_STORAGE_PATH . $newNameThumbnail;
-        $this->create_thumbnail_image($uri, $thumbnail_image_uri, $setting->value);
+        $this->create_thumbnail_image($uri, $thumbnail_image_uri, 300);
 
 
         return response()->json([

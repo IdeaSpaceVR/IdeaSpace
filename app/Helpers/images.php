@@ -5,9 +5,9 @@
  *
  * @param Image $image
  * @param Array $image_settings
- * @param int $content_id
+ * @param int $field_id
  */
-function generate_images($uri, $image_settings, $content_id) {
+function generate_images($uri, $image_settings, $field_id) {
 
     $images_info = [];
 
@@ -54,13 +54,13 @@ function generate_images($uri, $image_settings, $content_id) {
 
             $path_parts = pathinfo($uri);
 
-            $new_uri = $path_parts['dirname'] . '/' . $path_parts['filename'] . '_' . $content_id . '_' . strtolower($image_setting_name) . '.' . $path_parts['extension'];
+            $new_uri = $path_parts['dirname'] . '/' . $path_parts['filename'] . '_' . $field_id . '_' . strtolower($image_setting_name) . '.' . $path_parts['extension'];
         
             $image->save($new_uri);
 
             $image->destroy();
 
-            $images_info['theme_generated_images'][] = $content_id . '_' . strtolower($image_setting_name);
+            $images_info[\App\Theme::THEME_GENERATED_IMAGES][$image_setting_name] = $path_parts['filename'] . '_' . $field_id . '_' . strtolower($image_setting_name) . '.' . $path_parts['extension'];
         }
     }
 

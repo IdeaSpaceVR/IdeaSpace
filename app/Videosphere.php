@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class Videosphere extends Model
 {
 
-    CONST VIDEOSPHERE_STORAGE_PATH = 'public/assets/user/videosphere/';
+    CONST VIDEOSPHERE_STORAGE_PATH = 'public/assets/user/videospheres/';
 
     /**
      * The table associated with the model.
