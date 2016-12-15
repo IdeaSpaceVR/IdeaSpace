@@ -15,6 +15,7 @@ label.large {
   border-radius: 4px 4px 4px 4px;
   padding: 10px 10px 10px 10px;
   background-color: #FFFFFF;
+  height: 47px;
 }
 
 .form-control-textfield.has-error {
