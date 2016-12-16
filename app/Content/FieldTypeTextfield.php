@@ -195,7 +195,6 @@ class FieldTypeTextfield {
         $mandatoryKeys = [
             '#label' => 'string',
             '#description' => 'string',
-            '#help' => 'string',
             '#required' => 'boolean',
             '#maxlength' => 'number',
             '#contentformat' => 'string'];

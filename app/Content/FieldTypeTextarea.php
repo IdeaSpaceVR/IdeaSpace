@@ -200,7 +200,6 @@ class FieldTypeTextarea {
         $mandatoryKeys = [
             '#label' => 'string',
             '#description' => 'string',
-            '#help' => 'string',
             '#required' => 'boolean',
             '#rows' => 'string',
             '#maxlength' => 'number',

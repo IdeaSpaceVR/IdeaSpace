@@ -307,7 +307,6 @@ class FieldTypePhotosphere {
         $mandatoryKeys = [
             '#label' => 'string',
             '#description' => 'string',
-            '#help' => 'string',
             '#required' => 'boolean',
             '#file-extension' => 'array'];
 
