@@ -15,12 +15,14 @@ use App\FieldControl;
 use App\FieldDataImage;
 use App\FieldDataText;
 use Auth;
-use App\SpaceTrait;
+use App\Content\ContentType;
 use Log;
 
-class ViewSpaceController extends Controller
-{
+class ViewSpaceController extends Controller {
+
     use SpaceTrait;
+
+    private $contentType;
 
 
     /**
@@ -28,11 +30,12 @@ class ViewSpaceController extends Controller
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(ContentType $ct) {
+
         /* CORS = Cross Origin Resource Sharing */
         $this->middleware('cors');
         $this->middleware('register.theme.eventlistener');
+        $this->contentType = $ct;
     }
 
 
@@ -51,7 +54,7 @@ class ViewSpaceController extends Controller
             abort(404);
         }
 
-        $vars = $this->prepare_space_vars($space, false);
+        $vars = $this->prepare_space_vars($space, $this->contentType, false);
 
         /* cut off .blade.php */
         return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
@@ -77,7 +80,7 @@ class ViewSpaceController extends Controller
                 abort(404);
             }
 
-            $vars = $this->prepare_space_vars($space, true);
+            $vars = $this->prepare_space_vars($space, $this->contentType, true);
         
             /* cut off .blade.php */
             return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
@@ -168,7 +171,7 @@ class ViewSpaceController extends Controller
                         foreach ($field_data_images as $field_data_image) {
                             $generic_file = GenericFile::where('id', $field_data_image->file_id)->first();
                             $arr = ['image' => asset($generic_file->uri)]; 
-                            $image_thumb = $this->get_file_uri($generic_file->uri, '_thumb');
+                            $image_thumb = $this->get_file_name($generic_file->uri, '_thumb');
                             if (File::exists($image_thumb)) {
                                 $arr['image-thumbnail'] = asset($image_thumb); 
                             }

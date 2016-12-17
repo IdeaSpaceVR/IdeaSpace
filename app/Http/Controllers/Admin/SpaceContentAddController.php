@@ -8,7 +8,6 @@ use App\Space;
 use App\Content\ContentType;
 use Illuminate\Http\Request;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Event;
 use Auth;
 use Validator;
 use App\Http\Controllers\Admin\AssetLibraryControllerTrait;

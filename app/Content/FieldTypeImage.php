@@ -10,6 +10,7 @@ use Image;
 use Event;
 use App\Space;
 use App\Theme;
+use App\Content;
 use File;
 use Log;
 
@@ -251,7 +252,8 @@ class FieldTypeImage {
             $image = Image::make($genericFile->uri);
 
             /* fire events defined in theme functions.php */
-            $image_settings = Event::fire($config['#theme-key'] . '.' . $field_key, $image);
+            $content = Content::where('id', $content_id)->first();
+            $image_settings = Event::fire($config['#theme-key'] . '.' . $content->key . '.' . $field_key, $image);
             $image->destroy();
 
             /* defined in app/Helpers/* */
