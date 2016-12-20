@@ -28,7 +28,6 @@ class SpaceEditController extends Controller {
     public function __construct() {
 
         $this->middleware('auth');
-        //$this->middleware('register.theme.eventlistener');
     }
 
 
@@ -77,7 +76,7 @@ class SpaceEditController extends Controller {
         $vars['space'] = $space;
 
         /* needed for middleware: app/Http/Middleware/RegisterThemeEventListener.php */
-        session(['theme-id' => $theme->id]);
+        //session(['theme-id' => $theme->id]);
 
         return view('admin.space.space_edit', $vars);
     }

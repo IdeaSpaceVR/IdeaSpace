@@ -141,14 +141,6 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/spaces/published', ['as' => 'spaces_published', 'uses' => 'Admin\SpacesController@spaces_published']);
   Route::get('admin/spaces/deleted', ['as' => 'spaces_deleted', 'uses' => 'Admin\SpacesController@spaces_deleted']);
 
-  /**
-   * Preview Space and JSON GET endpoint.
-   *
-   * Not auth middleware protected.
-   */
-  Route::get('{uri}/preview/field-data', ['as' => 'preview_field_data_json', 'uses' => 'ViewSpaceController@preview_field_data_json']);
-  Route::get('{uri}/preview', ['as' => 'view_space', 'uses' => 'ViewSpaceController@preview_space']);
-
 
   /**
    * Settings
@@ -158,6 +150,14 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\Settings\SpaceSettingsController@index']);
   Route::post('admin/settings/space', ['as' => 'space_settings', 'uses' => 'Admin\Settings\SpaceSettingsController@save']);
 
+
+  /**
+   * Preview Space and JSON GET endpoint.
+   *
+   * Not auth middleware protected.
+   */
+  Route::get('{uri}/preview/content/{contenttype_key}', ['as' => 'preview_content_json', 'uses' => 'ViewSpaceController@preview_content_json']);
+  Route::get('{uri}/preview', ['as' => 'view_space', 'uses' => 'ViewSpaceController@preview_space']);
 
 
   /**
@@ -174,7 +174,7 @@ Route::group(['middleware' => 'web'], function () {
  *
  * Not auth middleware protected.
  */
-Route::get('{uri}/field-data', ['as' => 'field_data_json', 'uses' => 'ViewSpaceController@field_data_json']);
+Route::get('{uri}/content/{contenttype_key}', ['as' => 'content_json', 'uses' => 'ViewSpaceController@content_json']);
 Route::get('{uri}', ['as' => 'view_space', 'uses' => 'ViewSpaceController@view_space']);
 
 

@@ -285,4 +285,26 @@ class ContentType {
     }
 
 
+    /**
+     * Load content for a theme, json format.
+     *
+     * @param integer $content_id
+     *
+     * @return $vars
+     */
+    public function loadContentJson($content_id) {
+
+        $content_arr = [];
+
+        $fields = Field::where('content_id', $content_id)->get();
+
+        foreach ($fields as $field) {
+
+            $content_arr[$field->key] = $this->fieldTypes[$field->type]->loadContent($field);
+        }
+
+        return $content_arr;
+    }
+
+
 }
