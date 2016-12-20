@@ -197,7 +197,7 @@ class FieldTypePhotosphere {
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                     foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
-                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
                     }
                 }
 
@@ -212,7 +212,7 @@ class FieldTypePhotosphere {
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                     foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
-                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
+                        File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
                     }
                 }
                 $field->delete();
@@ -290,7 +290,7 @@ class FieldTypePhotosphere {
         $meta_data = json_decode($field->meta_data, true);
         if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
             foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
-                File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value);
+                File::delete(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
             }
         }
         $field->delete();
@@ -337,7 +337,7 @@ class FieldTypePhotosphere {
             $meta_data = json_decode($meta_data_json, true);
             foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
 
-                $content_arr[$image_info]['#uri']['#value'] = Photosphere::PHOTOSPHERE_STORAGE_PATH . '/' . $image_info_value;
+                $content_arr[$image_info]['#uri']['#value'] = Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value;
             }
         }
 
