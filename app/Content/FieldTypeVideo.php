@@ -252,11 +252,11 @@ class FieldTypeVideo {
         $genericFile = GenericFile::where('id', $video->file_id)->first();
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $field->caption;
-        $content_arr['#description'] = $field->description;
-        $content_arr['#width'] = $field->width;
-        $content_arr['#height'] = $field->height;
-        $content_arr['#duration'] = $field->duration;
+        $content_arr['#caption'] = $video->caption;
+        $content_arr['#description'] = $video->description;
+        $content_arr['#width'] = $video->width;
+        $content_arr['#height'] = $video->height;
+        $content_arr['#duration'] = $video->duration;
         $content_arr['#uri']['#value'] = asset($genericFile->uri);
 
         return $content_arr;

@@ -253,8 +253,9 @@ class FieldTypeAudio {
         $genericFile = GenericFile::where('id', $audio->file_id)->first();
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $field->caption;
-        $content_arr['#description'] = $field->description;
+        $content_arr['#caption'] = $audio->caption;
+        $content_arr['#description'] = $audio->description;
+        $content_arr['#duration'] = $audio->duration;
         $content_arr['#uri']['#value'] = asset($genericFile->uri);
 
         return $content_arr;

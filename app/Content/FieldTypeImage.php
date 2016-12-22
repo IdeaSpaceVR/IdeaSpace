@@ -349,10 +349,10 @@ class FieldTypeImage {
         }
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $field->caption;
-        $content_arr['#description'] = $field->description;
-        $content_arr['#width'] = $field->width;
-        $content_arr['#height'] = $field->height;
+        $content_arr['#caption'] = $image->caption;
+        $content_arr['#description'] = $image->description;
+        $content_arr['#width'] = $image->width;
+        $content_arr['#height'] = $image->height;
         $content_arr['#uri']['#value'] = asset($genericFile->uri);
 
         return $content_arr;

@@ -189,6 +189,14 @@ class FieldTypeModel3D {
 
             if (array_has($request_all, $field_key . '__model3d_id')) {
                 $field->data = $request_all[$field_key . '__model3d_id'];
+
+                $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
+                $model_data = json_decode($model->data, true);
+                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data)) {
+                    $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE]]); 
+                }
+
                 $field->save();
             } else {
                 $field->delete();
@@ -202,6 +210,14 @@ class FieldTypeModel3D {
                 $field->key = $field_key;
                 $field->type = $type;
                 $field->data = $request_all[$field_key . '__model3d_id'];
+
+                $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
+                $model_data = json_decode($model->data, true);
+                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data)) {
+                    $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE]]); 
+                }
+  
                 $field->save();
             }
         }
@@ -278,8 +294,16 @@ class FieldTypeModel3D {
         }
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $field->caption;
-        $content_arr['#description'] = $field->description;
+        $content_arr['#caption'] = $model->caption;
+        $content_arr['#description'] = $model->description;
+
+        /* when content is saved, we copied scale value from asset library to field meta_data, */
+        /* in order to allow different model scales per space */
+        $meta_data = json_decode($field->meta_data, true);
+
+        if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_SCALE, $meta_data)) {
+            $content_arr['#scale'] = $meta_data[Model3D::MODEL_SCALE];
+        }
 
         return $content_arr;
     }

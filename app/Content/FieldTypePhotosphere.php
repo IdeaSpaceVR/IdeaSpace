@@ -337,15 +337,15 @@ class FieldTypePhotosphere {
             $meta_data = json_decode($meta_data_json, true);
             foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
 
-                $content_arr[$image_info]['#uri']['#value'] = Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value;
+                $content_arr[$image_info]['#uri']['#value'] = asset(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
             }
         }
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $field->caption;
-        $content_arr['#description'] = $field->description;
-        $content_arr['#width'] = $field->width;
-        $content_arr['#height'] = $field->height;
+        $content_arr['#caption'] = $photosphere->caption;
+        $content_arr['#description'] = $photosphere->description;
+        $content_arr['#width'] = $photosphere->width;
+        $content_arr['#height'] = $photosphere->height;
         $content_arr['#uri']['#value'] = asset($genericFile->uri);
 
         return $content_arr;
