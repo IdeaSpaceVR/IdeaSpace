@@ -52,7 +52,15 @@ jQuery(document).ready(function($) {
         $('#asset-details .modal-content').prepend('<i class="fa fa-refresh fa-spin" style="color:#0080e5;font-size:60px;position:absolute;top:300px;left:50%;"></i>');
         $('#asset-details').modal('show');
 
-        $('#asset-details .modal-content').load(window.ideaspace_site_path + '/admin/assets/model/' + model_id + '/edit', function() {
+        if ($('.asset-library-nav').find('#models-tab').hasClass('auto-opentab')) { 
+            var content_id = window.open_asset_library_ref.find('.content-id').val();
+            var field_key = window.open_asset_library_ref.find('.content-key').val();
+            var uri = window.ideaspace_site_path + '/admin/assets/model/' + field_key + '/' + content_id + '/' + model_id + '/edit' 
+        } else {
+            var uri = window.ideaspace_site_path + '/admin/assets/model/null/null/' + model_id + '/edit' 
+        }
+  
+        $('#asset-details .modal-content').load(uri, function() {
 
             /* allow switching views */
             $('#asset-details .vr-view').unbind('click');

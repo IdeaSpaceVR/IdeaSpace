@@ -13,6 +13,8 @@ class Model3D extends Model
     CONST FILE_EXTENSION_MTL = 'mtl';
     CONST FILE_EXTENSION_PLY = 'ply';
 
+    CONST MODEL_SCALE = 'scale';
+
     /**
      * The table associated with the model.
      *

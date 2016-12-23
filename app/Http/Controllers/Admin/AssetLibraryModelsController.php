@@ -10,6 +10,7 @@ use App\GenericFile;
 use App\Model3D;
 use App\Texture;
 use App\Setting;
+use App\Field;
 use Auth;
 use Image;
 use File;
@@ -583,13 +584,15 @@ class AssetLibraryModelsController extends Controller {
     /**
      * Model edit page.
      *
+     * @param String $field_key
+     * @param int $content_id
      * @param int $model_id
      *
      * @return Response
      */
-    public function model_edit($model_id) {
+    public function model_edit($field_key, $content_id, $model_id) {
 
-        if ($model_id == null) {
+        if (is_null($model_id)) {
             abort(404);
         }
 
@@ -650,11 +653,29 @@ class AssetLibraryModelsController extends Controller {
                 break;
         }
 
-        $model_data = json_decode($model->data, true);
-        if (is_null($model_data)) {
-            $scale = '1.0 1.0 1.0';
+        /* if current content field meta data has a scale value, use that one to show in asset library; otherwise the value from the models table */
+        if (!is_null($content_id) && !is_null($field_key)) {
+            try {
+                $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+                $meta_data = json_decode($field->meta_data, true);
+                if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_SCALE, $meta_data)) {
+                    $scale = $meta_data[Model3D::MODEL_SCALE]; 
+                }
+            } catch (ModelNotFoundException $e) {
+                $model_data = json_decode($model->data, true);
+                if (is_null($model_data)) {
+                    $scale = '1.0 1.0 1.0';
+                } else {
+                    $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+                }
+            }
         } else {
-            $scale = (array_key_exists('scale', $model_data)?$model_data['scale']:'1.0 1.0 1.0');
+            $model_data = json_decode($model->data, true);
+            if (is_null($model_data)) {
+                $scale = '1.0 1.0 1.0';
+            } else {
+                $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+            }
         }
 
         $vars['id'] = $model->id;
@@ -693,7 +714,7 @@ class AssetLibraryModelsController extends Controller {
         $model->description = $request->input('description');
 
         /* keep the aspect ratio */
-        $model->data = json_encode(array('scale' => $request->input('scale')));
+        $model->data = json_encode(array(Model3D::MODEL_SCALE => $request->input('scale')));
 
         $model->save();
 
@@ -841,7 +862,7 @@ class AssetLibraryModelsController extends Controller {
         if (is_null($model_data)) {
             $scale = '1.0 1.0 1.0';
         } else {
-            $scale = (array_key_exists('scale', $model_data)?$model_data['scale']:'1.0 1.0 1.0');
+            $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
         }
 
         $vars['id'] = $model->id;
