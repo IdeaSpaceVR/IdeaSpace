@@ -9,20 +9,26 @@ use Schema;
 use App\Setting;
 use App\Space;
 use App\Theme;
+use App\Content\ContentType;
 use Auth;
 
-class FrontpageController extends Controller
-{
+class FrontpageController extends Controller {
 
     use SpaceTrait;
+
+    private $contentType;
+
 
     /**
      * Create a new controller instance.
      *
      * @return void
      */
-    public function __construct()
-    {
+    public function __construct(ContentType $ct) {
+
+        /* CORS = Cross Origin Resource Sharing */
+        $this->middleware('cors');
+        $this->contentType = $ct;
     }
 
     /**
@@ -77,7 +83,7 @@ class FrontpageController extends Controller
                 }
             
                 /* show space on full page */ 
-                $vars = $this->prepare_space_vars($space, false);
+                $vars = $this->prepare_space_content($space, false);
 
                 /* cut off .blade.php */
                 return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);

@@ -76,7 +76,7 @@ trait SpaceTrait {
         }
 
         foreach ($content_all as $content) {
-            $response[$content->key] = $contentType->loadContentJson($content->id);
+            $response[$content->key][] = $contentType->loadContentJson($content->id);
         }
 
 
