@@ -192,9 +192,8 @@ class FieldTypeModel3D {
 
                 $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
                 $model_data = json_decode($model->data, true);
-                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data)) {
-                    $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
-                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE]]); 
+                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
+                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE], Model3D::MODEL_ROTATION => $model_data[Model3D::MODEL_ROTATION]]); 
                 }
 
                 $field->save();
@@ -213,9 +212,8 @@ class FieldTypeModel3D {
 
                 $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
                 $model_data = json_decode($model->data, true);
-                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data)) {
-                    $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
-                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE]]); 
+                if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
+                    $field->meta_data = json_encode([Model3D::MODEL_SCALE => $model_data[Model3D::MODEL_SCALE], Model3D::MODEL_ROTATION => $model_data[Model3D::MODEL_ROTATION]]); 
                 }
   
                 $field->save();
@@ -303,6 +301,9 @@ class FieldTypeModel3D {
 
         if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_SCALE, $meta_data)) {
             $content_arr['#scale'] = $meta_data[Model3D::MODEL_SCALE];
+        }
+        if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_ROTATION, $meta_data)) {
+            $content_arr['#rotation'] = $meta_data[Model3D::MODEL_ROTATION];
         }
 
         return $content_arr;

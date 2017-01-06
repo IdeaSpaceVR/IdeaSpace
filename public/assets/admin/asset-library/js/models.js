@@ -100,6 +100,30 @@ jQuery(document).ready(function($) {
                 $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
             });
 
+            /* update model rotation */
+            $('#asset-details #rotation-x').unbind('change');
+            $('#asset-details #rotation-x').change(function() {
+                var rotation = document.querySelector('#model').getAttribute('rotation');
+                if ($(document.querySelector('#model')).hasClass('ply-model')) {
+                    document.querySelector('#model').setAttribute('rotation', ($(this).val() - 90) + ' ' + rotation.y + ' ' + rotation.z);
+                } else {
+                    document.querySelector('#model').setAttribute('rotation', $(this).val() + ' ' + rotation.y + ' ' + rotation.z);
+                }
+                $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
+            });
+            $('#asset-details #rotation-y').unbind('change');
+            $('#asset-details #rotation-y').change(function() {
+                var rotation = document.querySelector('#model').getAttribute('rotation');
+                document.querySelector('#model').setAttribute('rotation', rotation.x + ' ' + $(this).val() + rotation.z);
+                $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
+            });
+            $('#asset-details #rotation-z').unbind('change');
+            $('#asset-details #rotation-z').change(function() {
+                var rotation = document.querySelector('#model').getAttribute('rotation');
+                document.querySelector('#model').setAttribute('rotation', rotation.x + ' ' + rotation.y + ' ' + $(this).val());
+                $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
+            });
+
         });
     };
     window.list_item_edit_click_handler = list_item_edit_click_handler;
@@ -154,9 +178,9 @@ jQuery(document).ready(function($) {
             $('#asset-details #rotate-model').unbind('change');
             $('#asset-details #rotate-model').change(function() {
                 if (this.checked) {
-                    document.querySelector('#model').emit('start-rotation');
+                    document.querySelector('#model').emit('start-rotation-y');
                 } else {
-                    document.querySelector('#model').emit('stop-rotation');
+                    document.querySelector('#model').emit('stop-rotation-y');
                 }
             });
 
@@ -223,6 +247,9 @@ jQuery(document).ready(function($) {
         data.caption = $('#asset-details #caption').val();
         data.description = $('#asset-details #description').val();
         data.scale = $('#asset-details #scale').val();
+        data.rotation_x = $('#asset-details #rotation-x').val();
+        data.rotation_y = $('#asset-details #rotation-y').val();
+        data.rotation_z = $('#asset-details #rotation-z').val();
 
         $.ajax({
             url: window.ideaspace_site_path + '/admin/assets/model/'+$(this).attr('data-model-id')+'/save',

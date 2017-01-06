@@ -11,15 +11,15 @@
             <div style="width:100%">
 
                 @if ($is_dae)
-                    @include('admin.asset_library.model_dae', ['model_dae' => $uri, 'scale' => $scale])
+                    @include('admin.asset_library.model_dae', ['model_dae' => $uri])
                 @elseif ($is_obj_mtl)
-                    @include('admin.asset_library.model_obj_mtl', ['model_obj' => $obj_uri, 'model_mtl' => $mtl_uri, 'scale' => $scale])
+                    @include('admin.asset_library.model_obj_mtl', ['model_obj' => $obj_uri, 'model_mtl' => $mtl_uri])
                 @elseif ($is_obj)
-                    @include('admin.asset_library.model_obj_mtl', ['model_obj' => $obj_uri, 'scale' => $scale])
+                    @include('admin.asset_library.model_obj_mtl', ['model_obj' => $obj_uri])
                 @elseif ($is_mtl)
-                    @include('admin.asset_library.model_obj_mtl', ['model_mtl' => $mtl_uri, 'scale' => $scale])
+                    @include('admin.asset_library.model_obj_mtl', ['model_mtl' => $mtl_uri])
                 @elseif ($is_ply)
-                    @include('admin.asset_library.model_ply', ['model_ply' => $uri, 'scale' => $scale])
+                    @include('admin.asset_library.model_ply', ['model_ply' => $uri])
                 @endif
 
             </div>
@@ -76,6 +76,31 @@
                     <option value="1.8 1.8 1.8" @if ($scale == '1.8 1.8 1.8') selected="selected" @endif>{{ trans('template_asset_library_models.scale_1_8') }}</option>
                     <option value="1.9 1.9 1.9" @if ($scale == '1.9 1.9 1.9') selected="selected" @endif>{{ trans('template_asset_library_models.scale_1_9') }}</option>
                     <option value="2.0 2.0 2.0" @if ($scale == '2.0 2.0 2.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_2_0') }}</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="rotation-x">{{ trans('template_asset_library_models.rotate_x') }}</label>
+                <select class="form-control" id="rotation-x">
+                    @for ($i = 0; $i <= 360; $i++)
+                    <option value="{{ $i }}" @if ($rotation_x == $i) selected="selected" @endif>{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rotation-y">{{ trans('template_asset_library_models.rotate_y') }}</label>
+                <select class="form-control" id="rotation-y">
+                    @for ($i = 0; $i <= 360; $i++)
+                    <option value="{{ $i }}" @if ($rotation_y == $i) selected="selected" @endif>{{ $i }}</option>
+                    @endfor
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="rotation-z">{{ trans('template_asset_library_models.rotate_z') }}</label>
+                <select class="form-control" id="rotation-z">
+                    @for ($i = 0; $i <= 360; $i++)
+                    <option value="{{ $i }}" @if ($rotation_z == $i) selected="selected" @endif>{{ $i }}</option>
+                    @endfor
                 </select>
             </div>
 

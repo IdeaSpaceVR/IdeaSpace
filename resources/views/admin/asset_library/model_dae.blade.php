@@ -13,13 +13,13 @@
 
     <a-sky color="#000000"></a-sky>
 
-    <a-entity id="model" scale="{{ $scale }}" position="0 0 0" collada-model="#model-dae">
+    <a-entity id="model" scale="{{ $scale }}" position="0 0 0" rotation="{{ $rotation_x }} {{ $rotation_y }} {{ $rotation_z }}" collada-model="#model-dae">
         <a-animation
-            begin="start-rotation"
-            end="stop-rotation"
+            begin="start-rotation-y"
+            end="stop-rotation-y"
             attribute="rotation"
-            dur="5000"
-            to="0 -360 0"
+            dur="8000"
+            to="{{ $rotation_x }} -360 {{ $rotation_z }}"
             easing="linear"
             repeat="indefinite">
         </a-animation>

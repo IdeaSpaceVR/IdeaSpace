@@ -175,7 +175,7 @@ class AssetLibraryModelsController extends Controller {
                     'file_id_0' => $newFile->id,
                     'caption' => '',
                     'description' => '',
-                    //'data' => ''
+                    'data' => '{"scale":"1.0 1.0 1.0","rotation":"0 0 0"}'
                 ]);
 
                 /* get textures which belong to this model and set model id */
@@ -220,7 +220,7 @@ class AssetLibraryModelsController extends Controller {
                         'file_id_0' => $newFile->id,
                         'caption' => '',
                         'description' => '',
-                        //'data' => ''
+                        'data' => '{"scale":"1.0 1.0 1.0","rotation":"0 0 0"}'
                     ]);
 
                     /* get textures which belong to this model and set model id */
@@ -263,7 +263,7 @@ class AssetLibraryModelsController extends Controller {
                     'file_id_0' => $newFile->id,
                     'caption' => '',
                     'description' => '',
-                    //'data' => ''
+                    'data' => '{"scale":"1.0 1.0 1.0","rotation":"0 0 0"}'
                 ]);
 
                 /* get textures which belong to this model and set model id */
@@ -308,7 +308,7 @@ class AssetLibraryModelsController extends Controller {
                         'file_id_0' => $newFile->id,
                         'caption' => '',
                         'description' => '',
-                        //'data' => ''
+                        'data' => '{"scale":"1.0 1.0 1.0","rotation":"0 0 0"}'
                     ]);
 
                     /* get textures which belong to this model and set model id */
@@ -391,7 +391,7 @@ class AssetLibraryModelsController extends Controller {
                 'file_id_0' => $newFile->id,
                 'caption' => '',
                 'description' => '',
-                //'data' => ''
+                'data' => '{"scale":"1.0 1.0 1.0","rotation":"0 0 0"}'
             ]);
 
             /* get textures which belong to this model and set model id */
@@ -653,32 +653,48 @@ class AssetLibraryModelsController extends Controller {
                 break;
         }
 
-        /* if current content field meta data has a scale value, use that one to show in asset library; otherwise the value from the models table */
+        /* if current content field meta data has a scale / rotation value, use that one to show in asset library; otherwise take the value from the models table */
         if (!is_null($content_id) && !is_null($field_key)) {
             try {
-                $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+                $field = Field::where('content_id', $content_id)->where('key', $field_key)->where('data', $model_id)->firstOrFail();
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_SCALE, $meta_data)) {
                     $scale = $meta_data[Model3D::MODEL_SCALE]; 
+                } else {
+                    $scale = '1.0 1.0 1.0';
+                }
+                if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_ROTATION, $meta_data)) {
+                    $rotation = $meta_data[Model3D::MODEL_ROTATION]; 
+                } else {
+                    $rotation = '0 0 0';
                 }
             } catch (ModelNotFoundException $e) {
                 $model_data = json_decode($model->data, true);
                 if (is_null($model_data)) {
                     $scale = '1.0 1.0 1.0';
+                    $rotation = '0 0 0';
                 } else {
                     $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+                    $rotation = (array_key_exists(Model3D::MODEL_ROTATION, $model_data)?$model_data[Model3D::MODEL_ROTATION]:'0 0 0');
                 }
             }
         } else {
             $model_data = json_decode($model->data, true);
             if (is_null($model_data)) {
                 $scale = '1.0 1.0 1.0';
+                $rotation = '0 0 0';
             } else {
                 $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+                $rotation = (array_key_exists(Model3D::MODEL_ROTATION, $model_data)?$model_data[Model3D::MODEL_ROTATION]:'0 0 0');
             }
         }
 
+        $rotation = explode(' ', $rotation);
+
         $vars['id'] = $model->id;
+        $vars['rotation_x'] = $rotation[0];
+        $vars['rotation_y'] = $rotation[1];
+        $vars['rotation_z'] = $rotation[2];
         $vars['caption'] = $model->caption;
         $vars['description'] = $model->description;
         $vars['scale'] = $scale;
@@ -713,8 +729,8 @@ class AssetLibraryModelsController extends Controller {
         $model->caption = $request->input('caption');
         $model->description = $request->input('description');
 
-        /* keep the aspect ratio */
-        $model->data = json_encode(array(Model3D::MODEL_SCALE => $request->input('scale')));
+        $model->data = json_encode(array(Model3D::MODEL_SCALE => $request->input('scale'), 
+            Model3D::MODEL_ROTATION => $request->input('rotation_x') . ' ' . $request->input('rotation_y') . ' ' . $request->input('rotation_z')));
 
         $model->save();
 
@@ -861,12 +877,19 @@ class AssetLibraryModelsController extends Controller {
         $model_data = json_decode($model->data, true);
         if (is_null($model_data)) {
             $scale = '1.0 1.0 1.0';
+            $rotation = '0 0 0';
         } else {
             $scale = (array_key_exists(Model3D::MODEL_SCALE, $model_data)?$model_data[Model3D::MODEL_SCALE]:'1.0 1.0 1.0');
+            $rotation = (array_key_exists(Model3D::MODEL_ROTATION, $model_data)?$model_data[Model3D::MODEL_ROTATION]:'0 0 0');
         }
+
+        $rotation = explode(' ', $rotation);
 
         $vars['id'] = $model->id;
         $vars['scale'] = $scale;
+        $vars['rotation_x'] = $rotation[0];
+        $vars['rotation_y'] = $rotation[1];
+        $vars['rotation_z'] = $rotation[2];
         $vars['uploaded_on'] = $model->created_at->format('F d, Y');
         $vars['model_file_size'] = number_format(round($genericFile->filesize / 1024), 0, '', '') . 'KB';
         $vars['model_file_type'] = $genericFile->filemime . (($model_file_extension!='')?' ( *.' . $model_file_extension . ' )':'');

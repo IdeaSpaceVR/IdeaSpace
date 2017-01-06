@@ -14,6 +14,7 @@ class Model3D extends Model
     CONST FILE_EXTENSION_PLY = 'ply';
 
     CONST MODEL_SCALE = 'scale';
+    CONST MODEL_ROTATION = 'rotation';
 
     /**
      * The table associated with the model.

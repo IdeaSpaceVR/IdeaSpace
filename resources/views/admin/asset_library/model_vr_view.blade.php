@@ -69,7 +69,7 @@
                 <div class="checkbox">
                     <label style="font-weight:700">
                         <input id="rotate-model" type="checkbox" value="rotate"> 
-                        {{ trans('template_asset_library_models.rotate') }}
+                        {{ trans('template_asset_library_models.rotate_y') }}
                     </label>
                 </div>
             </div>
