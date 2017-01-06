@@ -19,7 +19,3171 @@ module.exports = {
   }
 };
 
-},{"./src/controls":22,"./src/loaders":27,"./src/misc":32,"./src/primitives":40,"./src/shadows":41,"aframe-physics-system":7}],3:[function(require,module,exports){
+},{"./src/controls":81,"./src/loaders":88,"./src/misc":95,"./src/primitives":103,"./src/shadows":104,"aframe-physics-system":8}],3:[function(require,module,exports){
+/**
+ * @author yamahigashi https://github.com/yamahigashi
+ * @author Kyle-Larson https://github.com/Kyle-Larson
+ *
+ * This loader loads FBX file in *ASCII and version 7 format*.
+ *
+ * Support
+ *  - mesh
+ *  - skinning
+ *  - normal / uv
+ *  - material (Multi-Material too)
+ *  - textures (Must be in same directory)
+ *
+ *  No Support
+ *  - morph
+ */
+
+( function () {
+
+  module.exports = THREE.FBXLoader = function ( manager ) {
+
+    THREE.Loader.call( this );
+    this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+    this.textureLoader = null;
+    this.textureBasePath = null;
+
+  };
+
+  THREE.FBXLoader.prototype = Object.create( THREE.Loader.prototype );
+
+  THREE.FBXLoader.prototype.constructor = THREE.FBXLoader;
+
+  Object.assign( THREE.FBXLoader.prototype, {
+
+    load: function ( url, onLoad, onProgress, onError ) {
+
+      var scope = this;
+
+      var loader = new THREE.XHRLoader( scope.manager );
+      // loader.setCrossOrigin( this.crossOrigin );
+      loader.load( url, function ( text ) {
+
+        if ( ! scope.isFbxFormatASCII( text ) ) {
+
+          console.warn( 'FBXLoader: !!! FBX Binary format not supported !!!' );
+
+        } else if ( ! scope.isFbxVersionSupported( text ) ) {
+
+          console.warn( 'FBXLoader: !!! FBX Version below 7 not supported !!!' );
+
+        } else {
+
+          scope.textureBasePath = scope.extractUrlBase( url );
+          onLoad( scope.parse( text ) );
+
+        }
+
+      }, onProgress, onError );
+
+    },
+
+    setCrossOrigin: function ( value ) {
+
+      this.crossOrigin = value;
+
+    },
+
+    isFbxFormatASCII: function ( body ) {
+
+      var CORRECT = [ 'K', 'a', 'y', 'd', 'a', 'r', 'a', '\\', 'F', 'B', 'X', '\\', 'B', 'i', 'n', 'a', 'r', 'y', '\\', '\\' ];
+
+      var cursor = 0;
+      var read = function ( offset ) {
+
+        var result = body[ offset - 1 ];
+        body = body.slice( cursor + offset );
+        cursor ++;
+        return result;
+
+      };
+
+      for ( var i = 0; i < CORRECT.length; ++ i ) {
+
+        var num = read( 1 );
+        if ( num == CORRECT[ i ] ) {
+
+          return false;
+
+        }
+
+      }
+
+      return true;
+
+    },
+
+    isFbxVersionSupported: function ( body ) {
+
+      var versionExp = /FBXVersion: (\d+)/;
+      var match = body.match( versionExp );
+      if ( match ) {
+
+        var version = parseInt( match[ 1 ] );
+        console.log( 'FBXLoader: FBX version ' + version );
+        return version >= 7000;
+
+      }
+      return false;
+
+    },
+
+    parse: function ( text ) {
+
+      var scope = this;
+
+      console.time( 'FBXLoader' );
+
+      console.time( 'FBXLoader: TextParser' );
+      var nodes = new FBXParser().parse( text );
+      console.timeEnd( 'FBXLoader: TextParser' );
+
+      console.time( 'FBXLoader: ObjectParser' );
+      scope.hierarchy = ( new Bones() ).parseHierarchy( nodes );
+      scope.weights = ( new Weights() ).parse( nodes, scope.hierarchy );
+      scope.animations = ( new Animation() ).parse( nodes, scope.hierarchy );
+      scope.textures = ( new Textures() ).parse( nodes, scope.hierarchy );
+      scope.materials = ( new Materials() ).parse( nodes, scope.hierarchy );
+      scope.geometries = ( new Geometries() ).parse( nodes, scope.hierarchy );
+      console.timeEnd( 'FBXLoader: ObjectParser' );
+
+      this.texture_cache = {};
+      this.material_cache = {};
+      this.geometry_cache = {};
+
+      console.time( 'FBXLoader: MeshParser' );
+      var meshes = this.parseMeshes( nodes );
+      console.timeEnd( 'FBXLoader: MeshParser' );
+
+      var container = new THREE.Group();
+
+      for ( var i = 0; i < meshes.length; ++ i ) {
+
+        if ( meshes[ i ] === undefined ) {
+
+          continue;
+
+        }
+
+        container.add( meshes[ i ] );
+
+        //wireframe = new THREE.WireframeHelper( geometries[i], 0x00ff00 );
+        //container.add( wireframe );
+
+        //vnh = new THREE.VertexNormalsHelper( geometries[i], 0.6 );
+        //container.add( vnh );
+
+        //skh = new THREE.SkeletonHelper( geometries[i] );
+        //container.add( skh );
+
+        // container.add( new THREE.BoxHelper( geometries[i] ) );
+
+      }
+
+      console.timeEnd( 'FBXLoader' );
+      return container;
+
+    },
+
+    getTexture: function ( texNode ) {
+
+      if ( ! ( texNode.id in this.texture_cache ) ) {
+
+        if ( this.textureLoader === null ) {
+
+          this.textureLoader = new THREE.TextureLoader();
+
+        }
+
+        this.texture_cache[ texNode.id ] = this.textureLoader.load( this.textureBasePath + '/' + texNode.fileName );
+
+      }
+
+      return this.texture_cache[ texNode.id ];
+
+    },
+
+    getMaterial: function ( matNode, nodes ) {
+
+      if ( ! ( matNode.id in this.material_cache ) ) {
+
+        // TODO:
+        // Cannot find a list of possible ShadingModel values.
+        // If someone finds a list, please add additional cases
+        // and map to appropriate materials.
+        var tmpMat;
+        switch ( matNode.type ) {
+
+          case "phong":
+            tmpMat = new THREE.MeshPhongMaterial();
+            break;
+          case "lambert":
+            tmpMat = new THREE.MeshLambertMaterial();
+            break;
+          default:
+            console.warn( "No implementation given for material type " + matNode.type + " in FBXLoader.js.  Defaulting to basic material" );
+            tmpMat = new THREE.MeshBasicMaterial( { color: 0x3300ff } );
+            break;
+
+        }
+
+        var children = nodes.searchConnectionChildren( matNode.id );
+        for ( var i = 0; i < children.length; ++ i ) {
+
+          var type = nodes.searchConnectionType( children[ i ], matNode.id );
+          switch ( type ) {
+
+            case " \"AmbientColor":
+              //TODO: Support AmbientColor textures
+              break;
+
+            case " \"DiffuseColor":
+              matNode.parameters.map = this.getTexture( this.textures.textures[ children[ i ] ] );
+              break;
+
+            default:
+              console.warn( 'Unknown texture application of type ' + type + ', skipping texture' );
+              break;
+
+          }
+
+        }
+
+        tmpMat.setValues( matNode.parameters );
+
+        this.material_cache[ matNode.id ] = tmpMat;
+
+      }
+
+      return this.material_cache[ matNode.id ];
+
+    },
+
+    getGeometry: function ( geoNode ) {
+
+      if ( ! ( geoNode.id in this.geometry_cache ) ) {
+
+        var tmpGeo = new THREE.BufferGeometry();
+        tmpGeo.name = geoNode.name;
+        tmpGeo.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( geoNode.vertices ), 3 ) );
+
+        if ( geoNode.normals !== undefined && geoNode.normals.length > 0 ) {
+
+          tmpGeo.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( geoNode.normals ), 3 ) );
+
+        }
+
+        if ( geoNode.uvs !== undefined && geoNode.uvs.length > 0 ) {
+
+          tmpGeo.addAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( geoNode.uvs ), 2 ) );
+
+        }
+
+        if ( geoNode.indices !== undefined && geoNode.indices.length > 0 ) {
+
+          if ( geoNode.indices.length > 65535 ) {
+
+            tmpGeo.setIndex( new THREE.BufferAttribute( new Uint32Array( geoNode.indices ), 1 ) );
+
+          } else {
+
+            tmpGeo.setIndex( new THREE.BufferAttribute( new Uint16Array( geoNode.indices ), 1 ) );
+
+          }
+
+        }
+
+        tmpGeo.verticesNeedUpdate = true;
+        tmpGeo.computeBoundingSphere();
+        tmpGeo.computeBoundingBox();
+
+        //Material groupings
+        if ( geoNode.materialIndices.length > 1 ) {
+
+          tmpGeo.groups = [];
+
+          for ( var i = 0, prevIndex = - 1; i < geoNode.materialIndices.length; ++ i ) {
+
+            if ( geoNode.materialIndices[ i ] !== prevIndex ) {
+
+              tmpGeo.groups.push( { start: i * 3, count: 0, materialIndex: geoNode.materialIndices[ i ] } );
+              prevIndex = geoNode.materialIndices[ i ];
+
+            }
+
+            tmpGeo.groups[ tmpGeo.groups.length - 1 ].count += 3;
+
+          }
+
+        }
+
+        this.geometry_cache[ geoNode.id ] = new THREE.Geometry().fromBufferGeometry( tmpGeo );
+        this.geometry_cache[ geoNode.id ].bones = geoNode.bones;
+        this.geometry_cache[ geoNode.id ].skinIndices = this.weights.skinIndices;
+        this.geometry_cache[ geoNode.id ].skinWeights = this.weights.skinWeights;
+
+      }
+
+      return this.geometry_cache[ geoNode.id ];
+
+    },
+
+    parseMeshes: function ( node ) {
+
+      var modelNode = node.Objects.subNodes.Model;
+      var meshes = [];
+
+      for ( var ID in modelNode ) {
+
+        if ( modelNode[ ID ].attrType === 'Mesh' ) {
+
+          //Parse Mesh
+          meshes.push( this.parseMesh( modelNode[ ID ], node ) );
+
+        }
+
+      }
+
+      return meshes;
+
+    },
+
+    parseMesh: function ( meshNode, FBXNodes ) {
+
+      var geoNodes = FBXNodes.Objects.subNodes.Geometry;
+      var matNodes = FBXNodes.Objects.subNodes.Material;
+
+      var children = FBXNodes.searchConnectionChildren( meshNode.id );
+      var geometry;
+      var materials = [];
+      var material;
+      var mesh;
+      for ( var i = 0; i < children.length; ++ i ) {
+
+        if ( children[ i ] in geoNodes ) {
+
+          geometry = this.getGeometry( this.geometries.geometries[ children[ i ] ] );
+          continue;
+
+        }
+
+        if ( children[ i ] in matNodes ) {
+
+          materials.push( this.getMaterial( this.materials.materials[ children[ i ] ], FBXNodes ) );
+          continue;
+
+        }
+
+      }
+
+      if ( materials.length > 1 ) {
+
+        material = new THREE.MultiMaterial( materials );
+        //material = materials[ 0 ];
+
+      } else {
+
+        material = materials[ 0 ];
+
+      }
+
+      if ( geometry.bones !== undefined && geometry.skinWeights !== undefined ) {
+
+        if ( material instanceof THREE.MultiMaterial ) {
+
+          for ( var i = 0; i < material.materials.length; ++ i ) {
+
+            material.materials[ i ].skinning = true;
+
+          }
+
+        } else {
+
+          material.skinning = true;
+
+        }
+
+        mesh = new THREE.SkinnedMesh( geometry, material );
+
+      } else {
+
+        mesh = new THREE.Mesh( geometry, material );
+
+      }
+
+      if ( this.animations !== undefined ) {
+
+        this.addAnimation( mesh, this.weights.matrices, this.animations );
+
+      }
+
+      return mesh;
+
+    },
+
+    addAnimation: function ( mesh, matrices, animations ) {
+
+      for ( var key in animations.stacks ) {
+
+        var animationData = {
+          name: animations.stacks[ key ].name,
+          fps: 30,
+          length: animations.stacks[ key ].length,
+          hierarchy: []
+        };
+
+        for ( var i = 0; i < mesh.geometry.bones.length; ++ i ) {
+
+          var name = mesh.geometry.bones[ i ].name;
+          name = name.replace( /.*:/, '' );
+          animationData.hierarchy.push( { parent: mesh.geometry.bones[ i ].parent, name: name, keys: [] } );
+
+        }
+
+        function hasCurve( animNode, attr ) {
+
+          if ( animNode === undefined ) {
+
+            return false;
+
+          }
+
+          var attrNode;
+          switch ( attr ) {
+
+            case 'S':
+              if ( ! ( animNode.S ) ) {
+
+                return false;
+
+              }
+              attrNode = animNode.S;
+              break;
+
+            case 'R':
+              if ( ! ( animNode.R ) ) {
+
+                return false;
+
+              }
+              attrNode = animNode.R;
+              break;
+
+            case 'T':
+              if ( ! ( animNode.T ) ) {
+
+                return false;
+
+              }
+              attrNode = animNode.T;
+              break;
+
+          }
+
+          if ( attrNode.curves.x === undefined ) {
+
+            return false;
+
+          }
+
+          if ( attrNode.curves.y === undefined ) {
+
+            return false;
+
+          }
+
+          if ( attrNode.curves.z === undefined ) {
+
+            return false;
+
+          }
+
+          return true;
+
+        }
+
+        function hasKeyOnFrame( attrNode, frame ) {
+
+          var x = isKeyExistOnFrame( attrNode.curves.x, frame );
+          var y = isKeyExistOnFrame( attrNode.curves.y, frame );
+          var z = isKeyExistOnFrame( attrNode.curves.z, frame );
+
+          return x && y && z;
+
+        }
+
+        function isKeyExistOnFrame( curve, frame ) {
+
+          var value = curve.values[ frame ];
+          return value !== undefined;
+
+        }
+
+        function genKey( animNode, bone ) {
+
+          // key initialize with its bone's bind pose at first
+          var key = {};
+          key.time = frame / animations.fps; // TODO:
+          key.pos = bone.pos;
+          key.rot = bone.rotq;
+          key.scl = bone.scl;
+
+          if ( animNode === undefined ) {
+
+            return key;
+
+          }
+
+          try {
+
+            if ( hasCurve( animNode, 'T' ) && hasKeyOnFrame( animNode.T, frame ) ) {
+
+              var pos = new THREE.Vector3(
+                animNode.T.curves.x.values[ frame ],
+                animNode.T.curves.y.values[ frame ],
+                animNode.T.curves.z.values[ frame ] );
+              key.pos = [ pos.x, pos.y, pos.z ];
+
+            }
+
+            if ( hasCurve( animNode, 'R' ) && hasKeyOnFrame( animNode.R, frame ) ) {
+
+              var rx = degToRad( animNode.R.curves.x.values[ frame ] );
+              var ry = degToRad( animNode.R.curves.y.values[ frame ] );
+              var rz = degToRad( animNode.R.curves.z.values[ frame ] );
+              var eul = new THREE.Vector3( rx, ry, rz );
+              var rot = quatFromVec( eul.x, eul.y, eul.z );
+              key.rot = [ rot.x, rot.y, rot.z, rot.w ];
+
+            }
+
+            if ( hasCurve( animNode, 'S' ) && hasKeyOnFrame( animNode.S, frame ) ) {
+
+              var scl = new THREE.Vector3(
+                animNode.S.curves.x.values[ frame ],
+                animNode.S.curves.y.values[ frame ],
+                animNode.S.curves.z.values[ frame ] );
+              key.scl = [ scl.x, scl.y, scl.z ];
+
+            }
+
+          } catch ( e ) {
+
+            // curve is not full plotted
+            console.log( bone );
+            console.log( e );
+
+          }
+
+          return key;
+
+        }
+
+        var bones = mesh.geometry.bones;
+        for ( var frame = 0; frame < animations.stacks[ key ].frames; frame ++ ) {
+
+
+          for ( i = 0; i < bones.length; i ++ ) {
+
+            var bone = bones[ i ];
+            var animNode = animations.stacks[ key ].layers[ 0 ][ i ];
+
+            for ( var j = 0; j < animationData.hierarchy.length; j ++ ) {
+
+              if ( animationData.hierarchy[ j ].name === bone.name ) {
+
+                animationData.hierarchy[ j ].keys.push( genKey( animNode, bone ) );
+
+              }
+
+            }
+
+          }
+
+        }
+
+        if ( mesh.geometry.animations === undefined ) {
+
+          mesh.geometry.animations = [];
+
+        }
+
+        mesh.geometry.animations.push( THREE.AnimationClip.parseAnimation( animationData, mesh.geometry.bones ) );
+
+      }
+
+    },
+
+    loadFile: function ( url, onLoad, onProgress, onError, responseType ) {
+
+      var loader = new THREE.XHRLoader( this.manager );
+
+      loader.setResponseType( responseType );
+
+      var request = loader.load( url, onLoad, onProgress, onError );
+
+      return request;
+
+    },
+
+    loadFileAsBuffer: function ( url, onLoad, onProgress, onError ) {
+
+      this.loadFile( url, onLoad, onProgress, onError, 'arraybuffer' );
+
+    },
+
+    loadFileAsText: function ( url, onLoad, onProgress, onError ) {
+
+      this.loadFile( url, onLoad, onProgress, onError, 'text' );
+
+    }
+
+  } );
+
+  /* ----------------------------------------------------------------- */
+
+  function FBXNodes() {}
+
+  Object.assign( FBXNodes.prototype, {
+
+    add: function ( key, val ) {
+
+      this[ key ] = val;
+
+    },
+
+    searchConnectionParent: function ( id ) {
+
+      if ( this.__cache_search_connection_parent === undefined ) {
+
+        this.__cache_search_connection_parent = [];
+
+      }
+
+      if ( this.__cache_search_connection_parent[ id ] !== undefined ) {
+
+        return this.__cache_search_connection_parent[ id ];
+
+      } else {
+
+        this.__cache_search_connection_parent[ id ] = [];
+
+      }
+
+      var conns = this.Connections.properties.connections;
+
+      var results = [];
+      for ( var i = 0; i < conns.length; ++ i ) {
+
+        if ( conns[ i ][ 0 ] == id ) {
+
+          // 0 means scene root
+          var res = conns[ i ][ 1 ] === 0 ? - 1 : conns[ i ][ 1 ];
+          results.push( res );
+
+        }
+
+      }
+
+      if ( results.length > 0 ) {
+
+        this.__cache_search_connection_parent[ id ] = this.__cache_search_connection_parent[ id ].concat( results );
+        return results;
+
+      } else {
+
+        this.__cache_search_connection_parent[ id ] = [ - 1 ];
+        return [ - 1 ];
+
+      }
+
+    },
+
+    searchConnectionChildren: function ( id ) {
+
+      if ( this.__cache_search_connection_children === undefined ) {
+
+        this.__cache_search_connection_children = [];
+
+      }
+
+      if ( this.__cache_search_connection_children[ id ] !== undefined ) {
+
+        return this.__cache_search_connection_children[ id ];
+
+      } else {
+
+        this.__cache_search_connection_children[ id ] = [];
+
+      }
+
+      var conns = this.Connections.properties.connections;
+
+      var res = [];
+      for ( var i = 0; i < conns.length; ++ i ) {
+
+        if ( conns[ i ][ 1 ] == id ) {
+
+          // 0 means scene root
+          res.push( conns[ i ][ 0 ] === 0 ? - 1 : conns[ i ][ 0 ] );
+          // there may more than one kid, then search to the end
+
+        }
+
+      }
+
+      if ( res.length > 0 ) {
+
+        this.__cache_search_connection_children[ id ] = this.__cache_search_connection_children[ id ].concat( res );
+        return res;
+
+      } else {
+
+        this.__cache_search_connection_children[ id ] = [ ];
+        return [ ];
+
+      }
+
+    },
+
+    searchConnectionType: function ( id, to ) {
+
+      var key = id + ',' + to; // TODO: to hash
+      if ( this.__cache_search_connection_type === undefined ) {
+
+        this.__cache_search_connection_type = {};
+
+      }
+
+      if ( this.__cache_search_connection_type[ key ] !== undefined ) {
+
+        return this.__cache_search_connection_type[ key ];
+
+      } else {
+
+        this.__cache_search_connection_type[ key ] = '';
+
+      }
+
+      var conns = this.Connections.properties.connections;
+
+      for ( var i = 0; i < conns.length; ++ i ) {
+
+        if ( conns[ i ][ 0 ] == id && conns[ i ][ 1 ] == to ) {
+
+          // 0 means scene root
+          this.__cache_search_connection_type[ key ] = conns[ i ][ 2 ];
+          return conns[ i ][ 2 ];
+
+        }
+
+      }
+
+      this.__cache_search_connection_type[ id ] = null;
+      return null;
+
+    }
+
+  } );
+
+  function FBXParser() {}
+
+  Object.assign( FBXParser.prototype, {
+
+    getPrevNode: function () {
+
+      return this.nodeStack[ this.currentIndent - 2 ];
+
+    },
+
+    getCurrentNode: function () {
+
+      return this.nodeStack[ this.currentIndent - 1 ];
+
+    },
+
+    getCurrentProp: function () {
+
+      return this.currentProp;
+
+    },
+
+    pushStack: function ( node ) {
+
+      this.nodeStack.push( node );
+      this.currentIndent += 1;
+
+    },
+
+    popStack: function () {
+
+      this.nodeStack.pop();
+      this.currentIndent -= 1;
+
+    },
+
+    setCurrentProp: function ( val, name ) {
+
+      this.currentProp = val;
+      this.currentPropName = name;
+
+    },
+
+    // ----------parse ---------------------------------------------------
+    parse: function ( text ) {
+
+      this.currentIndent = 0;
+      this.allNodes = new FBXNodes();
+      this.nodeStack = [];
+      this.currentProp = [];
+      this.currentPropName = '';
+
+      var split = text.split( "\n" );
+      for ( var line in split ) {
+
+        var l = split[ line ];
+
+        // short cut
+        if ( l.match( /^[\s\t]*;/ ) ) {
+
+          continue;
+
+        } // skip comment line
+        if ( l.match( /^[\s\t]*$/ ) ) {
+
+          continue;
+
+        } // skip empty line
+
+        // beginning of node
+        var beginningOfNodeExp = new RegExp( "^\\t{" + this.currentIndent + "}(\\w+):(.*){", '' );
+        var match = l.match( beginningOfNodeExp );
+        if ( match ) {
+
+          var nodeName = match[ 1 ].trim().replace( /^"/, '' ).replace( /"$/, "" );
+          var nodeAttrs = match[ 2 ].split( ',' ).map( function ( element ) {
+
+            return element.trim().replace( /^"/, '' ).replace( /"$/, '' );
+
+          } );
+
+          this.parseNodeBegin( l, nodeName, nodeAttrs || null );
+          continue;
+
+        }
+
+        // node's property
+        var propExp = new RegExp( "^\\t{" + ( this.currentIndent ) + "}(\\w+):[\\s\\t\\r\\n](.*)" );
+        var match = l.match( propExp );
+        if ( match ) {
+
+          var propName = match[ 1 ].replace( /^"/, '' ).replace( /"$/, "" ).trim();
+          var propValue = match[ 2 ].replace( /^"/, '' ).replace( /"$/, "" ).trim();
+
+          this.parseNodeProperty( l, propName, propValue );
+          continue;
+
+        }
+
+        // end of node
+        var endOfNodeExp = new RegExp( "^\\t{" + ( this.currentIndent - 1 ) + "}}" );
+        if ( l.match( endOfNodeExp ) ) {
+
+          this.nodeEnd();
+          continue;
+
+        }
+
+        // for special case,
+        //
+        //    Vertices: *8670 {
+        //      a: 0.0356229953467846,13.9599733352661,-0.399196773.....(snip)
+        // -0.0612030513584614,13.960485458374,-0.409748703241348,-0.10.....
+        // 0.12490539252758,13.7450733184814,-0.454119384288788,0.09272.....
+        // 0.0836158767342567,13.5432004928589,-0.435397416353226,0.028.....
+        //
+        // these case the lines must contiue with previous line
+        if ( l.match( /^[^\s\t}]/ ) ) {
+
+          this.parseNodePropertyContinued( l );
+
+        }
+
+      }
+
+      return this.allNodes;
+
+    },
+
+    parseNodeBegin: function ( line, nodeName, nodeAttrs ) {
+
+      // var nodeName = match[1];
+      var node = { 'name': nodeName, properties: {}, 'subNodes': {} };
+      var attrs = this.parseNodeAttr( nodeAttrs );
+      var currentNode = this.getCurrentNode();
+
+      // a top node
+      if ( this.currentIndent === 0 ) {
+
+        this.allNodes.add( nodeName, node );
+
+      } else {
+
+        // a subnode
+
+        // already exists subnode, then append it
+        if ( nodeName in currentNode.subNodes ) {
+
+          var tmp = currentNode.subNodes[ nodeName ];
+
+          // console.log( "duped entry found\nkey: " + nodeName + "\nvalue: " + propValue );
+          if ( this.isFlattenNode( currentNode.subNodes[ nodeName ] ) ) {
+
+
+            if ( attrs.id === '' ) {
+
+              currentNode.subNodes[ nodeName ] = [];
+              currentNode.subNodes[ nodeName ].push( tmp );
+
+            } else {
+
+              currentNode.subNodes[ nodeName ] = {};
+              currentNode.subNodes[ nodeName ][ tmp.id ] = tmp;
+
+            }
+
+          }
+
+          if ( attrs.id === '' ) {
+
+            currentNode.subNodes[ nodeName ].push( node );
+
+          } else {
+
+            currentNode.subNodes[ nodeName ][ attrs.id ] = node;
+
+          }
+
+        } else if ( typeof attrs.id === 'number' || attrs.id.match( /^\d+$/ ) ) {
+
+          currentNode.subNodes[ nodeName ] = {};
+          currentNode.subNodes[ nodeName ][ attrs.id ] = node;
+
+        } else {
+
+          currentNode.subNodes[ nodeName ] = node;
+
+        }
+
+      }
+
+      // for this     ↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓↓
+      // NodeAttribute: 1001463072, "NodeAttribute::", "LimbNode" {
+      if ( nodeAttrs ) {
+
+        node.id = attrs.id;
+        node.attrName = attrs.name;
+        node.attrType = attrs.type;
+
+      }
+
+      this.pushStack( node );
+
+    },
+
+    parseNodeAttr: function ( attrs ) {
+
+      var id = attrs[ 0 ];
+
+      if ( attrs[ 0 ] !== "" ) {
+
+        id = parseInt( attrs[ 0 ] );
+
+        if ( isNaN( id ) ) {
+
+          // PolygonVertexIndex: *16380 {
+          id = attrs[ 0 ];
+
+        }
+
+      }
+
+      var name;
+      var type;
+      if ( attrs.length > 1 ) {
+
+        name = attrs[ 1 ].replace( /^(\w+)::/, '' );
+        type = attrs[ 2 ];
+
+      }
+
+      return { id: id, name: name || '', type: type || '' };
+
+    },
+
+    parseNodeProperty: function ( line, propName, propValue ) {
+
+      var currentNode = this.getCurrentNode();
+      var parentName = currentNode.name;
+
+      // special case parent node's is like "Properties70"
+      // these chilren nodes must treat with careful
+      if ( parentName !== undefined ) {
+
+        var propMatch = parentName.match( /Properties(\d)+/ );
+        if ( propMatch ) {
+
+          this.parseNodeSpecialProperty( line, propName, propValue );
+          return;
+
+        }
+
+      }
+
+      // special case Connections
+      if ( propName == 'C' ) {
+
+        var connProps = propValue.split( ',' ).slice( 1 );
+        var from = parseInt( connProps[ 0 ] );
+        var to = parseInt( connProps[ 1 ] );
+
+        var rest = propValue.split( ',' ).slice( 3 );
+
+        propName = 'connections';
+        propValue = [ from, to ];
+        propValue = propValue.concat( rest );
+
+        if ( currentNode.properties[ propName ] === undefined ) {
+
+          currentNode.properties[ propName ] = [];
+
+        }
+
+      }
+
+      // special case Connections
+      if ( propName == 'Node' ) {
+
+        var id = parseInt( propValue );
+        currentNode.properties.id = id;
+        currentNode.id = id;
+
+      }
+
+      // already exists in properties, then append this
+      if ( propName in currentNode.properties ) {
+
+        // console.log( "duped entry found\nkey: " + propName + "\nvalue: " + propValue );
+        if ( Array.isArray( currentNode.properties[ propName ] ) ) {
+
+          currentNode.properties[ propName ].push( propValue );
+
+        } else {
+
+          currentNode.properties[ propName ] += propValue;
+
+        }
+
+      } else {
+
+        // console.log( propName + ":  " + propValue );
+        if ( Array.isArray( currentNode.properties[ propName ] ) ) {
+
+          currentNode.properties[ propName ].push( propValue );
+
+        } else {
+
+          currentNode.properties[ propName ] = propValue;
+
+        }
+
+      }
+
+      this.setCurrentProp( currentNode.properties, propName );
+
+    },
+
+    // TODO:
+    parseNodePropertyContinued: function ( line ) {
+
+      this.currentProp[ this.currentPropName ] += line;
+
+    },
+
+    parseNodeSpecialProperty: function ( line, propName, propValue ) {
+
+      // split this
+      // P: "Lcl Scaling", "Lcl Scaling", "", "A",1,1,1
+      // into array like below
+      // ["Lcl Scaling", "Lcl Scaling", "", "A", "1,1,1" ]
+      var props = propValue.split( '",' ).map( function ( element ) {
+
+        return element.trim().replace( /^\"/, '' ).replace( /\s/, '_' );
+
+      } );
+
+      var innerPropName = props[ 0 ];
+      var innerPropType1 = props[ 1 ];
+      var innerPropType2 = props[ 2 ];
+      var innerPropFlag = props[ 3 ];
+      var innerPropValue = props[ 4 ];
+
+      /*
+      if ( innerPropValue === undefined ) {
+        innerPropValue = props[3];
+      }
+      */
+
+      // cast value in its type
+      switch ( innerPropType1 ) {
+
+        case "int":
+          innerPropValue = parseInt( innerPropValue );
+          break;
+
+        case "double":
+          innerPropValue = parseFloat( innerPropValue );
+          break;
+
+        case "ColorRGB":
+        case "Vector3D":
+          var tmp = innerPropValue.split( ',' );
+          innerPropValue = new THREE.Vector3( tmp[ 0 ], tmp[ 1 ], tmp[ 2 ] );
+          break;
+
+      }
+
+      // CAUTION: these props must append to parent's parent
+      this.getPrevNode().properties[ innerPropName ] = {
+
+        'type': innerPropType1,
+        'type2': innerPropType2,
+        'flag': innerPropFlag,
+        'value': innerPropValue
+
+      };
+
+      this.setCurrentProp( this.getPrevNode().properties, innerPropName );
+
+    },
+
+    nodeEnd: function () {
+
+      this.popStack();
+
+    },
+
+    /* ---------------------------------------------------------------- */
+    /*    util                            */
+    isFlattenNode: function ( node ) {
+
+      return ( 'subNodes' in node && 'properties' in node ) ? true : false;
+
+    }
+
+  } );
+
+
+  // generate skinIndices, skinWeights
+  //    @skinIndices: per vertex data, this represents the bone indexes affects that vertex
+  //    @skinWeights: per vertex data, this represents the Weight Values affects that vertex
+  //    @matrices:  per `bones` data
+  function Weights() {
+
+    this.skinIndices = [];
+    this.skinWeights = [];
+
+    this.matrices = [];
+
+  }
+
+
+  Weights.prototype.parseCluster = function ( node, id, entry ) {
+
+    var _p = node.searchConnectionParent( id );
+    var _indices = parseArrayToInt( entry.subNodes.Indexes.properties.a );
+    var _weights = parseArrayToFloat( entry.subNodes.Weights.properties.a );
+    var _transform = parseArrayToMatrix( entry.subNodes.Transform.properties.a );
+    var _link = parseArrayToMatrix( entry.subNodes.TransformLink.properties.a );
+
+    return {
+
+      'parent': _p,
+      'id': parseInt( id ),
+      'indices': _indices,
+      'weights': _weights,
+      'transform': _transform,
+      'transformlink': _link,
+      'linkMode': entry.properties.Mode
+
+    };
+
+  };
+
+  Weights.prototype.parse = function ( node, bones ) {
+
+    this.skinIndices = [];
+    this.skinWeights = [];
+
+    this.matrices = [];
+
+    var deformers = node.Objects.subNodes.Deformer;
+
+    var clusters = {};
+    for ( var id in deformers ) {
+
+      if ( deformers[ id ].attrType === 'Cluster' ) {
+
+        if ( ! ( 'Indexes' in deformers[ id ].subNodes ) ) {
+
+          continue;
+
+        }
+
+        //clusters.push( this.parseCluster( node, id, deformers[id] ) );
+        var cluster = this.parseCluster( node, id, deformers[ id ] );
+        var boneId = node.searchConnectionChildren( cluster.id )[ 0 ];
+        clusters[ boneId ] = cluster;
+
+      }
+
+    }
+
+
+    // this clusters is per Bone data, thus we make this into per vertex data
+    var weights = [];
+    var hi = bones.hierarchy;
+    for ( var b = 0; b < hi.length; ++ b ) {
+
+      var bid = hi[ b ].internalId;
+      if ( clusters[ bid ] === undefined ) {
+
+        //console.log( bid );
+        this.matrices.push( new THREE.Matrix4() );
+        continue;
+
+      }
+
+      var clst = clusters[ bid ];
+      // store transform matrix per bones
+      this.matrices.push( clst.transform );
+      //this.matrices.push( clst.transformlink );
+      for ( var v = 0; v < clst.indices.length; ++ v ) {
+
+        if ( weights[ clst.indices[ v ] ] === undefined ) {
+
+          weights[ clst.indices[ v ] ] = {};
+          weights[ clst.indices[ v ] ].joint = [];
+          weights[ clst.indices[ v ] ].weight = [];
+
+        }
+
+        // indices
+        var affect = node.searchConnectionChildren( clst.id );
+
+        if ( affect.length > 1 ) {
+
+          console.warn( "FBXLoader: node " + clst.id + " have many weight kids: " + affect );
+
+        }
+        weights[ clst.indices[ v ] ].joint.push( bones.getBoneIdfromInternalId( node, affect[ 0 ] ) );
+
+        // weight value
+        weights[ clst.indices[ v ] ].weight.push( clst.weights[ v ] );
+
+      }
+
+    }
+
+    // normalize the skin weights
+    // TODO -  this might be a good place to choose greatest 4 weights
+    for ( var i = 0; i < weights.length; i ++ ) {
+
+      if ( weights[ i ] === undefined ) {
+
+        this.skinIndices.push( new THREE.Vector4( 0, 0, 0, 0 ) );
+        this.skinWeights.push( new THREE.Vector4( 0, 0, 0, 0 ) );
+        continue;
+
+      }
+
+      var indicies = new THREE.Vector4(
+        weights[ i ].joint[ 0 ] ? weights[ i ].joint[ 0 ] : 0,
+        weights[ i ].joint[ 1 ] ? weights[ i ].joint[ 1 ] : 0,
+        weights[ i ].joint[ 2 ] ? weights[ i ].joint[ 2 ] : 0,
+        weights[ i ].joint[ 3 ] ? weights[ i ].joint[ 3 ] : 0 );
+
+      var weight = new THREE.Vector4(
+        weights[ i ].weight[ 0 ] ? weights[ i ].weight[ 0 ] : 0,
+        weights[ i ].weight[ 1 ] ? weights[ i ].weight[ 1 ] : 0,
+        weights[ i ].weight[ 2 ] ? weights[ i ].weight[ 2 ] : 0,
+        weights[ i ].weight[ 3 ] ? weights[ i ].weight[ 3 ] : 0 );
+
+      this.skinIndices.push( indicies );
+      this.skinWeights.push( weight );
+
+    }
+
+    //console.log( this );
+    return this;
+
+  };
+
+  function Bones() {
+
+    // returns bones hierarchy tree.
+    //    [
+    //      {
+    //        "parent": id,
+    //        "name": name,
+    //        "pos": pos,
+    //        "rotq": quat
+    //      },
+    //      ...
+    //      {},
+    //      ...
+    //    ]
+    //
+    /* sample response
+
+       "bones" : [
+      {"parent":-1, "name":"Fbx01",     "pos":[-0.002,   98.739,   1.6e-05],   "rotq":[0, 0, 0, 1]},
+      {"parent":0,  "name":"Fbx01_Pelvis",   "pos":[0.00015963, 0,    7.33107e-08], "rotq":[0, 0, 0, 1]},
+      {"parent":1,  "name":"Fbx01_Spine",   "pos":[6.577e-06,  10.216,   0.0106811],   "rotq":[0, 0, 0, 1]},
+      {"parent":2,  "name":"Fbx01_R_Thigh", "pos":[14.6537, -10.216,  -0.00918758], "rotq":[0, 0, 0, 1]},
+      {"parent":3,  "name":"Fbx01_R_Calf",   "pos":[-3.70047,  -42.9681,   -7.78158],  "rotq":[0, 0, 0, 1]},
+      {"parent":4,  "name":"Fbx01_R_Foot",   "pos":[-2.0696,    -46.0488,  9.42052],    "rotq":[0, 0, 0, 1]},
+      {"parent":5,  "name":"Fbx01_R_Toe0",   "pos":[-0.0234785,   -9.46233,  -15.3187],  "rotq":[0, 0, 0, 1]},
+      {"parent":2,  "name":"Fbx01_L_Thigh", "pos":[-14.6537,   -10.216,   -0.00918314],  "rotq":[0, 0, 0, 1]},
+      {"parent":7,  "name":"Fbx01_L_Calf",   "pos":[3.70037,    -42.968,    -7.78155],   "rotq":[0, 0, 0, 1]},
+      {"parent":8,  "name":"Fbx01_L_Foot",   "pos":[2.06954,    -46.0488,  9.42052],    "rotq":[0, 0, 0, 1]},
+      {"parent":9,  "name":"Fbx01_L_Toe0",   "pos":[0.0234566,  -9.46235,  -15.3187],  "rotq":[0, 0, 0, 1]},
+      {"parent":2,  "name":"Fbx01_Spine1",   "pos":[-2.97523e-05, 11.5892,    -9.81027e-05], "rotq":[0, 0, 0, 1]},
+      {"parent":11, "name":"Fbx01_Spine2",   "pos":[-2.91292e-05, 11.4685,    8.27126e-05],  "rotq":[0, 0, 0, 1]},
+      {"parent":12, "name":"Fbx01_Spine3",   "pos":[-4.48857e-05, 11.5783,    8.35108e-05],  "rotq":[0, 0, 0, 1]},
+      {"parent":13, "name":"Fbx01_Neck",     "pos":[1.22987e-05,  11.5582,    -0.0044775],   "rotq":[0, 0, 0, 1]},
+      {"parent":14, "name":"Fbx01_Head",     "pos":[-3.50709e-05, 6.62915,    -0.00523254],  "rotq":[0, 0, 0, 1]},
+      {"parent":15, "name":"Fbx01_R_Eye",   "pos":[3.31681,   12.739,    -10.5267],  "rotq":[0, 0, 0, 1]},
+      {"parent":15, "name":"Fbx01_L_Eye",   "pos":[-3.32038,   12.7391,   -10.5267],   "rotq":[0, 0, 0, 1]},
+      {"parent":15, "name":"Jaw",       "pos":[-0.0017738,   7.43481,   -4.08114],   "rotq":[0, 0, 0, 1]},
+      {"parent":14, "name":"Fbx01_R_Clavicle", "pos":[3.10919,    2.46577,    -0.0115284],   "rotq":[0, 0, 0, 1]},
+      {"parent":19, "name":"Fbx01_R_UpperArm", "pos":[16.014,    4.57764e-05,  3.10405],    "rotq":[0, 0, 0, 1]},
+      {"parent":20, "name":"Fbx01_R_Forearm",  "pos":[22.7068,    -1.66322,  -2.13803],  "rotq":[0, 0, 0, 1]},
+      {"parent":21, "name":"Fbx01_R_Hand",   "pos":[25.5881,    -0.80249,  -6.37307],  "rotq":[0, 0, 0, 1]},
+      ...
+      {"parent":27, "name":"Fbx01_R_Finger32", "pos":[2.15572,    -0.548737,  -0.539604], "rotq":[0, 0, 0, 1]},
+      {"parent":22, "name":"Fbx01_R_Finger2",  "pos":[9.79318,    0.132553,  -2.97845],  "rotq":[0, 0, 0, 1]},
+      {"parent":29, "name":"Fbx01_R_Finger21", "pos":[2.74037,    0.0483093,  -0.650531], "rotq":[0, 0, 0, 1]},
+      {"parent":55, "name":"Fbx01_L_Finger02", "pos":[-1.65308,  -1.43208,   -1.82885],  "rotq":[0, 0, 0, 1]}
+      ]
+    */
+    this.hierarchy = [];
+
+  }
+
+  Bones.prototype.parseHierarchy = function ( node ) {
+
+    var objects = node.Objects;
+    var models = objects.subNodes.Model;
+
+    var bones = [];
+    for ( var id in models ) {
+
+      if ( models[ id ].attrType === undefined ) {
+
+        continue;
+
+      }
+      bones.push( models[ id ] );
+
+    }
+
+    this.hierarchy = [];
+    for ( var i = 0; i < bones.length; ++ i ) {
+
+      var bone = bones[ i ];
+
+      var p = node.searchConnectionParent( bone.id )[ 0 ];
+      var t = [ 0.0, 0.0, 0.0 ];
+      var r = [ 0.0, 0.0, 0.0, 1.0 ];
+      var s = [ 1.0, 1.0, 1.0 ];
+
+      if ( 'Lcl_Translation' in bone.properties ) {
+
+        t = parseArrayToFloat( bone.properties.Lcl_Translation.value );
+
+      }
+
+      if ( 'Lcl_Rotation' in bone.properties ) {
+
+        r = parseArrayToRadians( bone.properties.Lcl_Rotation.value );
+        var q = new THREE.Quaternion();
+        q.setFromEuler( new THREE.Euler( r[ 0 ], r[ 1 ], r[ 2 ], 'ZYX' ) );
+        r = [ q.x, q.y, q.z, q.w ];
+
+      }
+
+      if ( 'Lcl_Scaling' in bone.properties ) {
+
+        s = parseArrayToFloat( bone.properties.Lcl_Scaling.value );
+
+      }
+
+      // replace unsafe character
+      var name = bone.attrName;
+      name = name.replace( /:/, '' );
+      name = name.replace( /_/, '' );
+      name = name.replace( /-/, '' );
+      this.hierarchy.push( { "parent": p, "name": name, "pos": t, "rotq": r, "scl": s, "internalId": bone.id } );
+
+    }
+
+    this.reindexParentId();
+
+    this.restoreBindPose( node );
+
+    return this;
+
+  };
+
+  Bones.prototype.reindexParentId = function () {
+
+    for ( var h = 0; h < this.hierarchy.length; h ++ ) {
+
+      for ( var ii = 0; ii < this.hierarchy.length; ++ ii ) {
+
+        if ( this.hierarchy[ h ].parent == this.hierarchy[ ii ].internalId ) {
+
+          this.hierarchy[ h ].parent = ii;
+          break;
+
+        }
+
+      }
+
+    }
+
+  };
+
+  Bones.prototype.restoreBindPose = function ( node ) {
+
+    var bindPoseNode = node.Objects.subNodes.Pose;
+    if ( bindPoseNode === undefined ) {
+
+      return;
+
+    }
+
+    for ( var key in bindPoseNode ) {
+
+      if ( bindPoseNode[ key ].attrType === 'BindPose' ) {
+
+        bindPoseNode = bindPoseNode[ key ];
+        break;
+
+      }
+
+    }
+
+    var poseNode = bindPoseNode.subNodes.PoseNode;
+    var localMatrices = {}; // store local matrices, modified later( initialy world space )
+    var worldMatrices = {}; // store world matrices
+
+    for ( var i = 0; i < poseNode.length; ++ i ) {
+
+      var rawMatLcl = parseArrayToMatrix( poseNode[ i ].subNodes.Matrix.properties.a );
+      var rawMatWrd = parseArrayToMatrix( poseNode[ i ].subNodes.Matrix.properties.a );
+
+      localMatrices[ poseNode[ i ].id ] = rawMatLcl;
+      worldMatrices[ poseNode[ i ].id ] = rawMatWrd;
+
+    }
+
+    for ( var h = 0; h < this.hierarchy.length; ++ h ) {
+
+      var bone = this.hierarchy[ h ];
+      var inId = bone.internalId;
+
+      if ( worldMatrices[ inId ] === undefined ) {
+
+        // has no bind pose node, possibly be mesh
+        // console.log( bone );
+        continue;
+
+      }
+
+      var t = new THREE.Vector3( 0, 0, 0 );
+      var r = new THREE.Quaternion();
+      var s = new THREE.Vector3( 1, 1, 1 );
+
+      var parentId;
+      var parentNodes = node.searchConnectionParent( inId );
+      for ( var pn = 0; pn < parentNodes.length; ++ pn ) {
+
+        if ( this.isBoneNode( parentNodes[ pn ] ) ) {
+
+          parentId = parentNodes[ pn ];
+          break;
+
+        }
+
+      }
+
+      if ( parentId !== undefined && localMatrices[ parentId ] !== undefined ) {
+
+        // convert world space matrix into local space
+        var inv = new THREE.Matrix4();
+        inv.getInverse( worldMatrices[ parentId ] );
+        inv.multiply( localMatrices[ inId ] );
+        localMatrices[ inId ] = inv;
+
+      } else {
+        //console.log( bone );
+      }
+
+      localMatrices[ inId ].decompose( t, r, s );
+      bone.pos = [ t.x, t.y, t.z ];
+      bone.rotq = [ r.x, r.y, r.z, r.w ];
+      bone.scl = [ s.x, s.y, s.z ];
+
+    }
+
+  };
+
+  Bones.prototype.searchRealId = function ( internalId ) {
+
+    for ( var h = 0; h < this.hierarchy.length; h ++ ) {
+
+      if ( internalId == this.hierarchy[ h ].internalId ) {
+
+        return h;
+
+      }
+
+    }
+
+    // console.warn( 'FBXLoader: notfound internalId in bones: ' + internalId);
+    return - 1;
+
+  };
+
+  Bones.prototype.getByInternalId = function ( internalId ) {
+
+    for ( var h = 0; h < this.hierarchy.length; h ++ ) {
+
+      if ( internalId == this.hierarchy[ h ].internalId ) {
+
+        return this.hierarchy[ h ];
+
+      }
+
+    }
+
+    return null;
+
+  };
+
+  Bones.prototype.isBoneNode = function ( id ) {
+
+    for ( var i = 0; i < this.hierarchy.length; ++ i ) {
+
+      if ( id === this.hierarchy[ i ].internalId ) {
+
+        return true;
+
+      }
+
+    }
+    return false;
+
+  };
+
+  Bones.prototype.getBoneIdfromInternalId = function ( node, id ) {
+
+    if ( node.__cache_get_boneid_from_internalid === undefined ) {
+
+      node.__cache_get_boneid_from_internalid = [];
+
+    }
+
+    if ( node.__cache_get_boneid_from_internalid[ id ] !== undefined ) {
+
+      return node.__cache_get_boneid_from_internalid[ id ];
+
+    }
+
+    for ( var i = 0; i < this.hierarchy.length; ++ i ) {
+
+      if ( this.hierarchy[ i ].internalId == id ) {
+
+        node.__cache_get_boneid_from_internalid[ id ] = i;
+        return i;
+
+      }
+
+    }
+
+    // console.warn( 'FBXLoader: bone internalId(' + id + ') not found in bone hierarchy' );
+    return - 1;
+
+  };
+
+  function Geometries() {
+
+    this.geometries = {};
+
+  }
+
+  Object.assign( Geometries.prototype, {
+
+    parse: function ( FBXNodes, hierarchy ) {
+
+      if ( ! ( 'Geometry' in FBXNodes.Objects.subNodes ) ) {
+
+        return this;
+
+      }
+
+      for ( var geo in FBXNodes.Objects.subNodes.Geometry ) {
+
+        if ( FBXNodes.Objects.subNodes.Geometry[ geo ].attrType === 'Mesh' ) {
+
+          this.geometries[ geo ] = ( new Geometry() ).parse( FBXNodes.Objects.subNodes.Geometry[ geo ] );
+          this.geometries[ geo ].addBones( hierarchy.hierarchy );
+
+        }
+
+      }
+
+      return this;
+
+    }
+
+  } );
+
+
+  function Geometry() {
+
+    this.node = null;
+    this.name = null;
+    this.id = null;
+
+    this.vertices = [];
+    this.indices = [];
+    this.normals = [];
+    this.uvs = [];
+
+    this.bones = [];
+
+  }
+
+  Geometry.prototype.parse = function ( geoNode ) {
+
+    this.node = geoNode;
+    this.name = geoNode.attrName;
+    this.id = geoNode.id;
+
+    this.vertices = this.getVertices();
+
+    if ( this.vertices === undefined ) {
+
+      console.log( 'FBXLoader: Geometry.parse(): pass' + this.node.id );
+      return;
+
+    }
+
+    this.indices = this.getPolygonVertexIndices();
+    this.uvs = ( new UV() ).parse( this.node, this );
+    this.normals = ( new Normal() ).parse( this.node, this );
+    this.materialIndices = ( new MaterialIndex() ).parse( this.node );
+
+    if ( this.getPolygonTopologyMax() > 3 ) {
+
+      var indexInfo = this.convertPolyIndicesToTri(
+                this.indices,
+                this.materialIndices,
+                this.getPolygonTopologyArray() );
+      this.indices = indexInfo.res;
+      this.materialIndices = indexInfo.materialIndices;
+      this.polyIndices = indexInfo.polyIndices;
+
+    }
+
+    return this;
+
+  };
+
+
+  Geometry.prototype.getVertices = function () {
+
+    if ( this.node.__cache_vertices ) {
+
+      return this.node.__cache_vertices;
+
+    }
+
+    if ( this.node.subNodes.Vertices === undefined ) {
+
+      console.warn( 'this.node: ' + this.node.attrName + "(" + this.node.id + ") does not have Vertices" );
+      this.node.__cache_vertices = undefined;
+      return null;
+
+    }
+
+    var rawTextVert = this.node.subNodes.Vertices.properties.a;
+    var vertices = rawTextVert.split( ',' ).map( function ( element ) {
+
+      return parseFloat( element );
+
+    } );
+
+    this.node.__cache_vertices = vertices;
+    return this.node.__cache_vertices;
+
+  };
+
+  Geometry.prototype.getPolygonVertexIndices = function () {
+
+    if ( this.node.__cache_indices && this.node.__cache_poly_topology_max ) {
+
+      return this.node.__cache_indices;
+
+    }
+
+    if ( this.node.subNodes === undefined ) {
+
+      console.error( 'this.node.subNodes undefined' );
+      console.log( this.node );
+      return;
+
+    }
+
+    if ( this.node.subNodes.PolygonVertexIndex === undefined ) {
+
+      console.warn( 'this.node: ' + this.node.attrName + "(" + this.node.id + ") does not have PolygonVertexIndex " );
+      this.node.__cache_indices = undefined;
+      return;
+
+    }
+
+    var rawTextIndices = this.node.subNodes.PolygonVertexIndex.properties.a;
+    var indices = rawTextIndices.split( ',' );
+
+    var currentTopo = 1;
+    var topologyN = null;
+    var topologyArr = [];
+
+    // The indices that make up the polygon are in order and a negative index
+    // means that it’s the last index of the polygon. That index needs
+    // to be made positive and then you have to subtract 1 from it!
+    for ( var i = 0; i < indices.length; ++ i ) {
+
+      var tmpI = parseInt( indices[ i ] );
+      // found n
+      if ( tmpI < 0 ) {
+
+        if ( currentTopo > topologyN ) {
+
+          topologyN = currentTopo;
+
+        }
+
+        indices[ i ] = tmpI ^ - 1;
+        topologyArr.push( currentTopo );
+        currentTopo = 1;
+
+      } else {
+
+        indices[ i ] = tmpI;
+        currentTopo ++;
+
+      }
+
+    }
+
+    if ( topologyN === null ) {
+
+      console.warn( "FBXLoader: topology N not found: " + this.node.attrName );
+      console.warn( this.node );
+      topologyN = 3;
+
+    }
+
+    this.node.__cache_poly_topology_max = topologyN;
+    this.node.__cache_poly_topology_arr = topologyArr;
+    this.node.__cache_indices = indices;
+
+    return this.node.__cache_indices;
+
+  };
+
+  Geometry.prototype.getPolygonTopologyMax = function () {
+
+    if ( this.node.__cache_indices && this.node.__cache_poly_topology_max ) {
+
+      return this.node.__cache_poly_topology_max;
+
+    }
+
+    this.getPolygonVertexIndices( this.node );
+    return this.node.__cache_poly_topology_max;
+
+  };
+
+  Geometry.prototype.getPolygonTopologyArray = function () {
+
+    if ( this.node.__cache_indices && this.node.__cache_poly_topology_max ) {
+
+      return this.node.__cache_poly_topology_arr;
+
+    }
+
+    this.getPolygonVertexIndices( this.node );
+    return this.node.__cache_poly_topology_arr;
+
+  };
+
+  // a - d
+  // |   |
+  // b - c
+  //
+  // [( a, b, c, d ) ...........
+  // [( a, b, c ), (a, c, d )....
+
+  // Also keep track of original poly index.
+  Geometry.prototype.convertPolyIndicesToTri = function ( indices, materialIndices, strides ) {
+
+    var res = [];
+
+    var i = 0;
+    var currentPolyNum = 0;
+    var currentStride = 0;
+    var polyIndices = [];
+
+    while ( i < indices.length ) {
+
+      currentStride = strides[ currentPolyNum ];
+
+      // CAUTIN: NG over 6gon
+      for ( var j = 0; j <= ( currentStride - 3 ); j ++ ) {
+
+        res.push( indices[ i ] );
+        res.push( indices[ i + ( currentStride - 2 - j ) ] );
+        res.push( indices[ i + ( currentStride - 1 - j ) ] );
+
+        polyIndices.push( currentPolyNum );
+
+      }
+
+      currentPolyNum ++;
+      i += currentStride;
+
+    }
+
+    var newMaterialIndices = [ materialIndices[ 0 ] ];
+
+    if ( materialIndices.length > 1 ) {
+
+      for ( var i = 0; i < polyIndices.length; ++ i ) {
+
+        newMaterialIndices[ i ] = materialIndices[ polyIndices[ i ] ];
+
+      }
+
+    }
+
+    return {
+      res: res,
+      materialIndices: newMaterialIndices,
+      polyIndices: polyIndices };
+
+  };
+
+  Geometry.prototype.addBones = function ( bones ) {
+
+    this.bones = bones;
+
+  };
+
+
+  function UV() {
+
+    this.uv = null;
+    this.map = null;
+    this.ref = null;
+    this.node = null;
+    this.index = null;
+
+  }
+
+  UV.prototype.getUV = function ( node ) {
+
+    if ( this.node && this.uv && this.map && this.ref ) {
+
+      return this.uv;
+
+    } else {
+
+      return this._parseText( node );
+
+    }
+
+  };
+
+  UV.prototype.getMap = function ( node ) {
+
+    if ( this.node && this.uv && this.map && this.ref ) {
+
+      return this.map;
+
+    } else {
+
+      this._parseText( node );
+      return this.map;
+
+    }
+
+  };
+
+  UV.prototype.getRef = function ( node ) {
+
+    if ( this.node && this.uv && this.map && this.ref ) {
+
+      return this.ref;
+
+    } else {
+
+      this._parseText( node );
+      return this.ref;
+
+    }
+
+  };
+
+  UV.prototype.getIndex = function ( node ) {
+
+    if ( this.node && this.uv && this.map && this.ref ) {
+
+      return this.index;
+
+    } else {
+
+      this._parseText( node );
+      return this.index;
+
+    }
+
+  };
+
+  UV.prototype.getNode = function ( topnode ) {
+
+    if ( this.node !== null ) {
+
+      return this.node;
+
+    }
+
+    this.node = topnode.subNodes.LayerElementUV;
+    return this.node;
+
+  };
+
+  UV.prototype._parseText = function ( node ) {
+
+    var uvNode = this.getNode( node )[ 0 ];
+    if ( uvNode === undefined ) {
+
+      // console.log( node.attrName + "(" + node.id + ")" + " has no LayerElementUV." );
+      return [];
+
+    }
+
+    var count = 0;
+    for ( var n in uvNode ) {
+
+      if ( n.match( /^\d+$/ ) ) {
+
+        count ++;
+
+      }
+
+    }
+
+    if ( count > 0 ) {
+
+      console.warn( 'multi uv not supported' );
+      uvNode = uvNode[ n ];
+
+    }
+
+    var uvIndex = uvNode.subNodes.UVIndex.properties.a;
+    var uvs = uvNode.subNodes.UV.properties.a;
+    var uvMap = uvNode.properties.MappingInformationType;
+    var uvRef = uvNode.properties.ReferenceInformationType;
+
+
+    this.uv = parseArrayToFloat( uvs );
+    this.index = parseArrayToInt( uvIndex );
+
+    this.map = uvMap; // TODO: normalize notation shaking... FOR BLENDER
+    this.ref = uvRef;
+
+    return this.uv;
+
+  };
+
+  UV.prototype.parse = function ( node, geo ) {
+
+    if ( ! ( 'LayerElementUV' in node.subNodes ) ) {
+
+      return;
+
+    }
+
+    this.uvNode = this.getNode( node );
+
+    this.uv = this.getUV( node );
+    var mappingType = this.getMap( node );
+    var refType = this.getRef( node );
+    var indices = this.getIndex( node );
+
+    var strides = geo.getPolygonTopologyArray();
+
+    // it means that there is a normal for every vertex of every polygon of the model.
+    // For example, if the models has 8 vertices that make up four quads, then there
+    // will be 16 normals (one normal * 4 polygons * 4 vertices of the polygon). Note
+    // that generally a game engine needs the vertices to have only one normal defined.
+    // So, if you find a vertex has more tha one normal, you can either ignore the normals
+    // you find after the first, or calculate the mean from all of them (normal smoothing).
+    //if ( mappingType == "ByPolygonVertex" ){
+    switch ( mappingType ) {
+
+      case "ByPolygonVertex":
+
+        switch ( refType ) {
+
+          // Direct
+          // The this.uv are in order.
+          case "Direct":
+            this.uv = this.parseUV_ByPolygonVertex_Direct( this.uv, indices, strides, 2 );
+            break;
+
+          // IndexToDirect
+          // The order of the this.uv is given by the uvsIndex property.
+          case "IndexToDirect":
+            this.uv = this.parseUV_ByPolygonVertex_IndexToDirect( this.uv, indices );
+            break;
+
+        }
+
+        // convert from by polygon(vert) data into by verts data
+        this.uv = mapByPolygonVertexToByVertex( this.uv, geo.getPolygonVertexIndices( node ), 2 );
+        break;
+
+      case "ByPolygon":
+
+        switch ( refType ) {
+
+          // Direct
+          // The this.uv are in order.
+          case "Direct":
+            this.uv = this.parseUV_ByPolygon_Direct();
+            break;
+
+          // IndexToDirect
+          // The order of the this.uv is given by the uvsIndex property.
+          case "IndexToDirect":
+            this.uv = this.parseUV_ByPolygon_IndexToDirect();
+            break;
+
+        }
+        break;
+
+    }
+
+    return this.uv;
+
+  };
+
+  UV.prototype.parseUV_ByPolygonVertex_Direct = function ( node, indices, strides, itemSize ) {
+
+    return parse_Data_ByPolygonVertex_Direct( node, indices, strides, itemSize );
+
+  };
+
+  UV.prototype.parseUV_ByPolygonVertex_IndexToDirect = function ( node, indices ) {
+
+    return parse_Data_ByPolygonVertex_IndexToDirect( node, indices, 2 );
+
+  };
+
+  UV.prototype.parseUV_ByPolygon_Direct = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  UV.prototype.parseUV_ByPolygon_IndexToDirect = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  UV.prototype.parseUV_ByVertex_Direct = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+
+  function Normal() {
+
+    this.normal = null;
+    this.map  = null;
+    this.ref  = null;
+    this.node = null;
+    this.index = null;
+
+  }
+
+  Normal.prototype.getNormal = function ( node ) {
+
+    if ( this.node && this.normal && this.map && this.ref ) {
+
+      return this.normal;
+
+    } else {
+
+      this._parseText( node );
+      return this.normal;
+
+    }
+
+  };
+
+  // mappingType: possible variant
+  //    ByPolygon
+  //    ByPolygonVertex
+  //    ByVertex (or also ByVertice, as the Blender exporter writes)
+  //    ByEdge
+  //    AllSame
+  //  var mappingType = node.properties.MappingInformationType;
+  Normal.prototype.getMap = function ( node ) {
+
+    if ( this.node && this.normal && this.map && this.ref ) {
+
+      return this.map;
+
+    } else {
+
+      this._parseText( node );
+      return this.map;
+
+    }
+
+  };
+
+  // refType: possible variants
+  //    Direct
+  //    IndexToDirect (or Index for older versions)
+  // var refType   = node.properties.ReferenceInformationType;
+  Normal.prototype.getRef = function ( node ) {
+
+    if ( this.node && this.normal && this.map && this.ref ) {
+
+      return this.ref;
+
+    } else {
+
+      this._parseText( node );
+      return this.ref;
+
+    }
+
+  };
+
+  Normal.prototype.getNode = function ( node ) {
+
+    if ( this.node ) {
+
+      return this.node;
+
+    }
+
+    this.node = node.subNodes.LayerElementNormal;
+    return this.node;
+
+  };
+
+  Normal.prototype._parseText = function ( node ) {
+
+    var normalNode = this.getNode( node )[ 0 ];
+
+    if ( normalNode === undefined ) {
+
+      console.warn( 'node: ' + node.attrName + "(" + node.id + ") does not have LayerElementNormal" );
+      return;
+
+    }
+
+    var mappingType = normalNode.properties.MappingInformationType;
+    var refType = normalNode.properties.ReferenceInformationType;
+
+    var rawTextNormals = normalNode.subNodes.Normals.properties.a;
+    this.normal = parseArrayToFloat( rawTextNormals );
+
+    // TODO: normalize notation shaking, vertex / vertice... blender...
+    this.map  = mappingType;
+    this.ref  = refType;
+
+  };
+
+  Normal.prototype.parse = function ( topnode, geo ) {
+
+    var normals = this.getNormal( topnode );
+    //var normalNode = this.getNode( topnode );
+    var mappingType = this.getMap( topnode );
+    var refType = this.getRef( topnode );
+
+    var indices = geo.getPolygonVertexIndices( topnode );
+    var strides = geo.getPolygonTopologyArray( topnode );
+
+    // it means that there is a normal for every vertex of every polygon of the model.
+    // For example, if the models has 8 vertices that make up four quads, then there
+    // will be 16 normals (one normal * 4 polygons * 4 vertices of the polygon). Note
+    // that generally a game engine needs the vertices to have only one normal defined.
+    // So, if you find a vertex has more tha one normal, you can either ignore the normals
+    // you find after the first, or calculate the mean from all of them (normal smoothing).
+    //if ( mappingType == "ByPolygonVertex" ){
+    switch ( mappingType ) {
+
+      case "ByPolygonVertex":
+
+        switch ( refType ) {
+
+          // Direct
+          // The normals are in order.
+          case "Direct":
+            normals = this.parseNormal_ByPolygonVertex_Direct( normals, indices, strides, 3 );
+            break;
+
+          // IndexToDirect
+          // The order of the normals is given by the NormalsIndex property.
+          case "IndexToDirect":
+            normals = this.parseNormal_ByPolygonVertex_IndexToDirect();
+            break;
+
+        }
+        break;
+
+      case "ByPolygon":
+
+        switch ( refType ) {
+
+          // Direct
+          // The normals are in order.
+          case "Direct":
+            normals = this.parseNormal_ByPolygon_Direct();
+            break;
+
+          // IndexToDirect
+          // The order of the normals is given by the NormalsIndex property.
+          case "IndexToDirect":
+            normals = this.parseNormal_ByPolygon_IndexToDirect();
+            break;
+
+        }
+        break;
+
+    }
+
+    return normals;
+
+  };
+
+  Normal.prototype.parseNormal_ByPolygonVertex_Direct = function ( node, indices, strides, itemSize ) {
+
+    return parse_Data_ByPolygonVertex_Direct( node, indices, strides, itemSize );
+
+  };
+
+  Normal.prototype.parseNormal_ByPolygonVertex_IndexToDirect = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  Normal.prototype.parseNormal_ByPolygon_Direct = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  Normal.prototype.parseNormal_ByPolygon_IndexToDirect = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  Normal.prototype.parseNormal_ByVertex_Direct = function ( node ) {
+
+    console.warn( "not implemented" );
+    return node;
+
+  };
+
+  function MaterialIndex() {
+
+    this.indexBuffer = [];
+
+  }
+
+  Object.assign( MaterialIndex.prototype, {
+
+    parse: function ( node ) {
+
+      if ( ! ( 'LayerElementMaterial' in node.subNodes ) ) {
+
+        return;
+
+      }
+
+      var indexNode = node.subNodes.LayerElementMaterial[ 0 ];
+      var mappingType = indexNode.properties.MappingInformationType;
+      var refType = indexNode.properties.ReferenceInformationType;
+      var indices = parseArrayToInt( indexNode.subNodes.Materials.properties.a );
+
+      // it means that there is a normal for every vertex of every polygon of the model.
+      // For example, if the models has 8 vertices that make up four quads, then there
+      // will be 16 normals (one normal * 4 polygons * 4 vertices of the polygon). Note
+      // that generally a game engine needs the vertices to have only one normal defined.
+      // So, if you find a vertex has more tha one normal, you can either ignore the normals
+      // you find after the first, or calculate the mean from all of them (normal smoothing).
+      //if ( mappingType == "ByPolygonVertex" ){
+      switch ( mappingType ) {
+
+
+        case "ByPolygon":
+
+          switch ( refType ) {
+
+            // Direct
+            // The material indices are in order.
+            case "IndexToDirect":
+              this.indexBuffer = this.parse_ByPolygon_IndexToDirect( indices );
+              break;
+
+            default:
+              this.indexBuffer = [ 0 ];
+              break;
+
+          }
+          break;
+
+        default:
+
+          this.indexBuffer = [ 0 ];
+          break;
+
+      }
+
+      return this.indexBuffer;
+
+    },
+
+    parse_ByPolygon_IndexToDirect: function ( indices ) {
+
+      return indices;
+
+    },
+
+  } );
+
+  function AnimationCurve() {
+
+    this.version = null;
+
+    this.id = null;
+    this.internalId = null;
+    this.times = null;
+    this.values = null;
+
+    this.attrFlag = null; // tangeant
+    this.attrData = null; // slope, weight
+
+  }
+
+  AnimationCurve.prototype.fromNode = function ( curveNode ) {
+
+    this.id = curveNode.id;
+    this.internalId = curveNode.id;
+    this.times = curveNode.subNodes.KeyTime.properties.a;
+    this.values = curveNode.subNodes.KeyValueFloat.properties.a;
+
+    this.attrFlag = curveNode.subNodes.KeyAttrFlags.properties.a;
+    this.attrData = curveNode.subNodes.KeyAttrDataFloat.properties.a;
+
+    this.times = parseArrayToFloat( this.times );
+    this.values = parseArrayToFloat( this.values );
+    this.attrData = parseArrayToFloat( this.attrData );
+    this.attrFlag = parseArrayToInt( this.attrFlag );
+
+    this.times = this.times.map( function ( element ) {
+
+      return FBXTimeToSeconds( element );
+
+    } );
+
+    return this;
+
+  };
+
+  AnimationCurve.prototype.getLength = function () {
+
+    return this.times[ this.times.length - 1 ];
+
+  };
+
+  function AnimationNode() {
+
+    this.id = null;
+    this.attr = null; // S, R, T
+    this.attrX = false;
+    this.attrY = false;
+    this.attrZ = false;
+    this.internalId = null;
+    this.containerInternalId = null; // bone, null etc Id
+    this.containerBoneId = null; // bone, null etc Id
+    this.curveIdx = null; // AnimationCurve's indices
+    this.curves = {}; // AnimationCurve refs
+
+  }
+
+  AnimationNode.prototype.fromNode = function ( allNodes, node, bones ) {
+
+    this.id = node.id;
+    this.attr = node.attrName;
+    this.internalId = node.id;
+
+    if ( this.attr.match( /S|R|T/ ) ) {
+
+      for ( var attrKey in node.properties ) {
+
+        if ( attrKey.match( /X/ ) ) {
+
+          this.attrX = true;
+
+        }
+        if ( attrKey.match( /Y/ ) ) {
+
+          this.attrY = true;
+
+        }
+        if ( attrKey.match( /Z/ ) ) {
+
+          this.attrZ = true;
+
+        }
+
+      }
+
+    } else {
+
+      // may be deform percent nodes
+      return null;
+
+    }
+
+    this.containerIndices = allNodes.searchConnectionParent( this.id );
+    this.curveIdx = allNodes.searchConnectionChildren( this.id );
+
+    for ( var i = this.containerIndices.length - 1; i >= 0; -- i ) {
+
+      var boneId = bones.searchRealId( this.containerIndices[ i ] );
+      if ( boneId >= 0 ) {
+
+        this.containerBoneId = boneId;
+        this.containerId = this.containerIndices[ i ];
+
+      }
+
+      if ( boneId >= 0 ) {
+
+        break;
+
+      }
+
+    }
+    // this.containerBoneId = bones.searchRealId( this.containerIndices );
+
+    return this;
+
+  };
+
+  AnimationNode.prototype.setCurve = function ( curve ) {
+
+    this.curves.push( curve );
+
+  };
+
+  function Animation() {
+
+    this.curves = {};
+    this.length = 0.0;
+    this.fps  = 30.0;
+    this.frames = 0.0;
+
+  }
+
+  Animation.prototype.parse = function ( node, bones ) {
+
+    var rawNodes = node.Objects.subNodes.AnimationCurveNode;
+    var rawCurves = node.Objects.subNodes.AnimationCurve;
+    var rawLayers = node.Objects.subNodes.AnimationLayer;
+    var rawStacks = node.Objects.subNodes.AnimationStack;
+
+    // first: expand AnimationCurveNode into curve nodes
+    var curveNodes = [];
+    for ( var key in rawNodes ) {
+
+      if ( key.match( /\d+/ ) ) {
+
+        var a = ( new AnimationNode() ).fromNode( node, rawNodes[ key ], bones );
+        curveNodes.push( a );
+
+      }
+
+    }
+
+    // second: gen dict, mapped by internalId
+    var tmp = {};
+    for ( var i = 0; i < curveNodes.length; ++ i ) {
+
+      if ( curveNodes[ i ] === null ) {
+
+        continue;
+
+      }
+
+      tmp[ curveNodes[ i ].id ] = curveNodes[ i ];
+
+    }
+
+    // third: insert curves into the dict
+    var ac = [];
+    for ( key in rawCurves ) {
+
+      if ( key.match( /\d+/ ) ) {
+
+        var c = ( new AnimationCurve() ).fromNode( rawCurves[ key ] );
+        ac.push( c );
+
+        var parentId = node.searchConnectionParent( c.id )[ 0 ];
+        var axis = node.searchConnectionType( c.id, parentId );
+
+        if ( axis.match( /X/ ) ) {
+
+          axis = 'x';
+
+        } else if ( axis.match( /Y/ ) ) {
+
+          axis = 'y';
+
+        } else if ( axis.match( /Z/ ) ) {
+
+          axis = 'z';
+
+        } else {
+
+          continue;
+
+        }
+
+        tmp[ parentId ].curves[ axis ] = c;
+
+      }
+
+    }
+
+    // forth:
+    for ( var t in tmp ) {
+
+      var id = tmp[ t ].containerBoneId;
+      if ( this.curves[ id ] === undefined ) {
+
+        this.curves[ id ] = {
+          T: null,
+          R: null,
+          S: null
+        };
+
+      }
+
+      this.curves[ id ][ tmp[ t ].attr ] = tmp[ t ];
+
+    }
+
+    //Layers
+    this.layers = {};
+    for ( var key in rawLayers ) {
+
+      var layer = [];
+      var children = node.searchConnectionChildren( key );
+      for ( var i = 0; i < children.length; ++ i ) {
+
+        //Skip lockInfluenceWeights
+        if ( tmp[ children[ i ] ] ) {
+
+          if ( layer[ tmp[ children[ i ] ].containerBoneId ] === undefined ) {
+
+            layer[ tmp[ children[ i ] ].containerBoneId ] = {
+              T: null,
+              R: null,
+              S: null
+            };
+
+          }
+
+          layer[ tmp[ children[ i ] ].containerBoneId ][ tmp[ children[ i ] ].attr ] = tmp[ children[ i ] ];
+
+        }
+
+      }
+
+      this.layers[ key ] = layer;
+
+    }
+
+    //Takes
+    this.stacks = {};
+    for ( var key in rawStacks ) {
+
+      var layers = [];
+      var children = node.searchConnectionChildren( key );
+      var max = 0.0;
+      var min = Number.MAX_VALUE;
+      for ( var i = 0; i < children.length; ++ i ) {
+
+        if ( children[ i ] in this.layers ) {
+
+          layers.push( this.layers[ children[ i ] ] );
+
+          for ( var j = 0; j < this.layers[ children[ i ] ].length; ++ j ) {
+
+            function getMaxMin( layer ) {
+
+              function _getMaxMin( curves ) {
+
+                if ( curves.x ) {
+
+                  max = curves.x.getLength() > max ? curves.x.getLength() : max;
+                  min = curves.x.times[ 0 ] < min ? curves.x.times[ 0 ] : min;
+
+                }
+                if ( curves.y ) {
+
+                  max = curves.y.getLength() > max ? curves.y.getLength() : max;
+                  min = curves.y.times[ 0 ] < min ? curves.y.times[ 0 ] : min;
+
+                }
+                if ( curves.z ) {
+
+                  max = curves.z.getLength() > max ? curves.z.getLength() : max;
+                  min = curves.z.times[ 0 ] < min ? curves.z.times[ 0 ] : min;
+
+                }
+
+              }
+
+              if ( layer.R ) {
+
+                _getMaxMin( layer.R.curves );
+
+              }
+              if ( layer.S ) {
+
+                _getMaxMin( layer.S.curves );
+
+              }
+              if ( layer.T ) {
+
+                _getMaxMin( layer.T.curves );
+
+              }
+
+            }
+
+            var layer = this.layers[ children[ i ] ][ j ];
+            if ( layer ) {
+
+              getMaxMin( layer );
+
+            }
+
+          }
+
+        }
+
+      }
+
+      //Do we have an animation clip with an actual length?
+      if ( max > min ) {
+
+        this.stacks[ key ] = {
+
+          name: rawStacks[ key ].attrName,
+          layers: layers,
+          length: max - min,
+          frames: ( max - min ) * 30,
+
+        };
+
+      }
+
+    }
+
+    return this;
+
+  };
+
+
+  function Textures() {
+
+    this.textures = {};
+    //this.perGeoMap = {};
+
+  }
+
+  Textures.prototype.add = function ( tex ) {
+
+    debugger;
+
+    if ( this.textures === undefined ) {
+
+      this.textures = [];
+
+    }
+
+    this.textures.push( tex );
+
+    for ( var i = 0; i < tex.parentIds.length; ++ i ) {
+
+      if ( this.perGeoMap[ tex.parentIds[ i ] ] === undefined ) {
+
+        this.perGeoMap[ tex.parentIds[ i ] ] = [];
+
+      }
+
+      this.perGeoMap[ tex.parentIds[ i ] ].push( this.textures[ this.textures.length - 1 ] );
+
+    }
+
+  };
+
+  Textures.prototype.parse = function ( node ) {
+
+    var rawNodes = node.Objects.subNodes.Texture;
+
+    for ( var n in rawNodes ) {
+
+      var tex = ( new Texture() ).parse( rawNodes[ n ], node );
+      this.textures[ n ] = tex;
+
+    }
+
+    return this;
+
+  };
+
+  Textures.prototype.getById = function ( id ) {
+
+    return this.perGeoMap[ id ];
+
+  };
+
+  function Texture() {
+
+    this.fileName = "";
+    this.name = "";
+    this.id = null;
+    this.parentIds = [];
+
+  }
+
+  Texture.prototype.parse = function ( node, nodes ) {
+
+    this.id = node.id;
+    this.name = node.attrName;
+    this.fileName = this.parseFileName( node.properties.FileName );
+
+    this.parentIds = this.searchParents( this.id, nodes );
+
+    return this;
+
+  };
+
+  // TODO: support directory
+  Texture.prototype.parseFileName = function ( fname ) {
+
+    if ( fname === undefined ) {
+
+      return "";
+
+    }
+
+    // ignore directory structure, flatten path
+    var splitted = fname.split( /[\\\/]/ );
+    if ( splitted.length > 0 ) {
+
+      return splitted[ splitted.length - 1 ];
+
+    } else {
+
+      return fname;
+
+    }
+
+  };
+
+  Texture.prototype.searchParents = function ( id, nodes ) {
+
+    var p = nodes.searchConnectionParent( id );
+
+    return p;
+
+  };
+
+  function Materials() {
+
+    this.materials = {};
+    this.perGeoMap = {};
+
+  }
+
+  Object.assign( Materials.prototype, {
+
+    parse: function ( node ) {
+
+      var rawNodes = node.Objects.subNodes.Material;
+
+      for ( var n in rawNodes ) {
+
+        var mat = ( new Material() ).parse( rawNodes[ n ], node );
+        this.materials[ n ] = mat;
+
+      }
+
+      return this;
+
+    }
+
+  } );
+
+  function Material() {
+
+    this.fileName = "";
+    this.name = "";
+    this.id = null;
+    this.parentIds = [];
+
+  }
+
+  Object.assign( Material.prototype, {
+
+    parse: function ( node, nodes ) {
+
+      this.id = node.id;
+      this.name = node.attrName;
+      this.type = node.properties.ShadingModel;
+
+      this.parameters = this.parseParameters( node.properties );
+
+      this.parentIds = this.searchParents( this.id, nodes );
+
+      return this;
+
+    },
+
+    parseParameters: function ( properties ) {
+
+      var parameters = {};
+
+      //TODO: Missing parameters:
+      // - Ambient
+      // - MultiLayer
+      // - ShininessExponent (Same vals as Shininess)
+      // - Specular (Same vals as SpecularColor)
+      // - TransparencyFactor (Maybe same as Opacity?).
+
+      if ( properties.Diffuse ) {
+
+        parameters.color = new THREE.Color().fromArray( [ parseFloat( properties.Diffuse.value.x ), parseFloat( properties.Diffuse.value.y ), parseFloat( properties.Diffuse.value.z ) ] );
+
+      }
+      if ( properties.Specular ) {
+
+        parameters.specular = new THREE.Color().fromArray( [ parseFloat( properties.Specular.value.x ), parseFloat( properties.Specular.value.y ), parseFloat( properties.Specular.value.z ) ] );
+
+      }
+      if ( properties.Shininess ) {
+
+        parameters.shininess = properties.Shininess.value;
+
+      }
+      if ( properties.Emissive ) {
+
+        parameters.emissive = new THREE.Color().fromArray( [ parseFloat( properties.Emissive.value.x ), parseFloat( properties.Emissive.value.y ), parseFloat( properties.Emissive.value.z ) ] );
+
+      }
+      if ( properties.EmissiveFactor ) {
+
+        parameters.emissiveIntensity = properties.EmissiveFactor.value;
+
+      }
+      if ( properties.Reflectivity ) {
+
+        parameters.reflectivity = properties.Reflectivity.value;
+
+      }
+      if ( properties.Opacity ) {
+
+        parameters.opacity = properties.Opacity.value;
+
+      }
+      if ( parameters.opacity < 1.0 ) {
+
+        parameters.transparent = true;
+
+      }
+
+      //Assigning textures
+
+
+      return parameters;
+
+    },
+
+    searchParents: function ( id, nodes ) {
+
+      return nodes.searchConnectionParent( id );
+
+    }
+
+  } );
+
+
+  /* --------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------- */
+  /* --------------------------------------------------------------------- */
+
+  // LayerElementUV: 0 {
+  //  Version: 101
+  //  Name: "Texture_Projection"
+  //  MappingInformationType: "ByPolygonVertex"
+  //  ReferenceInformationType: "IndexToDirect"
+  //  UV: *1746 {
+  //  UVIndex: *7068 {
+  //
+  //  The order of the uvs is given by the UVIndex property.
+  function parse_Data_ByPolygonVertex_IndexToDirect( node, indices, itemSize ) {
+
+    var res = [];
+
+    for ( var i = 0; i < indices.length; ++ i ) {
+
+      for ( var j = 0; j < itemSize; ++ j ) {
+
+        res.push( node[ ( indices[ i ] * itemSize ) + j ] );
+
+      }
+
+    }
+
+    return res;
+
+  }
+
+
+  // what want:　normal per vertex, order vertice
+  // i have: normal per polygon
+  // i have: indice per polygon
+  function parse_Data_ByPolygonVertex_Direct( node, indices, strides, itemSize ) {
+
+    // *21204 > 3573
+    // Geometry: 690680816, "Geometry::", "Mesh" {
+    //  Vertices: *3573 {
+    //  PolygonVertexIndex: *7068 {
+
+    var tmp = [];
+    var currentIndex = 0;
+
+    // first: sort to per vertex
+    for ( var i = 0; i < indices.length; ++ i ) {
+
+      tmp[ indices[ i ] ] = [];
+
+      // TODO: duped entry? blend or something?
+      for ( var s = 0; s < itemSize; ++ s ) {
+
+        tmp[ indices[ i ] ][ s ] = node[ currentIndex + s ];
+
+      }
+
+      currentIndex += itemSize;
+
+    }
+
+    // second: expand x,y,z into serial array
+    var res = [];
+    for ( var jj = 0; jj < tmp.length; ++ jj ) {
+
+      if ( tmp[ jj ] === undefined ) {
+
+        continue;
+
+      }
+
+      for ( var t = 0; t < itemSize; ++ t ) {
+
+        if ( tmp[ jj ][ t ] === undefined ) {
+
+          continue;
+
+        }
+        res.push( tmp[ jj ][ t ] );
+
+      }
+
+    }
+
+    return res;
+
+  }
+
+  // convert from by polygon(vert) data into by verts data
+  function mapByPolygonVertexToByVertex( data, indices, stride ) {
+
+    var tmp = {};
+    var res = [];
+    var max = 0;
+
+    for ( var i = 0; i < indices.length; ++ i ) {
+
+      if ( indices[ i ] in tmp ) {
+
+        continue;
+
+      }
+
+      tmp[ indices[ i ] ] = {};
+
+      for ( var j = 0; j < stride; ++ j ) {
+
+        tmp[ indices[ i ] ][ j ] = data[ i * stride + j ];
+
+      }
+
+      max = max < indices[ i ] ? indices[ i ] : max;
+
+    }
+
+    try {
+
+      for ( i = 0; i <= max; i ++ ) {
+
+        for ( var s = 0; s < stride; s ++ ) {
+
+          res.push( tmp[ i ][ s ] );
+
+        }
+
+      }
+
+    } catch ( e ) {
+      //console.log( max );
+      //console.log( tmp );
+      //console.log( i );
+      //console.log( e );
+    }
+
+    return res;
+
+  }
+
+  // AUTODESK uses broken clock. i guess
+  function FBXTimeToSeconds( adskTime ) {
+
+    return adskTime / 46186158000;
+
+  }
+
+  function degToRad( degrees ) {
+
+    return degrees * Math.PI / 180;
+
+  }
+
+  function quatFromVec( x, y, z ) {
+
+    var euler = new THREE.Euler( x, y, z, 'ZYX' );
+    var quat = new THREE.Quaternion();
+    quat.setFromEuler( euler );
+
+    return quat;
+
+  }
+
+  function parseArrayToInt( string ) {
+
+    return string.split( ',' ).map( function ( element ) {
+
+      return parseInt( element );
+
+    } );
+
+  }
+
+  function parseArrayToFloat( string ) {
+
+    return string.split( ',' ).map( function ( element ) {
+
+      return parseFloat( element );
+
+    } );
+
+  }
+
+  function parseArrayToRadians( string ) {
+
+    return string.split( ',' ).map( function ( element ) {
+
+      return degToRad( parseFloat( element ) );
+
+    } );
+
+  }
+
+  function parseArrayToMatrix( string ) {
+
+    var arr = parseArrayToFloat( string );
+    return new THREE.Matrix4().fromArray( arr );
+
+  }
+
+} )();
+
+
+},{}],4:[function(require,module,exports){
 module.exports = Object.assign(function GamepadButton () {}, {
 	FACE_1: 0,
 	FACE_2: 1,
@@ -42,7 +3206,7 @@ module.exports = Object.assign(function GamepadButton () {}, {
 	VENDOR: 16,
 });
 
-},{}],4:[function(require,module,exports){
+},{}],5:[function(require,module,exports){
 function GamepadButtonEvent (type, index, details) {
   this.type = type;
   this.index = index;
@@ -52,7 +3216,7 @@ function GamepadButtonEvent (type, index, details) {
 
 module.exports = GamepadButtonEvent;
 
-},{}],5:[function(require,module,exports){
+},{}],6:[function(require,module,exports){
 /**
  * @author Wei Meng / http://about.me/menway
  *
@@ -532,7 +3696,7 @@ THREE.PLYLoader.prototype = {
 
 };
 
-},{}],6:[function(require,module,exports){
+},{}],7:[function(require,module,exports){
 /**
  * Polyfill for the additional KeyboardEvent properties defined in the D3E and
  * D4E draft specifications, by @inexorabletash.
@@ -1265,13 +4429,14 @@ THREE.PLYLoader.prototype = {
 
 } (window));
 
-},{}],7:[function(require,module,exports){
+},{}],8:[function(require,module,exports){
 var CANNON = require('cannon'),
     math = require('./src/components/math');
 
 module.exports = {
   'dynamic-body':   require('./src/components/body/dynamic-body'),
   'static-body':    require('./src/components/body/static-body'),
+  'constraint':     require('./src/components/constraint'),
   'system':         require('./src/system/physics'),
 
   registerAll: function (AFRAME) {
@@ -1280,9 +4445,10 @@ module.exports = {
     AFRAME = AFRAME || window.AFRAME;
 
     math.registerAll();
-    if (!AFRAME.systems.physics)              AFRAME.registerSystem('physics',           this.system);
-    if (!AFRAME.components['dynamic-body'])   AFRAME.registerComponent('dynamic-body',   this['dynamic-body']);
-    if (!AFRAME.components['static-body'])    AFRAME.registerComponent('static-body',    this['static-body']);
+    if (!AFRAME.systems.physics)            AFRAME.registerSystem('physics',         this.system);
+    if (!AFRAME.components['dynamic-body']) AFRAME.registerComponent('dynamic-body', this['dynamic-body']);
+    if (!AFRAME.components['static-body'])  AFRAME.registerComponent('static-body',  this['static-body']);
+    if (!AFRAME.components['constraint'])   AFRAME.registerComponent('constraint',   this['constraint']);
 
     this._registered = true;
   }
@@ -1291,7 +4457,7 @@ module.exports = {
 // Export CANNON.js.
 window.CANNON = window.CANNON || CANNON;
 
-},{"./src/components/body/dynamic-body":10,"./src/components/body/static-body":11,"./src/components/math":12,"./src/system/physics":16,"cannon":45}],8:[function(require,module,exports){
+},{"./src/components/body/dynamic-body":11,"./src/components/body/static-body":12,"./src/components/constraint":13,"./src/components/math":14,"./src/system/physics":18,"cannon":20}],9:[function(require,module,exports){
 /**
  * CANNON.shape2mesh
  *
@@ -1451,7 +4617,7 @@ CANNON.shape2mesh = function(body){
 
 module.exports = CANNON.shape2mesh;
 
-},{"cannon":45}],9:[function(require,module,exports){
+},{"cannon":20}],10:[function(require,module,exports){
 var CANNON = require('cannon'),
     mesh2shape = require('three-to-cannon');
 
@@ -1486,7 +4652,7 @@ module.exports = {
     var shape,
         el = this.el,
         data = this.data,
-        pos = el.getComputedAttribute('position'),
+        pos = el.getAttribute('position'),
         options = data.shape === 'auto' ? undefined : AFRAME.utils.extend({}, this.data, {
           type: mesh2shape.Type[data.shape.toUpperCase()]
         });
@@ -1514,7 +4680,7 @@ module.exports = {
     this.body.addShape(shape, shape.offset, shape.orientation);
 
     // Apply rotation
-    var rot = el.getComputedAttribute('rotation');
+    var rot = el.getAttribute('rotation');
     this.body.quaternion.setFromEuler(
       THREE.Math.degToRad(rot.x),
       THREE.Math.degToRad(rot.y),
@@ -1589,7 +4755,11 @@ module.exports = {
     var offset = shape.offset,
         orientation = shape.orientation,
         mesh = CANNON.shape2mesh(body).children[0];
-    this.wireframe = new THREE.EdgesHelper(mesh, 0xff0000);
+
+    this.wireframe = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry),
+      new THREE.LineBasicMaterial({color: 0xff0000})
+    );
 
     if (offset) {
       this.wireframe.offset = offset.clone();
@@ -1648,7 +4818,7 @@ module.exports = {
 
       if (!body) return;
 
-      if (el.components.velocity) body.velocity.copy(el.getComputedAttribute('velocity'));
+      if (el.components.velocity) body.velocity.copy(el.getAttribute('velocity'));
 
       if (parentEl.isScene) {
         body.quaternion.copy(el.object3D.quaternion);
@@ -1698,7 +4868,7 @@ module.exports = {
   }())
 };
 
-},{"../../../lib/CANNON-shape2mesh":8,"cannon":45,"three-to-cannon":17}],10:[function(require,module,exports){
+},{"../../../lib/CANNON-shape2mesh":9,"cannon":20,"three-to-cannon":76}],11:[function(require,module,exports){
 var Body = require('./body');
 
 /**
@@ -1720,7 +4890,7 @@ module.exports = AFRAME.utils.extend({}, Body, {
   }
 });
 
-},{"./body":9}],11:[function(require,module,exports){
+},{"./body":10}],12:[function(require,module,exports){
 var Body = require('./body');
 
 /**
@@ -1735,7 +4905,89 @@ module.exports = AFRAME.utils.extend({}, Body, {
   }
 });
 
-},{"./body":9}],12:[function(require,module,exports){
+},{"./body":10}],13:[function(require,module,exports){
+var CANNON = require('cannon');
+
+module.exports = {
+  dependencies: ['dynamic-body'],
+
+  multiple: true,
+
+  schema: {
+    // Type of constraint.
+    type: {default: 'lock', oneOf: ['coneTwist', 'distance', 'hinge', 'lock', 'pointToPoint']},
+
+    // Target (other) body for the constraint.
+    target: {type: 'selector'},
+
+    // Maximum force that should be applied to constraint the bodies.
+    maxForce: {default: 1e6, min: 0},
+
+    // If true, bodies can collide when they are connected.
+    collideConnected: {default: true},
+
+    // Wake up bodies when connected.
+    wakeUpBodies: {default: true},
+
+    // The distance to be kept between the bodies. If 0, will be set to current distance.
+    distance: {default: 0, min: 0},
+
+    // Offset of the hinge or point-to-point constraint, defined locally in the body.
+    pivot: {type: 'vec3'},
+    pivotTarget: {type: 'vec3'},
+
+    // An axis that each body can rotate around, defined locally to that body.
+    axis: {type: 'vec3'},
+    axisTarget: {type: 'vec3'},
+  },
+
+  init: function () {
+    this.system = this.el.sceneEl.systems.physics;
+    this.constraint = /* {CANNON.Constraint} */ null;
+  },
+
+  remove: function () {
+    if (!this.constraint) return;
+
+    this.system.world.removeConstraint(this.constraint);
+    this.constraint = null;
+  },
+
+  update: function () {
+    var el = this.el,
+        data = this.data,
+        options = AFRAME.utils.extend({}, data.options);
+
+    this.remove();
+
+    if (!el.body || !data.target.body) {
+      (el.body ? data.target : el).addEventListener('body-loaded', this.update.bind(this, {}));
+      return;
+    }
+
+    switch (data.type) {
+      case 'distance':
+        this.constraint = new CANNON.DistanceConstraint(
+          el.body,
+          data.target.body,
+          options.distance || undefined,
+          options.maxForce
+        );
+        break;
+      case 'lock':
+        this.constraint = new CANNON.LockConstraint(el.body, data.target.body, options);
+        break;
+      case 'coneTwist':
+      case 'hinge':
+      case 'pointToPoint':
+        throw new Error('[constraint] Unimplemented type.');
+    }
+
+    this.system.world.addConstraint(this.constraint);
+  }
+};
+
+},{"cannon":20}],14:[function(require,module,exports){
 module.exports = {
   'velocity':   require('./velocity'),
   'quaternion': require('./quaternion'),
@@ -1752,7 +5004,7 @@ module.exports = {
   }
 };
 
-},{"./quaternion":13,"./velocity":14}],13:[function(require,module,exports){
+},{"./quaternion":15,"./velocity":16}],15:[function(require,module,exports){
 /**
  * Quaternion.
  *
@@ -1781,7 +5033,7 @@ module.exports = {
   }
 };
 
-},{}],14:[function(require,module,exports){
+},{}],16:[function(require,module,exports){
 /**
  * Velocity, in m/s.
  */
@@ -1827,7 +5079,7 @@ module.exports = {
   }
 };
 
-},{}],15:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 module.exports = {
   GRAVITY: -9.8,
   MAX_INTERVAL: 4 / 60,
@@ -1842,7 +5094,7 @@ module.exports = {
   }
 };
 
-},{}],16:[function(require,module,exports){
+},{}],18:[function(require,module,exports){
 var CANNON = require('cannon'),
     CONSTANTS = require('../constants'),
     C_GRAV = CONSTANTS.GRAVITY,
@@ -2001,2969 +5253,89 @@ module.exports = {
   }
 };
 
-},{"../constants":15,"cannon":45}],17:[function(require,module,exports){
-var CANNON = require('cannon'),
-    quickhull = require('./lib/THREE.quickhull');
-
-var PI_2 = Math.PI / 2;
-
-var Type = {
-  BOX: 'Box',
-  CYLINDER: 'Cylinder',
-  SPHERE: 'Sphere',
-  HULL: 'ConvexPolyhedron'
-};
-
-/**
- * Given a THREE.Object3D instance, creates a corresponding CANNON shape.
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-module.exports = CANNON.mesh2shape = function (object, options) {
-  options = options || {};
-
-  if (options.type === Type.BOX) {
-    return createBoundingBoxShape(object);
-  } else if (options.type === Type.CYLINDER) {
-    return createBoundingCylinderShape(object, options);
-  } else if (options.type === Type.SPHERE) {
-    return createBoundingSphereShape(object, options);
-  } else if (options.type === Type.HULL) {
-    return createConvexPolyhedron(object);
-  } else if (options.type) {
-    throw new Error('[CANNON.mesh2shape] Invalid type "%s".', options.type);
-  }
-
-  var geometry = getGeometry(object);
-
-  if (!geometry) return null;
-
-  var type = geometry.metadata
-    ? geometry.metadata.type
-    : geometry.type;
-
-  switch (type) {
-    case 'BoxGeometry':
-    case 'BoxBufferGeometry':
-      return createBoxShape(geometry);
-    case 'CylinderGeometry':
-    case 'CylinderBufferGeometry':
-      return createCylinderShape(geometry);
-    case 'PlaneGeometry':
-    case 'PlaneBufferGeometry':
-      return createPlaneShape(geometry);
-    case 'SphereGeometry':
-    case 'SphereBufferGeometry':
-      return createSphereShape(geometry);
-    case 'TubeGeometry':
-      return createTubeShape(geometry);
-    case 'Geometry':
-    case 'BufferGeometry':
-      return createTrimeshShape(geometry);
-    default:
-      console.warn('Unrecognized geometry: "%s". Using bounding box as shape.', geometry.type);
-      return createBoxShape(geometry);
-  }
-};
-
-CANNON.mesh2shape.Type = Type;
-
-/******************************************************************************
- * Shape construction
- */
-
- /**
-  * @param  {THREE.Geometry} geometry
-  * @return {CANNON.Shape}
-  */
- function createBoxShape (geometry) {
-   var vertices = getVertices(geometry);
-
-   if (!vertices.length) return null;
-
-   geometry.computeBoundingBox();
-   var box = geometry.boundingBox;
-   return new CANNON.Box(new CANNON.Vec3(
-     (box.max.x - box.min.x) / 2,
-     (box.max.y - box.min.y) / 2,
-     (box.max.z - box.min.z) / 2
-   ));
- }
-
-/**
- * Bounding box needs to be computed with the entire mesh, not just geometry.
- * @param  {THREE.Object3D} mesh
- * @return {CANNON.Shape}
- */
-function createBoundingBoxShape (object) {
-  var box, shape, localPosition, worldPosition,
-      helper = new THREE.BoundingBoxHelper(object);
-
-  helper.update();
-  box = helper.box;
-
-  if (!isFinite(box.min.lengthSq())) return null;
-
-  shape = new CANNON.Box(new CANNON.Vec3(
-    (box.max.x - box.min.x) / 2,
-    (box.max.y - box.min.y) / 2,
-    (box.max.z - box.min.z) / 2
-  ));
-
-  object.updateMatrixWorld();
-  worldPosition = new THREE.Vector3();
-  worldPosition.setFromMatrixPosition(object.matrixWorld);
-  localPosition = helper.position.sub(worldPosition);
-  if (localPosition.lengthSq()) {
-    shape.offset = localPosition;
-  }
-
-  return shape;
-}
-
-/**
- * Computes 3D convex hull as a CANNON.ConvexPolyhedron.
- * @param  {THREE.Object3D} mesh
- * @return {CANNON.Shape}
- */
-function createConvexPolyhedron (object) {
-  var i, vertices, faces, hull,
-      eps = 1e-4,
-      geometry = getGeometry(object);
-
-  if (!geometry || !geometry.vertices.length) return null;
-
-  // Perturb.
-  for (i = 0; i < geometry.vertices.length; i++) {
-    geometry.vertices[i].x += (Math.random() - 0.5) * eps;
-    geometry.vertices[i].y += (Math.random() - 0.5) * eps;
-    geometry.vertices[i].z += (Math.random() - 0.5) * eps;
-  }
-
-  // Compute the 3D convex hull.
-  hull = quickhull(geometry);
-
-  // Convert from THREE.Vector3 to CANNON.Vec3.
-  vertices = new Array(hull.vertices.length);
-  for (i = 0; i < hull.vertices.length; i++) {
-    vertices[i] = new CANNON.Vec3(hull.vertices[i].x, hull.vertices[i].y, hull.vertices[i].z);
-  }
-
-  // Convert from THREE.Face to Array<number>.
-  faces = new Array(hull.faces.length);
-  for (i = 0; i < hull.faces.length; i++) {
-    faces[i] = [hull.faces[i].a, hull.faces[i].b, hull.faces[i].c];
-  }
-
-  return new CANNON.ConvexPolyhedron(vertices, faces);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createCylinderShape (geometry) {
-  var shape,
-      params = geometry.metadata
-        ? geometry.metadata.parameters
-        : geometry.parameters;
-  shape = new CANNON.Cylinder(
-    params.radiusTop,
-    params.radiusBottom,
-    params.height,
-    params.radialSegments
-  );
-  shape.orientation = new CANNON.Quaternion();
-  shape.orientation.setFromEuler(THREE.Math.degToRad(-90), 0, 0, 'XYZ').normalize();
-  return shape;
-}
-
-/**
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-function createBoundingCylinderShape (object, options) {
-  var shape, height, radius,
-      geometry = getGeometry(object),
-      axes = ['x', 'y', 'z'],
-      majorAxis = options.cylinderAxis || 'y',
-      minorAxes = axes.splice(axes.indexOf(majorAxis), 1) && axes;
-
-  // Compute cylinder dimensions.
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-  height = geometry.boundingBox.max[majorAxis] - geometry.boundingBox.min[majorAxis];
-  radius = 0.5 * Math.max(
-    geometry.boundingBox.max[minorAxes[0]] - geometry.boundingBox.min[minorAxes[0]],
-    geometry.boundingBox.max[minorAxes[1]] - geometry.boundingBox.min[minorAxes[1]]
-  );
-
-  // Create shape.
-  shape = new CANNON.Cylinder(radius, radius, height, 12);
-  shape.orientation = new CANNON.Quaternion();
-  shape.orientation.setFromEuler(
-    majorAxis === 'y' ? PI_2 : 0,
-    majorAxis === 'z' ? PI_2 : 0,
-    0,
-    'XYZ'
-  ).normalize();
-  return shape;
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createPlaneShape (geometry) {
-  geometry.computeBoundingBox();
-  var box = geometry.boundingBox;
-  return new CANNON.Box(new CANNON.Vec3(
-    (box.max.x - box.min.x) / 2 || 0.1,
-    (box.max.y - box.min.y) / 2 || 0.1,
-    (box.max.z - box.min.z) / 2 || 0.1
-  ));
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createSphereShape (geometry) {
-  var params = geometry.metadata
-    ? geometry.metadata.parameters
-    : geometry.parameters;
-  return new CANNON.Sphere(params.radius);
-}
-
-/**
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-function createBoundingSphereShape (object, options) {
-  var geometry = getGeometry(object);
-  geometry.computeBoundingSphere();
-  return new CANNON.Sphere(options.sphereRadius || geometry.boundingSphere.radius);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createTubeShape (geometry) {
-  var tmp = new THREE.BufferGeometry();
-  tmp.fromGeometry(geometry);
-  return createTrimeshShape(tmp);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createTrimeshShape (geometry) {
-  var indices,
-      vertices = getVertices(geometry);
-
-  if (!vertices.length) return null;
-
-  indices = Object.keys(vertices).map(Number);
-  return new CANNON.Trimesh(vertices, indices);
-}
-
-/******************************************************************************
- * Utils
- */
-
-/**
- * Returns a single geometry for the given object. If the object is compound,
- * its geometries are automatically merged.
- * @param {THREE.Object3D} object
- * @return {THREE.Geometry}
- */
-function getGeometry (object) {
-  var matrix, mesh,
-      meshes = getMeshes(object),
-      tmp = new THREE.Geometry(),
-      combined = new THREE.Geometry();
-
-  if (meshes.length === 0) return null;
-
-  // Apply scale  – it can't easily be applied to a CANNON.Shape later.
-  if (meshes.length === 1) {
-    var position = new THREE.Vector3(),
-        quaternion = new THREE.Quaternion(),
-        scale = new THREE.Vector3();
-    tmp = meshes[0].geometry.clone();
-    tmp.metadata = meshes[0].geometry.metadata;
-    meshes[0].updateMatrixWorld();
-    meshes[0].matrixWorld.decompose(position, quaternion, scale);
-    return tmp.scale(scale.x, scale.y, scale.z);
-  }
-
-  // Recursively merge geometry, preserving local transforms.
-  while ((mesh = meshes.pop())) {
-    mesh.updateMatrixWorld();
-    if (mesh.geometry instanceof THREE.BufferGeometry) {
-      tmp.fromBufferGeometry(mesh.geometry);
-      combined.merge(tmp, mesh.matrixWorld);
-    } else {
-      combined.merge(mesh.geometry, mesh.matrixWorld);
-    }
-  }
-
-  matrix = new THREE.Matrix4();
-  matrix.scale(object.scale);
-  combined.applyMatrix(matrix);
-  return combined;
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {Array<number>}
- */
-function getVertices (geometry) {
-  if (!geometry.attributes) {
-    geometry = new THREE.BufferGeometry().fromGeometry(geometry);
-  }
-  return geometry.attributes.position.array;
-}
-
-/**
- * Returns a flat array of THREE.Mesh instances from the given object. If
- * nested transformations are found, they are applied to child meshes
- * as mesh.userData.matrix, so that each mesh has its position/rotation/scale
- * independently of all of its parents except the top-level object.
- * @param  {THREE.Object3D} object
- * @return {Array<THREE.Mesh>}
- */
-function getMeshes (object) {
-  var meshes = [];
-  object.traverse(function (o) {
-    if (o.type === 'Mesh') {
-      meshes.push(o);
-    }
-  });
-  return meshes;
-}
-
-},{"./lib/THREE.quickhull":18,"cannon":45}],18:[function(require,module,exports){
-/**
-
-  QuickHull
-  ---------
-
-  The MIT License
-
-  Copyright &copy; 2010-2014 three.js authors
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-
-  THE SOFTWARE.
-
-
-    @author mark lundin / http://mark-lundin.com
-
-    This is a 3D implementation of the Quick Hull algorithm.
-    It is a fast way of computing a convex hull with average complexity
-    of O(n log(n)).
-    It uses depends on three.js and is supposed to create THREE.Geometry.
-
-    It's also very messy
-
- */
-
-module.exports = (function(){
-
-
-  var faces     = [],
-    faceStack   = [],
-    i, NUM_POINTS, extremes,
-    max     = 0,
-    dcur, current, j, v0, v1, v2, v3,
-    N, D;
-
-  var ab, ac, ax,
-    suba, subb, normal,
-    diff, subaA, subaB, subC;
-
-  function reset(){
-
-    ab    = new THREE.Vector3(),
-    ac    = new THREE.Vector3(),
-    ax    = new THREE.Vector3(),
-    suba  = new THREE.Vector3(),
-    subb  = new THREE.Vector3(),
-    normal  = new THREE.Vector3(),
-    diff  = new THREE.Vector3(),
-    subaA = new THREE.Vector3(),
-    subaB = new THREE.Vector3(),
-    subC  = new THREE.Vector3();
-
-  }
-
-  //temporary vectors
-
-  function process( points ){
-
-    // Iterate through all the faces and remove
-    while( faceStack.length > 0  ){
-      cull( faceStack.shift(), points );
-    }
-  }
-
-
-  var norm = function(){
-
-    var ca = new THREE.Vector3(),
-      ba = new THREE.Vector3(),
-      N = new THREE.Vector3();
-
-    return function( a, b, c ){
-
-      ca.subVectors( c, a );
-      ba.subVectors( b, a );
-
-      N.crossVectors( ca, ba );
-
-      return N.normalize();
-    }
-
-  }();
-
-
-  function getNormal( face, points ){
-
-    if( face.normal !== undefined ) return face.normal;
-
-    var p0 = points[face[0]],
-      p1 = points[face[1]],
-      p2 = points[face[2]];
-
-    ab.subVectors( p1, p0 );
-    ac.subVectors( p2, p0 );
-    normal.crossVectors( ac, ab );
-    normal.normalize();
-
-    return face.normal = normal.clone();
-
-  }
-
-
-  function assignPoints( face, pointset, points ){
-
-    // ASSIGNING POINTS TO FACE
-    var p0 = points[face[0]],
-      dots = [], apex,
-      norm = getNormal( face, points );
-
-
-    // Sory all the points by there distance from the plane
-    pointset.sort( function( aItem, bItem ){
-
-
-      dots[aItem.x/3] = dots[aItem.x/3] !== undefined ? dots[aItem.x/3] : norm.dot( suba.subVectors( aItem, p0 ));
-      dots[bItem.x/3] = dots[bItem.x/3] !== undefined ? dots[bItem.x/3] : norm.dot( subb.subVectors( bItem, p0 ));
-
-      return dots[aItem.x/3] - dots[bItem.x/3] ;
-    });
-
-    //TODO :: Must be a faster way of finding and index in this array
-    var index = pointset.length;
-
-    if( index === 1 ) dots[pointset[0].x/3] = norm.dot( suba.subVectors( pointset[0], p0 ));
-    while( index-- > 0 && dots[pointset[index].x/3] > 0 )
-
-    var point;
-    if( index + 1 < pointset.length && dots[pointset[index+1].x/3] > 0 ){
-
-      face.visiblePoints  = pointset.splice( index + 1 );
-    }
-  }
-
-
-
-
-  function cull( face, points ){
-
-    var i = faces.length,
-      dot, visibleFace, currentFace,
-      visibleFaces = [face];
-
-    var apex = points.indexOf( face.visiblePoints.pop() );
-
-    // Iterate through all other faces...
-    while( i-- > 0 ){
-      currentFace = faces[i];
-      if( currentFace !== face ){
-        // ...and check if they're pointing in the same direction
-        dot = getNormal( currentFace, points ).dot( diff.subVectors( points[apex], points[currentFace[0]] ));
-        if( dot > 0 ){
-          visibleFaces.push( currentFace );
-        }
-      }
-    }
-
-    var index, neighbouringIndex, vertex;
-
-    // Determine Perimeter - Creates a bounded horizon
-
-    // 1. Pick an edge A out of all possible edges
-    // 2. Check if A is shared by any other face. a->b === b->a
-      // 2.1 for each edge in each triangle, isShared = ( f1.a == f2.a && f1.b == f2.b ) || ( f1.a == f2.b && f1.b == f2.a )
-    // 3. If not shared, then add to convex horizon set,
-        //pick an end point (N) of the current edge A and choose a new edge NA connected to A.
-        //Restart from 1.
-    // 4. If A is shared, it is not an horizon edge, therefore flag both faces that share this edge as candidates for culling
-    // 5. If candidate geometry is a degenrate triangle (ie. the tangent space normal cannot be computed) then remove that triangle from all further processing
-
-
-    var j = i = visibleFaces.length;
-    var isDistinct = false,
-      hasOneVisibleFace = i === 1,
-      cull = [],
-      perimeter = [],
-      edgeIndex = 0, compareFace, nextIndex,
-      a, b;
-
-    var allPoints = [];
-    var originFace = [visibleFaces[0][0], visibleFaces[0][1], visibleFaces[0][1], visibleFaces[0][2], visibleFaces[0][2], visibleFaces[0][0]];
-
-
-    if( visibleFaces.length === 1 ){
-      currentFace = visibleFaces[0];
-
-      perimeter = [currentFace[0], currentFace[1], currentFace[1], currentFace[2], currentFace[2], currentFace[0]];
-      // remove visible face from list of faces
-      if( faceStack.indexOf( currentFace ) > -1 ){
-        faceStack.splice( faceStack.indexOf( currentFace ), 1 );
-      }
-
-
-      if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
-      faces.splice( faces.indexOf( currentFace ), 1 );
-
-    }else{
-
-      while( i-- > 0  ){  // for each visible face
-
-        currentFace = visibleFaces[i];
-
-        // remove visible face from list of faces
-        if( faceStack.indexOf( currentFace ) > -1 ){
-          faceStack.splice( faceStack.indexOf( currentFace ), 1 );
-        }
-
-        if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
-        faces.splice( faces.indexOf( currentFace ), 1 );
-
-
-        var isSharedEdge;
-        cEdgeIndex = 0;
-
-        while( cEdgeIndex < 3 ){ // Iterate through it's edges
-
-          isSharedEdge = false;
-          j = visibleFaces.length;
-          a = currentFace[cEdgeIndex]
-          b = currentFace[(cEdgeIndex+1)%3];
-
-
-          while( j-- > 0 && !isSharedEdge ){ // find another visible faces
-
-            compareFace = visibleFaces[j];
-            edgeIndex = 0;
-
-            // isSharedEdge = compareFace == currentFace;
-            if( compareFace !== currentFace ){
-
-              while( edgeIndex < 3 && !isSharedEdge ){ //Check all it's indices
-
-                nextIndex = ( edgeIndex + 1 );
-                isSharedEdge = ( compareFace[edgeIndex] === a && compareFace[nextIndex%3] === b ) ||
-                         ( compareFace[edgeIndex] === b && compareFace[nextIndex%3] === a );
-
-                edgeIndex++;
-              }
-            }
-          }
-
-          if( !isSharedEdge || hasOneVisibleFace ){
-            perimeter.push( a );
-            perimeter.push( b );
-          }
-
-          cEdgeIndex++;
-        }
-      }
-    }
-
-    // create new face for all pairs around edge
-    i = 0;
-    var l = perimeter.length/2;
-    var f;
-
-    while( i < l ){
-      f = [ perimeter[i*2+1], apex, perimeter[i*2] ];
-      assignPoints( f, allPoints, points );
-      faces.push( f )
-      if( f.visiblePoints !== undefined  )faceStack.push( f );
-      i++;
-    }
-
-  }
-
-  var distSqPointSegment = function(){
-
-    var ab = new THREE.Vector3(),
-      ac = new THREE.Vector3(),
-      bc = new THREE.Vector3();
-
-    return function( a, b, c ){
-
-        ab.subVectors( b, a );
-        ac.subVectors( c, a );
-        bc.subVectors( c, b );
-
-        var e = ac.dot(ab);
-        if (e < 0.0) return ac.dot( ac );
-        var f = ab.dot( ab );
-        if (e >= f) return bc.dot(  bc );
-        return ac.dot( ac ) - e * e / f;
-
-      }
-
-  }();
-
-
-
-
-
-  return function( geometry ){
-
-    reset();
-
-
-    points    = geometry.vertices;
-    faces     = [],
-    faceStack   = [],
-    i       = NUM_POINTS = points.length,
-    extremes  = points.slice( 0, 6 ),
-    max     = 0;
-
-
-
-    /*
-     *  FIND EXTREMETIES
-     */
-    while( i-- > 0 ){
-      if( points[i].x < extremes[0].x ) extremes[0] = points[i];
-      if( points[i].x > extremes[1].x ) extremes[1] = points[i];
-
-      if( points[i].y < extremes[2].y ) extremes[2] = points[i];
-      if( points[i].y < extremes[3].y ) extremes[3] = points[i];
-
-      if( points[i].z < extremes[4].z ) extremes[4] = points[i];
-      if( points[i].z < extremes[5].z ) extremes[5] = points[i];
-    }
-
-
-    /*
-     *  Find the longest line between the extremeties
-     */
-
-    j = i = 6;
-    while( i-- > 0 ){
-      j = i - 1;
-      while( j-- > 0 ){
-          if( max < (dcur = extremes[i].distanceToSquared( extremes[j] )) ){
-        max = dcur;
-        v0 = extremes[ i ];
-        v1 = extremes[ j ];
-
-          }
-        }
-      }
-
-
-      // 3. Find the most distant point to the line segment, this creates a plane
-      i = 6;
-      max = 0;
-    while( i-- > 0 ){
-      dcur = distSqPointSegment( v0, v1, extremes[i]);
-      if( max < dcur ){
-        max = dcur;
-            v2 = extremes[ i ];
-          }
-    }
-
-
-      // 4. Find the most distant point to the plane.
-
-      N = norm(v0, v1, v2);
-      D = N.dot( v0 );
-
-
-      max = 0;
-      i = NUM_POINTS;
-      while( i-- > 0 ){
-        dcur = Math.abs( points[i].dot( N ) - D );
-          if( max < dcur ){
-            max = dcur;
-            v3 = points[i];
-      }
-      }
-
-
-
-      var v0Index = points.indexOf( v0 ),
-      v1Index = points.indexOf( v1 ),
-      v2Index = points.indexOf( v2 ),
-      v3Index = points.indexOf( v3 );
-
-
-    //  We now have a tetrahedron as the base geometry.
-    //  Now we must subdivide the
-
-      var tetrahedron =[
-        [ v2Index, v1Index, v0Index ],
-        [ v1Index, v3Index, v0Index ],
-        [ v2Index, v3Index, v1Index ],
-        [ v0Index, v3Index, v2Index ],
-    ];
-
-
-
-    subaA.subVectors( v1, v0 ).normalize();
-    subaB.subVectors( v2, v0 ).normalize();
-    subC.subVectors ( v3, v0 ).normalize();
-    var sign  = subC.dot( new THREE.Vector3().crossVectors( subaB, subaA ));
-
-
-    // Reverse the winding if negative sign
-    if( sign < 0 ){
-      tetrahedron[0].reverse();
-      tetrahedron[1].reverse();
-      tetrahedron[2].reverse();
-      tetrahedron[3].reverse();
-    }
-
-
-    //One for each face of the pyramid
-    var pointsCloned = points.slice();
-    pointsCloned.splice( pointsCloned.indexOf( v0 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v1 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v2 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v3 ), 1 );
-
-
-    var i = tetrahedron.length;
-    while( i-- > 0 ){
-      assignPoints( tetrahedron[i], pointsCloned, points );
-      if( tetrahedron[i].visiblePoints !== undefined ){
-        faceStack.push( tetrahedron[i] );
-      }
-      faces.push( tetrahedron[i] );
-    }
-
-    process( points );
-
-
-    //  Assign to our geometry object
-
-    var ll = faces.length;
-    while( ll-- > 0 ){
-      geometry.faces[ll] = new THREE.Face3( faces[ll][2], faces[ll][1], faces[ll][0], faces[ll].normal )
-    }
-
-    geometry.normalsNeedUpdate = true;
-
-    return geometry;
-
-  }
-
-}())
-
-},{}],19:[function(require,module,exports){
-var EPS = 0.1;
-
-module.exports = {
-  schema: {
-    enabled: {default: true},
-    mode: {default: 'teleport', oneOf: ['teleport', 'animate']},
-    animateSpeed: {default: 3.0}
-  },
-
-  init: function () {
-    this.active = true;
-    this.checkpoint = null;
-
-    this.offset = new THREE.Vector3();
-    this.position = new THREE.Vector3();
-    this.targetPosition = new THREE.Vector3();
-  },
-
-  play: function () { this.active = true; },
-  pause: function () { this.active = false; },
-
-  setCheckpoint: function (checkpoint) {
-    if (!this.active) return;
-
-    this.checkpoint = checkpoint;
-    if (this.data.mode === 'teleport') {
-      this.sync();
-      this.el.setAttribute('position', this.targetPosition);
-    }
-  },
-
-  isVelocityActive: function () {
-    return !!(this.active && this.checkpoint);
-  },
-
-  getVelocity: function () {
-    if (!this.active) return;
-
-    var data = this.data,
-        offset = this.offset,
-        position = this.position,
-        targetPosition = this.targetPosition;
-
-    this.sync();
-    if (position.distanceTo(targetPosition) < EPS) {
-      this.checkpoint = null;
-      return offset.set(0, 0, 0);
-    }
-    offset.setLength(data.animateSpeed);
-    return offset;
-  },
-
-  sync: function () {
-    var offset = this.offset,
-        position = this.position,
-        targetPosition = this.targetPosition;
-
-    position.copy(this.el.getComputedAttribute('position'));
-    targetPosition.copy(this.checkpoint.getComputedAttribute('position'));
-    // TODO - Cleverer ways around this?
-    targetPosition.y = position.y;
-    offset.copy(targetPosition).sub(position);
-  }
-};
-
-},{}],20:[function(require,module,exports){
-/**
- * Gamepad controls for A-Frame.
- *
- * Stripped-down version of: https://github.com/donmccurdy/aframe-gamepad-controls
- *
- * For more information about the Gamepad API, see:
- * https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
- */
-
-var GamepadButton = require('../../lib/GamepadButton'),
-    GamepadButtonEvent = require('../../lib/GamepadButtonEvent');
-
-var JOYSTICK_EPS = 0.2;
-
-module.exports = {
-
-  /*******************************************************************
-   * Statics
-   */
-
-  GamepadButton: GamepadButton,
-
-  /*******************************************************************
-   * Schema
-   */
-
-  schema: {
-    // Controller 0-3
-    controller:        { default: 0, oneOf: [0, 1, 2, 3] },
-
-    // Enable/disable features
-    enabled:           { default: true },
-
-    // Debugging
-    debug:             { default: false }
-  },
-
-  /*******************************************************************
-   * Core
-   */
-
-  /**
-   * Called once when component is attached. Generally for initial setup.
-   */
-  init: function () {
-    var scene = this.el.sceneEl;
-    this.prevTime = window.performance.now();
-
-    // Button state
-    this.buttons = {};
-
-    scene.addBehavior(this);
-
-    if (!this.getGamepad()) {
-      console.warn(
-        'Gamepad #%d not found. Connect controller and press any button to continue.',
-        this.data.controller
-      );
-    }
-  },
-
-  /**
-   * Called when component is attached and when component data changes.
-   * Generally modifies the entity based on the data.
-   */
-  update: function () { this.tick(); },
-
-  /**
-   * Called on each iteration of main render loop.
-   */
-  tick: function () {
-    this.updateButtonState();
-  },
-
-  /**
-   * Called when a component is removed (e.g., via removeAttribute).
-   * Generally undoes all modifications to the entity.
-   */
-  remove: function () { },
-
-  /*******************************************************************
-   * Universal controls - movement
-   */
-
-  isVelocityActive: function () {
-    if (!this.data.enabled || !this.isConnected()) return false;
-
-    var dpad = this.getDpad(),
-        joystick0 = this.getJoystick(0),
-        inputX = dpad.x || joystick0.x,
-        inputY = dpad.y || joystick0.y;
-
-    return Math.abs(inputX) > JOYSTICK_EPS || Math.abs(inputY) > JOYSTICK_EPS;
-  },
-
-  getVelocityDelta: function () {
-    var dpad = this.getDpad(),
-        joystick0 = this.getJoystick(0),
-        inputX = dpad.x || joystick0.x,
-        inputY = dpad.y || joystick0.y,
-        dVelocity = new THREE.Vector3();
-
-    if (Math.abs(inputX) > JOYSTICK_EPS) {
-      dVelocity.x += inputX;
-    }
-    if (Math.abs(inputY) > JOYSTICK_EPS) {
-      dVelocity.z += inputY;
-    }
-
-    return dVelocity;
-  },
-
-  /*******************************************************************
-   * Universal controls - rotation
-   */
-
-  isRotationActive: function () {
-    if (!this.data.enabled || !this.isConnected()) return false;
-
-    var joystick1 = this.getJoystick(1);
-
-    return Math.abs(joystick1.x) > JOYSTICK_EPS || Math.abs(joystick1.y) > JOYSTICK_EPS;
-  },
-
-  getRotationDelta: function () {
-    var lookVector = this.getJoystick(1);
-    if (Math.abs(lookVector.x) <= JOYSTICK_EPS) lookVector.x = 0;
-    if (Math.abs(lookVector.y) <= JOYSTICK_EPS) lookVector.y = 0;
-    return lookVector;
-  },
-
-  /*******************************************************************
-   * Button events
-   */
-
-  updateButtonState: function () {
-    var gamepad = this.getGamepad();
-    if (this.data.enabled && gamepad) {
-
-      // Fire DOM events for button state changes.
-      for (var i = 0; i < gamepad.buttons.length; i++) {
-        if (gamepad.buttons[i].pressed && !this.buttons[i]) {
-          this.emit(new GamepadButtonEvent('gamepadbuttondown', i, gamepad.buttons[i]));
-        } else if (!gamepad.buttons[i].pressed && this.buttons[i]) {
-          this.emit(new GamepadButtonEvent('gamepadbuttonup', i, gamepad.buttons[i]));
-        }
-        this.buttons[i] = gamepad.buttons[i].pressed;
-      }
-
-    } else if (Object.keys(this.buttons)) {
-      // Reset state if controls are disabled or controller is lost.
-      this.buttons = {};
-    }
-  },
-
-  emit: function (event) {
-    // Emit original event.
-    this.el.emit(event.type, event);
-
-    // Emit convenience event, identifying button index.
-    this.el.emit(
-      event.type + ':' + event.index,
-      new GamepadButtonEvent(event.type, event.index, event)
-    );
-  },
-
-  /*******************************************************************
-   * Gamepad state
-   */
-
-  /**
-   * Returns the Gamepad instance attached to the component. If connected,
-   * a proxy-controls component may provide access to Gamepad input from a
-   * remote device.
-   *
-   * @return {Gamepad}
-   */
-  getGamepad: function () {
-    var localGamepad = navigator.getGamepads
-          && navigator.getGamepads()[this.data.controller],
-        proxyControls = this.el.sceneEl.components['proxy-controls'],
-        proxyGamepad = proxyControls && proxyControls.isConnected()
-          && proxyControls.getGamepad(this.data.controller);
-    return proxyGamepad || localGamepad;
-  },
-
-  /**
-   * Returns the state of the given button.
-   * @param  {number} index The button (0-N) for which to find state.
-   * @return {GamepadButton}
-   */
-  getButton: function (index) {
-    return this.getGamepad().buttons[index];
-  },
-
-  /**
-   * Returns state of the given axis. Axes are labelled 0-N, where 0-1 will
-   * represent X/Y on the first joystick, and 2-3 X/Y on the second.
-   * @param  {number} index The axis (0-N) for which to find state.
-   * @return {number} On the interval [-1,1].
-   */
-  getAxis: function (index) {
-    return this.getGamepad().axes[index];
-  },
-
-  /**
-   * Returns the state of the given joystick (0 or 1) as a THREE.Vector2.
-   * @param  {number} id The joystick (0, 1) for which to find state.
-   * @return {THREE.Vector2}
-   */
-  getJoystick: function (index) {
-    var gamepad = this.getGamepad();
-    switch (index) {
-      case 0: return new THREE.Vector2(gamepad.axes[0], gamepad.axes[1]);
-      case 1: return new THREE.Vector2(gamepad.axes[2], gamepad.axes[3]);
-      default: throw new Error('Unexpected joystick index "%d".', index);
-    }
-  },
-
-  /**
-   * Returns the state of the dpad as a THREE.Vector2.
-   * @return {THREE.Vector2}
-   */
-  getDpad: function () {
-    var gamepad = this.getGamepad();
-    if (!gamepad.buttons[GamepadButton.DPAD_RIGHT]) {
-      return new THREE.Vector2();
-    }
-    return new THREE.Vector2(
-      (gamepad.buttons[GamepadButton.DPAD_RIGHT].pressed ? 1 : 0)
-      + (gamepad.buttons[GamepadButton.DPAD_LEFT].pressed ? -1 : 0),
-      (gamepad.buttons[GamepadButton.DPAD_UP].pressed ? -1 : 0)
-      + (gamepad.buttons[GamepadButton.DPAD_DOWN].pressed ? 1 : 0)
-    );
-  },
-
-  /**
-   * Returns true if the gamepad is currently connected to the system.
-   * @return {boolean}
-   */
-  isConnected: function () {
-    var gamepad = this.getGamepad();
-    return !!(gamepad && gamepad.connected);
-  },
-
-  /**
-   * Returns a string containing some information about the controller. Result
-   * may vary across browsers, for a given controller.
-   * @return {string}
-   */
-  getID: function () {
-    return this.getGamepad().id;
-  }
-};
-
-},{"../../lib/GamepadButton":3,"../../lib/GamepadButtonEvent":4}],21:[function(require,module,exports){
-var radToDeg = THREE.Math.radToDeg,
-    isMobile = AFRAME.utils.isMobile();
-
-module.exports = {
-  schema: {
-    enabled: {default: true},
-    standing: {default: true}
-  },
-
-  init: function () {
-    this.isPositionCalibrated = false;
-    this.dolly = new THREE.Object3D();
-    this.hmdEuler = new THREE.Euler();
-    this.previousHMDPosition = new THREE.Vector3();
-    this.deltaHMDPosition = new THREE.Vector3();
-    this.vrControls = new THREE.VRControls(this.dolly);
-    this.rotation = new THREE.Vector3();
-  },
-
-  update: function () {
-    var data = this.data;
-    var vrControls = this.vrControls;
-    vrControls.standing = data.standing;
-    vrControls.update();
-  },
-
-  tick: function () {
-    this.vrControls.update();
-  },
-
-  remove: function () {
-    this.vrControls.dispose();
-  },
-
-  isRotationActive: function () {
-    var hmdEuler = this.hmdEuler;
-    if (!this.data.enabled || !(this.el.sceneEl.is('vr-mode') || isMobile)) {
-      return false;
-    }
-    hmdEuler.setFromQuaternion(this.dolly.quaternion, 'YXZ');
-    return !isNullVector(hmdEuler);
-  },
-
-  getRotation: function () {
-    var hmdEuler = this.hmdEuler;
-    return this.rotation.set(
-      radToDeg(hmdEuler.x),
-      radToDeg(hmdEuler.y),
-      radToDeg(hmdEuler.z)
-    );
-  },
-
-  isVelocityActive: function () {
-    var deltaHMDPosition = this.deltaHMDPosition;
-    var previousHMDPosition = this.previousHMDPosition;
-    var currentHMDPosition = this.calculateHMDPosition();
-    this.isPositionCalibrated = this.isPositionCalibrated || !isNullVector(previousHMDPosition);
-    if (!this.data.enabled || !this.el.sceneEl.is('vr-mode') || isMobile) {
-      return false;
-    }
-    deltaHMDPosition.copy(currentHMDPosition).sub(previousHMDPosition);
-    previousHMDPosition.copy(currentHMDPosition);
-    return this.isPositionCalibrated && !isNullVector(deltaHMDPosition);
-  },
-
-  getPositionDelta: function () {
-    return this.deltaHMDPosition;
-  },
-
-  calculateHMDPosition: function () {
-    var dolly = this.dolly;
-    var position = new THREE.Vector3();
-    dolly.updateMatrix();
-    position.setFromMatrixPosition(dolly.matrix);
-    return position;
-  }
-};
-
-function isNullVector (vector) {
-  return vector.x === 0 && vector.y === 0 && vector.z === 0;
-}
-
-},{}],22:[function(require,module,exports){
-var physics = require('aframe-physics-system');
-
-module.exports = {
-  'checkpoint-controls': require('./checkpoint-controls'),
-  'gamepad-controls':    require('./gamepad-controls'),
-  'hmd-controls':        require('./hmd-controls'),
-  'keyboard-controls':   require('./keyboard-controls'),
-  'mouse-controls':      require('./mouse-controls'),
-  'touch-controls':      require('./touch-controls'),
-  'universal-controls':  require('./universal-controls'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    physics.registerAll();
-    if (!AFRAME.components['checkpoint-controls'])  AFRAME.registerComponent('checkpoint-controls', this['checkpoint-controls']);
-    if (!AFRAME.components['gamepad-controls'])     AFRAME.registerComponent('gamepad-controls',    this['gamepad-controls']);
-    if (!AFRAME.components['hmd-controls'])         AFRAME.registerComponent('hmd-controls',        this['hmd-controls']);
-    if (!AFRAME.components['keyboard-controls'])    AFRAME.registerComponent('keyboard-controls',   this['keyboard-controls']);
-    if (!AFRAME.components['mouse-controls'])       AFRAME.registerComponent('mouse-controls',      this['mouse-controls']);
-    if (!AFRAME.components['touch-controls'])       AFRAME.registerComponent('touch-controls',      this['touch-controls']);
-    if (!AFRAME.components['universal-controls'])   AFRAME.registerComponent('universal-controls',  this['universal-controls']);
-
-    this._registered = true;
-  }
-};
-
-},{"./checkpoint-controls":19,"./gamepad-controls":20,"./hmd-controls":21,"./keyboard-controls":23,"./mouse-controls":24,"./touch-controls":25,"./universal-controls":26,"aframe-physics-system":7}],23:[function(require,module,exports){
-require('../../lib/keyboard.polyfill');
-
-var MAX_DELTA = 0.2,
-    PROXY_FLAG = '__keyboard-controls-proxy';
-
-var KeyboardEvent = window.KeyboardEvent;
-
-/**
- * Keyboard Controls component.
- *
- * Stripped-down version of: https://github.com/donmccurdy/aframe-keyboard-controls
- *
- * Bind keyboard events to components, or control your entities with the WASD keys.
- *
- * Why use KeyboardEvent.code? "This is set to a string representing the key that was pressed to
- * generate the KeyboardEvent, without taking the current keyboard layout (e.g., QWERTY vs.
- * Dvorak), locale (e.g., English vs. French), or any modifier keys into account. This is useful
- * when you care about which physical key was pressed, rather thanwhich character it corresponds
- * to. For example, if you’re a writing a game, you might want a certain set of keys to move the
- * player in different directions, and that mapping should ideally be independent of keyboard
- * layout. See: https://developers.google.com/web/updates/2016/04/keyboardevent-keys-codes
- *
- * @namespace wasd-controls
- * keys the entity moves and if you release it will stop. Easing simulates friction.
- * to the entity when pressing the keys.
- * @param {bool} [enabled=true] - To completely enable or disable the controls
- */
-module.exports = {
-  schema: {
-    enabled:           { default: true },
-    debug:             { default: false }
-  },
-
-  init: function () {
-    this.dVelocity = new THREE.Vector3();
-    this.localKeys = {};
-    this.listeners = {
-      keydown: this.onKeyDown.bind(this),
-      keyup: this.onKeyUp.bind(this),
-      blur: this.onBlur.bind(this)
-    };
-    this.attachEventListeners();
-  },
-
-  /*******************************************************************
-  * Movement
-  */
-
-  isVelocityActive: function () {
-    return this.data.enabled && !!Object.keys(this.getKeys()).length;
-  },
-
-  getVelocityDelta: function () {
-    var data = this.data,
-        keys = this.getKeys();
-
-    this.dVelocity.set(0, 0, 0);
-    if (data.enabled) {
-      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; }
-      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; }
-      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; }
-      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; }
-    }
-
-    return this.dVelocity.clone();
-  },
-
-  /*******************************************************************
-  * Events
-  */
-
-  play: function () {
-    this.attachEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  attachEventListeners: function () {
-    window.addEventListener('keydown', this.listeners.keydown, false);
-    window.addEventListener('keyup', this.listeners.keyup, false);
-    window.addEventListener('blur', this.listeners.blur, false);
-  },
-
-  removeEventListeners: function () {
-    window.removeEventListener('keydown', this.listeners.keydown);
-    window.removeEventListener('keyup', this.listeners.keyup);
-    window.removeEventListener('blur', this.listeners.blur);
-  },
-
-  onKeyDown: function (event) {
-    this.localKeys[event.code] = true;
-    this.emit(event);
-  },
-
-  onKeyUp: function (event) {
-    delete this.localKeys[event.code];
-    this.emit(event);
-  },
-
-  onBlur: function () {
-    for (var code in this.localKeys) {
-      if (this.localKeys.hasOwnProperty(code)) {
-        delete this.localKeys[code];
-      }
-    }
-  },
-
-  emit: function (event) {
-    // TODO - keydown only initially?
-    // TODO - where the f is the spacebar
-
-    // Emit original event.
-    if (PROXY_FLAG in event) {
-      // TODO - Method never triggered.
-      this.el.emit(event.type, event);
-    }
-
-    // Emit convenience event, identifying key.
-    this.el.emit(event.type + ':' + event.code, new KeyboardEvent(event.type, event));
-    if (this.data.debug) console.log(event.type + ':' + event.code);
-  },
-
-  /*******************************************************************
-  * Accessors
-  */
-
-  isPressed: function (code) {
-    return code in this.getKeys();
-  },
-
-  getKeys: function () {
-    if (this.isProxied()) {
-      return this.el.sceneEl.components['proxy-controls'].getKeyboard();
-    }
-    return this.localKeys;
-  },
-
-  isProxied: function () {
-    var proxyControls = this.el.sceneEl.components['proxy-controls'];
-    return proxyControls && proxyControls.isConnected();
-  }
-
-};
-
-},{"../../lib/keyboard.polyfill":6}],24:[function(require,module,exports){
-/**
- * Mouse + Pointerlock controls.
- *
- * Based on: https://github.com/aframevr/aframe/pull/1056
- */
-module.exports = {
-  schema: {
-    enabled: { default: true },
-    pointerlockEnabled: { default: true },
-    sensitivity: { default: 1 / 25 }
-  },
-
-  init: function () {
-    this.mouseDown = false;
-    this.pointerLocked = false;
-    this.lookVector = new THREE.Vector2();
-    this.bindMethods();
-  },
-
-  play: function () {
-    this.addEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-    this.lookVector.set(0, 0);
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  bindMethods: function () {
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-  },
-
-  addEventListeners: function () {
-    var sceneEl = this.el.sceneEl;
-    var canvasEl = sceneEl.canvas;
-    var data = this.data;
-
-    if (!canvasEl) {
-      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
-      return;
-    }
-
-    canvasEl.addEventListener('mousedown', this.onMouseDown, false);
-    canvasEl.addEventListener('mousemove', this.onMouseMove, false);
-    canvasEl.addEventListener('mouseup', this.onMouseUp, false);
-    canvasEl.addEventListener('mouseout', this.onMouseUp, false);
-
-    if (data.pointerlockEnabled) {
-      document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
-      document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
-      document.addEventListener('pointerlockerror', this.onPointerLockError, false);
-    }
-  },
-
-  removeEventListeners: function () {
-    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
-    if (canvasEl) {
-      canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
-      canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
-      canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
-      canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
-    }
-    document.removeEventListener('pointerlockchange', this.onPointerLockChange, false);
-    document.removeEventListener('mozpointerlockchange', this.onPointerLockChange, false);
-    document.removeEventListener('pointerlockerror', this.onPointerLockError, false);
-  },
-
-  isRotationActive: function () {
-    return this.data.enabled && (this.mouseDown || this.pointerLocked);
-  },
-
-  /**
-   * Returns the sum of all mouse movement since last call.
-   */
-  getRotationDelta: function () {
-    var dRotation = this.lookVector.clone().multiplyScalar(this.data.sensitivity);
-    this.lookVector.set(0, 0);
-    return dRotation;
-  },
-
-  onMouseMove: function (event) {
-    var previousMouseEvent = this.previousMouseEvent;
-
-    if (!this.data.enabled || !(this.mouseDown || this.pointerLocked)) {
-      return;
-    }
-
-    var movementX = event.movementX || event.mozMovementX || 0;
-    var movementY = event.movementY || event.mozMovementY || 0;
-
-    if (!this.pointerLocked) {
-      movementX = event.screenX - previousMouseEvent.screenX;
-      movementY = event.screenY - previousMouseEvent.screenY;
-    }
-
-    this.lookVector.x += movementX;
-    this.lookVector.y += movementY;
-
-    this.previousMouseEvent = event;
-  },
-
-  onMouseDown: function (event) {
-    var canvasEl = this.el.sceneEl.canvas;
-
-    this.mouseDown = true;
-    this.previousMouseEvent = event;
-
-    if (this.data.pointerlockEnabled && !this.pointerLocked) {
-      if (canvasEl.requestPointerLock) {
-        canvasEl.requestPointerLock();
-      } else if (canvasEl.mozRequestPointerLock) {
-        canvasEl.mozRequestPointerLock();
-      }
-    }
-  },
-
-  onMouseUp: function () {
-    this.mouseDown = false;
-  },
-
-  onPointerLockChange: function () {
-    this.pointerLocked = !!(document.pointerLockElement || document.mozPointerLockElement);
-  },
-
-  onPointerLockError: function () {
-    this.pointerLocked = false;
-  }
-};
-
-},{}],25:[function(require,module,exports){
-module.exports = {
-  schema: {
-    enabled: { default: true }
-  },
-
-  init: function () {
-    this.dVelocity = new THREE.Vector3();
-    this.bindMethods();
-  },
-
-  play: function () {
-    this.addEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-    this.dVelocity.set(0, 0, 0);
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  addEventListeners: function () {
-    var sceneEl = this.el.sceneEl;
-    var canvasEl = sceneEl.canvas;
-
-    if (!canvasEl) {
-      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
-      return;
-    }
-
-    canvasEl.addEventListener('touchstart', this.onTouchStart);
-    canvasEl.addEventListener('touchend', this.onTouchEnd);
-  },
-
-  removeEventListeners: function () {
-    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
-    if (!canvasEl) { return; }
-
-    canvasEl.removeEventListener('touchstart', this.onTouchStart);
-    canvasEl.removeEventListener('touchend', this.onTouchEnd);
-  },
-
-  isVelocityActive: function () {
-    return this.data.enabled && this.isMoving;
-  },
-
-  getVelocityDelta: function () {
-    this.dVelocity.z = this.isMoving ? -1 : 0;
-    return this.dVelocity.clone();
-  },
-
-  bindMethods: function () {
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-  },
-
-  onTouchStart: function (e) {
-    this.isMoving = true;
-    e.preventDefault();
-  },
-
-  onTouchEnd: function (e) {
-    this.isMoving = false;
-    e.preventDefault();
-  }
-};
-
-},{}],26:[function(require,module,exports){
-/**
- * Universal Controls
- *
- * @author Don McCurdy <dm@donmccurdy.com>
- */
-
-var COMPONENT_SUFFIX = '-controls',
-    MAX_DELTA = 0.2, // ms
-    PI_2 = Math.PI / 2;
-
-module.exports = {
-
-  /*******************************************************************
-   * Schema
-   */
-
-  dependencies: ['velocity', 'rotation'],
-
-  schema: {
-    enabled:              { default: true },
-    movementEnabled:      { default: true },
-    movementControls:     { default: ['gamepad', 'keyboard', 'touch', 'hmd'] },
-    rotationEnabled:      { default: true },
-    rotationControls:     { default: ['hmd', 'gamepad', 'mouse'] },
-    movementSpeed:        { default: 5 }, // m/s
-    movementEasing:       { default: 15 }, // m/s2
-    movementAcceleration: { default: 80 }, // m/s2
-    rotationSensitivity:  { default: 0.05 }, // radians/frame, ish
-    fly:                  { default: false }
-  },
-
-  /*******************************************************************
-   * Lifecycle
-   */
-
-  init: function () {
-    // Movement
-    this.velocity = new THREE.Vector3();
-
-    // Rotation
-    this.pitch = new THREE.Object3D();
-    this.yaw = new THREE.Object3D();
-    this.yaw.position.y = 10;
-    this.yaw.add(this.pitch);
-    this.heading = new THREE.Euler(0, 0, 0, 'YXZ');
-
-    if (this.el.sceneEl.hasLoaded) {
-      this.injectControls();
-    } else {
-      this.el.sceneEl.addEventListener('loaded', this.injectControls.bind(this));
-    }
-  },
-
-  update: function () {
-    if (this.el.sceneEl.hasLoaded) {
-      this.injectControls();
-    }
-  },
-
-  injectControls: function () {
-    var i, name,
-        data = this.data;
-
-    for (i = 0; i < data.movementControls.length; i++) {
-      name = data.movementControls[i] + COMPONENT_SUFFIX;
-      if (!this.el.components[name]) {
-        this.el.setAttribute(name, '');
-      }
-    }
-
-    for (i = 0; i < data.rotationControls.length; i++) {
-      name = data.rotationControls[i] + COMPONENT_SUFFIX;
-      if (!this.el.components[name]) {
-        this.el.setAttribute(name, '');
-      }
-    }
-  },
-
-  /*******************************************************************
-   * Tick
-   */
-
-  tick: function (t, dt) {
-    if (!dt) { return; }
-
-    // Update rotation.
-    if (this.data.rotationEnabled) this.updateRotation(dt);
-
-    // Update velocity. If FPS is too low, reset.
-    if (this.data.movementEnabled && dt / 1000 > MAX_DELTA) {
-      this.velocity.set(0, 0, 0);
-      this.el.setAttribute('velocity', this.velocity);
-    } else {
-      this.updateVelocity(dt);
-    }
-  },
-
-  /*******************************************************************
-   * Rotation
-   */
-
-  updateRotation: function (dt) {
-    var control, dRotation,
-        data = this.data;
-
-    for (var i = 0, l = data.rotationControls.length; i < l; i++) {
-      control = this.el.components[data.rotationControls[i] + COMPONENT_SUFFIX];
-      if (control && control.isRotationActive()) {
-        if (control.getRotationDelta) {
-          dRotation = control.getRotationDelta(dt);
-          dRotation.multiplyScalar(data.rotationSensitivity);
-          this.yaw.rotation.y -= dRotation.x;
-          this.pitch.rotation.x -= dRotation.y;
-          this.pitch.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitch.rotation.x));
-          this.el.setAttribute('rotation', {
-            x: THREE.Math.radToDeg(this.pitch.rotation.x),
-            y: THREE.Math.radToDeg(this.yaw.rotation.y),
-            z: 0
-          });
-        } else if (control.getRotation) {
-          this.el.setAttribute('rotation', control.getRotation());
-        } else {
-          throw new Error('Incompatible rotation controls: %s', data.rotationControls[i]);
-        }
-        break;
-      }
-    }
-  },
-
-  /*******************************************************************
-   * Movement
-   */
-
-  updateVelocity: function (dt) {
-    var control, dVelocity,
-        velocity = this.velocity,
-        data = this.data;
-
-    if (data.movementEnabled) {
-      for (var i = 0, l = data.movementControls.length; i < l; i++) {
-        control = this.el.components[data.movementControls[i] + COMPONENT_SUFFIX];
-        if (control && control.isVelocityActive()) {
-          if (control.getVelocityDelta) {
-            dVelocity = control.getVelocityDelta(dt);
-          } else if (control.getVelocity) {
-            this.el.setAttribute('velocity', control.getVelocity());
-            return;
-          } else if (control.getPositionDelta) {
-            velocity.copy(control.getPositionDelta(dt).multiplyScalar(1000 / dt));
-            this.el.setAttribute('velocity', velocity);
-            return;
-          } else {
-            throw new Error('Incompatible movement controls: ', data.movementControls[i]);
-          }
-          break;
-        }
-      }
-    }
-
-    velocity.copy(this.el.getComputedAttribute('velocity'));
-    velocity.x -= velocity.x * data.movementEasing * dt / 1000;
-    velocity.z -= velocity.z * data.movementEasing * dt / 1000;
-
-    if (dVelocity && data.movementEnabled) {
-      // Set acceleration
-      if (dVelocity.length() > 1) {
-        dVelocity.setLength(this.data.movementAcceleration * dt / 1000);
-      } else {
-        dVelocity.multiplyScalar(this.data.movementAcceleration * dt / 1000);
-      }
-
-      // Rotate to heading
-      var rotation = this.el.getAttribute('rotation');
-      if (rotation) {
-        this.heading.set(
-          data.fly ? THREE.Math.degToRad(rotation.x) : 0,
-          THREE.Math.degToRad(rotation.y),
-          0
-        );
-        dVelocity.applyEuler(this.heading);
-      }
-
-      velocity.add(dVelocity);
-
-      // TODO - Several issues here:
-      // (1) Interferes w/ gravity.
-      // (2) Interferes w/ jumping.
-      // (3) Likely to interfere w/ relative position to moving platform.
-      // if (velocity.length() > data.movementSpeed) {
-      //   velocity.setLength(data.movementSpeed);
-      // }
-    }
-
-    this.el.setAttribute('velocity', velocity);
-  }
-};
-
-},{}],27:[function(require,module,exports){
-module.exports = {
-  'ply-model': require('./ply-model'),
-  'three-model': require('./three-model'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    if (!AFRAME.systems['ply-model']) {
-      AFRAME.registerSystem('ply-model', this['ply-model'].System);
-    }
-    if (!AFRAME.components['ply-model']) {
-      AFRAME.registerComponent('ply-model', this['ply-model'].Component);
-    }
-    if (!AFRAME.components['three-model']) {
-      AFRAME.registerComponent('three-model', this['three-model']);
-    }
-
-    this._registered = true;
-  }
-};
-
-},{"./ply-model":28,"./three-model":29}],28:[function(require,module,exports){
-/**
- * ply-model
- *
- * Wraps THREE.PLYLoader.
- */
-THREE.PLYLoader = require('../../lib/PLYLoader');
-
-/**
- * Loads, caches, resolves geometries.
- *
- * @member cache - Promises that resolve geometries keyed by `src`.
- */
-module.exports.System = {
-  init: function () {
-    this.cache = {};
-  },
-
-  /**
-   * @returns {Promise}
-   */
-  getOrLoadGeometry: function (src, skipCache) {
-    var cache = this.cache;
-    var cacheItem = cache[src];
-
-    if (!skipCache && cacheItem) {
-      return cacheItem;
-    }
-
-    cache[src] = new Promise(function (resolve) {
-      var loader = new THREE.PLYLoader();
-      loader.load(src, function (geometry) {
-        resolve(geometry);
-      });
-    });
-    return cache[src];
-  },
-};
-
-module.exports.Component = {
-  schema: {
-    skipCache: {type: 'boolean', default: false},
-    src: {type: 'src'}
-  },
-
-  init: function () {
-    this.model = null;
-  },
-
-  update: function () {
-    var data = this.data;
-    var el = this.el;
-    var loader;
-
-    if (!data.src) {
-      console.warn('[%s] `src` property is required.', this.name);
-      return;
-    }
-
-    // Get geometry from system, create and set mesh.
-    this.system.getOrLoadGeometry(data.src, data.skipCache).then(function (geometry) {
-      var model = createModel(geometry);
-      el.setObject3D('mesh', model);
-      el.emit('model-loaded', {format: 'ply', model: model});
-    });
-  },
-
-  remove: function () {
-    if (this.model) { this.el.removeObject3D('mesh'); }
-  }
-};
-
-function createModel (geometry) {
-  return new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
-    color: 0xFFFFFF,
-    shading: THREE.FlatShading,
-    vertexColors: THREE.VertexColors,
-    shininess: 0
-  }));
-}
-
-},{"../../lib/PLYLoader":5}],29:[function(require,module,exports){
-var DEFAULT_ANIMATION = '__auto__';
-
-/**
- * three-model
- *
- * Loader for THREE.js JSON format. Somewhat confusingly, there are two
- * different THREE.js formats, both having the .json extension. This loader
- * supports both, but requires you to specify the mode as "object" or "json".
- *
- * Typically, you will use "json" for a single mesh, and "object" for a scene
- * or multiple meshes. Check the console for errors, if in doubt.
- *
- * See: https://clara.io/learn/user-guide/data_exchange/threejs_export
- */
-module.exports = {
-  schema: {
-    src:               { type: 'src' },
-    loader:            { default: 'object', oneOf: ['object', 'json'] },
-    enableAnimation:   { default: true },
-    animation:         { default: DEFAULT_ANIMATION },
-    animationDuration: { default: 0 }
-  },
-
-  init: function () {
-    this.model = null;
-    this.mixer = null;
-  },
-
-  update: function (previousData) {
-    previousData = previousData || {};
-
-    var loader,
-        data = this.data;
-
-    if (!data.src) {
-      this.remove();
-      return;
-    }
-
-    // First load.
-    if (!Object.keys(previousData).length) {
-      this.remove();
-      if (data.loader === 'object') {
-        loader = new THREE.ObjectLoader();
-        loader.load(data.src, function(loaded) {
-          loaded.traverse( function(object) {
-            if (object instanceof THREE.SkinnedMesh)
-              loaded = object;
-          });
-          if(loaded.material)
-            loaded.material.skinning = !!((loaded.geometry && loaded.geometry.bones) || []).length;
-          this.load(loaded);
-        }.bind(this));
-      } else if (data.loader === 'json') {
-        loader = new THREE.JSONLoader();
-        loader.load(data.src, function (geometry, materials) {
-
-          // Attempt to automatically detect common material options.
-          materials.forEach(function (mat) {
-            mat.vertexColors = (geometry.faces[0] || {}).color ? THREE.FaceColors : THREE.NoColors;
-            mat.skinning = !!(geometry.bones || []).length;
-            mat.morphTargets = !!(geometry.morphTargets || []).length;
-            mat.morphNormals = !!(geometry.morphNormals || []).length;
-          });
-
-          var mesh = (geometry.bones || []).length
-            ? new THREE.SkinnedMesh(geometry, new THREE.MultiMaterial(materials))
-            : new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
-
-          this.load(mesh);
-        }.bind(this));
-      } else {
-        throw new Error('[three-model] Invalid mode "%s".', data.mode);
-      }
-      return;
-    }
-
-    var activeAction = this.model && this.model.activeAction;
-
-    if (data.animation !== previousData.animation) {
-      if (activeAction) activeAction.stop();
-      this.playAnimation();
-      return;
-    }
-
-    if (activeAction && data.enableAnimation !== activeAction.isRunning()) {
-      data.enableAnimation ? this.playAnimation() : activeAction.stop();
-    }
-
-    if (activeAction && data.animationDuration) {
-        activeAction.setDuration(data.animationDuration);
-    }
-  },
-
-  load: function (model) {
-    this.model = model;
-    this.mixer = new THREE.AnimationMixer(this.model);
-    this.el.setObject3D('mesh', model);
-    this.el.emit('model-loaded', {format: 'three', model: model});
-
-    if (this.data.enableAnimation) this.playAnimation();
-  },
-
-  playAnimation: function () {
-    var clip,
-        data = this.data,
-        animations = this.model.animations || this.model.geometry.animations || [];
-
-    if (!data.enableAnimation || !data.animation || !animations.length) {
-      return;
-    }
-
-    clip = data.animation === DEFAULT_ANIMATION
-      ? animations[0]
-      : THREE.AnimationClip.findByName(animations, data.animation);
-
-    if (!clip) {
-      console.error('[three-model] Animation "%s" not found.', data.animation);
-      return;
-    }
-
-    this.model.activeAction = this.mixer.clipAction(clip, this.model);
-    if (data.animationDuration) {
-      this.model.activeAction.setDuration(data.animationDuration);
-    }
-    this.model.activeAction.play();
-  },
-
-  remove: function () {
-    if (this.mixer) this.mixer.stopAllAction();
-    if (this.model) this.el.removeObject3D('mesh');
-  },
-
-  tick: function (t, dt) {
-    if (this.mixer && !isNaN(dt)) {
-      this.mixer.update(dt / 1000);
-    }
-  }
-};
-
-},{}],30:[function(require,module,exports){
-module.exports = {
-  schema: {
-    defaultRotation: {type: 'vec3'},
-    enableDefaultRotation: {default: false}
-  },
-
-  init: function () {
-    this.active = false;
-    this.targetEl = null;
-    this.fire = this.fire.bind(this);
-  },
-
-  play: function () { this.el.addEventListener('click', this.fire); },
-  pause: function () { this.el.addEventListener('click', this.fire); },
-  remove: function () { this.pause(); },
-
-  fire: function () {
-    var targetEl = this.el.sceneEl.querySelector('[checkpoint-controls]');
-    if (!targetEl) {
-      throw new Error('No `checkpoint-controls` component found.');
-    }
-    targetEl.components['checkpoint-controls'].setCheckpoint(this.el);
-  }
-};
-
-},{}],31:[function(require,module,exports){
-/**
- * Based on aframe/examples/showcase/tracked-controls.
- *
- * Handles events coming from the hand-controls.
- * Determines if the entity is grabbed or released.
- * Updates its position to move along the controller.
- */
-module.exports = {
-  init: function () {
-    this.GRABBED_STATE = 'grabbed';
-
-    this.grabbing = false;
-    this.hitEl =      /** @type {AFRAME.Element}    */ null;
-    this.physics =    /** @type {AFRAME.System}     */ this.el.sceneEl.systems.physics;
-    this.constraint = /** @type {CANNON.Constraint} */ null;
-
-    // Bind event handlers
-    this.onHit = this.onHit.bind(this);
-    this.onGripOpen = this.onGripOpen.bind(this);
-    this.onGripClose = this.onGripClose.bind(this);
-  },
-
-  play: function () {
-    var el = this.el;
-    el.addEventListener('hit', this.onHit);
-    el.addEventListener('gripdown', this.onGripClose);
-    el.addEventListener('gripup', this.onGripOpen);
-    el.addEventListener('trackpaddown', this.onGripClose);
-    el.addEventListener('trackpadup', this.onGripOpen);
-    el.addEventListener('triggerdown', this.onGripClose);
-    el.addEventListener('triggerup', this.onGripOpen);
-  },
-
-  pause: function () {
-    var el = this.el;
-    el.removeEventListener('hit', this.onHit);
-    el.removeEventListener('gripdown', this.onGripClose);
-    el.removeEventListener('gripup', this.onGripOpen);
-    el.removeEventListener('trackpaddown', this.onGripClose);
-    el.removeEventListener('trackpadup', this.onGripOpen);
-    el.removeEventListener('triggerdown', this.onGripClose);
-    el.removeEventListener('triggerup', this.onGripOpen);
-  },
-
-  onGripClose: function (evt) {
-    this.grabbing = true;
-  },
-
-  onGripOpen: function (evt) {
-    var hitEl = this.hitEl;
-    this.grabbing = false;
-    if (!hitEl) { return; }
-    hitEl.removeState(this.GRABBED_STATE);
-    this.hitEl = undefined;
-    this.physics.world.removeConstraint(this.constraint);
-    this.constraint = null;
-  },
-
-  onHit: function (evt) {
-    var hitEl = evt.detail.el;
-    // If the element is already grabbed (it could be grabbed by another controller).
-    // If the hand is not grabbing the element does not stick.
-    // If we're already grabbing something you can't grab again.
-    if (!hitEl || hitEl.is(this.GRABBED_STATE) || !this.grabbing || this.hitEl) { return; }
-    hitEl.addState(this.GRABBED_STATE);
-    this.hitEl = hitEl;
-    this.constraint = new CANNON.LockConstraint(this.el.body, hitEl.body);
-    this.physics.world.addConstraint(this.constraint);
-  }
-};
-
-},{}],32:[function(require,module,exports){
-var physics = require('aframe-physics-system');
-
-module.exports = {
-  'checkpoint':      require('./checkpoint'),
-  'grab':            require('./grab'),
-  'jump-ability':    require('./jump-ability'),
-  'kinematic-body':  require('./kinematic-body'),
-  'sphere-collider': require('./sphere-collider'),
-  'toggle-velocity': require('./toggle-velocity'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    physics.registerAll();
-    if (!AFRAME.components['checkpoint'])      AFRAME.registerComponent('checkpoint',      this['checkpoint']);
-    if (!AFRAME.components['grab'])            AFRAME.registerComponent('grab',            this['grab']);
-    if (!AFRAME.components['jump-ability'])    AFRAME.registerComponent('jump-ability',    this['jump-ability']);
-    if (!AFRAME.components['kinematic-body'])  AFRAME.registerComponent('kinematic-body',  this['kinematic-body']);
-    if (!AFRAME.components['sphere-collider']) AFRAME.registerComponent('sphere-collider', this['sphere-collider']);
-    if (!AFRAME.components['toggle-velocity']) AFRAME.registerComponent('toggle-velocity', this['toggle-velocity']);
-
-    this._registered = true;
-  }
-};
-
-},{"./checkpoint":30,"./grab":31,"./jump-ability":33,"./kinematic-body":34,"./sphere-collider":35,"./toggle-velocity":36,"aframe-physics-system":7}],33:[function(require,module,exports){
-var ACCEL_G = -9.8, // m/s^2
-    EASING = -15; // m/s^2
-
-/**
- * Jump ability.
- */
-module.exports = {
-  dependencies: ['velocity'],
-
-  /* Schema
-  ——————————————————————————————————————————————*/
-
-  schema: {
-    on: { default: 'keydown:Space gamepadbuttondown:0' },
-    playerHeight: { default: 1.764 },
-    maxJumps: { default: 1 },
-    distance: { default: 5 },
-    soundJump: { default: '' },
-    soundLand: { default: '' },
-    debug: { default: false }
-  },
-
-  init: function () {
-    this.velocity = 0;
-    this.numJumps = 0;
-
-    var beginJump = this.beginJump.bind(this),
-        events = this.data.on.split(' ');
-    this.bindings = {};
-    for (var i = 0; i <  events.length; i++) {
-      this.bindings[events[i]] = beginJump;
-      this.el.addEventListener(events[i], beginJump);
-    }
-    this.bindings.collide = this.onCollide.bind(this);
-    this.el.addEventListener('collide', this.bindings.collide);
-  },
-
-  remove: function () {
-    for (var event in this.bindings) {
-      if (this.bindings.hasOwnProperty(event)) {
-        this.el.removeEventListener(event, this.bindings[event]);
-        delete this.bindings[event];
-      }
-    }
-    this.el.removeEventListener('collide', this.bindings.collide);
-    delete this.bindings.collide;
-  },
-
-  beginJump: function () {
-    if (this.numJumps < this.data.maxJumps) {
-      var data = this.data,
-          initialVelocity = Math.sqrt(-2 * data.distance * (ACCEL_G + EASING)),
-          v = this.el.getAttribute('velocity');
-      this.el.setAttribute('velocity', {x: v.x, y: initialVelocity, z: v.z});
-      this.numJumps++;
-    }
-  },
-
-  onCollide: function () {
-    this.numJumps = 0;
-  }
-};
-
-},{}],34:[function(require,module,exports){
-/**
- * Kinematic body.
- *
- * Managed dynamic body, which moves but is not affected (directly) by the
- * physics engine. This is not a true kinematic body, in the sense that we are
- * letting the physics engine _compute_ collisions against it and selectively
- * applying those collisions to the object. The physics engine does not decide
- * the position/velocity/rotation of the element.
- *
- * Used for the camera object, because full physics simulation would create
- * movement that feels unnatural to the player. Bipedal movement does not
- * translate nicely to rigid body physics.
- *
- * See: http://www.learn-cocos2d.com/2013/08/physics-engine-platformer-terrible-idea/
- * And: http://oxleygamedev.blogspot.com/2011/04/player-physics-part-2.html
- */
-var CANNON = require('cannon');
-
-var EPS = 0.000001;
-
-module.exports = {
-  dependencies: ['velocity'],
-
-  /*******************************************************************
-   * Schema
-   */
-
-  schema: {
-    mass:           { default: 5 },
-    radius:         { default: 1.3 },
-    height:         { default: 1.764 },
-    linearDamping:  { default: 0.05 },
-    enableSlopes:   { default: true }
-  },
-
-  /*******************************************************************
-   * Lifecycle
-   */
-
-  init: function () {
-    this.system = this.el.sceneEl.systems.physics;
-    this.system.addBehavior(this, this.system.Phase.SIMULATE);
-
-    var el = this.el,
-        data = this.data,
-        position = (new CANNON.Vec3()).copy(el.getAttribute('position'));
-
-    this.body = new CANNON.Body({
-      material: this.system.material,
-      position: position,
-      mass: data.mass,
-      linearDamping: data.linearDamping,
-      fixedRotation: true
-    });
-    this.body.addShape(
-      new CANNON.Sphere(data.radius),
-      new CANNON.Vec3(0, data.radius - data.height, 0)
-    );
-
-    this.body.el = this.el;
-    this.system.addBody(this.body);
-  },
-
-  remove: function () {
-    this.system.removeBody(this.body);
-    this.system.removeBehavior(this, this.system.Phase.SIMULATE);
-  },
-
-  /*******************************************************************
-   * Tick
-   */
-
-  /**
-   * Checks CANNON.World for collisions and attempts to apply them to the
-   * element automatically, in a player-friendly way.
-   *
-   * There's extra logic for horizontal surfaces here. The basic requirements:
-   * (1) Only apply gravity when not in contact with _any_ horizontal surface.
-   * (2) When moving, project the velocity against exactly one ground surface.
-   *     If in contact with two ground surfaces (e.g. ground + ramp), choose
-   *     the one that collides with current velocity, if any.
-   */
-  step: (function () {
-    var velocity = new THREE.Vector3(),
-        normalizedVelocity = new THREE.Vector3(),
-        currentSurfaceNormal = new THREE.Vector3(),
-        groundNormal = new THREE.Vector3();
-
-    return function (t, dt) {
-      if (!dt) return;
-
-      var body = this.body,
-          data = this.data,
-          didCollide = false,
-          height, groundHeight = -Infinity,
-          groundBody;
-
-      dt = Math.min(dt, this.system.data.maxInterval * 1000);
-
-      groundNormal.set(0, 0, 0);
-      velocity.copy(this.el.getAttribute('velocity'));
-      body.velocity.copy(velocity);
-      body.position.copy(this.el.getAttribute('position'));
-
-      for (var i = 0, contact; (contact = this.system.world.contacts[i]); i++) {
-        // 1. Find any collisions involving this element. Get the contact
-        // normal, and make sure it's oriented _out_ of the other object.
-        if (body.id === contact.bi.id) {
-          contact.ni.negate(currentSurfaceNormal);
-        } else if (body.id === contact.bj.id) {
-          currentSurfaceNormal.copy(contact.ni);
-        } else {
-          continue;
-        }
-
-        didCollide = body.velocity.dot(currentSurfaceNormal) < -EPS;
-        if (didCollide && currentSurfaceNormal.y <= 0.5) {
-          // 2. If current trajectory attempts to move _through_ another
-          // object, project the velocity against the collision plane to
-          // prevent passing through.
-          velocity = velocity.projectOnPlane(currentSurfaceNormal);
-        } else if (currentSurfaceNormal.y > 0.5) {
-          // 3. If in contact with something roughly horizontal (+/- 45º) then
-          // consider that the current ground. Only the highest qualifying
-          // ground is retained.
-          height = body.id === contact.bi.id
-            ? Math.abs(contact.rj.y + contact.bj.position.y)
-            : Math.abs(contact.ri.y + contact.bi.position.y);
-          if (height > groundHeight) {
-            groundHeight = height;
-            groundNormal.copy(currentSurfaceNormal);
-            groundBody = body.id === contact.bi.id ? contact.bj : contact.bi;
-          }
-        }
-      }
-
-      normalizedVelocity.copy(velocity).normalize();
-      if (groundBody && normalizedVelocity.y < 0.5) {
-        if (!data.enableSlopes) {
-          groundNormal.set(0, 1, 0);
-        } else if (groundNormal.y < 1 - EPS) {
-          groundNormal = this.raycastToGround(groundBody, groundNormal);
-        }
-
-        // 4. Project trajectory onto the top-most ground object, unless
-        // trajectory is > 45º.
-        velocity = velocity.projectOnPlane(groundNormal);
-      } else {
-        // 5. If not in contact with anything horizontal, apply world gravity.
-        // TODO - Why is the 4x scalar necessary.
-        velocity.add(this.system.world.gravity.scale(dt * 4.0 / 1000));
-      }
-
-      // 6. If the ground surface has a velocity, apply it directly to current
-      // position, not velocity, to preserve relative velocity.
-      if (groundBody && groundBody.el && groundBody.el.components.velocity) {
-        var groundVelocity = groundBody.el.getComputedAttribute('velocity');
-        body.position.copy({
-          x: body.position.x + groundVelocity.x * dt / 1000,
-          y: body.position.y + groundVelocity.y * dt / 1000,
-          z: body.position.z + groundVelocity.z * dt / 1000
-        });
-        this.el.setAttribute('position', body.position);
-      }
-
-      body.velocity.copy(velocity);
-      this.el.setAttribute('velocity', velocity);
-    };
-  }()),
-
-  /**
-   * When walking on complex surfaces (trimeshes, borders between two shapes),
-   * the collision normals returned for the player sphere can be very
-   * inconsistent. To address this, raycast straight down, find the collision
-   * normal, and return whichever normal is more vertical.
-   * @param  {CANNON.Body} groundBody
-   * @param  {CANNON.Vec3} groundNormal
-   * @return {CANNON.Vec3}
-   */
-  raycastToGround: function (groundBody, groundNormal) {
-    var ray,
-        hitNormal,
-        vFrom = this.body.position,
-        vTo = this.body.position.clone();
-
-    vTo.y -= this.data.height;
-    ray = new CANNON.Ray(vFrom, vTo);
-    ray._updateDirection(); // TODO - Report bug.
-    ray.intersectBody(groundBody);
-
-    if (!ray.hasHit) return groundNormal;
-
-    // Compare ABS, in case we're projecting against the inside of the face.
-    hitNormal = ray.result.hitNormalWorld;
-    return Math.abs(hitNormal.y) > Math.abs(groundNormal.y) ? hitNormal : groundNormal;
-  }
-};
-
-},{"cannon":45}],35:[function(require,module,exports){
-/**
- * Based on aframe/examples/showcase/tracked-controls.
- *
- * Implement bounding sphere collision detection for entities with a mesh.
- * Sets the specified state on the intersected entities.
- *
- * @property {string} objects - Selector of the entities to test for collision.
- * @property {string} state - State to set on collided entities.
- *
- */
-module.exports = {
-  schema: {
-    objects: {default: ''},
-    state: {default: 'collided'},
-    radius: {default: 0.05}
-  },
-
-  init: function () {
-    this.els = [];
-    this.collisions = [];
-  },
-
-  /**
-   * Update list of entities to test for collision.
-   */
-  update: function () {
-    var data = this.data;
-    var objectEls;
-
-    // Push entities into list of els to intersect.
-    if (data.objects) {
-      objectEls = this.el.sceneEl.querySelectorAll(data.objects);
-    } else {
-      // If objects not defined, intersect with everything.
-      objectEls = this.el.sceneEl.children;
-    }
-    // Convert from NodeList to Array
-    this.els = Array.prototype.slice.call(objectEls);
-  },
-
-  tick: (function () {
-    var position = new THREE.Vector3(),
-        meshPosition = new THREE.Vector3();
-    return function () {
-      var el = this.el,
-          data = this.data,
-          mesh = el.getObject3D('mesh'),
-          collisions = [];
-
-      if (!mesh) { return; }
-
-      position.copy(el.getComputedAttribute('position'));
-
-      // Update collisions.
-      this.els.forEach(intersect);
-      // Emit events.
-      collisions.forEach(handleHit);
-      // No collisions.
-      if (collisions.length === 0) { el.emit('hit', {el: null}); }
-      // Updated the state of the elements that are not intersected anymore.
-      this.collisions.filter(function (el) {
-        return collisions.indexOf(el) === -1;
-      }).forEach(function removeState (el) {
-        el.removeState(data.state);
-      });
-      // Store new collisions
-      this.collisions = collisions;
-
-      // AABB collision detection
-      function intersect (el) {
-        var radius,
-            mesh = el.getObject3D('mesh');
-
-        if (!mesh) return;
-
-        mesh.getWorldPosition(meshPosition);
-        mesh.geometry.computeBoundingSphere();
-        radius = mesh.geometry.boundingSphere.radius;
-        if (position.distanceTo(meshPosition) < radius + data.radius) {
-          collisions.push(el);
-        }
-      }
-
-      function handleHit (hitEl) {
-        hitEl.emit('hit');
-        hitEl.addState(data.state);
-        el.emit('hit', {el: hitEl});
-      }
-    };
-  })()
-};
-
-},{}],36:[function(require,module,exports){
-/**
- * Toggle velocity.
- *
- * Moves an object back and forth along an axis, within a min/max extent.
- */
-module.exports = {
-  dependencies: ['velocity'],
-  schema: {
-    axis: { default: 'x', oneOf: ['x', 'y', 'z'] },
-    min: { default: 0 },
-    max: { default: 0 },
-    speed: { default: 1 }
-  },
-  init: function () {
-    var velocity = {x: 0, y: 0, z: 0};
-    velocity[this.data.axis] = this.data.speed;
-    this.el.setAttribute('velocity', velocity);
-
-    if (this.el.sceneEl.addBehavior) this.el.sceneEl.addBehavior(this);
-  },
-  remove: function () {},
-  update: function () { this.tick(); },
-  tick: function () {
-    var data = this.data,
-        velocity = this.el.getAttribute('velocity'),
-        position = this.el.getAttribute('position');
-    if (velocity[data.axis] > 0 && position[data.axis] > data.max) {
-      velocity[data.axis] = -data.speed;
-      this.el.setAttribute('velocity', velocity);
-    } else if (velocity[data.axis] < 0 && position[data.axis] < data.min) {
-      velocity[data.axis] = data.speed;
-      this.el.setAttribute('velocity', velocity);
-    }
-  },
-};
-
-},{}],37:[function(require,module,exports){
-/**
- * Flat grid.
- *
- * Defaults to 75x75.
- */
-module.exports = {
-  defaultComponents: {
-    geometry: {
-      primitive: 'plane',
-      width: 75,
-      height: 75
-    },
-    rotation: {x: -90, y: 0, z: 0},
-    material: {
-      src: 'url(https://cdn.rawgit.com/donmccurdy/aframe-extras/v1.16.3/assets/grid.png)',
-      repeat: '75 75'
-    }
-  },
-  mappings: {
-    width: 'geometry.width',
-    height: 'geometry.height',
-    src: 'material.src'
-  }
-};
-
-},{}],38:[function(require,module,exports){
-/**
- * Flat-shaded ocean primitive.
- *
- * Based on a Codrops tutorial:
- * http://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/
- */
-module.exports.Primitive = {
-  defaultComponents: {
-    ocean: {},
-    rotation: {x: -90, y: 0, z: 0}
-  },
-  mappings: {
-    width: 'ocean.width',
-    depth: 'ocean.depth',
-    density: 'ocean.density',
-    color: 'ocean.color',
-    opacity: 'ocean.opacity'
-  }
-};
-
-module.exports.Component = {
-  schema: {
-    // Dimensions of the ocean area.
-    width: {default: 10, min: 0},
-    depth: {default: 10, min: 0},
-
-    // Density of waves.
-    density: {default: 10},
-
-    // Wave amplitude and variance.
-    amplitude: {default: 0.1},
-    amplitudeVariance: {default: 0.3},
-
-    // Wave speed and variance.
-    speed: {default: 1},
-    speedVariance: {default: 2},
-
-    // Material.
-    color: {default: 0x7AD2F7},
-    opacity: {default: 0.8}
-  },
-
-  /**
-   * Use play() instead of init(), because component mappings – unavailable as dependencies – are
-   * not guaranteed to have parsed when this component is initialized.
-   */
-  play: function () {
-    var el = this.el,
-        data = this.data,
-        material = el.components.material;
-
-    var geometry = new THREE.PlaneGeometry(data.width, data.depth, data.density, data.density);
-    geometry.mergeVertices();
-    this.waves = [];
-    for (var v, i = 0, l = geometry.vertices.length; i < l; i++) {
-      v = geometry.vertices[i];
-      this.waves.push({
-        z: v.z,
-        ang: Math.random() * Math.PI * 2,
-        amp: data.amplitude + Math.random() * data.amplitudeVariance,
-        speed: (data.speed + Math.random() * data.speedVariance) / 1000 // radians / frame
-      });
-    }
-
-    if (!material) {
-      material = {};
-      material.material = new THREE.MeshPhongMaterial({
-        color: data.color,
-        transparent: data.opacity < 1,
-        opacity: data.opacity,
-        shading: THREE.FlatShading,
-      });
-    }
-
-    this.mesh = new THREE.Mesh(geometry, material.material);
-    el.object3D.add(this.mesh);
-  },
-
-  remove: function () {
-    this.el.object3D.remove(this.mesh);
-  },
-
-  tick: function (t, dt) {
-    if (!dt) return;
-
-    var verts = this.mesh.geometry.vertices;
-    for (var v, vprops, i = 0; (v = verts[i]); i++){
-      vprops = this.waves[i];
-      v.z = vprops.z + Math.sin(vprops.ang) * vprops.amp;
-      vprops.ang += vprops.speed * dt;
-    }
-    this.mesh.geometry.verticesNeedUpdate = true;
-  }
-};
-
-},{}],39:[function(require,module,exports){
-/**
- * Tube following a custom path.
- *
- * Usage:
- *
- * ```html
- * <a-tube path="5 0 5, 5 0 -5, -5 0 -5" radius="0.5"></a-tube>
- * ```
- */
-module.exports.Primitive = {
-  defaultComponents: {
-    tube:           {},
-  },
-  mappings: {
-    path:           'tube.path',
-    segments:       'tube.segments',
-    radius:         'tube.radius',
-    radialSegments: 'tube.radialSegments',
-    closed:         'tube.closed'
-  }
-};
-
-module.exports.Component = {
-  schema: {
-    path:           {default: []},
-    segments:       {default: 64},
-    radius:         {default: 1},
-    radialSegments: {default: 8},
-    closed:         {default: false}
-  },
-
-  init: function () {
-    var el = this.el,
-        data = this.data,
-        material = el.components.material;
-
-    if (!data.path.length) {
-      console.error('[a-tube] `path` property expected but not found.');
-      return;
-    }
-
-    var curve = new THREE.CatmullRomCurve3(data.path.map(function (point) {
-      point = point.split(' ');
-      return new THREE.Vector3(Number(point[0]), Number(point[1]), Number(point[2]));
-    }));
-    var geometry = new THREE.TubeGeometry(
-      curve, data.segments, data.radius, data.radialSegments, data.closed
-    );
-
-    if (!material) {
-      material = {};
-      material.material = new THREE.MeshPhongMaterial();
-    }
-
-    this.mesh = new THREE.Mesh(geometry, material.material);
-    this.el.setObject3D('mesh', this.mesh);
-  },
-
-  remove: function () {
-    if (this.mesh) this.el.removeObject3D('mesh');
-  }
-};
-
-},{}],40:[function(require,module,exports){
-module.exports = {
-  'a-grid':        require('./a-grid'),
-  'a-ocean':        require('./a-ocean'),
-  'a-tube':        require('./a-tube'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    AFRAME.registerPrimitive('a-grid',  this['a-grid']);
-
-    AFRAME.registerComponent('ocean', this['a-ocean'].Component);
-    AFRAME.registerPrimitive('a-ocean', this['a-ocean'].Primitive);
-
-    AFRAME.registerComponent('tube', this['a-tube'].Component);
-    AFRAME.registerPrimitive('a-tube', this['a-tube'].Primitive);
-
-    this._registered = true;
-  }
-};
-
-},{"./a-grid":37,"./a-ocean":38,"./a-tube":39}],41:[function(require,module,exports){
-module.exports = {
-  'shadow':       require('./shadow'),
-  'shadow-light': require('./shadow-light'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    if (!AFRAME.components['shadow'])       AFRAME.registerComponent('shadow',        this['shadow']);
-    if (!AFRAME.components['shadow-light']) AFRAME.registerComponent('shadow-light',  this['shadow-light']);
-
-    this._registered = true;
-  }
-};
-
-},{"./shadow":43,"./shadow-light":42}],42:[function(require,module,exports){
-/**
- * Light component.
- *
- * Source: https://github.com/aframevr/aframe-core/pull/348
- *
- * @namespace light
- * @param {number} [angle=PI / 3] - Maximum extent of light from its direction,
-          in radians. For spot lights.
- * @param {bool} [castShadow=false] - Whether light will cast shadows.
-          Only applies to directional, point, and spot lights.
- * @param {string} [color=#FFF] - Light color. For every light.
- * @param {number} [decay=1] - Amount the light dims along the distance of the
-          light. For point and spot lights.
- * @param {number} [exponent=10.0] - Rapidity of falloff of light from its
-          target direction. For spot lights.
- * @param {string} [groundColor=#FFF] - Ground light color.
-          For hemisphere lights.
- * @param {number} [intensity=1.0] - Light strength.
-          For every light except ambient.
- * @param {number} [shadowBias=0] - How much to add or subtract from the
-          normalized depth when deciding whether a surface is in shadow.
- * @param {number} [shadowCameraFar=5000] - Orthographic shadow camera frustum
-          parameter.
- * @param {number} [shadowCameraNear=50] - Orthographic shadow camera frustum
-          parameter.
- * @param {number} [shadowDarkness=0.5] - Darkness of shadow cast, from 0 to 1.
- * @param {number} [shadowMapHeight=512] - Shadow map texture height in pixels.
- * @param {number} [shadowMapWidth=512] - Shadow map texture height in pixels.
- * @param {string} [type=directional] - Light type (i.e., ambient, directional,
-          hemisphere, point, spot).
- */
-module.exports = {
-  schema: {
-      angle:            { default: Math.PI / 3 },
-      castShadow:       { default: false },
-      color:            { default: '#FFF' },
-      groundColor:      { default: '#FFF' },
-      decay:            { default: 1 },
-      distance:         { default: 0.0 },
-      exponent:         { default: 10.0 },
-      intensity:        { default: 1.0 },
-      shadowBias:       { default: 0 },
-      shadowCameraFar:  { default: 5000 },
-      shadowCameraFov:  { default: 50 },
-      shadowCameraNear: { default: 0.5 },
-      shadowDarkness:   { default: 0.5 },
-      shadowMapHeight:  { default: 512 },
-      shadowMapWidth:   { default: 512 },
-      type:             { default: 'directional' }
-  },
-
-  init: function () {
-    var el = this.el;
-    this.light = this.getLight();
-    el.object3D.add(this.light);
-    el.sceneEl.systems.light.registerLight(el);
-    if (!el.sceneEl.hasLoaded) {
-      el.sceneEl.addEventListener('loaded', this.play.bind(this));
-    }
-  },
-
-  update: function (previousData) {
-    previousData = previousData || {};
-    if (!Object.keys(previousData).length) { return; }
-    this.el.object3D.remove(this.light);
-    this.light = this.getLight();
-    this.el.object3D.add(this.light);
-  },
-
-  play: function () {
-    var el = this.el,
-        renderer = el.sceneEl.renderer;
-    if (renderer && !renderer.shadowMap.enabled) {
-      renderer.shadowMap.enabled = true;
-    }
-  },
-
-  /**
-   * Creates a new three.js light object given the current attributes of the
-   * component.
-   *
-   * @namespace light
-   */
-  getLight: function () {
-    var data = this.data;
-    var color = new THREE.Color(data.color).getHex();
-    var intensity = data.intensity;
-    var type = data.type;
-
-    if (type) {
-      type = type.toLowerCase();
-    }
-    switch (type) {
-      case 'ambient': {
-        return new THREE.AmbientLight(color);
-      }
-      case 'directional': {
-        return this.setShadow(new THREE.DirectionalLight(color, intensity));
-      }
-      case 'hemisphere': {
-        return new THREE.HemisphereLight(color, data.groundColor,
-                                         intensity);
-      }
-      case 'point': {
-        return this.setShadow(
-          new THREE.PointLight(color, intensity, data.distance, data.decay));
-      }
-      case 'spot': {
-        return this.setShadow(
-          new THREE.SpotLight(color, intensity, data.distance, data.angle,
-                              data.exponent, data.decay));
-      }
-      default: {
-        return new THREE.AmbientLight(color);
-      }
-    }
-  },
-
-  /**
-   * Copy over shadow-related data from the component onto the light.
-   *
-   * @param {object} light
-   */
-  setShadow: function (light) {
-    var data = this.data;
-    if (!data.castShadow) { return light; }
-
-    light.castShadow = data.castShadow;
-    light.shadow.camera.near = data.shadowCameraNear;
-    light.shadow.camera.far = data.shadowCameraFar;
-    light.shadow.camera.fov = data.shadowCameraFov;
-    light.shadow.darkness = data.shadowDarkness;
-    light.shadow.mapSize.height = data.shadowMapHeight;
-    light.shadow.mapSize.width = data.shadowMapWidth;
-
-    return light;
-  }
-};
-
-},{}],43:[function(require,module,exports){
-/**
- * Shadow component.
- *
- * Source: https://github.com/aframevr/aframe-core/pull/348
- *
- * @namespace shadow
- * @param {bool} [cast=false] - whether object will cast shadows.
- * @param {bool} [receive=false] - whether object will receive shadows.
- */
-module.exports = {
-  schema: {
-    cast:     { default: false },
-    receive:  { default: false }
-  },
-
-  init: function () {
-    this.el.addEventListener('model-loaded', this.update.bind(this));
-  },
-
-  update: function () {
-    var data = this.data;
-
-    // Applied recursively to support imported models.
-    this.el.object3D.traverse(function(node) {
-      if (node instanceof THREE.Mesh) {
-        node.castShadow = data.cast;
-        node.receiveShadow = data.receive;
-      }
-    });
-  },
-
-  remove: function () {}
-};
-
-},{}],44:[function(require,module,exports){
+},{"../constants":17,"cannon":20}],19:[function(require,module,exports){
 module.exports={
-  "name": "cannon",
-  "version": "0.6.2",
+  "_args": [
+    [
+      {
+        "hosted": {
+          "directUrl": "https://raw.githubusercontent.com/donmccurdy/cannon.js/v0.6.2-dev1/package.json",
+          "gitUrl": "git://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "httpsUrl": "git+https://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "shortcut": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+          "ssh": "git@github.com:donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "sshUrl": "git+ssh://git@github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "type": "github"
+        },
+        "name": "cannon",
+        "raw": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "rawSpec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "scope": null,
+        "spec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "type": "hosted"
+      },
+      "/Users/donmccurdy/Documents/Projects/aframe-extras/node_modules/aframe-physics-system"
+    ]
+  ],
+  "_from": "donmccurdy/cannon.js#v0.6.2-dev1",
+  "_id": "cannon@0.6.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/cannon",
+  "_phantomChildren": {},
+  "_requested": {
+    "hosted": {
+      "directUrl": "https://raw.githubusercontent.com/donmccurdy/cannon.js/v0.6.2-dev1/package.json",
+      "gitUrl": "git://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "httpsUrl": "git+https://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "shortcut": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+      "ssh": "git@github.com:donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "sshUrl": "git+ssh://git@github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "type": "github"
+    },
+    "name": "cannon",
+    "raw": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "rawSpec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "scope": null,
+    "spec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "type": "hosted"
+  },
+  "_requiredBy": [
+    "/aframe-physics-system"
+  ],
+  "_resolved": "git://github.com/donmccurdy/cannon.js.git#022e8ba53fa83abf0ad8a0e4fd08623123838a17",
+  "_shasum": "f472d09c5bc75499b38a3a799d2c6083547a5b6a",
+  "_shrinkwrap": null,
+  "_spec": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+  "_where": "/Users/donmccurdy/Documents/Projects/aframe-extras/node_modules/aframe-physics-system",
+  "author": {
+    "email": "schteppe@gmail.com",
+    "name": "Stefan Hedman",
+    "url": "http://steffe.se"
+  },
+  "bugs": {
+    "url": "https://github.com/schteppe/cannon.js/issues"
+  },
+  "dependencies": {},
   "description": "A lightweight 3D physics engine written in JavaScript.",
+  "devDependencies": {
+    "browserify": "*",
+    "grunt": "~0.4.0",
+    "grunt-browserify": "^2.1.4",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "^0.4.1",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-yuidoc": "^0.5.2",
+    "jshint": "latest",
+    "nodeunit": "^0.9.0",
+    "uglify-js": "latest"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "gitHead": "022e8ba53fa83abf0ad8a0e4fd08623123838a17",
   "homepage": "https://github.com/schteppe/cannon.js",
-  "author": "Stefan Hedman <schteppe@gmail.com> (http://steffe.se)",
   "keywords": [
     "cannon.js",
     "cannon",
@@ -4971,39 +5343,24 @@ module.exports={
     "engine",
     "3d"
   ],
-  "main": "./src/Cannon.js",
-  "engines": {
-    "node": "*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/schteppe/cannon.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/schteppe/cannon.js/issues"
-  },
   "licenses": [
     {
       "type": "MIT"
     }
   ],
-  "devDependencies": {
-    "jshint": "latest",
-    "uglify-js": "latest",
-    "nodeunit": "^0.9.0",
-    "grunt": "~0.4.0",
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "^0.4.1",
-    "grunt-contrib-concat": "~0.1.3",
-    "grunt-contrib-uglify": "^0.5.1",
-    "grunt-browserify": "^2.1.4",
-    "grunt-contrib-yuidoc": "^0.5.2",
-    "browserify": "*"
+  "main": "./src/Cannon.js",
+  "name": "cannon",
+  "optionalDependencies": {},
+  "readme": "# cannon.js\n\n### Lightweight 3D physics for the web\nInspired by [three.js](https://github.com/mrdoob/three.js) and [ammo.js](https://github.com/kripken/ammo.js), and driven by the fact that the web lacks a physics engine, here comes cannon.js.\nThe rigid body physics engine includes simple collision detection, various body shapes, contacts, friction and constraints.\n\n[Demos](http://schteppe.github.com/cannon.js) - [Documentation](http://schteppe.github.com/cannon.js/docs) - [Rendering hints](https://github.com/schteppe/cannon.js/tree/master/examples) - [NPM package](https://npmjs.org/package/cannon) - [CDN](https://cdnjs.com/libraries/cannon.js)\n\n### Browser install\n\nJust include [cannon.js](https://github.com/schteppe/cannon.js/releases/download/v0.6.2/cannon.js) or [cannon.min.js](https://github.com/schteppe/cannon.js/releases/download/v0.6.2/cannon.min.js) in your html and you're done:\n\n```html\n<script src=\"cannon.min.js\"></script>\n```\n\n### Node.js install\n\nInstall the cannon package via NPM:\n\n```bash\nnpm install --save cannon\n```\n\nAlternatively, point to the Github repo directly to get the very latest version:\n\n```bash\nnpm install --save schteppe/cannon.js\n```\n\n### Example\n\nThe sample code below creates a sphere on a plane, steps the simulation, and prints the sphere simulation to the console. Note that Cannon.js uses [SI units](http://en.wikipedia.org/wiki/International_System_of_Units) (metre, kilogram, second, etc.).\n\n```javascript\n// Setup our world\nvar world = new CANNON.World();\nworld.gravity.set(0, 0, -9.82); // m/s²\n\n// Create a sphere\nvar radius = 1; // m\nvar sphereBody = new CANNON.Body({\n   mass: 5, // kg\n   position: new CANNON.Vec3(0, 0, 10), // m\n   shape: new CANNON.Sphere(radius)\n});\nworld.addBody(sphereBody);\n\n// Create a plane\nvar groundBody = new CANNON.Body({\n    mass: 0 // mass == 0 makes the body static\n});\nvar groundShape = new CANNON.Plane();\ngroundBody.addShape(groundShape);\nworld.addBody(groundBody);\n\nvar fixedTimeStep = 1.0 / 60.0; // seconds\nvar maxSubSteps = 3;\n\n// Start the simulation loop\nvar lastTime;\n(function simloop(time){\n  requestAnimationFrame(simloop);\n  if(lastTime !== undefined){\n     var dt = (time - lastTime) / 1000;\n     world.step(fixedTimeStep, dt, maxSubSteps);\n  }\n  console.log(\"Sphere z position: \" + sphereBody.position.z);\n  lastTime = time;\n})();\n```\n\nIf you want to know how to use cannon.js with a rendering engine, for example Three.js, see the [Examples](examples).\n\n### Features\n* Rigid body dynamics\n* Discrete collision detection\n* Contacts, friction and restitution\n* Constraints\n   * PointToPoint (a.k.a. ball/socket joint)\n   * Distance\n   * Hinge (with optional motor)\n   * Lock\n   * ConeTwist\n* Gauss-Seidel constraint solver and an island split algorithm\n* Collision filters\n* Body sleeping\n* Experimental SPH / fluid support\n* Various shapes and collision algorithms (see table below)\n\n|             | [Sphere](http://schteppe.github.io/cannon.js/docs/classes/Sphere.html) | [Plane](http://schteppe.github.io/cannon.js/docs/classes/Plane.html) | [Box](http://schteppe.github.io/cannon.js/docs/classes/Box.html) | [Convex](http://schteppe.github.io/cannon.js/docs/classes/ConvexPolyhedron.html) | [Particle](http://schteppe.github.io/cannon.js/docs/classes/Particle.html) | [Heightfield](http://schteppe.github.io/cannon.js/docs/classes/Heightfield.html) | [Trimesh](http://schteppe.github.io/cannon.js/docs/classes/Trimesh.html) |\n| :-----------|:------:|:-----:|:---:|:------:|:--------:|:-----------:|:-------:|\n| Sphere      | Yes    | Yes   | Yes | Yes    | Yes      | Yes         | Yes     |\n| Plane       | -      | -     | Yes | Yes    | Yes      | -           | Yes     |\n| Box         | -      | -     | Yes | Yes    | Yes      | Yes         | (todo)  |\n| Cylinder    | -      | -     | Yes | Yes    | Yes      | Yes         | (todo)  |\n| Convex      | -      | -     | -   | Yes    | Yes      | Yes         | (todo)  |\n| Particle    | -      | -     | -   | -      | -        | (todo)      | (todo)  |\n| Heightfield | -      | -     | -   | -      | -        | -           | (todo)  |\n| Trimesh     | -      | -     | -   | -      | -        | -           | -       |\n\n### Todo\nThe simpler todos are marked with ```@todo``` in the code. Github Issues can and should also be used for todos.\n\n### Help\nCreate an [issue](https://github.com/schteppe/cannon.js/issues) if you need help.\n",
+  "readmeFilename": "README.markdown",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schteppe/cannon.js.git"
   },
-  "dependencies": {}
+  "version": "0.6.2"
 }
 
-},{}],45:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 // Export classes
 module.exports = {
     version :                       require('../package.json').version,
@@ -5058,7 +5415,7 @@ module.exports = {
     World :                         require('./world/World'),
 };
 
-},{"../package.json":44,"./collision/AABB":46,"./collision/ArrayCollisionMatrix":47,"./collision/Broadphase":48,"./collision/GridBroadphase":49,"./collision/NaiveBroadphase":50,"./collision/ObjectCollisionMatrix":51,"./collision/Ray":53,"./collision/RaycastResult":54,"./collision/SAPBroadphase":55,"./constraints/ConeTwistConstraint":56,"./constraints/Constraint":57,"./constraints/DistanceConstraint":58,"./constraints/HingeConstraint":59,"./constraints/LockConstraint":60,"./constraints/PointToPointConstraint":61,"./equations/ContactEquation":63,"./equations/Equation":64,"./equations/FrictionEquation":65,"./equations/RotationalEquation":66,"./equations/RotationalMotorEquation":67,"./material/ContactMaterial":68,"./material/Material":69,"./math/Mat3":71,"./math/Quaternion":72,"./math/Transform":73,"./math/Vec3":74,"./objects/Body":75,"./objects/RaycastVehicle":76,"./objects/RigidVehicle":77,"./objects/SPHSystem":78,"./objects/Spring":79,"./shapes/Box":81,"./shapes/ConvexPolyhedron":82,"./shapes/Cylinder":83,"./shapes/Heightfield":84,"./shapes/Particle":85,"./shapes/Plane":86,"./shapes/Shape":87,"./shapes/Sphere":88,"./shapes/Trimesh":89,"./solver/GSSolver":90,"./solver/Solver":91,"./solver/SplitSolver":92,"./utils/EventTarget":93,"./utils/Pool":95,"./utils/Vec3Pool":98,"./world/Narrowphase":99,"./world/World":100}],46:[function(require,module,exports){
+},{"../package.json":19,"./collision/AABB":21,"./collision/ArrayCollisionMatrix":22,"./collision/Broadphase":23,"./collision/GridBroadphase":24,"./collision/NaiveBroadphase":25,"./collision/ObjectCollisionMatrix":26,"./collision/Ray":28,"./collision/RaycastResult":29,"./collision/SAPBroadphase":30,"./constraints/ConeTwistConstraint":31,"./constraints/Constraint":32,"./constraints/DistanceConstraint":33,"./constraints/HingeConstraint":34,"./constraints/LockConstraint":35,"./constraints/PointToPointConstraint":36,"./equations/ContactEquation":38,"./equations/Equation":39,"./equations/FrictionEquation":40,"./equations/RotationalEquation":41,"./equations/RotationalMotorEquation":42,"./material/ContactMaterial":43,"./material/Material":44,"./math/Mat3":46,"./math/Quaternion":47,"./math/Transform":48,"./math/Vec3":49,"./objects/Body":50,"./objects/RaycastVehicle":51,"./objects/RigidVehicle":52,"./objects/SPHSystem":53,"./objects/Spring":54,"./shapes/Box":56,"./shapes/ConvexPolyhedron":57,"./shapes/Cylinder":58,"./shapes/Heightfield":59,"./shapes/Particle":60,"./shapes/Plane":61,"./shapes/Shape":62,"./shapes/Sphere":63,"./shapes/Trimesh":64,"./solver/GSSolver":65,"./solver/Solver":66,"./solver/SplitSolver":67,"./utils/EventTarget":68,"./utils/Pool":70,"./utils/Vec3Pool":73,"./world/Narrowphase":74,"./world/World":75}],21:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 var Utils = require('../utils/Utils');
 
@@ -5381,7 +5738,7 @@ AABB.prototype.overlapsRay = function(ray){
 
     return true;
 };
-},{"../math/Vec3":74,"../utils/Utils":97}],47:[function(require,module,exports){
+},{"../math/Vec3":49,"../utils/Utils":72}],22:[function(require,module,exports){
 module.exports = ArrayCollisionMatrix;
 
 /**
@@ -5454,7 +5811,7 @@ ArrayCollisionMatrix.prototype.setNumObjects = function(n) {
     this.matrix.length = n*(n-1)>>1;
 };
 
-},{}],48:[function(require,module,exports){
+},{}],23:[function(require,module,exports){
 var Body = require('../objects/Body');
 var Vec3 = require('../math/Vec3');
 var Quaternion = require('../math/Quaternion');
@@ -5662,7 +6019,7 @@ Broadphase.prototype.aabbQuery = function(world, aabb, result){
     console.warn('.aabbQuery is not implemented in this Broadphase subclass.');
     return [];
 };
-},{"../math/Quaternion":72,"../math/Vec3":74,"../objects/Body":75,"../shapes/Plane":86,"../shapes/Shape":87}],49:[function(require,module,exports){
+},{"../math/Quaternion":47,"../math/Vec3":49,"../objects/Body":50,"../shapes/Plane":61,"../shapes/Shape":62}],24:[function(require,module,exports){
 module.exports = GridBroadphase;
 
 var Broadphase = require('./Broadphase');
@@ -5892,7 +6249,7 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
     this.makePairsUnique(pairs1,pairs2);
 };
 
-},{"../math/Vec3":74,"../shapes/Shape":87,"./Broadphase":48}],50:[function(require,module,exports){
+},{"../math/Vec3":49,"../shapes/Shape":62,"./Broadphase":23}],25:[function(require,module,exports){
 module.exports = NaiveBroadphase;
 
 var Broadphase = require('./Broadphase');
@@ -5967,7 +6324,7 @@ NaiveBroadphase.prototype.aabbQuery = function(world, aabb, result){
 
     return result;
 };
-},{"./AABB":46,"./Broadphase":48}],51:[function(require,module,exports){
+},{"./AABB":21,"./Broadphase":23}],26:[function(require,module,exports){
 module.exports = ObjectCollisionMatrix;
 
 /**
@@ -6040,7 +6397,7 @@ ObjectCollisionMatrix.prototype.reset = function() {
 ObjectCollisionMatrix.prototype.setNumObjects = function(n) {
 };
 
-},{}],52:[function(require,module,exports){
+},{}],27:[function(require,module,exports){
 module.exports = OverlapKeeper;
 
 /**
@@ -6136,7 +6493,7 @@ OverlapKeeper.prototype.getDiff = function(additions, removals) {
         }
     }
 };
-},{}],53:[function(require,module,exports){
+},{}],28:[function(require,module,exports){
 module.exports = Ray;
 
 var Vec3 = require('../math/Vec3');
@@ -6962,7 +7319,7 @@ function distanceFromIntersection(from, direction, position) {
 }
 
 
-},{"../collision/AABB":46,"../collision/RaycastResult":54,"../math/Quaternion":72,"../math/Transform":73,"../math/Vec3":74,"../shapes/Box":81,"../shapes/ConvexPolyhedron":82,"../shapes/Shape":87}],54:[function(require,module,exports){
+},{"../collision/AABB":21,"../collision/RaycastResult":29,"../math/Quaternion":47,"../math/Transform":48,"../math/Vec3":49,"../shapes/Box":56,"../shapes/ConvexPolyhedron":57,"../shapes/Shape":62}],29:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 
 module.exports = RaycastResult;
@@ -7085,7 +7442,7 @@ RaycastResult.prototype.set = function(
 	this.body = body;
 	this.distance = distance;
 };
-},{"../math/Vec3":74}],55:[function(require,module,exports){
+},{"../math/Vec3":49}],30:[function(require,module,exports){
 var Shape = require('../shapes/Shape');
 var Broadphase = require('../collision/Broadphase');
 
@@ -7409,7 +7766,7 @@ SAPBroadphase.prototype.aabbQuery = function(world, aabb, result){
 
     return result;
 };
-},{"../collision/Broadphase":48,"../shapes/Shape":87}],56:[function(require,module,exports){
+},{"../collision/Broadphase":23,"../shapes/Shape":62}],31:[function(require,module,exports){
 module.exports = ConeTwistConstraint;
 
 var Constraint = require('./Constraint');
@@ -7500,7 +7857,7 @@ ConeTwistConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ConeEquation":62,"../equations/ContactEquation":63,"../equations/RotationalEquation":66,"../math/Vec3":74,"./Constraint":57,"./PointToPointConstraint":61}],57:[function(require,module,exports){
+},{"../equations/ConeEquation":37,"../equations/ContactEquation":38,"../equations/RotationalEquation":41,"../math/Vec3":49,"./Constraint":32,"./PointToPointConstraint":36}],32:[function(require,module,exports){
 module.exports = Constraint;
 
 var Utils = require('../utils/Utils');
@@ -7593,7 +7950,7 @@ Constraint.prototype.disable = function(){
 
 Constraint.idCounter = 0;
 
-},{"../utils/Utils":97}],58:[function(require,module,exports){
+},{"../utils/Utils":72}],33:[function(require,module,exports){
 module.exports = DistanceConstraint;
 
 var Constraint = require('./Constraint');
@@ -7650,7 +8007,7 @@ DistanceConstraint.prototype.update = function(){
     normal.mult(halfDist, eq.ri);
     normal.mult(-halfDist, eq.rj);
 };
-},{"../equations/ContactEquation":63,"./Constraint":57}],59:[function(require,module,exports){
+},{"../equations/ContactEquation":38,"./Constraint":32}],34:[function(require,module,exports){
 module.exports = HingeConstraint;
 
 var Constraint = require('./Constraint');
@@ -7786,7 +8143,7 @@ HingeConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ContactEquation":63,"../equations/RotationalEquation":66,"../equations/RotationalMotorEquation":67,"../math/Vec3":74,"./Constraint":57,"./PointToPointConstraint":61}],60:[function(require,module,exports){
+},{"../equations/ContactEquation":38,"../equations/RotationalEquation":41,"../equations/RotationalMotorEquation":42,"../math/Vec3":49,"./Constraint":32,"./PointToPointConstraint":36}],35:[function(require,module,exports){
 module.exports = LockConstraint;
 
 var Constraint = require('./Constraint');
@@ -7880,7 +8237,7 @@ LockConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ContactEquation":63,"../equations/RotationalEquation":66,"../equations/RotationalMotorEquation":67,"../math/Vec3":74,"./Constraint":57,"./PointToPointConstraint":61}],61:[function(require,module,exports){
+},{"../equations/ContactEquation":38,"../equations/RotationalEquation":41,"../equations/RotationalMotorEquation":42,"../math/Vec3":49,"./Constraint":32,"./PointToPointConstraint":36}],36:[function(require,module,exports){
 module.exports = PointToPointConstraint;
 
 var Constraint = require('./Constraint');
@@ -7973,7 +8330,7 @@ PointToPointConstraint.prototype.update = function(){
     z.ri.copy(x.ri);
     z.rj.copy(x.rj);
 };
-},{"../equations/ContactEquation":63,"../math/Vec3":74,"./Constraint":57}],62:[function(require,module,exports){
+},{"../equations/ContactEquation":38,"../math/Vec3":49,"./Constraint":32}],37:[function(require,module,exports){
 module.exports = ConeEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -8052,7 +8409,7 @@ ConeEquation.prototype.computeB = function(h){
 };
 
 
-},{"../math/Mat3":71,"../math/Vec3":74,"./Equation":64}],63:[function(require,module,exports){
+},{"../math/Mat3":46,"../math/Vec3":49,"./Equation":39}],38:[function(require,module,exports){
 module.exports = ContactEquation;
 
 var Equation = require('./Equation');
@@ -8189,7 +8546,7 @@ ContactEquation.prototype.getImpactVelocityAlongNormal = function(){
 };
 
 
-},{"../math/Mat3":71,"../math/Vec3":74,"./Equation":64}],64:[function(require,module,exports){
+},{"../math/Mat3":46,"../math/Vec3":49,"./Equation":39}],39:[function(require,module,exports){
 module.exports = Equation;
 
 var JacobianElement = require('../math/JacobianElement'),
@@ -8453,7 +8810,7 @@ Equation.prototype.computeC = function(){
     return this.computeGiMGt() + this.eps;
 };
 
-},{"../math/JacobianElement":70,"../math/Vec3":74}],65:[function(require,module,exports){
+},{"../math/JacobianElement":45,"../math/Vec3":49}],40:[function(require,module,exports){
 module.exports = FrictionEquation;
 
 var Equation = require('./Equation');
@@ -8514,7 +8871,7 @@ FrictionEquation.prototype.computeB = function(h){
     return B;
 };
 
-},{"../math/Mat3":71,"../math/Vec3":74,"./Equation":64}],66:[function(require,module,exports){
+},{"../math/Mat3":46,"../math/Vec3":49,"./Equation":39}],41:[function(require,module,exports){
 module.exports = RotationalEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -8585,7 +8942,7 @@ RotationalEquation.prototype.computeB = function(h){
 };
 
 
-},{"../math/Mat3":71,"../math/Vec3":74,"./Equation":64}],67:[function(require,module,exports){
+},{"../math/Mat3":46,"../math/Vec3":49,"./Equation":39}],42:[function(require,module,exports){
 module.exports = RotationalMotorEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -8657,7 +9014,7 @@ RotationalMotorEquation.prototype.computeB = function(h){
     return B;
 };
 
-},{"../math/Mat3":71,"../math/Vec3":74,"./Equation":64}],68:[function(require,module,exports){
+},{"../math/Mat3":46,"../math/Vec3":49,"./Equation":39}],43:[function(require,module,exports){
 var Utils = require('../utils/Utils');
 
 module.exports = ContactMaterial;
@@ -8738,7 +9095,7 @@ function ContactMaterial(m1, m2, options){
 
 ContactMaterial.idCounter = 0;
 
-},{"../utils/Utils":97}],69:[function(require,module,exports){
+},{"../utils/Utils":72}],44:[function(require,module,exports){
 module.exports = Material;
 
 /**
@@ -8788,7 +9145,7 @@ function Material(options){
 
 Material.idCounter = 0;
 
-},{}],70:[function(require,module,exports){
+},{}],45:[function(require,module,exports){
 module.exports = JacobianElement;
 
 var Vec3 = require('./Vec3');
@@ -8832,7 +9189,7 @@ JacobianElement.prototype.multiplyVectors = function(spatial,rotational){
     return spatial.dot(this.spatial) + rotational.dot(this.rotational);
 };
 
-},{"./Vec3":74}],71:[function(require,module,exports){
+},{"./Vec3":49}],46:[function(require,module,exports){
 module.exports = Mat3;
 
 var Vec3 = require('./Vec3');
@@ -9256,7 +9613,7 @@ Mat3.prototype.transpose = function( target ) {
     return target;
 };
 
-},{"./Vec3":74}],72:[function(require,module,exports){
+},{"./Vec3":49}],47:[function(require,module,exports){
 module.exports = Quaternion;
 
 var Vec3 = require('./Vec3');
@@ -9746,7 +10103,7 @@ Quaternion.prototype.integrate = function(angularVelocity, dt, angularFactor, ta
 
     return target;
 };
-},{"./Vec3":74}],73:[function(require,module,exports){
+},{"./Vec3":49}],48:[function(require,module,exports){
 var Vec3 = require('./Vec3');
 var Quaternion = require('./Quaternion');
 
@@ -9851,7 +10208,7 @@ Transform.vectorToLocalFrame = function(position, quaternion, worldVector, resul
     return result;
 };
 
-},{"./Quaternion":72,"./Vec3":74}],74:[function(require,module,exports){
+},{"./Quaternion":47,"./Vec3":49}],49:[function(require,module,exports){
 module.exports = Vec3;
 
 var Mat3 = require('./Mat3');
@@ -10335,7 +10692,7 @@ Vec3.prototype.isAntiparallelTo = function(v,precision){
 Vec3.prototype.clone = function(){
     return new Vec3(this.x, this.y, this.z);
 };
-},{"./Mat3":71}],75:[function(require,module,exports){
+},{"./Mat3":46}],50:[function(require,module,exports){
 module.exports = Body;
 
 var EventTarget = require('../utils/EventTarget');
@@ -10366,7 +10723,7 @@ var Box = require('../shapes/Box');
  * @param {number} [options.sleepSpeedLimit=0.1]
  * @param {number} [options.sleepTimeLimit=1]
  * @param {number} [options.collisionFilterGroup=1]
- * @param {number} [options.collisionFilterMask=-1]
+ * @param {number} [options.collisionFilterMask=1]
  * @param {boolean} [options.fixedRotation=false]
  * @param {Vec3} [options.linearFactor]
  * @param {Vec3} [options.angularFactor]
@@ -10419,7 +10776,7 @@ function Body(options){
     /**
      * @property {Number} collisionFilterMask
      */
-    this.collisionFilterMask = typeof(options.collisionFilterMask) === 'number' ? options.collisionFilterMask : -1;
+    this.collisionFilterMask = typeof(options.collisionFilterMask) === 'number' ? options.collisionFilterMask : 1;
 
     /**
      * Whether to produce contact forces when in contact with other bodies. Note that contacts will be generated, but they will be disabled.
@@ -10428,7 +10785,6 @@ function Body(options){
 	this.collisionResponse = true;
 
     /**
-     * World space position of the body.
      * @property position
      * @type {Vec3}
      */
@@ -10460,7 +10816,6 @@ function Body(options){
     }
 
     /**
-     * World space velocity of the body.
      * @property velocity
      * @type {Vec3}
      */
@@ -10477,7 +10832,7 @@ function Body(options){
     this.initVelocity = new Vec3();
 
     /**
-     * Linear force on the body in world space.
+     * Linear force on the body
      * @property force
      * @type {Vec3}
      */
@@ -10555,14 +10910,15 @@ function Body(options){
 
     this._wakeUpAfterNarrowphase = false;
 
+
     /**
-     * World space rotational force on the body, around center of mass.
+     * Rotational force on the body, around center of mass
      * @property {Vec3} torque
      */
     this.torque = new Vec3();
 
     /**
-     * World space orientation of the body.
+     * Orientation of the body
      * @property quaternion
      * @type {Quaternion}
      */
@@ -10593,7 +10949,6 @@ function Body(options){
     }
 
     /**
-     * Angular velocity of the body, in world space. Think of the angular velocity as a vector, which the body rotates around. The length of this vector determines how fast (in radians per second) the body rotates.
      * @property angularVelocity
      * @type {Vec3}
      */
@@ -10616,14 +10971,12 @@ function Body(options){
     this.shapes = [];
 
     /**
-     * Position of each Shape in the body, given in local Body space.
      * @property shapeOffsets
      * @type {array}
      */
     this.shapeOffsets = [];
 
     /**
-     * Orientation of each Shape, given in local Body space.
      * @property shapeOrientations
      * @type {array}
      */
@@ -10670,7 +11023,6 @@ function Body(options){
     this.angularDamping = typeof(options.angularDamping) !== 'undefined' ? options.angularDamping : 0.01;
 
     /**
-     * Use this property to limit the motion along any world axis. (1,1,1) will allow motion along all axes while (0,0,0) allows none.
      * @property {Vec3} linearFactor
      */
     this.linearFactor = new Vec3(1,1,1);
@@ -10679,7 +11031,6 @@ function Body(options){
     }
 
     /**
-     * Use this property to limit the rotational motion along any world axis. (1,1,1) will allow rotation along all axes while (0,0,0) allows none.
      * @property {Vec3} angularFactor
      */
     this.angularFactor = new Vec3(1,1,1);
@@ -10688,7 +11039,6 @@ function Body(options){
     }
 
     /**
-     * World space bounding box of the body and its shapes.
      * @property aabb
      * @type {AABB}
      */
@@ -10700,13 +11050,6 @@ function Body(options){
      * @type {Boolean}
      */
     this.aabbNeedsUpdate = true;
-
-    /**
-     * Total bounding radius of the Body including its shapes, relative to body.position.
-     * @property boundingRadius
-     * @type {Number}
-     */
-    this.boundingRadius = 0;
 
     this.wlambda = new Vec3();
 
@@ -11265,7 +11608,7 @@ Body.prototype.integrate = function(dt, quatNormalize, quatNormalizeFast){
     this.updateInertiaWorld();
 };
 
-},{"../collision/AABB":46,"../material/Material":69,"../math/Mat3":71,"../math/Quaternion":72,"../math/Vec3":74,"../shapes/Box":81,"../shapes/Shape":87,"../utils/EventTarget":93}],76:[function(require,module,exports){
+},{"../collision/AABB":21,"../material/Material":44,"../math/Mat3":46,"../math/Quaternion":47,"../math/Vec3":49,"../shapes/Box":56,"../shapes/Shape":62,"../utils/EventTarget":68}],51:[function(require,module,exports){
 var Body = require('./Body');
 var Vec3 = require('../math/Vec3');
 var Quaternion = require('../math/Quaternion');
@@ -11969,7 +12312,7 @@ function resolveSingleBilateral(body1, pos1, body2, pos2, normal, impulse){
 
     return impulse;
 }
-},{"../collision/Ray":53,"../collision/RaycastResult":54,"../math/Quaternion":72,"../math/Vec3":74,"../objects/WheelInfo":80,"./Body":75}],77:[function(require,module,exports){
+},{"../collision/Ray":28,"../collision/RaycastResult":29,"../math/Quaternion":47,"../math/Vec3":49,"../objects/WheelInfo":55,"./Body":50}],52:[function(require,module,exports){
 var Body = require('./Body');
 var Sphere = require('../shapes/Sphere');
 var Box = require('../shapes/Box');
@@ -12191,7 +12534,7 @@ RigidVehicle.prototype.getWheelSpeed = function(wheelIndex){
     return w.dot(worldAxis);
 };
 
-},{"../constraints/HingeConstraint":59,"../math/Vec3":74,"../shapes/Box":81,"../shapes/Sphere":88,"./Body":75}],78:[function(require,module,exports){
+},{"../constraints/HingeConstraint":34,"../math/Vec3":49,"../shapes/Box":56,"../shapes/Sphere":63,"./Body":50}],53:[function(require,module,exports){
 module.exports = SPHSystem;
 
 var Shape = require('../shapes/Shape');
@@ -12406,7 +12749,7 @@ SPHSystem.prototype.nablaw = function(r){
     return nabla;
 };
 
-},{"../material/Material":69,"../math/Quaternion":72,"../math/Vec3":74,"../objects/Body":75,"../shapes/Particle":85,"../shapes/Shape":87}],79:[function(require,module,exports){
+},{"../material/Material":44,"../math/Quaternion":47,"../math/Vec3":49,"../objects/Body":50,"../shapes/Particle":60,"../shapes/Shape":62}],54:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 
 module.exports = Spring;
@@ -12601,7 +12944,7 @@ Spring.prototype.applyForce = function(){
     bodyB.torque.vadd(rj_x_f,bodyB.torque);
 };
 
-},{"../math/Vec3":74}],80:[function(require,module,exports){
+},{"../math/Vec3":49}],55:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 var Transform = require('../math/Transform');
 var RaycastResult = require('../collision/RaycastResult');
@@ -12884,7 +13227,7 @@ WheelInfo.prototype.updateWheel = function(chassis){
         this.clippedInvContactDotSuspension = 1.0;
     }
 };
-},{"../collision/RaycastResult":54,"../math/Transform":73,"../math/Vec3":74,"../utils/Utils":97}],81:[function(require,module,exports){
+},{"../collision/RaycastResult":29,"../math/Transform":48,"../math/Vec3":49,"../utils/Utils":72}],56:[function(require,module,exports){
 module.exports = Box;
 
 var Shape = require('./Shape');
@@ -12900,9 +13243,9 @@ var ConvexPolyhedron = require('./ConvexPolyhedron');
  * @extends Shape
  */
 function Box(halfExtents){
-    Shape.call(this, {
-        type: Shape.types.BOX
-    });
+    Shape.call(this);
+
+    this.type = Shape.types.BOX;
 
     /**
      * @property halfExtents
@@ -13121,7 +13464,7 @@ Box.prototype.calculateWorldAABB = function(pos,quat,min,max){
     // });
 };
 
-},{"../math/Vec3":74,"./ConvexPolyhedron":82,"./Shape":87}],82:[function(require,module,exports){
+},{"../math/Vec3":49,"./ConvexPolyhedron":57,"./Shape":62}],57:[function(require,module,exports){
 module.exports = ConvexPolyhedron;
 
 var Shape = require('./Shape');
@@ -13149,9 +13492,9 @@ var Transform = require('../math/Transform');
  * @todo Automatically merge coplanar polygons in constructor.
  */
 function ConvexPolyhedron(points, faces, uniqueAxes) {
-    Shape.call(this, {
-        type: Shape.types.CONVEXPOLYHEDRON
-    });
+    var that = this;
+    Shape.call(this);
+    this.type = Shape.types.CONVEXPOLYHEDRON;
 
     /**
      * Array of Vec3
@@ -14049,7 +14392,7 @@ ConvexPolyhedron.project = function(hull, axis, pos, quat, result){
     result[1] = min;
 };
 
-},{"../math/Quaternion":72,"../math/Transform":73,"../math/Vec3":74,"./Shape":87}],83:[function(require,module,exports){
+},{"../math/Quaternion":47,"../math/Transform":48,"../math/Vec3":49,"./Shape":62}],58:[function(require,module,exports){
 module.exports = Cylinder;
 
 var Shape = require('./Shape');
@@ -14125,12 +14468,13 @@ function Cylinder( radiusTop, radiusBottom, height , numSegments ) {
     }
     faces.push(temp);
 
+    this.type = Shape.types.CONVEXPOLYHEDRON;
     ConvexPolyhedron.call( this, verts, faces, axes );
 }
 
 Cylinder.prototype = new ConvexPolyhedron();
 
-},{"../math/Quaternion":72,"../math/Vec3":74,"./ConvexPolyhedron":82,"./Shape":87}],84:[function(require,module,exports){
+},{"../math/Quaternion":47,"../math/Vec3":49,"./ConvexPolyhedron":57,"./Shape":62}],59:[function(require,module,exports){
 var Shape = require('./Shape');
 var ConvexPolyhedron = require('./ConvexPolyhedron');
 var Vec3 = require('../math/Vec3');
@@ -14208,13 +14552,12 @@ function Heightfield(data, options){
 
     this.cacheEnabled = true;
 
-    Shape.call(this, {
-        type: Shape.types.HEIGHTFIELD
-    });
+    Shape.call(this);
 
     this.pillarConvex = new ConvexPolyhedron();
     this.pillarOffset = new Vec3();
 
+    this.type = Shape.types.HEIGHTFIELD;
     this.updateBoundingSphereRadius();
 
     // "i_j_isUpper" => { convex: ..., offset: ... }
@@ -14816,7 +15159,7 @@ Heightfield.prototype.setHeightsFromImage = function(image, scale){
     this.updateMinValue();
     this.update();
 };
-},{"../math/Vec3":74,"../utils/Utils":97,"./ConvexPolyhedron":82,"./Shape":87}],85:[function(require,module,exports){
+},{"../math/Vec3":49,"../utils/Utils":72,"./ConvexPolyhedron":57,"./Shape":62}],60:[function(require,module,exports){
 module.exports = Particle;
 
 var Shape = require('./Shape');
@@ -14830,9 +15173,9 @@ var Vec3 = require('../math/Vec3');
  * @extends Shape
  */
 function Particle(){
-    Shape.call(this, {
-        type: Shape.types.PARTICLE
-    });
+    Shape.call(this);
+
+    this.type = Shape.types.PARTICLE;
 }
 Particle.prototype = new Shape();
 Particle.prototype.constructor = Particle;
@@ -14863,23 +15206,22 @@ Particle.prototype.calculateWorldAABB = function(pos,quat,min,max){
     max.copy(pos);
 };
 
-},{"../math/Vec3":74,"./Shape":87}],86:[function(require,module,exports){
+},{"../math/Vec3":49,"./Shape":62}],61:[function(require,module,exports){
 module.exports = Plane;
 
 var Shape = require('./Shape');
 var Vec3 = require('../math/Vec3');
 
 /**
- * A plane, facing in the Z direction. The plane has its surface at z=0 and everything below z=0 is assumed to be solid plane. To make the plane face in some other direction than z, you must put it inside a Body and rotate that body. See the demos.
+ * A plane, facing in the Z direction. The plane has its surface at z=0 and everything below z=0 is assumed to be solid plane. To make the plane face in some other direction than z, you must put it inside a RigidBody and rotate that body. See the demos.
  * @class Plane
  * @constructor
  * @extends Shape
  * @author schteppe
  */
 function Plane(){
-    Shape.call(this, {
-        type: Shape.types.PLANE
-    });
+    Shape.call(this);
+    this.type = Shape.types.PLANE;
 
     // World oriented normal
     this.worldNormal = new Vec3();
@@ -14927,7 +15269,7 @@ Plane.prototype.calculateWorldAABB = function(pos, quat, min, max){
 Plane.prototype.updateBoundingSphereRadius = function(){
     this.boundingSphereRadius = Number.MAX_VALUE;
 };
-},{"../math/Vec3":74,"./Shape":87}],87:[function(require,module,exports){
+},{"../math/Vec3":49,"./Shape":62}],62:[function(require,module,exports){
 module.exports = Shape;
 
 var Shape = require('./Shape');
@@ -14939,15 +15281,10 @@ var Material = require('../material/Material');
  * Base class for shapes
  * @class Shape
  * @constructor
- * @param {object} [options]
- * @param {number} [options.collisionFilterGroup=1]
- * @param {number} [options.collisionFilterMask=-1]
- * @param {number} [options.collisionResponse=true]
- * @param {number} [options.material=null]
  * @author schteppe
+ * @todo Should have a mechanism for caching bounding sphere radius instead of calculating it each time
  */
-function Shape(options){
-    options = options || {};
+function Shape(){
 
     /**
      * Identifyer of the Shape.
@@ -14961,7 +15298,7 @@ function Shape(options){
      * @type {Number}
      * @see Shape.types
      */
-    this.type = options.type || 0;
+    this.type = 0;
 
     /**
      * The local bounding sphere radius of this shape.
@@ -14973,22 +15310,12 @@ function Shape(options){
      * Whether to produce contact forces when in contact with other bodies. Note that contacts will be generated, but they will be disabled.
      * @property {boolean} collisionResponse
      */
-    this.collisionResponse = options.collisionResponse ? options.collisionResponse : true;
-
-    /**
-     * @property {Number} collisionFilterGroup
-     */
-    this.collisionFilterGroup = options.collisionFilterGroup !== undefined ? options.collisionFilterGroup : 1;
-
-    /**
-     * @property {Number} collisionFilterMask
-     */
-    this.collisionFilterMask = options.collisionFilterMask !== undefined ? options.collisionFilterMask : -1;
+    this.collisionResponse = true;
 
     /**
      * @property {Material} material
      */
-    this.material = options.material ? options.material : null;
+    this.material = null;
 
     /**
      * @property {Body} body
@@ -15046,7 +15373,7 @@ Shape.types = {
 };
 
 
-},{"../material/Material":69,"../math/Quaternion":72,"../math/Vec3":74,"./Shape":87}],88:[function(require,module,exports){
+},{"../material/Material":44,"../math/Quaternion":47,"../math/Vec3":49,"./Shape":62}],63:[function(require,module,exports){
 module.exports = Sphere;
 
 var Shape = require('./Shape');
@@ -15061,14 +15388,13 @@ var Vec3 = require('../math/Vec3');
  * @author schteppe / http://github.com/schteppe
  */
 function Sphere(radius){
-    Shape.call(this, {
-        type: Shape.types.SPHERE
-    });
+    Shape.call(this);
 
     /**
      * @property {Number} radius
      */
-    this.radius = radius !== undefined ? radius : 1.0;
+    this.radius = radius!==undefined ? Number(radius) : 1.0;
+    this.type = Shape.types.SPHERE;
 
     if(this.radius < 0){
         throw new Error('The sphere radius cannot be negative.');
@@ -15106,7 +15432,7 @@ Sphere.prototype.calculateWorldAABB = function(pos,quat,min,max){
     }
 };
 
-},{"../math/Vec3":74,"./Shape":87}],89:[function(require,module,exports){
+},{"../math/Vec3":49,"./Shape":62}],64:[function(require,module,exports){
 module.exports = Trimesh;
 
 var Shape = require('./Shape');
@@ -15135,9 +15461,8 @@ var Octree = require('../utils/Octree');
  *     var trimeshShape = new Trimesh(vertices, indices);
  */
 function Trimesh(vertices, indices) {
-    Shape.call(this, {
-        type: Shape.types.TRIMESH
-    });
+    Shape.call(this);
+    this.type = Shape.types.TRIMESH;
 
     /**
      * @property vertices
@@ -15669,7 +15994,7 @@ Trimesh.createTorus = function (radius, tube, radialSegments, tubularSegments, a
     return new Trimesh(vertices, indices);
 };
 
-},{"../collision/AABB":46,"../math/Quaternion":72,"../math/Transform":73,"../math/Vec3":74,"../utils/Octree":94,"./Shape":87}],90:[function(require,module,exports){
+},{"../collision/AABB":21,"../math/Quaternion":47,"../math/Transform":48,"../math/Vec3":49,"../utils/Octree":69,"./Shape":62}],65:[function(require,module,exports){
 module.exports = GSSolver;
 
 var Vec3 = require('../math/Vec3');
@@ -15811,7 +16136,7 @@ GSSolver.prototype.solve = function(dt,world){
     return iter;
 };
 
-},{"../math/Quaternion":72,"../math/Vec3":74,"./Solver":91}],91:[function(require,module,exports){
+},{"../math/Quaternion":47,"../math/Vec3":49,"./Solver":66}],66:[function(require,module,exports){
 module.exports = Solver;
 
 /**
@@ -15872,7 +16197,7 @@ Solver.prototype.removeAllEquations = function(){
 };
 
 
-},{}],92:[function(require,module,exports){
+},{}],67:[function(require,module,exports){
 module.exports = SplitSolver;
 
 var Vec3 = require('../math/Vec3');
@@ -16027,7 +16352,7 @@ SplitSolver.prototype.solve = function(dt,world){
 function sortById(a, b){
     return b.id - a.id;
 }
-},{"../math/Quaternion":72,"../math/Vec3":74,"../objects/Body":75,"./Solver":91}],93:[function(require,module,exports){
+},{"../math/Quaternion":47,"../math/Vec3":49,"../objects/Body":50,"./Solver":66}],68:[function(require,module,exports){
 /**
  * Base class for objects that dispatches events.
  * @class EventTarget
@@ -16128,7 +16453,7 @@ EventTarget.prototype = {
     }
 };
 
-},{}],94:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 var AABB = require('../collision/AABB');
 var Vec3 = require('../math/Vec3');
 
@@ -16363,7 +16688,7 @@ OctreeNode.prototype.removeEmptyNodes = function() {
     }
 };
 
-},{"../collision/AABB":46,"../math/Vec3":74}],95:[function(require,module,exports){
+},{"../collision/AABB":21,"../math/Vec3":49}],70:[function(require,module,exports){
 module.exports = Pool;
 
 /**
@@ -16440,7 +16765,7 @@ Pool.prototype.resize = function (size) {
 };
 
 
-},{}],96:[function(require,module,exports){
+},{}],71:[function(require,module,exports){
 module.exports = TupleDictionary;
 
 /**
@@ -16507,7 +16832,7 @@ TupleDictionary.prototype.reset = function() {
     }
 };
 
-},{}],97:[function(require,module,exports){
+},{}],72:[function(require,module,exports){
 function Utils(){}
 
 module.exports = Utils;
@@ -16532,7 +16857,7 @@ Utils.defaults = function(options, defaults){
     return options;
 };
 
-},{}],98:[function(require,module,exports){
+},{}],73:[function(require,module,exports){
 module.exports = Vec3Pool;
 
 var Vec3 = require('../math/Vec3');
@@ -16558,7 +16883,7 @@ Vec3Pool.prototype.constructObject = function(){
     return new Vec3();
 };
 
-},{"../math/Vec3":74,"./Pool":95}],99:[function(require,module,exports){
+},{"../math/Vec3":49,"./Pool":70}],74:[function(require,module,exports){
 module.exports = Narrowphase;
 
 var AABB = require('../collision/AABB');
@@ -16820,10 +17145,6 @@ Narrowphase.prototype.getContacts = function(p1, p2, world, result, oldcontacts,
                 bj.quaternion.vmult(bj.shapeOffsets[j], xj);
                 xj.vadd(bj.position, xj);
                 var sj = bj.shapes[j];
-
-                if(!((si.collisionFilterMask & sj.collisionFilterGroup) && (sj.collisionFilterMask & si.collisionFilterGroup))){
-                    continue;
-                }
 
                 if(xi.distanceTo(xj) > si.boundingSphereRadius + sj.boundingSphereRadius){
                     continue;
@@ -18424,7 +18745,7 @@ Narrowphase.prototype.sphereHeightfield = function (
     }
 };
 
-},{"../collision/AABB":46,"../collision/Ray":53,"../equations/ContactEquation":63,"../equations/FrictionEquation":65,"../math/Quaternion":72,"../math/Transform":73,"../math/Vec3":74,"../objects/Body":75,"../shapes/ConvexPolyhedron":82,"../shapes/Shape":87,"../solver/Solver":91,"../utils/Vec3Pool":98}],100:[function(require,module,exports){
+},{"../collision/AABB":21,"../collision/Ray":28,"../equations/ContactEquation":38,"../equations/FrictionEquation":40,"../math/Quaternion":47,"../math/Transform":48,"../math/Vec3":49,"../objects/Body":50,"../shapes/ConvexPolyhedron":57,"../shapes/Shape":62,"../solver/Solver":66,"../utils/Vec3Pool":73}],75:[function(require,module,exports){
 /* global performance */
 
 module.exports = World;
@@ -19458,4 +19779,3250 @@ World.prototype.clearForces = function(){
     }
 };
 
-},{"../collision/AABB":46,"../collision/ArrayCollisionMatrix":47,"../collision/NaiveBroadphase":50,"../collision/OverlapKeeper":52,"../collision/Ray":53,"../collision/RaycastResult":54,"../equations/ContactEquation":63,"../equations/FrictionEquation":65,"../material/ContactMaterial":68,"../material/Material":69,"../math/Quaternion":72,"../math/Vec3":74,"../objects/Body":75,"../shapes/Shape":87,"../solver/GSSolver":90,"../utils/EventTarget":93,"../utils/TupleDictionary":96,"./Narrowphase":99}]},{},[1]);
+},{"../collision/AABB":21,"../collision/ArrayCollisionMatrix":22,"../collision/NaiveBroadphase":25,"../collision/OverlapKeeper":27,"../collision/Ray":28,"../collision/RaycastResult":29,"../equations/ContactEquation":38,"../equations/FrictionEquation":40,"../material/ContactMaterial":43,"../material/Material":44,"../math/Quaternion":47,"../math/Vec3":49,"../objects/Body":50,"../shapes/Shape":62,"../solver/GSSolver":65,"../utils/EventTarget":68,"../utils/TupleDictionary":71,"./Narrowphase":74}],76:[function(require,module,exports){
+var CANNON = require('cannon'),
+    quickhull = require('./lib/THREE.quickhull');
+
+var PI_2 = Math.PI / 2;
+
+var Type = {
+  BOX: 'Box',
+  CYLINDER: 'Cylinder',
+  SPHERE: 'Sphere',
+  HULL: 'ConvexPolyhedron'
+};
+
+// TEST TEST TEST TEST
+
+/**
+ * Given a THREE.Object3D instance, creates a corresponding CANNON shape.
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+module.exports = CANNON.mesh2shape = function (object, options) {
+  options = options || {};
+
+  if (options.type === Type.BOX) {
+    return createBoundingBoxShape(object);
+  } else if (options.type === Type.CYLINDER) {
+    return createBoundingCylinderShape(object, options);
+  } else if (options.type === Type.SPHERE) {
+    return createBoundingSphereShape(object, options);
+  } else if (options.type === Type.HULL) {
+    return createConvexPolyhedron(object);
+  } else if (options.type) {
+    throw new Error('[CANNON.mesh2shape] Invalid type "%s".', options.type);
+  }
+
+  var geometry = getGeometry(object);
+
+  if (!geometry) return null;
+
+  var type = geometry.metadata
+    ? geometry.metadata.type
+    : geometry.type;
+
+  switch (type) {
+    case 'BoxGeometry':
+    case 'BoxBufferGeometry':
+      return createBoxShape(geometry);
+    case 'CylinderGeometry':
+    case 'CylinderBufferGeometry':
+      return createCylinderShape(geometry);
+    case 'PlaneGeometry':
+    case 'PlaneBufferGeometry':
+      return createPlaneShape(geometry);
+    case 'SphereGeometry':
+    case 'SphereBufferGeometry':
+      return createSphereShape(geometry);
+    case 'TubeGeometry':
+      return createTubeShape(geometry);
+    case 'Geometry':
+    case 'BufferGeometry':
+      return createTrimeshShape(geometry);
+    default:
+      console.warn('Unrecognized geometry: "%s". Using bounding box as shape.', geometry.type);
+      return createBoxShape(geometry);
+  }
+};
+
+CANNON.mesh2shape.Type = Type;
+
+/******************************************************************************
+ * Shape construction
+ */
+
+ /**
+  * @param  {THREE.Geometry} geometry
+  * @return {CANNON.Shape}
+  */
+ function createBoxShape (geometry) {
+   var vertices = getVertices(geometry);
+
+   if (!vertices.length) return null;
+
+   geometry.computeBoundingBox();
+   var box = geometry.boundingBox;
+   return new CANNON.Box(new CANNON.Vec3(
+     (box.max.x - box.min.x) / 2,
+     (box.max.y - box.min.y) / 2,
+     (box.max.z - box.min.z) / 2
+   ));
+ }
+
+/**
+ * Bounding box needs to be computed with the entire mesh, not just geometry.
+ * @param  {THREE.Object3D} mesh
+ * @return {CANNON.Shape}
+ */
+function createBoundingBoxShape (object) {
+  var box, shape, localPosition, worldPosition,
+      helper = new THREE.BoundingBoxHelper(object);
+
+  helper.update();
+  box = helper.box;
+
+  if (!isFinite(box.min.lengthSq())) return null;
+
+  shape = new CANNON.Box(new CANNON.Vec3(
+    (box.max.x - box.min.x) / 2,
+    (box.max.y - box.min.y) / 2,
+    (box.max.z - box.min.z) / 2
+  ));
+
+  object.updateMatrixWorld();
+  worldPosition = new THREE.Vector3();
+  worldPosition.setFromMatrixPosition(object.matrixWorld);
+  localPosition = helper.position.sub(worldPosition);
+  if (localPosition.lengthSq()) {
+    shape.offset = localPosition;
+  }
+
+  return shape;
+}
+
+/**
+ * Computes 3D convex hull as a CANNON.ConvexPolyhedron.
+ * @param  {THREE.Object3D} mesh
+ * @return {CANNON.Shape}
+ */
+function createConvexPolyhedron (object) {
+  var i, vertices, faces, hull,
+      eps = 1e-4,
+      geometry = getGeometry(object);
+
+  if (!geometry || !geometry.vertices.length) return null;
+
+  // Perturb.
+  for (i = 0; i < geometry.vertices.length; i++) {
+    geometry.vertices[i].x += (Math.random() - 0.5) * eps;
+    geometry.vertices[i].y += (Math.random() - 0.5) * eps;
+    geometry.vertices[i].z += (Math.random() - 0.5) * eps;
+  }
+
+  // Compute the 3D convex hull.
+  hull = quickhull(geometry);
+
+  // Convert from THREE.Vector3 to CANNON.Vec3.
+  vertices = new Array(hull.vertices.length);
+  for (i = 0; i < hull.vertices.length; i++) {
+    vertices[i] = new CANNON.Vec3(hull.vertices[i].x, hull.vertices[i].y, hull.vertices[i].z);
+  }
+
+  // Convert from THREE.Face to Array<number>.
+  faces = new Array(hull.faces.length);
+  for (i = 0; i < hull.faces.length; i++) {
+    faces[i] = [hull.faces[i].a, hull.faces[i].b, hull.faces[i].c];
+  }
+
+  return new CANNON.ConvexPolyhedron(vertices, faces);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createCylinderShape (geometry) {
+  var shape,
+      params = geometry.metadata
+        ? geometry.metadata.parameters
+        : geometry.parameters;
+  shape = new CANNON.Cylinder(
+    params.radiusTop,
+    params.radiusBottom,
+    params.height,
+    params.radialSegments
+  );
+  shape.orientation = new CANNON.Quaternion();
+  shape.orientation.setFromEuler(THREE.Math.degToRad(-90), 0, 0, 'XYZ').normalize();
+  return shape;
+}
+
+/**
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+function createBoundingCylinderShape (object, options) {
+  var shape, height, radius,
+      geometry = getGeometry(object),
+      axes = ['x', 'y', 'z'],
+      majorAxis = options.cylinderAxis || 'y',
+      minorAxes = axes.splice(axes.indexOf(majorAxis), 1) && axes;
+
+  // Compute cylinder dimensions.
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  height = geometry.boundingBox.max[majorAxis] - geometry.boundingBox.min[majorAxis];
+  radius = 0.5 * Math.max(
+    geometry.boundingBox.max[minorAxes[0]] - geometry.boundingBox.min[minorAxes[0]],
+    geometry.boundingBox.max[minorAxes[1]] - geometry.boundingBox.min[minorAxes[1]]
+  );
+
+  // Create shape.
+  shape = new CANNON.Cylinder(radius, radius, height, 12);
+  shape.orientation = new CANNON.Quaternion();
+  shape.orientation.setFromEuler(
+    majorAxis === 'y' ? PI_2 : 0,
+    majorAxis === 'z' ? PI_2 : 0,
+    0,
+    'XYZ'
+  ).normalize();
+  return shape;
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createPlaneShape (geometry) {
+  geometry.computeBoundingBox();
+  var box = geometry.boundingBox;
+  return new CANNON.Box(new CANNON.Vec3(
+    (box.max.x - box.min.x) / 2 || 0.1,
+    (box.max.y - box.min.y) / 2 || 0.1,
+    (box.max.z - box.min.z) / 2 || 0.1
+  ));
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createSphereShape (geometry) {
+  var params = geometry.metadata
+    ? geometry.metadata.parameters
+    : geometry.parameters;
+  return new CANNON.Sphere(params.radius);
+}
+
+/**
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+function createBoundingSphereShape (object, options) {
+  var geometry = getGeometry(object);
+  geometry.computeBoundingSphere();
+  return new CANNON.Sphere(options.sphereRadius || geometry.boundingSphere.radius);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createTubeShape (geometry) {
+  var tmp = new THREE.BufferGeometry();
+  tmp.fromGeometry(geometry);
+  return createTrimeshShape(tmp);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createTrimeshShape (geometry) {
+  var indices,
+      vertices = getVertices(geometry);
+
+  if (!vertices.length) return null;
+
+  indices = Object.keys(vertices).map(Number);
+  return new CANNON.Trimesh(vertices, indices);
+}
+
+/******************************************************************************
+ * Utils
+ */
+
+/**
+ * Returns a single geometry for the given object. If the object is compound,
+ * its geometries are automatically merged.
+ * @param {THREE.Object3D} object
+ * @return {THREE.Geometry}
+ */
+function getGeometry (object) {
+  var matrix, mesh,
+      meshes = getMeshes(object),
+      tmp = new THREE.Geometry(),
+      combined = new THREE.Geometry();
+
+  if (meshes.length === 0) return null;
+
+  // Apply scale  – it can't easily be applied to a CANNON.Shape later.
+  if (meshes.length === 1) {
+    var position = new THREE.Vector3(),
+        quaternion = new THREE.Quaternion(),
+        scale = new THREE.Vector3();
+    tmp = meshes[0].geometry.clone();
+    tmp.metadata = meshes[0].geometry.metadata;
+    meshes[0].updateMatrixWorld();
+    meshes[0].matrixWorld.decompose(position, quaternion, scale);
+    return tmp.scale(scale.x, scale.y, scale.z);
+  }
+
+  // Recursively merge geometry, preserving local transforms.
+  while ((mesh = meshes.pop())) {
+    mesh.updateMatrixWorld();
+    if (mesh.geometry instanceof THREE.BufferGeometry) {
+      tmp.fromBufferGeometry(mesh.geometry);
+      combined.merge(tmp, mesh.matrixWorld);
+    } else {
+      combined.merge(mesh.geometry, mesh.matrixWorld);
+    }
+  }
+
+  matrix = new THREE.Matrix4();
+  matrix.scale(object.scale);
+  combined.applyMatrix(matrix);
+  return combined;
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {Array<number>}
+ */
+function getVertices (geometry) {
+  if (!geometry.attributes) {
+    geometry = new THREE.BufferGeometry().fromGeometry(geometry);
+  }
+  return (geometry.attributes.position || {}).array || [];
+}
+
+/**
+ * Returns a flat array of THREE.Mesh instances from the given object. If
+ * nested transformations are found, they are applied to child meshes
+ * as mesh.userData.matrix, so that each mesh has its position/rotation/scale
+ * independently of all of its parents except the top-level object.
+ * @param  {THREE.Object3D} object
+ * @return {Array<THREE.Mesh>}
+ */
+function getMeshes (object) {
+  var meshes = [];
+  object.traverse(function (o) {
+    if (o.type === 'Mesh') {
+      meshes.push(o);
+    }
+  });
+  return meshes;
+}
+
+},{"./lib/THREE.quickhull":77,"cannon":20}],77:[function(require,module,exports){
+/**
+
+  QuickHull
+  ---------
+
+  The MIT License
+
+  Copyright &copy; 2010-2014 three.js authors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+
+  THE SOFTWARE.
+
+
+    @author mark lundin / http://mark-lundin.com
+
+    This is a 3D implementation of the Quick Hull algorithm.
+    It is a fast way of computing a convex hull with average complexity
+    of O(n log(n)).
+    It uses depends on three.js and is supposed to create THREE.Geometry.
+
+    It's also very messy
+
+ */
+
+module.exports = (function(){
+
+
+  var faces     = [],
+    faceStack   = [],
+    i, NUM_POINTS, extremes,
+    max     = 0,
+    dcur, current, j, v0, v1, v2, v3,
+    N, D;
+
+  var ab, ac, ax,
+    suba, subb, normal,
+    diff, subaA, subaB, subC;
+
+  function reset(){
+
+    ab    = new THREE.Vector3(),
+    ac    = new THREE.Vector3(),
+    ax    = new THREE.Vector3(),
+    suba  = new THREE.Vector3(),
+    subb  = new THREE.Vector3(),
+    normal  = new THREE.Vector3(),
+    diff  = new THREE.Vector3(),
+    subaA = new THREE.Vector3(),
+    subaB = new THREE.Vector3(),
+    subC  = new THREE.Vector3();
+
+  }
+
+  //temporary vectors
+
+  function process( points ){
+
+    // Iterate through all the faces and remove
+    while( faceStack.length > 0  ){
+      cull( faceStack.shift(), points );
+    }
+  }
+
+
+  var norm = function(){
+
+    var ca = new THREE.Vector3(),
+      ba = new THREE.Vector3(),
+      N = new THREE.Vector3();
+
+    return function( a, b, c ){
+
+      ca.subVectors( c, a );
+      ba.subVectors( b, a );
+
+      N.crossVectors( ca, ba );
+
+      return N.normalize();
+    }
+
+  }();
+
+
+  function getNormal( face, points ){
+
+    if( face.normal !== undefined ) return face.normal;
+
+    var p0 = points[face[0]],
+      p1 = points[face[1]],
+      p2 = points[face[2]];
+
+    ab.subVectors( p1, p0 );
+    ac.subVectors( p2, p0 );
+    normal.crossVectors( ac, ab );
+    normal.normalize();
+
+    return face.normal = normal.clone();
+
+  }
+
+
+  function assignPoints( face, pointset, points ){
+
+    // ASSIGNING POINTS TO FACE
+    var p0 = points[face[0]],
+      dots = [], apex,
+      norm = getNormal( face, points );
+
+
+    // Sory all the points by there distance from the plane
+    pointset.sort( function( aItem, bItem ){
+
+
+      dots[aItem.x/3] = dots[aItem.x/3] !== undefined ? dots[aItem.x/3] : norm.dot( suba.subVectors( aItem, p0 ));
+      dots[bItem.x/3] = dots[bItem.x/3] !== undefined ? dots[bItem.x/3] : norm.dot( subb.subVectors( bItem, p0 ));
+
+      return dots[aItem.x/3] - dots[bItem.x/3] ;
+    });
+
+    //TODO :: Must be a faster way of finding and index in this array
+    var index = pointset.length;
+
+    if( index === 1 ) dots[pointset[0].x/3] = norm.dot( suba.subVectors( pointset[0], p0 ));
+    while( index-- > 0 && dots[pointset[index].x/3] > 0 )
+
+    var point;
+    if( index + 1 < pointset.length && dots[pointset[index+1].x/3] > 0 ){
+
+      face.visiblePoints  = pointset.splice( index + 1 );
+    }
+  }
+
+
+
+
+  function cull( face, points ){
+
+    var i = faces.length,
+      dot, visibleFace, currentFace,
+      visibleFaces = [face];
+
+    var apex = points.indexOf( face.visiblePoints.pop() );
+
+    // Iterate through all other faces...
+    while( i-- > 0 ){
+      currentFace = faces[i];
+      if( currentFace !== face ){
+        // ...and check if they're pointing in the same direction
+        dot = getNormal( currentFace, points ).dot( diff.subVectors( points[apex], points[currentFace[0]] ));
+        if( dot > 0 ){
+          visibleFaces.push( currentFace );
+        }
+      }
+    }
+
+    var index, neighbouringIndex, vertex;
+
+    // Determine Perimeter - Creates a bounded horizon
+
+    // 1. Pick an edge A out of all possible edges
+    // 2. Check if A is shared by any other face. a->b === b->a
+      // 2.1 for each edge in each triangle, isShared = ( f1.a == f2.a && f1.b == f2.b ) || ( f1.a == f2.b && f1.b == f2.a )
+    // 3. If not shared, then add to convex horizon set,
+        //pick an end point (N) of the current edge A and choose a new edge NA connected to A.
+        //Restart from 1.
+    // 4. If A is shared, it is not an horizon edge, therefore flag both faces that share this edge as candidates for culling
+    // 5. If candidate geometry is a degenrate triangle (ie. the tangent space normal cannot be computed) then remove that triangle from all further processing
+
+
+    var j = i = visibleFaces.length;
+    var isDistinct = false,
+      hasOneVisibleFace = i === 1,
+      cull = [],
+      perimeter = [],
+      edgeIndex = 0, compareFace, nextIndex,
+      a, b;
+
+    var allPoints = [];
+    var originFace = [visibleFaces[0][0], visibleFaces[0][1], visibleFaces[0][1], visibleFaces[0][2], visibleFaces[0][2], visibleFaces[0][0]];
+
+
+    if( visibleFaces.length === 1 ){
+      currentFace = visibleFaces[0];
+
+      perimeter = [currentFace[0], currentFace[1], currentFace[1], currentFace[2], currentFace[2], currentFace[0]];
+      // remove visible face from list of faces
+      if( faceStack.indexOf( currentFace ) > -1 ){
+        faceStack.splice( faceStack.indexOf( currentFace ), 1 );
+      }
+
+
+      if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
+      faces.splice( faces.indexOf( currentFace ), 1 );
+
+    }else{
+
+      while( i-- > 0  ){  // for each visible face
+
+        currentFace = visibleFaces[i];
+
+        // remove visible face from list of faces
+        if( faceStack.indexOf( currentFace ) > -1 ){
+          faceStack.splice( faceStack.indexOf( currentFace ), 1 );
+        }
+
+        if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
+        faces.splice( faces.indexOf( currentFace ), 1 );
+
+
+        var isSharedEdge;
+        cEdgeIndex = 0;
+
+        while( cEdgeIndex < 3 ){ // Iterate through it's edges
+
+          isSharedEdge = false;
+          j = visibleFaces.length;
+          a = currentFace[cEdgeIndex]
+          b = currentFace[(cEdgeIndex+1)%3];
+
+
+          while( j-- > 0 && !isSharedEdge ){ // find another visible faces
+
+            compareFace = visibleFaces[j];
+            edgeIndex = 0;
+
+            // isSharedEdge = compareFace == currentFace;
+            if( compareFace !== currentFace ){
+
+              while( edgeIndex < 3 && !isSharedEdge ){ //Check all it's indices
+
+                nextIndex = ( edgeIndex + 1 );
+                isSharedEdge = ( compareFace[edgeIndex] === a && compareFace[nextIndex%3] === b ) ||
+                         ( compareFace[edgeIndex] === b && compareFace[nextIndex%3] === a );
+
+                edgeIndex++;
+              }
+            }
+          }
+
+          if( !isSharedEdge || hasOneVisibleFace ){
+            perimeter.push( a );
+            perimeter.push( b );
+          }
+
+          cEdgeIndex++;
+        }
+      }
+    }
+
+    // create new face for all pairs around edge
+    i = 0;
+    var l = perimeter.length/2;
+    var f;
+
+    while( i < l ){
+      f = [ perimeter[i*2+1], apex, perimeter[i*2] ];
+      assignPoints( f, allPoints, points );
+      faces.push( f )
+      if( f.visiblePoints !== undefined  )faceStack.push( f );
+      i++;
+    }
+
+  }
+
+  var distSqPointSegment = function(){
+
+    var ab = new THREE.Vector3(),
+      ac = new THREE.Vector3(),
+      bc = new THREE.Vector3();
+
+    return function( a, b, c ){
+
+        ab.subVectors( b, a );
+        ac.subVectors( c, a );
+        bc.subVectors( c, b );
+
+        var e = ac.dot(ab);
+        if (e < 0.0) return ac.dot( ac );
+        var f = ab.dot( ab );
+        if (e >= f) return bc.dot(  bc );
+        return ac.dot( ac ) - e * e / f;
+
+      }
+
+  }();
+
+
+
+
+
+  return function( geometry ){
+
+    reset();
+
+
+    points    = geometry.vertices;
+    faces     = [],
+    faceStack   = [],
+    i       = NUM_POINTS = points.length,
+    extremes  = points.slice( 0, 6 ),
+    max     = 0;
+
+
+
+    /*
+     *  FIND EXTREMETIES
+     */
+    while( i-- > 0 ){
+      if( points[i].x < extremes[0].x ) extremes[0] = points[i];
+      if( points[i].x > extremes[1].x ) extremes[1] = points[i];
+
+      if( points[i].y < extremes[2].y ) extremes[2] = points[i];
+      if( points[i].y < extremes[3].y ) extremes[3] = points[i];
+
+      if( points[i].z < extremes[4].z ) extremes[4] = points[i];
+      if( points[i].z < extremes[5].z ) extremes[5] = points[i];
+    }
+
+
+    /*
+     *  Find the longest line between the extremeties
+     */
+
+    j = i = 6;
+    while( i-- > 0 ){
+      j = i - 1;
+      while( j-- > 0 ){
+          if( max < (dcur = extremes[i].distanceToSquared( extremes[j] )) ){
+        max = dcur;
+        v0 = extremes[ i ];
+        v1 = extremes[ j ];
+
+          }
+        }
+      }
+
+
+      // 3. Find the most distant point to the line segment, this creates a plane
+      i = 6;
+      max = 0;
+    while( i-- > 0 ){
+      dcur = distSqPointSegment( v0, v1, extremes[i]);
+      if( max < dcur ){
+        max = dcur;
+            v2 = extremes[ i ];
+          }
+    }
+
+
+      // 4. Find the most distant point to the plane.
+
+      N = norm(v0, v1, v2);
+      D = N.dot( v0 );
+
+
+      max = 0;
+      i = NUM_POINTS;
+      while( i-- > 0 ){
+        dcur = Math.abs( points[i].dot( N ) - D );
+          if( max < dcur ){
+            max = dcur;
+            v3 = points[i];
+      }
+      }
+
+
+
+      var v0Index = points.indexOf( v0 ),
+      v1Index = points.indexOf( v1 ),
+      v2Index = points.indexOf( v2 ),
+      v3Index = points.indexOf( v3 );
+
+
+    //  We now have a tetrahedron as the base geometry.
+    //  Now we must subdivide the
+
+      var tetrahedron =[
+        [ v2Index, v1Index, v0Index ],
+        [ v1Index, v3Index, v0Index ],
+        [ v2Index, v3Index, v1Index ],
+        [ v0Index, v3Index, v2Index ],
+    ];
+
+
+
+    subaA.subVectors( v1, v0 ).normalize();
+    subaB.subVectors( v2, v0 ).normalize();
+    subC.subVectors ( v3, v0 ).normalize();
+    var sign  = subC.dot( new THREE.Vector3().crossVectors( subaB, subaA ));
+
+
+    // Reverse the winding if negative sign
+    if( sign < 0 ){
+      tetrahedron[0].reverse();
+      tetrahedron[1].reverse();
+      tetrahedron[2].reverse();
+      tetrahedron[3].reverse();
+    }
+
+
+    //One for each face of the pyramid
+    var pointsCloned = points.slice();
+    pointsCloned.splice( pointsCloned.indexOf( v0 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v1 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v2 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v3 ), 1 );
+
+
+    var i = tetrahedron.length;
+    while( i-- > 0 ){
+      assignPoints( tetrahedron[i], pointsCloned, points );
+      if( tetrahedron[i].visiblePoints !== undefined ){
+        faceStack.push( tetrahedron[i] );
+      }
+      faces.push( tetrahedron[i] );
+    }
+
+    process( points );
+
+
+    //  Assign to our geometry object
+
+    var ll = faces.length;
+    while( ll-- > 0 ){
+      geometry.faces[ll] = new THREE.Face3( faces[ll][2], faces[ll][1], faces[ll][0], faces[ll].normal )
+    }
+
+    geometry.normalsNeedUpdate = true;
+
+    return geometry;
+
+  }
+
+}())
+
+},{}],78:[function(require,module,exports){
+var EPS = 0.1;
+
+module.exports = {
+  schema: {
+    enabled: {default: true},
+    mode: {default: 'teleport', oneOf: ['teleport', 'animate']},
+    animateSpeed: {default: 3.0}
+  },
+
+  init: function () {
+    this.active = true;
+    this.checkpoint = null;
+
+    this.offset = new THREE.Vector3();
+    this.position = new THREE.Vector3();
+    this.targetPosition = new THREE.Vector3();
+  },
+
+  play: function () { this.active = true; },
+  pause: function () { this.active = false; },
+
+  setCheckpoint: function (checkpoint) {
+    if (!this.active) return;
+
+    this.checkpoint = checkpoint;
+    if (this.data.mode === 'teleport') {
+      this.sync();
+      this.el.setAttribute('position', this.targetPosition);
+    }
+  },
+
+  isVelocityActive: function () {
+    return !!(this.active && this.checkpoint);
+  },
+
+  getVelocity: function () {
+    if (!this.active) return;
+
+    var data = this.data,
+        offset = this.offset,
+        position = this.position,
+        targetPosition = this.targetPosition;
+
+    this.sync();
+    if (position.distanceTo(targetPosition) < EPS) {
+      this.checkpoint = null;
+      return offset.set(0, 0, 0);
+    }
+    offset.setLength(data.animateSpeed);
+    return offset;
+  },
+
+  sync: function () {
+    var offset = this.offset,
+        position = this.position,
+        targetPosition = this.targetPosition;
+
+    position.copy(this.el.getAttribute('position'));
+    targetPosition.copy(this.checkpoint.getAttribute('position'));
+    // TODO - Cleverer ways around this?
+    targetPosition.y = position.y;
+    offset.copy(targetPosition).sub(position);
+  }
+};
+
+},{}],79:[function(require,module,exports){
+/**
+ * Gamepad controls for A-Frame.
+ *
+ * Stripped-down version of: https://github.com/donmccurdy/aframe-gamepad-controls
+ *
+ * For more information about the Gamepad API, see:
+ * https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
+ */
+
+var GamepadButton = require('../../lib/GamepadButton'),
+    GamepadButtonEvent = require('../../lib/GamepadButtonEvent');
+
+var JOYSTICK_EPS = 0.2;
+
+module.exports = {
+
+  /*******************************************************************
+   * Statics
+   */
+
+  GamepadButton: GamepadButton,
+
+  /*******************************************************************
+   * Schema
+   */
+
+  schema: {
+    // Controller 0-3
+    controller:        { default: 0, oneOf: [0, 1, 2, 3] },
+
+    // Enable/disable features
+    enabled:           { default: true },
+
+    // Debugging
+    debug:             { default: false }
+  },
+
+  /*******************************************************************
+   * Core
+   */
+
+  /**
+   * Called once when component is attached. Generally for initial setup.
+   */
+  init: function () {
+    var scene = this.el.sceneEl;
+    this.prevTime = window.performance.now();
+
+    // Button state
+    this.buttons = {};
+
+    scene.addBehavior(this);
+  },
+
+  /**
+   * Called when component is attached and when component data changes.
+   * Generally modifies the entity based on the data.
+   */
+  update: function () { this.tick(); },
+
+  /**
+   * Called on each iteration of main render loop.
+   */
+  tick: function () {
+    this.updateButtonState();
+  },
+
+  /**
+   * Called when a component is removed (e.g., via removeAttribute).
+   * Generally undoes all modifications to the entity.
+   */
+  remove: function () { },
+
+  /*******************************************************************
+   * Universal controls - movement
+   */
+
+  isVelocityActive: function () {
+    if (!this.data.enabled || !this.isConnected()) return false;
+
+    var dpad = this.getDpad(),
+        joystick0 = this.getJoystick(0),
+        inputX = dpad.x || joystick0.x,
+        inputY = dpad.y || joystick0.y;
+
+    return Math.abs(inputX) > JOYSTICK_EPS || Math.abs(inputY) > JOYSTICK_EPS;
+  },
+
+  getVelocityDelta: function () {
+    var dpad = this.getDpad(),
+        joystick0 = this.getJoystick(0),
+        inputX = dpad.x || joystick0.x,
+        inputY = dpad.y || joystick0.y,
+        dVelocity = new THREE.Vector3();
+
+    if (Math.abs(inputX) > JOYSTICK_EPS) {
+      dVelocity.x += inputX;
+    }
+    if (Math.abs(inputY) > JOYSTICK_EPS) {
+      dVelocity.z += inputY;
+    }
+
+    return dVelocity;
+  },
+
+  /*******************************************************************
+   * Universal controls - rotation
+   */
+
+  isRotationActive: function () {
+    if (!this.data.enabled || !this.isConnected()) return false;
+
+    var joystick1 = this.getJoystick(1);
+
+    return Math.abs(joystick1.x) > JOYSTICK_EPS || Math.abs(joystick1.y) > JOYSTICK_EPS;
+  },
+
+  getRotationDelta: function () {
+    var lookVector = this.getJoystick(1);
+    if (Math.abs(lookVector.x) <= JOYSTICK_EPS) lookVector.x = 0;
+    if (Math.abs(lookVector.y) <= JOYSTICK_EPS) lookVector.y = 0;
+    return lookVector;
+  },
+
+  /*******************************************************************
+   * Button events
+   */
+
+  updateButtonState: function () {
+    var gamepad = this.getGamepad();
+    if (this.data.enabled && gamepad) {
+
+      // Fire DOM events for button state changes.
+      for (var i = 0; i < gamepad.buttons.length; i++) {
+        if (gamepad.buttons[i].pressed && !this.buttons[i]) {
+          this.emit(new GamepadButtonEvent('gamepadbuttondown', i, gamepad.buttons[i]));
+        } else if (!gamepad.buttons[i].pressed && this.buttons[i]) {
+          this.emit(new GamepadButtonEvent('gamepadbuttonup', i, gamepad.buttons[i]));
+        }
+        this.buttons[i] = gamepad.buttons[i].pressed;
+      }
+
+    } else if (Object.keys(this.buttons)) {
+      // Reset state if controls are disabled or controller is lost.
+      this.buttons = {};
+    }
+  },
+
+  emit: function (event) {
+    // Emit original event.
+    this.el.emit(event.type, event);
+
+    // Emit convenience event, identifying button index.
+    this.el.emit(
+      event.type + ':' + event.index,
+      new GamepadButtonEvent(event.type, event.index, event)
+    );
+  },
+
+  /*******************************************************************
+   * Gamepad state
+   */
+
+  /**
+   * Returns the Gamepad instance attached to the component. If connected,
+   * a proxy-controls component may provide access to Gamepad input from a
+   * remote device.
+   *
+   * @return {Gamepad}
+   */
+  getGamepad: function () {
+    var localGamepad = navigator.getGamepads
+          && navigator.getGamepads()[this.data.controller],
+        proxyControls = this.el.sceneEl.components['proxy-controls'],
+        proxyGamepad = proxyControls && proxyControls.isConnected()
+          && proxyControls.getGamepad(this.data.controller);
+    return proxyGamepad || localGamepad;
+  },
+
+  /**
+   * Returns the state of the given button.
+   * @param  {number} index The button (0-N) for which to find state.
+   * @return {GamepadButton}
+   */
+  getButton: function (index) {
+    return this.getGamepad().buttons[index];
+  },
+
+  /**
+   * Returns state of the given axis. Axes are labelled 0-N, where 0-1 will
+   * represent X/Y on the first joystick, and 2-3 X/Y on the second.
+   * @param  {number} index The axis (0-N) for which to find state.
+   * @return {number} On the interval [-1,1].
+   */
+  getAxis: function (index) {
+    return this.getGamepad().axes[index];
+  },
+
+  /**
+   * Returns the state of the given joystick (0 or 1) as a THREE.Vector2.
+   * @param  {number} id The joystick (0, 1) for which to find state.
+   * @return {THREE.Vector2}
+   */
+  getJoystick: function (index) {
+    var gamepad = this.getGamepad();
+    switch (index) {
+      case 0: return new THREE.Vector2(gamepad.axes[0], gamepad.axes[1]);
+      case 1: return new THREE.Vector2(gamepad.axes[2], gamepad.axes[3]);
+      default: throw new Error('Unexpected joystick index "%d".', index);
+    }
+  },
+
+  /**
+   * Returns the state of the dpad as a THREE.Vector2.
+   * @return {THREE.Vector2}
+   */
+  getDpad: function () {
+    var gamepad = this.getGamepad();
+    if (!gamepad.buttons[GamepadButton.DPAD_RIGHT]) {
+      return new THREE.Vector2();
+    }
+    return new THREE.Vector2(
+      (gamepad.buttons[GamepadButton.DPAD_RIGHT].pressed ? 1 : 0)
+      + (gamepad.buttons[GamepadButton.DPAD_LEFT].pressed ? -1 : 0),
+      (gamepad.buttons[GamepadButton.DPAD_UP].pressed ? -1 : 0)
+      + (gamepad.buttons[GamepadButton.DPAD_DOWN].pressed ? 1 : 0)
+    );
+  },
+
+  /**
+   * Returns true if the gamepad is currently connected to the system.
+   * @return {boolean}
+   */
+  isConnected: function () {
+    var gamepad = this.getGamepad();
+    return !!(gamepad && gamepad.connected);
+  },
+
+  /**
+   * Returns a string containing some information about the controller. Result
+   * may vary across browsers, for a given controller.
+   * @return {string}
+   */
+  getID: function () {
+    return this.getGamepad().id;
+  }
+};
+
+},{"../../lib/GamepadButton":4,"../../lib/GamepadButtonEvent":5}],80:[function(require,module,exports){
+var radToDeg = THREE.Math.radToDeg,
+    isMobile = AFRAME.utils.device.isMobile();
+
+module.exports = {
+  schema: {
+    enabled: {default: true},
+    standing: {default: true}
+  },
+
+  init: function () {
+    this.isPositionCalibrated = false;
+    this.dolly = new THREE.Object3D();
+    this.hmdEuler = new THREE.Euler();
+    this.previousHMDPosition = new THREE.Vector3();
+    this.deltaHMDPosition = new THREE.Vector3();
+    this.vrControls = new THREE.VRControls(this.dolly);
+    this.rotation = new THREE.Vector3();
+  },
+
+  update: function () {
+    var data = this.data;
+    var vrControls = this.vrControls;
+    vrControls.standing = data.standing;
+    vrControls.update();
+  },
+
+  tick: function () {
+    this.vrControls.update();
+  },
+
+  remove: function () {
+    this.vrControls.dispose();
+  },
+
+  isRotationActive: function () {
+    var hmdEuler = this.hmdEuler;
+    if (!this.data.enabled || !(this.el.sceneEl.is('vr-mode') || isMobile)) {
+      return false;
+    }
+    hmdEuler.setFromQuaternion(this.dolly.quaternion, 'YXZ');
+    return !isNullVector(hmdEuler);
+  },
+
+  getRotation: function () {
+    var hmdEuler = this.hmdEuler;
+    return this.rotation.set(
+      radToDeg(hmdEuler.x),
+      radToDeg(hmdEuler.y),
+      radToDeg(hmdEuler.z)
+    );
+  },
+
+  isVelocityActive: function () {
+    var deltaHMDPosition = this.deltaHMDPosition;
+    var previousHMDPosition = this.previousHMDPosition;
+    var currentHMDPosition = this.calculateHMDPosition();
+    this.isPositionCalibrated = this.isPositionCalibrated || !isNullVector(previousHMDPosition);
+    if (!this.data.enabled || !this.el.sceneEl.is('vr-mode') || isMobile) {
+      return false;
+    }
+    deltaHMDPosition.copy(currentHMDPosition).sub(previousHMDPosition);
+    previousHMDPosition.copy(currentHMDPosition);
+    return this.isPositionCalibrated && !isNullVector(deltaHMDPosition);
+  },
+
+  getPositionDelta: function () {
+    return this.deltaHMDPosition;
+  },
+
+  calculateHMDPosition: function () {
+    var dolly = this.dolly;
+    var position = new THREE.Vector3();
+    dolly.updateMatrix();
+    position.setFromMatrixPosition(dolly.matrix);
+    return position;
+  }
+};
+
+function isNullVector (vector) {
+  return vector.x === 0 && vector.y === 0 && vector.z === 0;
+}
+
+},{}],81:[function(require,module,exports){
+var physics = require('aframe-physics-system');
+
+module.exports = {
+  'checkpoint-controls': require('./checkpoint-controls'),
+  'gamepad-controls':    require('./gamepad-controls'),
+  'hmd-controls':        require('./hmd-controls'),
+  'keyboard-controls':   require('./keyboard-controls'),
+  'mouse-controls':      require('./mouse-controls'),
+  'touch-controls':      require('./touch-controls'),
+  'universal-controls':  require('./universal-controls'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    physics.registerAll();
+    if (!AFRAME.components['checkpoint-controls'])  AFRAME.registerComponent('checkpoint-controls', this['checkpoint-controls']);
+    if (!AFRAME.components['gamepad-controls'])     AFRAME.registerComponent('gamepad-controls',    this['gamepad-controls']);
+    if (!AFRAME.components['hmd-controls'])         AFRAME.registerComponent('hmd-controls',        this['hmd-controls']);
+    if (!AFRAME.components['keyboard-controls'])    AFRAME.registerComponent('keyboard-controls',   this['keyboard-controls']);
+    if (!AFRAME.components['mouse-controls'])       AFRAME.registerComponent('mouse-controls',      this['mouse-controls']);
+    if (!AFRAME.components['touch-controls'])       AFRAME.registerComponent('touch-controls',      this['touch-controls']);
+    if (!AFRAME.components['universal-controls'])   AFRAME.registerComponent('universal-controls',  this['universal-controls']);
+
+    this._registered = true;
+  }
+};
+
+},{"./checkpoint-controls":78,"./gamepad-controls":79,"./hmd-controls":80,"./keyboard-controls":82,"./mouse-controls":83,"./touch-controls":84,"./universal-controls":85,"aframe-physics-system":8}],82:[function(require,module,exports){
+require('../../lib/keyboard.polyfill');
+
+var MAX_DELTA = 0.2,
+    PROXY_FLAG = '__keyboard-controls-proxy';
+
+var KeyboardEvent = window.KeyboardEvent;
+
+/**
+ * Keyboard Controls component.
+ *
+ * Stripped-down version of: https://github.com/donmccurdy/aframe-keyboard-controls
+ *
+ * Bind keyboard events to components, or control your entities with the WASD keys.
+ *
+ * Why use KeyboardEvent.code? "This is set to a string representing the key that was pressed to
+ * generate the KeyboardEvent, without taking the current keyboard layout (e.g., QWERTY vs.
+ * Dvorak), locale (e.g., English vs. French), or any modifier keys into account. This is useful
+ * when you care about which physical key was pressed, rather thanwhich character it corresponds
+ * to. For example, if you’re a writing a game, you might want a certain set of keys to move the
+ * player in different directions, and that mapping should ideally be independent of keyboard
+ * layout. See: https://developers.google.com/web/updates/2016/04/keyboardevent-keys-codes
+ *
+ * @namespace wasd-controls
+ * keys the entity moves and if you release it will stop. Easing simulates friction.
+ * to the entity when pressing the keys.
+ * @param {bool} [enabled=true] - To completely enable or disable the controls
+ */
+module.exports = {
+  schema: {
+    enabled:           { default: true },
+    debug:             { default: false }
+  },
+
+  init: function () {
+    this.dVelocity = new THREE.Vector3();
+    this.localKeys = {};
+    this.listeners = {
+      keydown: this.onKeyDown.bind(this),
+      keyup: this.onKeyUp.bind(this),
+      blur: this.onBlur.bind(this)
+    };
+    this.attachEventListeners();
+  },
+
+  /*******************************************************************
+  * Movement
+  */
+
+  isVelocityActive: function () {
+    return this.data.enabled && !!Object.keys(this.getKeys()).length;
+  },
+
+  getVelocityDelta: function () {
+    var data = this.data,
+        keys = this.getKeys();
+
+    this.dVelocity.set(0, 0, 0);
+    if (data.enabled) {
+      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; }
+      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; }
+      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; }
+      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; }
+    }
+
+    return this.dVelocity.clone();
+  },
+
+  /*******************************************************************
+  * Events
+  */
+
+  play: function () {
+    this.attachEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  attachEventListeners: function () {
+    window.addEventListener('keydown', this.listeners.keydown, false);
+    window.addEventListener('keyup', this.listeners.keyup, false);
+    window.addEventListener('blur', this.listeners.blur, false);
+  },
+
+  removeEventListeners: function () {
+    window.removeEventListener('keydown', this.listeners.keydown);
+    window.removeEventListener('keyup', this.listeners.keyup);
+    window.removeEventListener('blur', this.listeners.blur);
+  },
+
+  onKeyDown: function (event) {
+    this.localKeys[event.code] = true;
+    this.emit(event);
+  },
+
+  onKeyUp: function (event) {
+    delete this.localKeys[event.code];
+    this.emit(event);
+  },
+
+  onBlur: function () {
+    for (var code in this.localKeys) {
+      if (this.localKeys.hasOwnProperty(code)) {
+        delete this.localKeys[code];
+      }
+    }
+  },
+
+  emit: function (event) {
+    // TODO - keydown only initially?
+    // TODO - where the f is the spacebar
+
+    // Emit original event.
+    if (PROXY_FLAG in event) {
+      // TODO - Method never triggered.
+      this.el.emit(event.type, event);
+    }
+
+    // Emit convenience event, identifying key.
+    this.el.emit(event.type + ':' + event.code, new KeyboardEvent(event.type, event));
+    if (this.data.debug) console.log(event.type + ':' + event.code);
+  },
+
+  /*******************************************************************
+  * Accessors
+  */
+
+  isPressed: function (code) {
+    return code in this.getKeys();
+  },
+
+  getKeys: function () {
+    if (this.isProxied()) {
+      return this.el.sceneEl.components['proxy-controls'].getKeyboard();
+    }
+    return this.localKeys;
+  },
+
+  isProxied: function () {
+    var proxyControls = this.el.sceneEl.components['proxy-controls'];
+    return proxyControls && proxyControls.isConnected();
+  }
+
+};
+
+},{"../../lib/keyboard.polyfill":7}],83:[function(require,module,exports){
+/**
+ * Mouse + Pointerlock controls.
+ *
+ * Based on: https://github.com/aframevr/aframe/pull/1056
+ */
+module.exports = {
+  schema: {
+    enabled: { default: true },
+    pointerlockEnabled: { default: true },
+    sensitivity: { default: 1 / 25 }
+  },
+
+  init: function () {
+    this.mouseDown = false;
+    this.pointerLocked = false;
+    this.lookVector = new THREE.Vector2();
+    this.bindMethods();
+  },
+
+  play: function () {
+    this.addEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+    this.lookVector.set(0, 0);
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  bindMethods: function () {
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+  },
+
+  addEventListeners: function () {
+    var sceneEl = this.el.sceneEl;
+    var canvasEl = sceneEl.canvas;
+    var data = this.data;
+
+    if (!canvasEl) {
+      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
+      return;
+    }
+
+    canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+    canvasEl.addEventListener('mousemove', this.onMouseMove, false);
+    canvasEl.addEventListener('mouseup', this.onMouseUp, false);
+    canvasEl.addEventListener('mouseout', this.onMouseUp, false);
+
+    if (data.pointerlockEnabled) {
+      document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
+      document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
+      document.addEventListener('pointerlockerror', this.onPointerLockError, false);
+    }
+  },
+
+  removeEventListeners: function () {
+    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
+    if (canvasEl) {
+      canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
+      canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
+      canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
+      canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
+    }
+    document.removeEventListener('pointerlockchange', this.onPointerLockChange, false);
+    document.removeEventListener('mozpointerlockchange', this.onPointerLockChange, false);
+    document.removeEventListener('pointerlockerror', this.onPointerLockError, false);
+  },
+
+  isRotationActive: function () {
+    return this.data.enabled && (this.mouseDown || this.pointerLocked);
+  },
+
+  /**
+   * Returns the sum of all mouse movement since last call.
+   */
+  getRotationDelta: function () {
+    var dRotation = this.lookVector.clone().multiplyScalar(this.data.sensitivity);
+    this.lookVector.set(0, 0);
+    return dRotation;
+  },
+
+  onMouseMove: function (event) {
+    var previousMouseEvent = this.previousMouseEvent;
+
+    if (!this.data.enabled || !(this.mouseDown || this.pointerLocked)) {
+      return;
+    }
+
+    var movementX = event.movementX || event.mozMovementX || 0;
+    var movementY = event.movementY || event.mozMovementY || 0;
+
+    if (!this.pointerLocked) {
+      movementX = event.screenX - previousMouseEvent.screenX;
+      movementY = event.screenY - previousMouseEvent.screenY;
+    }
+
+    this.lookVector.x += movementX;
+    this.lookVector.y += movementY;
+
+    this.previousMouseEvent = event;
+  },
+
+  onMouseDown: function (event) {
+    var canvasEl = this.el.sceneEl.canvas;
+
+    this.mouseDown = true;
+    this.previousMouseEvent = event;
+
+    if (this.data.pointerlockEnabled && !this.pointerLocked) {
+      if (canvasEl.requestPointerLock) {
+        canvasEl.requestPointerLock();
+      } else if (canvasEl.mozRequestPointerLock) {
+        canvasEl.mozRequestPointerLock();
+      }
+    }
+  },
+
+  onMouseUp: function () {
+    this.mouseDown = false;
+  },
+
+  onPointerLockChange: function () {
+    this.pointerLocked = !!(document.pointerLockElement || document.mozPointerLockElement);
+  },
+
+  onPointerLockError: function () {
+    this.pointerLocked = false;
+  }
+};
+
+},{}],84:[function(require,module,exports){
+module.exports = {
+  schema: {
+    enabled: { default: true }
+  },
+
+  init: function () {
+    this.dVelocity = new THREE.Vector3();
+    this.bindMethods();
+  },
+
+  play: function () {
+    this.addEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+    this.dVelocity.set(0, 0, 0);
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  addEventListeners: function () {
+    var sceneEl = this.el.sceneEl;
+    var canvasEl = sceneEl.canvas;
+
+    if (!canvasEl) {
+      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
+      return;
+    }
+
+    canvasEl.addEventListener('touchstart', this.onTouchStart);
+    canvasEl.addEventListener('touchend', this.onTouchEnd);
+  },
+
+  removeEventListeners: function () {
+    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
+    if (!canvasEl) { return; }
+
+    canvasEl.removeEventListener('touchstart', this.onTouchStart);
+    canvasEl.removeEventListener('touchend', this.onTouchEnd);
+  },
+
+  isVelocityActive: function () {
+    return this.data.enabled && this.isMoving;
+  },
+
+  getVelocityDelta: function () {
+    this.dVelocity.z = this.isMoving ? -1 : 0;
+    return this.dVelocity.clone();
+  },
+
+  bindMethods: function () {
+    this.onTouchStart = this.onTouchStart.bind(this);
+    this.onTouchEnd = this.onTouchEnd.bind(this);
+  },
+
+  onTouchStart: function (e) {
+    this.isMoving = true;
+    e.preventDefault();
+  },
+
+  onTouchEnd: function (e) {
+    this.isMoving = false;
+    e.preventDefault();
+  }
+};
+
+},{}],85:[function(require,module,exports){
+/**
+ * Universal Controls
+ *
+ * @author Don McCurdy <dm@donmccurdy.com>
+ */
+
+var COMPONENT_SUFFIX = '-controls',
+    MAX_DELTA = 0.2, // ms
+    PI_2 = Math.PI / 2;
+
+module.exports = {
+
+  /*******************************************************************
+   * Schema
+   */
+
+  dependencies: ['velocity', 'rotation'],
+
+  schema: {
+    enabled:              { default: true },
+    movementEnabled:      { default: true },
+    movementControls:     { default: ['gamepad', 'keyboard', 'touch', 'hmd'] },
+    rotationEnabled:      { default: true },
+    rotationControls:     { default: ['hmd', 'gamepad', 'mouse'] },
+    movementSpeed:        { default: 5 }, // m/s
+    movementEasing:       { default: 15 }, // m/s2
+    movementAcceleration: { default: 80 }, // m/s2
+    rotationSensitivity:  { default: 0.05 }, // radians/frame, ish
+    fly:                  { default: false }
+  },
+
+  /*******************************************************************
+   * Lifecycle
+   */
+
+  init: function () {
+    var rotation = this.el.getAttribute('rotation');
+
+    // Movement
+    this.velocity = new THREE.Vector3();
+
+    // Rotation
+    this.pitch = new THREE.Object3D();
+    this.pitch.rotation.x = THREE.Math.degToRad(rotation.x);
+    this.yaw = new THREE.Object3D();
+    this.yaw.position.y = 10;
+    this.yaw.rotation.y = THREE.Math.degToRad(rotation.y);
+    this.yaw.add(this.pitch);
+    this.heading = new THREE.Euler(0, 0, 0, 'YXZ');
+
+    if (this.el.sceneEl.hasLoaded) {
+      this.injectControls();
+    } else {
+      this.el.sceneEl.addEventListener('loaded', this.injectControls.bind(this));
+    }
+  },
+
+  update: function () {
+    if (this.el.sceneEl.hasLoaded) {
+      this.injectControls();
+    }
+  },
+
+  injectControls: function () {
+    var i, name,
+        data = this.data;
+
+    for (i = 0; i < data.movementControls.length; i++) {
+      name = data.movementControls[i] + COMPONENT_SUFFIX;
+      if (!this.el.components[name]) {
+        this.el.setAttribute(name, '');
+      }
+    }
+
+    for (i = 0; i < data.rotationControls.length; i++) {
+      name = data.rotationControls[i] + COMPONENT_SUFFIX;
+      if (!this.el.components[name]) {
+        this.el.setAttribute(name, '');
+      }
+    }
+  },
+
+  /*******************************************************************
+   * Tick
+   */
+
+  tick: function (t, dt) {
+    if (!dt) { return; }
+
+    // Update rotation.
+    if (this.data.rotationEnabled) this.updateRotation(dt);
+
+    // Update velocity. If FPS is too low, reset.
+    if (this.data.movementEnabled && dt / 1000 > MAX_DELTA) {
+      this.velocity.set(0, 0, 0);
+      this.el.setAttribute('velocity', this.velocity);
+    } else {
+      this.updateVelocity(dt);
+    }
+  },
+
+  /*******************************************************************
+   * Rotation
+   */
+
+  updateRotation: function (dt) {
+    var control, dRotation,
+        data = this.data;
+
+    for (var i = 0, l = data.rotationControls.length; i < l; i++) {
+      control = this.el.components[data.rotationControls[i] + COMPONENT_SUFFIX];
+      if (control && control.isRotationActive()) {
+        if (control.getRotationDelta) {
+          dRotation = control.getRotationDelta(dt);
+          dRotation.multiplyScalar(data.rotationSensitivity);
+          this.yaw.rotation.y -= dRotation.x;
+          this.pitch.rotation.x -= dRotation.y;
+          this.pitch.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitch.rotation.x));
+          this.el.setAttribute('rotation', {
+            x: THREE.Math.radToDeg(this.pitch.rotation.x),
+            y: THREE.Math.radToDeg(this.yaw.rotation.y),
+            z: 0
+          });
+        } else if (control.getRotation) {
+          this.el.setAttribute('rotation', control.getRotation());
+        } else {
+          throw new Error('Incompatible rotation controls: %s', data.rotationControls[i]);
+        }
+        break;
+      }
+    }
+  },
+
+  /*******************************************************************
+   * Movement
+   */
+
+  updateVelocity: function (dt) {
+    var control, dVelocity,
+        velocity = this.velocity,
+        data = this.data;
+
+    if (data.movementEnabled) {
+      for (var i = 0, l = data.movementControls.length; i < l; i++) {
+        control = this.el.components[data.movementControls[i] + COMPONENT_SUFFIX];
+        if (control && control.isVelocityActive()) {
+          if (control.getVelocityDelta) {
+            dVelocity = control.getVelocityDelta(dt);
+          } else if (control.getVelocity) {
+            this.el.setAttribute('velocity', control.getVelocity());
+            return;
+          } else if (control.getPositionDelta) {
+            velocity.copy(control.getPositionDelta(dt).multiplyScalar(1000 / dt));
+            this.el.setAttribute('velocity', velocity);
+            return;
+          } else {
+            throw new Error('Incompatible movement controls: ', data.movementControls[i]);
+          }
+          break;
+        }
+      }
+    }
+
+    velocity.copy(this.el.getAttribute('velocity'));
+    velocity.x -= velocity.x * data.movementEasing * dt / 1000;
+    velocity.z -= velocity.z * data.movementEasing * dt / 1000;
+
+    if (dVelocity && data.movementEnabled) {
+      // Set acceleration
+      if (dVelocity.length() > 1) {
+        dVelocity.setLength(this.data.movementAcceleration * dt / 1000);
+      } else {
+        dVelocity.multiplyScalar(this.data.movementAcceleration * dt / 1000);
+      }
+
+      // Rotate to heading
+      var rotation = this.el.getAttribute('rotation');
+      if (rotation) {
+        this.heading.set(
+          data.fly ? THREE.Math.degToRad(rotation.x) : 0,
+          THREE.Math.degToRad(rotation.y),
+          0
+        );
+        dVelocity.applyEuler(this.heading);
+      }
+
+      velocity.add(dVelocity);
+
+      // TODO - Several issues here:
+      // (1) Interferes w/ gravity.
+      // (2) Interferes w/ jumping.
+      // (3) Likely to interfere w/ relative position to moving platform.
+      // if (velocity.length() > data.movementSpeed) {
+      //   velocity.setLength(data.movementSpeed);
+      // }
+    }
+
+    this.el.setAttribute('velocity', velocity);
+  }
+};
+
+},{}],86:[function(require,module,exports){
+var DEFAULT_CLIP = '__auto__';
+
+/**
+ * animation-mixer
+ *
+ * Player for animation clips. Intended to be compatible with any model format that supports
+ * skeletal or morph animations.
+ */
+module.exports = {
+  schema: {
+    clip:  {default: DEFAULT_CLIP},
+    duration: {default: 0}
+  },
+
+  init: function () {
+    this.model =        /* {THREE.Mesh}            */ null;
+    this.mixer =        /* {THREE.AnimationMixer}  */ null;
+    this.activeAction = /* {THREE.AnimationAction} */ null;
+
+    var model = this.el.getObject3D('mesh');
+
+    if (model) {
+      this.load(model);
+    } else {
+      this.el.addEventListener('model-loaded', function(e) {
+        this.load(e.detail.model);
+      }.bind(this));
+    }
+  },
+
+  load: function (model) {
+    this.model = model;
+    this.mixer = new THREE.AnimationMixer(model);
+    if (this.data.clip) this.update({});
+  },
+
+  remove: function () {
+    if (this.mixer) this.mixer.stopAllAction();
+  },
+
+  update: function (previousData) {
+    if (!previousData) return;
+
+    var data = this.data;
+
+    if (data.clip !== previousData.clip) {
+      if (this.activeAction) this.activeAction.stop();
+      if (data.clip) this.playClip(data.clip);
+    }
+
+    if (!this.activeAction) return;
+
+    if (data.duration) {
+      this.activeAction.setDuration(data.duration);
+    }
+  },
+
+  playClip: function (clipName) {
+    if (!this.mixer) return;
+
+    var clip,
+        data = this.data,
+        model = this.model,
+        animations = model.animations || (model.geometry || {}).animations || [];
+
+    if (!animations.length) { return; }
+
+    clip = clipName === DEFAULT_CLIP
+      ? animations[0]
+      : THREE.AnimationClip.findByName(animations, data.clip);
+
+    if (!clip) {
+      console.error('[animation-mixer] Clip "%s" not found.', data.clip);
+      return;
+    }
+
+    this.activeAction = this.mixer.clipAction(clip, model);
+    this.activeAction.play();
+  },
+
+  tick: function (t, dt) {
+    if (this.mixer && !isNaN(dt)) this.mixer.update(dt / 1000);
+  }
+};
+
+},{}],87:[function(require,module,exports){
+THREE.FBXLoader = require('../../lib/FBXLoader');
+
+/**
+ * fbx-model
+ *
+ * Loader for FBX format. Supports ASCII, but *not* binary, models.
+ */
+module.exports = {
+  schema: {
+    src:         { type: 'asset' },
+    crossorigin: { default: '' }
+  },
+
+  init: function () {
+    this.model = null;
+  },
+
+  update: function () {
+    var loader,
+        data = this.data;
+    if (!data.src) return;
+
+    this.remove();
+    loader = new THREE.FBXLoader();
+    if (data.crossorigin) loader.setCrossOrigin(data.crossorigin);
+    loader.load(data.src, this.load.bind(this));
+  },
+
+  load: function (model) {
+    this.model = model;
+    this.el.setObject3D('mesh', model);
+    this.el.emit('model-loaded', {format: 'fbx', model: model});
+  },
+
+  remove: function () {
+    if (this.model) this.el.removeObject3D('mesh');
+  }
+};
+
+},{"../../lib/FBXLoader":3}],88:[function(require,module,exports){
+module.exports = {
+  'animation-mixer': require('./animation-mixer'),
+  'fbx-model': require('./fbx-model'),
+  'json-model': require('./json-model'),
+  'object-model': require('./object-model'),
+  'ply-model': require('./ply-model'),
+  'three-model': require('./three-model'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    // THREE.AnimationMixer
+    if (!AFRAME.components['animation-mixer']) {
+      AFRAME.registerComponent('animation-mixer', this['animation-mixer']);
+    }
+
+    // THREE.PlyLoader
+    if (!AFRAME.systems['ply-model']) {
+      AFRAME.registerSystem('ply-model', this['ply-model'].System);
+    }
+    if (!AFRAME.components['ply-model']) {
+      AFRAME.registerComponent('ply-model', this['ply-model'].Component);
+    }
+
+    // THREE.FBXLoader
+    if (!AFRAME.components['fbx-model']) {
+      AFRAME.registerComponent('fbx-model', this['fbx-model']);
+    }
+
+    // THREE.JsonLoader
+    if (!AFRAME.components['json-model']) {
+      AFRAME.registerComponent('json-model', this['json-model']);
+    }
+
+    // THREE.ObjectLoader
+    if (!AFRAME.components['object-model']) {
+      AFRAME.registerComponent('object-model', this['object-model']);
+    }
+
+    // (deprecated) THREE.JsonLoader and THREE.ObjectLoader
+    if (!AFRAME.components['three-model']) {
+      AFRAME.registerComponent('three-model', this['three-model']);
+    }
+
+    this._registered = true;
+  }
+};
+
+},{"./animation-mixer":86,"./fbx-model":87,"./json-model":89,"./object-model":90,"./ply-model":91,"./three-model":92}],89:[function(require,module,exports){
+/**
+ * json-model
+ *
+ * Loader for THREE.js JSON format. Somewhat confusingly, there are two different THREE.js formats,
+ * both having the .json extension. This loader supports only THREE.JsonLoader, which typically
+ * includes only a single mesh.
+ *
+ * Check the console for errors, if in doubt. You may need to use `object-model` or
+ * `blend-character-model` for some .js and .json files.
+ *
+ * See: https://clara.io/learn/user-guide/data_exchange/threejs_export
+ */
+module.exports = {
+  schema: {
+    src:         { type: 'asset' },
+    crossorigin: { default: '' }
+  },
+
+  init: function () {
+    this.model = null;
+  },
+
+  update: function () {
+    var loader,
+        data = this.data;
+    if (!data.src) return;
+
+    this.remove();
+    loader = new THREE.JSONLoader();
+    if (data.crossorigin) loader.crossOrigin = data.crossorigin;
+    loader.load(data.src, function (geometry, materials) {
+
+      // Attempt to automatically detect common material options.
+      materials.forEach(function (mat) {
+        mat.vertexColors = (geometry.faces[0] || {}).color ? THREE.FaceColors : THREE.NoColors;
+        mat.skinning = !!(geometry.bones || []).length;
+        mat.morphTargets = !!(geometry.morphTargets || []).length;
+        mat.morphNormals = !!(geometry.morphNormals || []).length;
+      });
+
+      var model = (geometry.bones || []).length
+        ? new THREE.SkinnedMesh(geometry, new THREE.MultiMaterial(materials))
+        : new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+
+      this.load(model);
+    }.bind(this));
+  },
+
+  load: function (model) {
+    this.model = model;
+    this.el.setObject3D('mesh', model);
+    this.el.emit('model-loaded', {format: 'json', model: model});
+  },
+
+  remove: function () {
+    if (this.model) this.el.removeObject3D('mesh');
+  }
+};
+
+},{}],90:[function(require,module,exports){
+/**
+ * object-model
+ *
+ * Loader for THREE.js JSON format. Somewhat confusingly, there are two different THREE.js formats,
+ * both having the .json extension. This loader supports only THREE.ObjectLoader, which typically
+ * includes multiple meshes or an entire scene.
+ *
+ * Check the console for errors, if in doubt. You may need to use `json-model` or
+ * `blend-character-model` for some .js and .json files.
+ *
+ * See: https://clara.io/learn/user-guide/data_exchange/threejs_export
+ */
+module.exports = {
+  schema: {
+    src:         { type: 'asset' },
+    crossorigin: { default: '' }
+  },
+
+  init: function () {
+    this.model = null;
+  },
+
+  update: function () {
+    var loader,
+        data = this.data;
+    if (!data.src) return;
+
+    this.remove();
+    loader = new THREE.ObjectLoader();
+    if (data.crossorigin) loader.setCrossOrigin(data.crossorigin);
+    loader.load(data.src, function(object) {
+
+      // Enable skinning, if applicable.
+      object.traverse(function(o) {
+        if (o instanceof THREE.SkinnedMesh && o.material) {
+          o.material.skinning = !!((o.geometry && o.geometry.bones) || []).length;
+        }
+      });
+
+      this.load(object);
+    }.bind(this));
+  },
+
+  load: function (model) {
+    this.model = model;
+    this.el.setObject3D('mesh', model);
+    this.el.emit('model-loaded', {format: 'json', model: model});
+  },
+
+  remove: function () {
+    if (this.model) this.el.removeObject3D('mesh');
+  }
+};
+
+},{}],91:[function(require,module,exports){
+/**
+ * ply-model
+ *
+ * Wraps THREE.PLYLoader.
+ */
+THREE.PLYLoader = require('../../lib/PLYLoader');
+
+/**
+ * Loads, caches, resolves geometries.
+ *
+ * @member cache - Promises that resolve geometries keyed by `src`.
+ */
+module.exports.System = {
+  init: function () {
+    this.cache = {};
+  },
+
+  /**
+   * @returns {Promise}
+   */
+  getOrLoadGeometry: function (src, skipCache) {
+    var cache = this.cache;
+    var cacheItem = cache[src];
+
+    if (!skipCache && cacheItem) {
+      return cacheItem;
+    }
+
+    cache[src] = new Promise(function (resolve) {
+      var loader = new THREE.PLYLoader();
+      loader.load(src, function (geometry) {
+        resolve(geometry);
+      });
+    });
+    return cache[src];
+  },
+};
+
+module.exports.Component = {
+  schema: {
+    skipCache: {type: 'boolean', default: false},
+    src: {type: 'asset'}
+  },
+
+  init: function () {
+    this.model = null;
+  },
+
+  update: function () {
+    var data = this.data;
+    var el = this.el;
+    var loader;
+
+    if (!data.src) {
+      console.warn('[%s] `src` property is required.', this.name);
+      return;
+    }
+
+    // Get geometry from system, create and set mesh.
+    this.system.getOrLoadGeometry(data.src, data.skipCache).then(function (geometry) {
+      var model = createModel(geometry);
+      el.setObject3D('mesh', model);
+      el.emit('model-loaded', {format: 'ply', model: model});
+    });
+  },
+
+  remove: function () {
+    if (this.model) { this.el.removeObject3D('mesh'); }
+  }
+};
+
+function createModel (geometry) {
+  return new THREE.Mesh(geometry, new THREE.MeshPhongMaterial({
+    color: 0xFFFFFF,
+    shading: THREE.FlatShading,
+    vertexColors: THREE.VertexColors,
+    shininess: 0
+  }));
+}
+
+},{"../../lib/PLYLoader":6}],92:[function(require,module,exports){
+var DEFAULT_ANIMATION = '__auto__';
+
+/**
+ * three-model
+ *
+ * Loader for THREE.js JSON format. Somewhat confusingly, there are two
+ * different THREE.js formats, both having the .json extension. This loader
+ * supports both, but requires you to specify the mode as "object" or "json".
+ *
+ * Typically, you will use "json" for a single mesh, and "object" for a scene
+ * or multiple meshes. Check the console for errors, if in doubt.
+ *
+ * See: https://clara.io/learn/user-guide/data_exchange/threejs_export
+ */
+module.exports = {
+  deprecated: true,
+
+  schema: {
+    src:               { type: 'asset' },
+    loader:            { default: 'object', oneOf: ['object', 'json'] },
+    enableAnimation:   { default: true },
+    animation:         { default: DEFAULT_ANIMATION },
+    animationDuration: { default: 0 },
+    crossorigin:       { default: '' }
+  },
+
+  init: function () {
+    this.model = null;
+    this.mixer = null;
+    console.warn('[three-model] Component is deprecated. Use json-model or object-model instead.');
+  },
+
+  update: function (previousData) {
+    previousData = previousData || {};
+
+    var loader,
+        data = this.data;
+
+    if (!data.src) {
+      this.remove();
+      return;
+    }
+
+    // First load.
+    if (!Object.keys(previousData).length) {
+      this.remove();
+      if (data.loader === 'object') {
+        loader = new THREE.ObjectLoader();
+        if (data.crossorigin) loader.setCrossOrigin(data.crossorigin);
+        loader.load(data.src, function(loaded) {
+          loaded.traverse( function(object) {
+            if (object instanceof THREE.SkinnedMesh)
+              loaded = object;
+          });
+          if(loaded.material)
+            loaded.material.skinning = !!((loaded.geometry && loaded.geometry.bones) || []).length;
+          this.load(loaded);
+        }.bind(this));
+      } else if (data.loader === 'json') {
+        loader = new THREE.JSONLoader();
+        if (data.crossorigin) loader.crossOrigin = data.crossorigin;
+        loader.load(data.src, function (geometry, materials) {
+
+          // Attempt to automatically detect common material options.
+          materials.forEach(function (mat) {
+            mat.vertexColors = (geometry.faces[0] || {}).color ? THREE.FaceColors : THREE.NoColors;
+            mat.skinning = !!(geometry.bones || []).length;
+            mat.morphTargets = !!(geometry.morphTargets || []).length;
+            mat.morphNormals = !!(geometry.morphNormals || []).length;
+          });
+
+          var mesh = (geometry.bones || []).length
+            ? new THREE.SkinnedMesh(geometry, new THREE.MultiMaterial(materials))
+            : new THREE.Mesh(geometry, new THREE.MultiMaterial(materials));
+
+          this.load(mesh);
+        }.bind(this));
+      } else {
+        throw new Error('[three-model] Invalid mode "%s".', data.mode);
+      }
+      return;
+    }
+
+    var activeAction = this.model && this.model.activeAction;
+
+    if (data.animation !== previousData.animation) {
+      if (activeAction) activeAction.stop();
+      this.playAnimation();
+      return;
+    }
+
+    if (activeAction && data.enableAnimation !== activeAction.isRunning()) {
+      data.enableAnimation ? this.playAnimation() : activeAction.stop();
+    }
+
+    if (activeAction && data.animationDuration) {
+        activeAction.setDuration(data.animationDuration);
+    }
+  },
+
+  load: function (model) {
+    this.model = model;
+    this.mixer = new THREE.AnimationMixer(this.model);
+    this.el.setObject3D('mesh', model);
+    this.el.emit('model-loaded', {format: 'three', model: model});
+
+    if (this.data.enableAnimation) this.playAnimation();
+  },
+
+  playAnimation: function () {
+    var clip,
+        data = this.data,
+        animations = this.model.animations || this.model.geometry.animations || [];
+
+    if (!data.enableAnimation || !data.animation || !animations.length) {
+      return;
+    }
+
+    clip = data.animation === DEFAULT_ANIMATION
+      ? animations[0]
+      : THREE.AnimationClip.findByName(animations, data.animation);
+
+    if (!clip) {
+      console.error('[three-model] Animation "%s" not found.', data.animation);
+      return;
+    }
+
+    this.model.activeAction = this.mixer.clipAction(clip, this.model);
+    if (data.animationDuration) {
+      this.model.activeAction.setDuration(data.animationDuration);
+    }
+    this.model.activeAction.play();
+  },
+
+  remove: function () {
+    if (this.mixer) this.mixer.stopAllAction();
+    if (this.model) this.el.removeObject3D('mesh');
+  },
+
+  tick: function (t, dt) {
+    if (this.mixer && !isNaN(dt)) {
+      this.mixer.update(dt / 1000);
+    }
+  }
+};
+
+},{}],93:[function(require,module,exports){
+module.exports = {
+  schema: {
+    defaultRotation: {type: 'vec3'},
+    enableDefaultRotation: {default: false}
+  },
+
+  init: function () {
+    this.active = false;
+    this.targetEl = null;
+    this.fire = this.fire.bind(this);
+  },
+
+  play: function () { this.el.addEventListener('click', this.fire); },
+  pause: function () { this.el.addEventListener('click', this.fire); },
+  remove: function () { this.pause(); },
+
+  fire: function () {
+    var targetEl = this.el.sceneEl.querySelector('[checkpoint-controls]');
+    if (!targetEl) {
+      throw new Error('No `checkpoint-controls` component found.');
+    }
+    targetEl.components['checkpoint-controls'].setCheckpoint(this.el);
+  }
+};
+
+},{}],94:[function(require,module,exports){
+/**
+ * Based on aframe/examples/showcase/tracked-controls.
+ *
+ * Handles events coming from the hand-controls.
+ * Determines if the entity is grabbed or released.
+ * Updates its position to move along the controller.
+ */
+module.exports = {
+  init: function () {
+    this.GRABBED_STATE = 'grabbed';
+
+    this.grabbing = false;
+    this.hitEl =      /** @type {AFRAME.Element}    */ null;
+    this.physics =    /** @type {AFRAME.System}     */ this.el.sceneEl.systems.physics;
+    this.constraint = /** @type {CANNON.Constraint} */ null;
+
+    // Bind event handlers
+    this.onHit = this.onHit.bind(this);
+    this.onGripOpen = this.onGripOpen.bind(this);
+    this.onGripClose = this.onGripClose.bind(this);
+  },
+
+  play: function () {
+    var el = this.el;
+    el.addEventListener('hit', this.onHit);
+    el.addEventListener('gripdown', this.onGripClose);
+    el.addEventListener('gripup', this.onGripOpen);
+    el.addEventListener('trackpaddown', this.onGripClose);
+    el.addEventListener('trackpadup', this.onGripOpen);
+    el.addEventListener('triggerdown', this.onGripClose);
+    el.addEventListener('triggerup', this.onGripOpen);
+  },
+
+  pause: function () {
+    var el = this.el;
+    el.removeEventListener('hit', this.onHit);
+    el.removeEventListener('gripdown', this.onGripClose);
+    el.removeEventListener('gripup', this.onGripOpen);
+    el.removeEventListener('trackpaddown', this.onGripClose);
+    el.removeEventListener('trackpadup', this.onGripOpen);
+    el.removeEventListener('triggerdown', this.onGripClose);
+    el.removeEventListener('triggerup', this.onGripOpen);
+  },
+
+  onGripClose: function (evt) {
+    this.grabbing = true;
+  },
+
+  onGripOpen: function (evt) {
+    var hitEl = this.hitEl;
+    this.grabbing = false;
+    if (!hitEl) { return; }
+    hitEl.removeState(this.GRABBED_STATE);
+    this.hitEl = undefined;
+    this.physics.world.removeConstraint(this.constraint);
+    this.constraint = null;
+  },
+
+  onHit: function (evt) {
+    var hitEl = evt.detail.el;
+    // If the element is already grabbed (it could be grabbed by another controller).
+    // If the hand is not grabbing the element does not stick.
+    // If we're already grabbing something you can't grab again.
+    if (!hitEl || hitEl.is(this.GRABBED_STATE) || !this.grabbing || this.hitEl) { return; }
+    hitEl.addState(this.GRABBED_STATE);
+    this.hitEl = hitEl;
+    this.constraint = new CANNON.LockConstraint(this.el.body, hitEl.body);
+    this.physics.world.addConstraint(this.constraint);
+  }
+};
+
+},{}],95:[function(require,module,exports){
+var physics = require('aframe-physics-system');
+
+module.exports = {
+  'checkpoint':      require('./checkpoint'),
+  'grab':            require('./grab'),
+  'jump-ability':    require('./jump-ability'),
+  'kinematic-body':  require('./kinematic-body'),
+  'sphere-collider': require('./sphere-collider'),
+  'toggle-velocity': require('./toggle-velocity'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    physics.registerAll();
+    if (!AFRAME.components['checkpoint'])      AFRAME.registerComponent('checkpoint',      this['checkpoint']);
+    if (!AFRAME.components['grab'])            AFRAME.registerComponent('grab',            this['grab']);
+    if (!AFRAME.components['jump-ability'])    AFRAME.registerComponent('jump-ability',    this['jump-ability']);
+    if (!AFRAME.components['kinematic-body'])  AFRAME.registerComponent('kinematic-body',  this['kinematic-body']);
+    if (!AFRAME.components['sphere-collider']) AFRAME.registerComponent('sphere-collider', this['sphere-collider']);
+    if (!AFRAME.components['toggle-velocity']) AFRAME.registerComponent('toggle-velocity', this['toggle-velocity']);
+
+    this._registered = true;
+  }
+};
+
+},{"./checkpoint":93,"./grab":94,"./jump-ability":96,"./kinematic-body":97,"./sphere-collider":98,"./toggle-velocity":99,"aframe-physics-system":8}],96:[function(require,module,exports){
+var ACCEL_G = -9.8, // m/s^2
+    EASING = -15; // m/s^2
+
+/**
+ * Jump ability.
+ */
+module.exports = {
+  dependencies: ['velocity'],
+
+  /* Schema
+  ——————————————————————————————————————————————*/
+
+  schema: {
+    on: { default: 'keydown:Space gamepadbuttondown:0' },
+    playerHeight: { default: 1.764 },
+    maxJumps: { default: 1 },
+    distance: { default: 5 },
+    soundJump: { default: '' },
+    soundLand: { default: '' },
+    debug: { default: false }
+  },
+
+  init: function () {
+    this.velocity = 0;
+    this.numJumps = 0;
+
+    var beginJump = this.beginJump.bind(this),
+        events = this.data.on.split(' ');
+    this.bindings = {};
+    for (var i = 0; i <  events.length; i++) {
+      this.bindings[events[i]] = beginJump;
+      this.el.addEventListener(events[i], beginJump);
+    }
+    this.bindings.collide = this.onCollide.bind(this);
+    this.el.addEventListener('collide', this.bindings.collide);
+  },
+
+  remove: function () {
+    for (var event in this.bindings) {
+      if (this.bindings.hasOwnProperty(event)) {
+        this.el.removeEventListener(event, this.bindings[event]);
+        delete this.bindings[event];
+      }
+    }
+    this.el.removeEventListener('collide', this.bindings.collide);
+    delete this.bindings.collide;
+  },
+
+  beginJump: function () {
+    if (this.numJumps < this.data.maxJumps) {
+      var data = this.data,
+          initialVelocity = Math.sqrt(-2 * data.distance * (ACCEL_G + EASING)),
+          v = this.el.getAttribute('velocity');
+      this.el.setAttribute('velocity', {x: v.x, y: initialVelocity, z: v.z});
+      this.numJumps++;
+    }
+  },
+
+  onCollide: function () {
+    this.numJumps = 0;
+  }
+};
+
+},{}],97:[function(require,module,exports){
+/**
+ * Kinematic body.
+ *
+ * Managed dynamic body, which moves but is not affected (directly) by the
+ * physics engine. This is not a true kinematic body, in the sense that we are
+ * letting the physics engine _compute_ collisions against it and selectively
+ * applying those collisions to the object. The physics engine does not decide
+ * the position/velocity/rotation of the element.
+ *
+ * Used for the camera object, because full physics simulation would create
+ * movement that feels unnatural to the player. Bipedal movement does not
+ * translate nicely to rigid body physics.
+ *
+ * See: http://www.learn-cocos2d.com/2013/08/physics-engine-platformer-terrible-idea/
+ * And: http://oxleygamedev.blogspot.com/2011/04/player-physics-part-2.html
+ */
+var CANNON = window.CANNON;
+var EPS = 0.000001;
+
+module.exports = {
+  dependencies: ['velocity'],
+
+  /*******************************************************************
+   * Schema
+   */
+
+  schema: {
+    mass:           { default: 5 },
+    radius:         { default: 1.3 },
+    height:         { default: 1.764 },
+    linearDamping:  { default: 0.05 },
+    enableSlopes:   { default: true }
+  },
+
+  /*******************************************************************
+   * Lifecycle
+   */
+
+  init: function () {
+    this.system = this.el.sceneEl.systems.physics;
+    this.system.addBehavior(this, this.system.Phase.SIMULATE);
+
+    var el = this.el,
+        data = this.data,
+        position = (new CANNON.Vec3()).copy(el.getAttribute('position'));
+
+    this.body = new CANNON.Body({
+      material: this.system.material,
+      position: position,
+      mass: data.mass,
+      linearDamping: data.linearDamping,
+      fixedRotation: true
+    });
+    this.body.addShape(
+      new CANNON.Sphere(data.radius),
+      new CANNON.Vec3(0, data.radius - data.height, 0)
+    );
+
+    this.body.el = this.el;
+    this.el.body = this.body;
+    this.system.addBody(this.body);
+  },
+
+  remove: function () {
+    this.system.removeBody(this.body);
+    this.system.removeBehavior(this, this.system.Phase.SIMULATE);
+    delete this.el.body;
+  },
+
+  /*******************************************************************
+   * Tick
+   */
+
+  /**
+   * Checks CANNON.World for collisions and attempts to apply them to the
+   * element automatically, in a player-friendly way.
+   *
+   * There's extra logic for horizontal surfaces here. The basic requirements:
+   * (1) Only apply gravity when not in contact with _any_ horizontal surface.
+   * (2) When moving, project the velocity against exactly one ground surface.
+   *     If in contact with two ground surfaces (e.g. ground + ramp), choose
+   *     the one that collides with current velocity, if any.
+   */
+  step: (function () {
+    var velocity = new THREE.Vector3(),
+        normalizedVelocity = new THREE.Vector3(),
+        currentSurfaceNormal = new THREE.Vector3(),
+        groundNormal = new THREE.Vector3();
+
+    return function (t, dt) {
+      if (!dt) return;
+
+      var body = this.body,
+          data = this.data,
+          didCollide = false,
+          height, groundHeight = -Infinity,
+          groundBody;
+
+      dt = Math.min(dt, this.system.data.maxInterval * 1000);
+
+      groundNormal.set(0, 0, 0);
+      velocity.copy(this.el.getAttribute('velocity'));
+      body.velocity.copy(velocity);
+      body.position.copy(this.el.getAttribute('position'));
+
+      for (var i = 0, contact; (contact = this.system.world.contacts[i]); i++) {
+        // 1. Find any collisions involving this element. Get the contact
+        // normal, and make sure it's oriented _out_ of the other object.
+        if (body.id === contact.bi.id) {
+          contact.ni.negate(currentSurfaceNormal);
+        } else if (body.id === contact.bj.id) {
+          currentSurfaceNormal.copy(contact.ni);
+        } else {
+          continue;
+        }
+
+        didCollide = body.velocity.dot(currentSurfaceNormal) < -EPS;
+        if (didCollide && currentSurfaceNormal.y <= 0.5) {
+          // 2. If current trajectory attempts to move _through_ another
+          // object, project the velocity against the collision plane to
+          // prevent passing through.
+          velocity = velocity.projectOnPlane(currentSurfaceNormal);
+        } else if (currentSurfaceNormal.y > 0.5) {
+          // 3. If in contact with something roughly horizontal (+/- 45º) then
+          // consider that the current ground. Only the highest qualifying
+          // ground is retained.
+          height = body.id === contact.bi.id
+            ? Math.abs(contact.rj.y + contact.bj.position.y)
+            : Math.abs(contact.ri.y + contact.bi.position.y);
+          if (height > groundHeight) {
+            groundHeight = height;
+            groundNormal.copy(currentSurfaceNormal);
+            groundBody = body.id === contact.bi.id ? contact.bj : contact.bi;
+          }
+        }
+      }
+
+      normalizedVelocity.copy(velocity).normalize();
+      if (groundBody && normalizedVelocity.y < 0.5) {
+        if (!data.enableSlopes) {
+          groundNormal.set(0, 1, 0);
+        } else if (groundNormal.y < 1 - EPS) {
+          groundNormal.copy(this.raycastToGround(groundBody, groundNormal));
+        }
+
+        // 4. Project trajectory onto the top-most ground object, unless
+        // trajectory is > 45º.
+        velocity = velocity.projectOnPlane(groundNormal);
+      } else {
+        // 5. If not in contact with anything horizontal, apply world gravity.
+        // TODO - Why is the 4x scalar necessary.
+        velocity.add(this.system.world.gravity.scale(dt * 4.0 / 1000));
+      }
+
+      // 6. If the ground surface has a velocity, apply it directly to current
+      // position, not velocity, to preserve relative velocity.
+      if (groundBody && groundBody.el && groundBody.el.components.velocity) {
+        var groundVelocity = groundBody.el.getAttribute('velocity');
+        body.position.copy({
+          x: body.position.x + groundVelocity.x * dt / 1000,
+          y: body.position.y + groundVelocity.y * dt / 1000,
+          z: body.position.z + groundVelocity.z * dt / 1000
+        });
+        this.el.setAttribute('position', body.position);
+      }
+
+      body.velocity.copy(velocity);
+      this.el.setAttribute('velocity', velocity);
+    };
+  }()),
+
+  /**
+   * When walking on complex surfaces (trimeshes, borders between two shapes),
+   * the collision normals returned for the player sphere can be very
+   * inconsistent. To address this, raycast straight down, find the collision
+   * normal, and return whichever normal is more vertical.
+   * @param  {CANNON.Body} groundBody
+   * @param  {CANNON.Vec3} groundNormal
+   * @return {CANNON.Vec3}
+   */
+  raycastToGround: function (groundBody, groundNormal) {
+    var ray,
+        hitNormal,
+        vFrom = this.body.position,
+        vTo = this.body.position.clone();
+
+    vTo.y -= this.data.height;
+    ray = new CANNON.Ray(vFrom, vTo);
+    ray._updateDirection(); // TODO - Report bug.
+    ray.intersectBody(groundBody);
+
+    if (!ray.hasHit) return groundNormal;
+
+    // Compare ABS, in case we're projecting against the inside of the face.
+    hitNormal = ray.result.hitNormalWorld;
+    return Math.abs(hitNormal.y) > Math.abs(groundNormal.y) ? hitNormal : groundNormal;
+  }
+};
+
+},{}],98:[function(require,module,exports){
+/**
+ * Based on aframe/examples/showcase/tracked-controls.
+ *
+ * Implement bounding sphere collision detection for entities with a mesh.
+ * Sets the specified state on the intersected entities.
+ *
+ * @property {string} objects - Selector of the entities to test for collision.
+ * @property {string} state - State to set on collided entities.
+ *
+ */
+module.exports = {
+  schema: {
+    objects: {default: ''},
+    state: {default: 'collided'},
+    radius: {default: 0.05}
+  },
+
+  init: function () {
+    this.els = [];
+    this.collisions = [];
+  },
+
+  /**
+   * Update list of entities to test for collision.
+   */
+  update: function () {
+    var data = this.data;
+    var objectEls;
+
+    // Push entities into list of els to intersect.
+    if (data.objects) {
+      objectEls = this.el.sceneEl.querySelectorAll(data.objects);
+    } else {
+      // If objects not defined, intersect with everything.
+      objectEls = this.el.sceneEl.children;
+    }
+    // Convert from NodeList to Array
+    this.els = Array.prototype.slice.call(objectEls);
+  },
+
+  tick: (function () {
+    var position = new THREE.Vector3(),
+        meshPosition = new THREE.Vector3();
+    return function () {
+      var el = this.el,
+          data = this.data,
+          mesh = el.getObject3D('mesh'),
+          collisions = [];
+
+      if (!mesh) { return; }
+
+      position.copy(el.getAttribute('position'));
+
+      // Update collisions.
+      this.els.forEach(intersect);
+      // Emit events.
+      collisions.forEach(handleHit);
+      // No collisions.
+      if (collisions.length === 0) { el.emit('hit', {el: null}); }
+      // Updated the state of the elements that are not intersected anymore.
+      this.collisions.filter(function (el) {
+        return collisions.indexOf(el) === -1;
+      }).forEach(function removeState (el) {
+        el.removeState(data.state);
+      });
+      // Store new collisions
+      this.collisions = collisions;
+
+      // AABB collision detection
+      function intersect (el) {
+        var radius,
+            mesh = el.getObject3D('mesh');
+
+        if (!mesh) return;
+
+        mesh.getWorldPosition(meshPosition);
+        mesh.geometry.computeBoundingSphere();
+        radius = mesh.geometry.boundingSphere.radius;
+        if (position.distanceTo(meshPosition) < radius + data.radius) {
+          collisions.push(el);
+        }
+      }
+
+      function handleHit (hitEl) {
+        hitEl.emit('hit');
+        hitEl.addState(data.state);
+        el.emit('hit', {el: hitEl});
+      }
+    };
+  })()
+};
+
+},{}],99:[function(require,module,exports){
+/**
+ * Toggle velocity.
+ *
+ * Moves an object back and forth along an axis, within a min/max extent.
+ */
+module.exports = {
+  dependencies: ['velocity'],
+  schema: {
+    axis: { default: 'x', oneOf: ['x', 'y', 'z'] },
+    min: { default: 0 },
+    max: { default: 0 },
+    speed: { default: 1 }
+  },
+  init: function () {
+    var velocity = {x: 0, y: 0, z: 0};
+    velocity[this.data.axis] = this.data.speed;
+    this.el.setAttribute('velocity', velocity);
+
+    if (this.el.sceneEl.addBehavior) this.el.sceneEl.addBehavior(this);
+  },
+  remove: function () {},
+  update: function () { this.tick(); },
+  tick: function () {
+    var data = this.data,
+        velocity = this.el.getAttribute('velocity'),
+        position = this.el.getAttribute('position');
+    if (velocity[data.axis] > 0 && position[data.axis] > data.max) {
+      velocity[data.axis] = -data.speed;
+      this.el.setAttribute('velocity', velocity);
+    } else if (velocity[data.axis] < 0 && position[data.axis] < data.min) {
+      velocity[data.axis] = data.speed;
+      this.el.setAttribute('velocity', velocity);
+    }
+  },
+};
+
+},{}],100:[function(require,module,exports){
+/**
+ * Flat grid.
+ *
+ * Defaults to 75x75.
+ */
+module.exports = {
+  defaultComponents: {
+    geometry: {
+      primitive: 'plane',
+      width: 75,
+      height: 75
+    },
+    rotation: {x: -90, y: 0, z: 0},
+    material: {
+      src: 'url(https://cdn.rawgit.com/donmccurdy/aframe-extras/v1.16.3/assets/grid.png)',
+      repeat: '75 75'
+    }
+  },
+  mappings: {
+    width: 'geometry.width',
+    height: 'geometry.height',
+    src: 'material.src'
+  }
+};
+
+},{}],101:[function(require,module,exports){
+/**
+ * Flat-shaded ocean primitive.
+ *
+ * Based on a Codrops tutorial:
+ * http://tympanus.net/codrops/2016/04/26/the-aviator-animating-basic-3d-scene-threejs/
+ */
+module.exports.Primitive = {
+  defaultComponents: {
+    ocean: {},
+    rotation: {x: -90, y: 0, z: 0}
+  },
+  mappings: {
+    width: 'ocean.width',
+    depth: 'ocean.depth',
+    density: 'ocean.density',
+    color: 'ocean.color',
+    opacity: 'ocean.opacity'
+  }
+};
+
+module.exports.Component = {
+  schema: {
+    // Dimensions of the ocean area.
+    width: {default: 10, min: 0},
+    depth: {default: 10, min: 0},
+
+    // Density of waves.
+    density: {default: 10},
+
+    // Wave amplitude and variance.
+    amplitude: {default: 0.1},
+    amplitudeVariance: {default: 0.3},
+
+    // Wave speed and variance.
+    speed: {default: 1},
+    speedVariance: {default: 2},
+
+    // Material.
+    color: {default: 0x7AD2F7},
+    opacity: {default: 0.8}
+  },
+
+  /**
+   * Use play() instead of init(), because component mappings – unavailable as dependencies – are
+   * not guaranteed to have parsed when this component is initialized.
+   */
+  play: function () {
+    var el = this.el,
+        data = this.data,
+        material = el.components.material;
+
+    var geometry = new THREE.PlaneGeometry(data.width, data.depth, data.density, data.density);
+    geometry.mergeVertices();
+    this.waves = [];
+    for (var v, i = 0, l = geometry.vertices.length; i < l; i++) {
+      v = geometry.vertices[i];
+      this.waves.push({
+        z: v.z,
+        ang: Math.random() * Math.PI * 2,
+        amp: data.amplitude + Math.random() * data.amplitudeVariance,
+        speed: (data.speed + Math.random() * data.speedVariance) / 1000 // radians / frame
+      });
+    }
+
+    if (!material) {
+      material = {};
+      material.material = new THREE.MeshPhongMaterial({
+        color: data.color,
+        transparent: data.opacity < 1,
+        opacity: data.opacity,
+        shading: THREE.FlatShading,
+      });
+    }
+
+    this.mesh = new THREE.Mesh(geometry, material.material);
+    el.setObject3D('mesh', this.mesh);
+  },
+
+  remove: function () {
+    this.el.removeObject3D('mesh');
+  },
+
+  tick: function (t, dt) {
+    if (!dt) return;
+
+    var verts = this.mesh.geometry.vertices;
+    for (var v, vprops, i = 0; (v = verts[i]); i++){
+      vprops = this.waves[i];
+      v.z = vprops.z + Math.sin(vprops.ang) * vprops.amp;
+      vprops.ang += vprops.speed * dt;
+    }
+    this.mesh.geometry.verticesNeedUpdate = true;
+  }
+};
+
+},{}],102:[function(require,module,exports){
+/**
+ * Tube following a custom path.
+ *
+ * Usage:
+ *
+ * ```html
+ * <a-tube path="5 0 5, 5 0 -5, -5 0 -5" radius="0.5"></a-tube>
+ * ```
+ */
+module.exports.Primitive = {
+  defaultComponents: {
+    tube:           {},
+  },
+  mappings: {
+    path:           'tube.path',
+    segments:       'tube.segments',
+    radius:         'tube.radius',
+    radialSegments: 'tube.radialSegments',
+    closed:         'tube.closed'
+  }
+};
+
+module.exports.Component = {
+  schema: {
+    path:           {default: []},
+    segments:       {default: 64},
+    radius:         {default: 1},
+    radialSegments: {default: 8},
+    closed:         {default: false}
+  },
+
+  init: function () {
+    var el = this.el,
+        data = this.data,
+        material = el.components.material;
+
+    if (!data.path.length) {
+      console.error('[a-tube] `path` property expected but not found.');
+      return;
+    }
+
+    var curve = new THREE.CatmullRomCurve3(data.path.map(function (point) {
+      point = point.split(' ');
+      return new THREE.Vector3(Number(point[0]), Number(point[1]), Number(point[2]));
+    }));
+    var geometry = new THREE.TubeGeometry(
+      curve, data.segments, data.radius, data.radialSegments, data.closed
+    );
+
+    if (!material) {
+      material = {};
+      material.material = new THREE.MeshPhongMaterial();
+    }
+
+    this.mesh = new THREE.Mesh(geometry, material.material);
+    this.el.setObject3D('mesh', this.mesh);
+  },
+
+  remove: function () {
+    if (this.mesh) this.el.removeObject3D('mesh');
+  }
+};
+
+},{}],103:[function(require,module,exports){
+module.exports = {
+  'a-grid':        require('./a-grid'),
+  'a-ocean':        require('./a-ocean'),
+  'a-tube':        require('./a-tube'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    AFRAME.registerPrimitive('a-grid',  this['a-grid']);
+
+    AFRAME.registerComponent('ocean', this['a-ocean'].Component);
+    AFRAME.registerPrimitive('a-ocean', this['a-ocean'].Primitive);
+
+    AFRAME.registerComponent('tube', this['a-tube'].Component);
+    AFRAME.registerPrimitive('a-tube', this['a-tube'].Primitive);
+
+    this._registered = true;
+  }
+};
+
+},{"./a-grid":100,"./a-ocean":101,"./a-tube":102}],104:[function(require,module,exports){
+module.exports = {
+  'shadow':       require('./shadow'),
+  'shadow-light': require('./shadow-light'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    if (!AFRAME.components['shadow'])       AFRAME.registerComponent('shadow',        this['shadow']);
+    if (!AFRAME.components['shadow-light']) AFRAME.registerComponent('shadow-light',  this['shadow-light']);
+
+    this._registered = true;
+  }
+};
+
+},{"./shadow":106,"./shadow-light":105}],105:[function(require,module,exports){
+/**
+ * Light component.
+ *
+ * Source: https://github.com/aframevr/aframe-core/pull/348
+ *
+ * @namespace light
+ * @param {number} [angle=PI / 3] - Maximum extent of light from its direction, in radians. For spot
+ *     lights.
+ * @param {bool} [castShadow=false] - Whether light will cast shadows. Only applies to directional,
+ *     point, and spot lights.
+ * @param {string} [color=#FFF] - Light color. For every light.
+ * @param {number} [decay=1] - Amount the light dims along the distance of the light. For point and
+ *     spot lights.
+ * @param {number} [exponent=10.0] - Rapidity of falloff of light from its target direction. For
+ *     spot lights.
+ * @param {string} [groundColor=#FFF] - Ground light color. For hemisphere lights.
+ * @param {number} [intensity=1.0] - Light strength. For every light except ambient.
+ * @param {number} [shadowBias=0] - How much to add or subtract from the normalized depth when
+ *     deciding whether a surface is in shadow.
+ * @param {number} [shadowCameraFar=5000] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowCameraNear=50] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowCameraTop=10] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowCameraRight=10] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowCameraBottom=-10] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowCameraLeft=-10] - Orthographic shadow camera frustum parameter.
+ * @param {number} [shadowDarkness=0.5] - Darkness of shadow cast, from 0 to 1.
+ * @param {number} [shadowMapHeight=512] - Shadow map texture height in pixels.
+ * @param {number} [shadowMapWidth=512] - Shadow map texture height in pixels.
+ * @param {string} [type=directional] - Light type (i.e., ambient, directional, hemisphere, point,
+ *     spot).
+ */
+module.exports = {
+  schema: {
+      angle:              { default: Math.PI / 3 },
+      castShadow:         { default: true },
+      color:              { default: '#FFF' },
+      groundColor:        { default: '#FFF' },
+      decay:              { default: 1 },
+      distance:           { default: 0.0 },
+      exponent:           { default: 10.0 },
+      intensity:          { default: 1.0 },
+      shadowBias:         { default: 0 },
+      shadowCameraFar:    { default: 5000 },
+      shadowCameraFov:    { default: 50 },
+      shadowCameraNear:   { default: 0.5 },
+      shadowCameraTop:    { default: 10 },
+      shadowCameraRight:  { default: 10 },
+      shadowCameraBottom: { default: -10 },
+      shadowCameraLeft:   { default: -10 },
+      shadowDarkness:     { default: 0.5 },
+      shadowMapHeight:    { default: 512 },
+      shadowMapWidth:     { default: 512 },
+      type:               {
+        default: 'directional',
+        oneOf: ['ambient', 'directional', 'hemisphere', 'point', 'spot']
+      }
+  },
+
+  init: function () {
+    var el = this.el;
+    this.light = this.getLight();
+    el.object3D.add(this.light);
+    el.sceneEl.systems.light.registerLight(el);
+    if (!el.sceneEl.hasLoaded) {
+      el.sceneEl.addEventListener('loaded', this.play.bind(this));
+    }
+  },
+
+  update: function (previousData) {
+    previousData = previousData || {};
+    if (!Object.keys(previousData).length) { return; }
+    this.el.object3D.remove(this.light);
+    this.light = this.getLight();
+    this.el.object3D.add(this.light);
+  },
+
+  play: function () {
+    var el = this.el,
+        renderer = el.sceneEl.renderer;
+    if (renderer && !renderer.shadowMap.enabled) {
+      renderer.shadowMap.enabled = true;
+    }
+  },
+
+  /**
+   * Creates a new three.js light object given the current attributes of the
+   * component.
+   *
+   * @namespace light
+   */
+  getLight: function () {
+    var data = this.data;
+    var color = new THREE.Color(data.color).getHex();
+    var intensity = data.intensity;
+    var type = data.type;
+
+    if (type) {
+      type = type.toLowerCase();
+    }
+    switch (type) {
+      case 'ambient': {
+        return new THREE.AmbientLight(color);
+      }
+      case 'directional': {
+        return this.setShadow(new THREE.DirectionalLight(color, intensity));
+      }
+      case 'hemisphere': {
+        return new THREE.HemisphereLight(color, data.groundColor,
+                                         intensity);
+      }
+      case 'point': {
+        return this.setShadow(
+          new THREE.PointLight(color, intensity, data.distance, data.decay));
+      }
+      case 'spot': {
+        return this.setShadow(
+          new THREE.SpotLight(color, intensity, data.distance, data.angle,
+                              data.exponent, data.decay));
+      }
+      default: {
+        return new THREE.AmbientLight(color);
+      }
+    }
+  },
+
+  /**
+   * Copy over shadow-related data from the component onto the light.
+   *
+   * @param {object} light
+   */
+  setShadow: function (light) {
+    var data = this.data;
+    if (!data.castShadow) { return light; }
+
+    light.castShadow = data.castShadow;
+    light.shadow.bias = data.shadowBias;
+    light.shadow.darkness = data.shadowDarkness;
+    light.shadow.mapSize.height = data.shadowMapHeight;
+    light.shadow.mapSize.width = data.shadowMapWidth;
+
+    light.shadow.camera.near = data.shadowCameraNear;
+    light.shadow.camera.far = data.shadowCameraFar;
+    if (light.shadow.camera instanceof THREE.OrthographicCamera) {
+      light.shadow.camera.top = data.shadowCameraTop;
+      light.shadow.camera.right = data.shadowCameraRight;
+      light.shadow.camera.bottom = data.shadowCameraBottom;
+      light.shadow.camera.left = data.shadowCameraLeft;
+    } else {
+      light.shadow.camera.fov = data.shadowCameraFov;
+    }
+
+    return light;
+  }
+};
+
+},{}],106:[function(require,module,exports){
+/**
+ * Shadow component.
+ *
+ * Source: https://github.com/aframevr/aframe-core/pull/348
+ *
+ * @namespace shadow
+ * @param {bool} [cast=false] - whether object will cast shadows.
+ * @param {bool} [receive=false] - whether object will receive shadows.
+ */
+module.exports = {
+  schema: {
+    cast:     { default: false },
+    receive:  { default: false }
+  },
+
+  init: function () {
+    this.el.addEventListener('model-loaded', this.update.bind(this));
+  },
+
+  update: function () {
+    var data = this.data;
+
+    // Applied recursively to support imported models.
+    this.el.object3D.traverse(function(node) {
+      if (node instanceof THREE.Mesh) {
+        node.castShadow = data.cast;
+        node.receiveShadow = data.receive;
+      }
+    });
+  },
+
+  remove: function () {}
+};
+
+},{}]},{},[1]);

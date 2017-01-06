@@ -16,17 +16,21 @@ var DEFAULT_ANIMATION = '__auto__';
  * See: https://clara.io/learn/user-guide/data_exchange/threejs_export
  */
 module.exports = {
+  deprecated: true,
+
   schema: {
-    src:               { type: 'src' },
+    src:               { type: 'asset' },
     loader:            { default: 'object', oneOf: ['object', 'json'] },
     enableAnimation:   { default: true },
     animation:         { default: DEFAULT_ANIMATION },
-    animationDuration: { default: 0 }
+    animationDuration: { default: 0 },
+    crossorigin:       { default: '' }
   },
 
   init: function () {
     this.model = null;
     this.mixer = null;
+    console.warn('[three-model] Component is deprecated. Use json-model or object-model instead.');
   },
 
   update: function (previousData) {
@@ -45,6 +49,7 @@ module.exports = {
       this.remove();
       if (data.loader === 'object') {
         loader = new THREE.ObjectLoader();
+        if (data.crossorigin) loader.setCrossOrigin(data.crossorigin);
         loader.load(data.src, function(loaded) {
           loaded.traverse( function(object) {
             if (object instanceof THREE.SkinnedMesh)
@@ -56,6 +61,7 @@ module.exports = {
         }.bind(this));
       } else if (data.loader === 'json') {
         loader = new THREE.JSONLoader();
+        if (data.crossorigin) loader.crossOrigin = data.crossorigin;
         loader.load(data.src, function (geometry, materials) {
 
           // Attempt to automatically detect common material options.

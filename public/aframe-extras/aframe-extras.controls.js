@@ -1,6 +1,6 @@
 (function e(t,n,r){function s(o,u){if(!n[o]){if(!t[o]){var a=typeof require=="function"&&require;if(!u&&a)return a(o,!0);if(i)return i(o,!0);var f=new Error("Cannot find module '"+o+"'");throw f.code="MODULE_NOT_FOUND",f}var l=n[o]={exports:{}};t[o][0].call(l.exports,function(e){var n=t[o][1][e];return s(n?n:e)},l,l.exports,e,t,n,r)}return n[o].exports}var i=typeof require=="function"&&require;for(var o=0;o<r.length;o++)s(r[o]);return s})({1:[function(require,module,exports){
 require('./src/controls').registerAll();
-},{"./src/controls":20}],2:[function(require,module,exports){
+},{"./src/controls":78}],2:[function(require,module,exports){
 module.exports = Object.assign(function GamepadButton () {}, {
 	FACE_1: 0,
 	FACE_2: 1,
@@ -773,6 +773,7 @@ var CANNON = require('cannon'),
 module.exports = {
   'dynamic-body':   require('./src/components/body/dynamic-body'),
   'static-body':    require('./src/components/body/static-body'),
+  'constraint':     require('./src/components/constraint'),
   'system':         require('./src/system/physics'),
 
   registerAll: function (AFRAME) {
@@ -781,9 +782,10 @@ module.exports = {
     AFRAME = AFRAME || window.AFRAME;
 
     math.registerAll();
-    if (!AFRAME.systems.physics)              AFRAME.registerSystem('physics',           this.system);
-    if (!AFRAME.components['dynamic-body'])   AFRAME.registerComponent('dynamic-body',   this['dynamic-body']);
-    if (!AFRAME.components['static-body'])    AFRAME.registerComponent('static-body',    this['static-body']);
+    if (!AFRAME.systems.physics)            AFRAME.registerSystem('physics',         this.system);
+    if (!AFRAME.components['dynamic-body']) AFRAME.registerComponent('dynamic-body', this['dynamic-body']);
+    if (!AFRAME.components['static-body'])  AFRAME.registerComponent('static-body',  this['static-body']);
+    if (!AFRAME.components['constraint'])   AFRAME.registerComponent('constraint',   this['constraint']);
 
     this._registered = true;
   }
@@ -792,7 +794,7 @@ module.exports = {
 // Export CANNON.js.
 window.CANNON = window.CANNON || CANNON;
 
-},{"./src/components/body/dynamic-body":8,"./src/components/body/static-body":9,"./src/components/math":10,"./src/system/physics":14,"cannon":26}],6:[function(require,module,exports){
+},{"./src/components/body/dynamic-body":8,"./src/components/body/static-body":9,"./src/components/constraint":10,"./src/components/math":11,"./src/system/physics":15,"cannon":17}],6:[function(require,module,exports){
 /**
  * CANNON.shape2mesh
  *
@@ -952,7 +954,7 @@ CANNON.shape2mesh = function(body){
 
 module.exports = CANNON.shape2mesh;
 
-},{"cannon":26}],7:[function(require,module,exports){
+},{"cannon":17}],7:[function(require,module,exports){
 var CANNON = require('cannon'),
     mesh2shape = require('three-to-cannon');
 
@@ -987,7 +989,7 @@ module.exports = {
     var shape,
         el = this.el,
         data = this.data,
-        pos = el.getComputedAttribute('position'),
+        pos = el.getAttribute('position'),
         options = data.shape === 'auto' ? undefined : AFRAME.utils.extend({}, this.data, {
           type: mesh2shape.Type[data.shape.toUpperCase()]
         });
@@ -1015,7 +1017,7 @@ module.exports = {
     this.body.addShape(shape, shape.offset, shape.orientation);
 
     // Apply rotation
-    var rot = el.getComputedAttribute('rotation');
+    var rot = el.getAttribute('rotation');
     this.body.quaternion.setFromEuler(
       THREE.Math.degToRad(rot.x),
       THREE.Math.degToRad(rot.y),
@@ -1090,7 +1092,11 @@ module.exports = {
     var offset = shape.offset,
         orientation = shape.orientation,
         mesh = CANNON.shape2mesh(body).children[0];
-    this.wireframe = new THREE.EdgesHelper(mesh, 0xff0000);
+
+    this.wireframe = new THREE.LineSegments(
+      new THREE.EdgesGeometry(mesh.geometry),
+      new THREE.LineBasicMaterial({color: 0xff0000})
+    );
 
     if (offset) {
       this.wireframe.offset = offset.clone();
@@ -1149,7 +1155,7 @@ module.exports = {
 
       if (!body) return;
 
-      if (el.components.velocity) body.velocity.copy(el.getComputedAttribute('velocity'));
+      if (el.components.velocity) body.velocity.copy(el.getAttribute('velocity'));
 
       if (parentEl.isScene) {
         body.quaternion.copy(el.object3D.quaternion);
@@ -1199,7 +1205,7 @@ module.exports = {
   }())
 };
 
-},{"../../../lib/CANNON-shape2mesh":6,"cannon":26,"three-to-cannon":15}],8:[function(require,module,exports){
+},{"../../../lib/CANNON-shape2mesh":6,"cannon":17,"three-to-cannon":73}],8:[function(require,module,exports){
 var Body = require('./body');
 
 /**
@@ -1237,6 +1243,88 @@ module.exports = AFRAME.utils.extend({}, Body, {
 });
 
 },{"./body":7}],10:[function(require,module,exports){
+var CANNON = require('cannon');
+
+module.exports = {
+  dependencies: ['dynamic-body'],
+
+  multiple: true,
+
+  schema: {
+    // Type of constraint.
+    type: {default: 'lock', oneOf: ['coneTwist', 'distance', 'hinge', 'lock', 'pointToPoint']},
+
+    // Target (other) body for the constraint.
+    target: {type: 'selector'},
+
+    // Maximum force that should be applied to constraint the bodies.
+    maxForce: {default: 1e6, min: 0},
+
+    // If true, bodies can collide when they are connected.
+    collideConnected: {default: true},
+
+    // Wake up bodies when connected.
+    wakeUpBodies: {default: true},
+
+    // The distance to be kept between the bodies. If 0, will be set to current distance.
+    distance: {default: 0, min: 0},
+
+    // Offset of the hinge or point-to-point constraint, defined locally in the body.
+    pivot: {type: 'vec3'},
+    pivotTarget: {type: 'vec3'},
+
+    // An axis that each body can rotate around, defined locally to that body.
+    axis: {type: 'vec3'},
+    axisTarget: {type: 'vec3'},
+  },
+
+  init: function () {
+    this.system = this.el.sceneEl.systems.physics;
+    this.constraint = /* {CANNON.Constraint} */ null;
+  },
+
+  remove: function () {
+    if (!this.constraint) return;
+
+    this.system.world.removeConstraint(this.constraint);
+    this.constraint = null;
+  },
+
+  update: function () {
+    var el = this.el,
+        data = this.data,
+        options = AFRAME.utils.extend({}, data.options);
+
+    this.remove();
+
+    if (!el.body || !data.target.body) {
+      (el.body ? data.target : el).addEventListener('body-loaded', this.update.bind(this, {}));
+      return;
+    }
+
+    switch (data.type) {
+      case 'distance':
+        this.constraint = new CANNON.DistanceConstraint(
+          el.body,
+          data.target.body,
+          options.distance || undefined,
+          options.maxForce
+        );
+        break;
+      case 'lock':
+        this.constraint = new CANNON.LockConstraint(el.body, data.target.body, options);
+        break;
+      case 'coneTwist':
+      case 'hinge':
+      case 'pointToPoint':
+        throw new Error('[constraint] Unimplemented type.');
+    }
+
+    this.system.world.addConstraint(this.constraint);
+  }
+};
+
+},{"cannon":17}],11:[function(require,module,exports){
 module.exports = {
   'velocity':   require('./velocity'),
   'quaternion': require('./quaternion'),
@@ -1253,7 +1341,7 @@ module.exports = {
   }
 };
 
-},{"./quaternion":11,"./velocity":12}],11:[function(require,module,exports){
+},{"./quaternion":12,"./velocity":13}],12:[function(require,module,exports){
 /**
  * Quaternion.
  *
@@ -1282,7 +1370,7 @@ module.exports = {
   }
 };
 
-},{}],12:[function(require,module,exports){
+},{}],13:[function(require,module,exports){
 /**
  * Velocity, in m/s.
  */
@@ -1328,7 +1416,7 @@ module.exports = {
   }
 };
 
-},{}],13:[function(require,module,exports){
+},{}],14:[function(require,module,exports){
 module.exports = {
   GRAVITY: -9.8,
   MAX_INTERVAL: 4 / 60,
@@ -1343,7 +1431,7 @@ module.exports = {
   }
 };
 
-},{}],14:[function(require,module,exports){
+},{}],15:[function(require,module,exports){
 var CANNON = require('cannon'),
     CONSTANTS = require('../constants'),
     C_GRAV = CONSTANTS.GRAVITY,
@@ -1502,1803 +1590,89 @@ module.exports = {
   }
 };
 
-},{"../constants":13,"cannon":26}],15:[function(require,module,exports){
-var CANNON = require('cannon'),
-    quickhull = require('./lib/THREE.quickhull');
-
-var PI_2 = Math.PI / 2;
-
-var Type = {
-  BOX: 'Box',
-  CYLINDER: 'Cylinder',
-  SPHERE: 'Sphere',
-  HULL: 'ConvexPolyhedron'
-};
-
-/**
- * Given a THREE.Object3D instance, creates a corresponding CANNON shape.
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-module.exports = CANNON.mesh2shape = function (object, options) {
-  options = options || {};
-
-  if (options.type === Type.BOX) {
-    return createBoundingBoxShape(object);
-  } else if (options.type === Type.CYLINDER) {
-    return createBoundingCylinderShape(object, options);
-  } else if (options.type === Type.SPHERE) {
-    return createBoundingSphereShape(object, options);
-  } else if (options.type === Type.HULL) {
-    return createConvexPolyhedron(object);
-  } else if (options.type) {
-    throw new Error('[CANNON.mesh2shape] Invalid type "%s".', options.type);
-  }
-
-  var geometry = getGeometry(object);
-
-  if (!geometry) return null;
-
-  var type = geometry.metadata
-    ? geometry.metadata.type
-    : geometry.type;
-
-  switch (type) {
-    case 'BoxGeometry':
-    case 'BoxBufferGeometry':
-      return createBoxShape(geometry);
-    case 'CylinderGeometry':
-    case 'CylinderBufferGeometry':
-      return createCylinderShape(geometry);
-    case 'PlaneGeometry':
-    case 'PlaneBufferGeometry':
-      return createPlaneShape(geometry);
-    case 'SphereGeometry':
-    case 'SphereBufferGeometry':
-      return createSphereShape(geometry);
-    case 'TubeGeometry':
-      return createTubeShape(geometry);
-    case 'Geometry':
-    case 'BufferGeometry':
-      return createTrimeshShape(geometry);
-    default:
-      console.warn('Unrecognized geometry: "%s". Using bounding box as shape.', geometry.type);
-      return createBoxShape(geometry);
-  }
-};
-
-CANNON.mesh2shape.Type = Type;
-
-/******************************************************************************
- * Shape construction
- */
-
- /**
-  * @param  {THREE.Geometry} geometry
-  * @return {CANNON.Shape}
-  */
- function createBoxShape (geometry) {
-   var vertices = getVertices(geometry);
-
-   if (!vertices.length) return null;
-
-   geometry.computeBoundingBox();
-   var box = geometry.boundingBox;
-   return new CANNON.Box(new CANNON.Vec3(
-     (box.max.x - box.min.x) / 2,
-     (box.max.y - box.min.y) / 2,
-     (box.max.z - box.min.z) / 2
-   ));
- }
-
-/**
- * Bounding box needs to be computed with the entire mesh, not just geometry.
- * @param  {THREE.Object3D} mesh
- * @return {CANNON.Shape}
- */
-function createBoundingBoxShape (object) {
-  var box, shape, localPosition, worldPosition,
-      helper = new THREE.BoundingBoxHelper(object);
-
-  helper.update();
-  box = helper.box;
-
-  if (!isFinite(box.min.lengthSq())) return null;
-
-  shape = new CANNON.Box(new CANNON.Vec3(
-    (box.max.x - box.min.x) / 2,
-    (box.max.y - box.min.y) / 2,
-    (box.max.z - box.min.z) / 2
-  ));
-
-  object.updateMatrixWorld();
-  worldPosition = new THREE.Vector3();
-  worldPosition.setFromMatrixPosition(object.matrixWorld);
-  localPosition = helper.position.sub(worldPosition);
-  if (localPosition.lengthSq()) {
-    shape.offset = localPosition;
-  }
-
-  return shape;
-}
-
-/**
- * Computes 3D convex hull as a CANNON.ConvexPolyhedron.
- * @param  {THREE.Object3D} mesh
- * @return {CANNON.Shape}
- */
-function createConvexPolyhedron (object) {
-  var i, vertices, faces, hull,
-      eps = 1e-4,
-      geometry = getGeometry(object);
-
-  if (!geometry || !geometry.vertices.length) return null;
-
-  // Perturb.
-  for (i = 0; i < geometry.vertices.length; i++) {
-    geometry.vertices[i].x += (Math.random() - 0.5) * eps;
-    geometry.vertices[i].y += (Math.random() - 0.5) * eps;
-    geometry.vertices[i].z += (Math.random() - 0.5) * eps;
-  }
-
-  // Compute the 3D convex hull.
-  hull = quickhull(geometry);
-
-  // Convert from THREE.Vector3 to CANNON.Vec3.
-  vertices = new Array(hull.vertices.length);
-  for (i = 0; i < hull.vertices.length; i++) {
-    vertices[i] = new CANNON.Vec3(hull.vertices[i].x, hull.vertices[i].y, hull.vertices[i].z);
-  }
-
-  // Convert from THREE.Face to Array<number>.
-  faces = new Array(hull.faces.length);
-  for (i = 0; i < hull.faces.length; i++) {
-    faces[i] = [hull.faces[i].a, hull.faces[i].b, hull.faces[i].c];
-  }
-
-  return new CANNON.ConvexPolyhedron(vertices, faces);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createCylinderShape (geometry) {
-  var shape,
-      params = geometry.metadata
-        ? geometry.metadata.parameters
-        : geometry.parameters;
-  shape = new CANNON.Cylinder(
-    params.radiusTop,
-    params.radiusBottom,
-    params.height,
-    params.radialSegments
-  );
-  shape.orientation = new CANNON.Quaternion();
-  shape.orientation.setFromEuler(THREE.Math.degToRad(-90), 0, 0, 'XYZ').normalize();
-  return shape;
-}
-
-/**
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-function createBoundingCylinderShape (object, options) {
-  var shape, height, radius,
-      geometry = getGeometry(object),
-      axes = ['x', 'y', 'z'],
-      majorAxis = options.cylinderAxis || 'y',
-      minorAxes = axes.splice(axes.indexOf(majorAxis), 1) && axes;
-
-  // Compute cylinder dimensions.
-  geometry.computeBoundingBox();
-  geometry.computeBoundingSphere();
-  height = geometry.boundingBox.max[majorAxis] - geometry.boundingBox.min[majorAxis];
-  radius = 0.5 * Math.max(
-    geometry.boundingBox.max[minorAxes[0]] - geometry.boundingBox.min[minorAxes[0]],
-    geometry.boundingBox.max[minorAxes[1]] - geometry.boundingBox.min[minorAxes[1]]
-  );
-
-  // Create shape.
-  shape = new CANNON.Cylinder(radius, radius, height, 12);
-  shape.orientation = new CANNON.Quaternion();
-  shape.orientation.setFromEuler(
-    majorAxis === 'y' ? PI_2 : 0,
-    majorAxis === 'z' ? PI_2 : 0,
-    0,
-    'XYZ'
-  ).normalize();
-  return shape;
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createPlaneShape (geometry) {
-  geometry.computeBoundingBox();
-  var box = geometry.boundingBox;
-  return new CANNON.Box(new CANNON.Vec3(
-    (box.max.x - box.min.x) / 2 || 0.1,
-    (box.max.y - box.min.y) / 2 || 0.1,
-    (box.max.z - box.min.z) / 2 || 0.1
-  ));
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createSphereShape (geometry) {
-  var params = geometry.metadata
-    ? geometry.metadata.parameters
-    : geometry.parameters;
-  return new CANNON.Sphere(params.radius);
-}
-
-/**
- * @param  {THREE.Object3D} object
- * @return {CANNON.Shape}
- */
-function createBoundingSphereShape (object, options) {
-  var geometry = getGeometry(object);
-  geometry.computeBoundingSphere();
-  return new CANNON.Sphere(options.sphereRadius || geometry.boundingSphere.radius);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createTubeShape (geometry) {
-  var tmp = new THREE.BufferGeometry();
-  tmp.fromGeometry(geometry);
-  return createTrimeshShape(tmp);
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {CANNON.Shape}
- */
-function createTrimeshShape (geometry) {
-  var indices,
-      vertices = getVertices(geometry);
-
-  if (!vertices.length) return null;
-
-  indices = Object.keys(vertices).map(Number);
-  return new CANNON.Trimesh(vertices, indices);
-}
-
-/******************************************************************************
- * Utils
- */
-
-/**
- * Returns a single geometry for the given object. If the object is compound,
- * its geometries are automatically merged.
- * @param {THREE.Object3D} object
- * @return {THREE.Geometry}
- */
-function getGeometry (object) {
-  var matrix, mesh,
-      meshes = getMeshes(object),
-      tmp = new THREE.Geometry(),
-      combined = new THREE.Geometry();
-
-  if (meshes.length === 0) return null;
-
-  // Apply scale  – it can't easily be applied to a CANNON.Shape later.
-  if (meshes.length === 1) {
-    var position = new THREE.Vector3(),
-        quaternion = new THREE.Quaternion(),
-        scale = new THREE.Vector3();
-    tmp = meshes[0].geometry.clone();
-    tmp.metadata = meshes[0].geometry.metadata;
-    meshes[0].updateMatrixWorld();
-    meshes[0].matrixWorld.decompose(position, quaternion, scale);
-    return tmp.scale(scale.x, scale.y, scale.z);
-  }
-
-  // Recursively merge geometry, preserving local transforms.
-  while ((mesh = meshes.pop())) {
-    mesh.updateMatrixWorld();
-    if (mesh.geometry instanceof THREE.BufferGeometry) {
-      tmp.fromBufferGeometry(mesh.geometry);
-      combined.merge(tmp, mesh.matrixWorld);
-    } else {
-      combined.merge(mesh.geometry, mesh.matrixWorld);
-    }
-  }
-
-  matrix = new THREE.Matrix4();
-  matrix.scale(object.scale);
-  combined.applyMatrix(matrix);
-  return combined;
-}
-
-/**
- * @param  {THREE.Geometry} geometry
- * @return {Array<number>}
- */
-function getVertices (geometry) {
-  if (!geometry.attributes) {
-    geometry = new THREE.BufferGeometry().fromGeometry(geometry);
-  }
-  return geometry.attributes.position.array;
-}
-
-/**
- * Returns a flat array of THREE.Mesh instances from the given object. If
- * nested transformations are found, they are applied to child meshes
- * as mesh.userData.matrix, so that each mesh has its position/rotation/scale
- * independently of all of its parents except the top-level object.
- * @param  {THREE.Object3D} object
- * @return {Array<THREE.Mesh>}
- */
-function getMeshes (object) {
-  var meshes = [];
-  object.traverse(function (o) {
-    if (o.type === 'Mesh') {
-      meshes.push(o);
-    }
-  });
-  return meshes;
-}
-
-},{"./lib/THREE.quickhull":16,"cannon":26}],16:[function(require,module,exports){
-/**
-
-  QuickHull
-  ---------
-
-  The MIT License
-
-  Copyright &copy; 2010-2014 three.js authors
-
-  Permission is hereby granted, free of charge, to any person obtaining a copy
-  of this software and associated documentation files (the "Software"), to deal
-  in the Software without restriction, including without limitation the rights
-  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-  copies of the Software, and to permit persons to whom the Software is
-  furnished to do so, subject to the following conditions:
-
-  The above copyright notice and this permission notice shall be included in
-  all copies or substantial portions of the Software.
-
-  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-
-  THE SOFTWARE.
-
-
-    @author mark lundin / http://mark-lundin.com
-
-    This is a 3D implementation of the Quick Hull algorithm.
-    It is a fast way of computing a convex hull with average complexity
-    of O(n log(n)).
-    It uses depends on three.js and is supposed to create THREE.Geometry.
-
-    It's also very messy
-
- */
-
-module.exports = (function(){
-
-
-  var faces     = [],
-    faceStack   = [],
-    i, NUM_POINTS, extremes,
-    max     = 0,
-    dcur, current, j, v0, v1, v2, v3,
-    N, D;
-
-  var ab, ac, ax,
-    suba, subb, normal,
-    diff, subaA, subaB, subC;
-
-  function reset(){
-
-    ab    = new THREE.Vector3(),
-    ac    = new THREE.Vector3(),
-    ax    = new THREE.Vector3(),
-    suba  = new THREE.Vector3(),
-    subb  = new THREE.Vector3(),
-    normal  = new THREE.Vector3(),
-    diff  = new THREE.Vector3(),
-    subaA = new THREE.Vector3(),
-    subaB = new THREE.Vector3(),
-    subC  = new THREE.Vector3();
-
-  }
-
-  //temporary vectors
-
-  function process( points ){
-
-    // Iterate through all the faces and remove
-    while( faceStack.length > 0  ){
-      cull( faceStack.shift(), points );
-    }
-  }
-
-
-  var norm = function(){
-
-    var ca = new THREE.Vector3(),
-      ba = new THREE.Vector3(),
-      N = new THREE.Vector3();
-
-    return function( a, b, c ){
-
-      ca.subVectors( c, a );
-      ba.subVectors( b, a );
-
-      N.crossVectors( ca, ba );
-
-      return N.normalize();
-    }
-
-  }();
-
-
-  function getNormal( face, points ){
-
-    if( face.normal !== undefined ) return face.normal;
-
-    var p0 = points[face[0]],
-      p1 = points[face[1]],
-      p2 = points[face[2]];
-
-    ab.subVectors( p1, p0 );
-    ac.subVectors( p2, p0 );
-    normal.crossVectors( ac, ab );
-    normal.normalize();
-
-    return face.normal = normal.clone();
-
-  }
-
-
-  function assignPoints( face, pointset, points ){
-
-    // ASSIGNING POINTS TO FACE
-    var p0 = points[face[0]],
-      dots = [], apex,
-      norm = getNormal( face, points );
-
-
-    // Sory all the points by there distance from the plane
-    pointset.sort( function( aItem, bItem ){
-
-
-      dots[aItem.x/3] = dots[aItem.x/3] !== undefined ? dots[aItem.x/3] : norm.dot( suba.subVectors( aItem, p0 ));
-      dots[bItem.x/3] = dots[bItem.x/3] !== undefined ? dots[bItem.x/3] : norm.dot( subb.subVectors( bItem, p0 ));
-
-      return dots[aItem.x/3] - dots[bItem.x/3] ;
-    });
-
-    //TODO :: Must be a faster way of finding and index in this array
-    var index = pointset.length;
-
-    if( index === 1 ) dots[pointset[0].x/3] = norm.dot( suba.subVectors( pointset[0], p0 ));
-    while( index-- > 0 && dots[pointset[index].x/3] > 0 )
-
-    var point;
-    if( index + 1 < pointset.length && dots[pointset[index+1].x/3] > 0 ){
-
-      face.visiblePoints  = pointset.splice( index + 1 );
-    }
-  }
-
-
-
-
-  function cull( face, points ){
-
-    var i = faces.length,
-      dot, visibleFace, currentFace,
-      visibleFaces = [face];
-
-    var apex = points.indexOf( face.visiblePoints.pop() );
-
-    // Iterate through all other faces...
-    while( i-- > 0 ){
-      currentFace = faces[i];
-      if( currentFace !== face ){
-        // ...and check if they're pointing in the same direction
-        dot = getNormal( currentFace, points ).dot( diff.subVectors( points[apex], points[currentFace[0]] ));
-        if( dot > 0 ){
-          visibleFaces.push( currentFace );
-        }
-      }
-    }
-
-    var index, neighbouringIndex, vertex;
-
-    // Determine Perimeter - Creates a bounded horizon
-
-    // 1. Pick an edge A out of all possible edges
-    // 2. Check if A is shared by any other face. a->b === b->a
-      // 2.1 for each edge in each triangle, isShared = ( f1.a == f2.a && f1.b == f2.b ) || ( f1.a == f2.b && f1.b == f2.a )
-    // 3. If not shared, then add to convex horizon set,
-        //pick an end point (N) of the current edge A and choose a new edge NA connected to A.
-        //Restart from 1.
-    // 4. If A is shared, it is not an horizon edge, therefore flag both faces that share this edge as candidates for culling
-    // 5. If candidate geometry is a degenrate triangle (ie. the tangent space normal cannot be computed) then remove that triangle from all further processing
-
-
-    var j = i = visibleFaces.length;
-    var isDistinct = false,
-      hasOneVisibleFace = i === 1,
-      cull = [],
-      perimeter = [],
-      edgeIndex = 0, compareFace, nextIndex,
-      a, b;
-
-    var allPoints = [];
-    var originFace = [visibleFaces[0][0], visibleFaces[0][1], visibleFaces[0][1], visibleFaces[0][2], visibleFaces[0][2], visibleFaces[0][0]];
-
-
-    if( visibleFaces.length === 1 ){
-      currentFace = visibleFaces[0];
-
-      perimeter = [currentFace[0], currentFace[1], currentFace[1], currentFace[2], currentFace[2], currentFace[0]];
-      // remove visible face from list of faces
-      if( faceStack.indexOf( currentFace ) > -1 ){
-        faceStack.splice( faceStack.indexOf( currentFace ), 1 );
-      }
-
-
-      if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
-      faces.splice( faces.indexOf( currentFace ), 1 );
-
-    }else{
-
-      while( i-- > 0  ){  // for each visible face
-
-        currentFace = visibleFaces[i];
-
-        // remove visible face from list of faces
-        if( faceStack.indexOf( currentFace ) > -1 ){
-          faceStack.splice( faceStack.indexOf( currentFace ), 1 );
-        }
-
-        if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
-        faces.splice( faces.indexOf( currentFace ), 1 );
-
-
-        var isSharedEdge;
-        cEdgeIndex = 0;
-
-        while( cEdgeIndex < 3 ){ // Iterate through it's edges
-
-          isSharedEdge = false;
-          j = visibleFaces.length;
-          a = currentFace[cEdgeIndex]
-          b = currentFace[(cEdgeIndex+1)%3];
-
-
-          while( j-- > 0 && !isSharedEdge ){ // find another visible faces
-
-            compareFace = visibleFaces[j];
-            edgeIndex = 0;
-
-            // isSharedEdge = compareFace == currentFace;
-            if( compareFace !== currentFace ){
-
-              while( edgeIndex < 3 && !isSharedEdge ){ //Check all it's indices
-
-                nextIndex = ( edgeIndex + 1 );
-                isSharedEdge = ( compareFace[edgeIndex] === a && compareFace[nextIndex%3] === b ) ||
-                         ( compareFace[edgeIndex] === b && compareFace[nextIndex%3] === a );
-
-                edgeIndex++;
-              }
-            }
-          }
-
-          if( !isSharedEdge || hasOneVisibleFace ){
-            perimeter.push( a );
-            perimeter.push( b );
-          }
-
-          cEdgeIndex++;
-        }
-      }
-    }
-
-    // create new face for all pairs around edge
-    i = 0;
-    var l = perimeter.length/2;
-    var f;
-
-    while( i < l ){
-      f = [ perimeter[i*2+1], apex, perimeter[i*2] ];
-      assignPoints( f, allPoints, points );
-      faces.push( f )
-      if( f.visiblePoints !== undefined  )faceStack.push( f );
-      i++;
-    }
-
-  }
-
-  var distSqPointSegment = function(){
-
-    var ab = new THREE.Vector3(),
-      ac = new THREE.Vector3(),
-      bc = new THREE.Vector3();
-
-    return function( a, b, c ){
-
-        ab.subVectors( b, a );
-        ac.subVectors( c, a );
-        bc.subVectors( c, b );
-
-        var e = ac.dot(ab);
-        if (e < 0.0) return ac.dot( ac );
-        var f = ab.dot( ab );
-        if (e >= f) return bc.dot(  bc );
-        return ac.dot( ac ) - e * e / f;
-
-      }
-
-  }();
-
-
-
-
-
-  return function( geometry ){
-
-    reset();
-
-
-    points    = geometry.vertices;
-    faces     = [],
-    faceStack   = [],
-    i       = NUM_POINTS = points.length,
-    extremes  = points.slice( 0, 6 ),
-    max     = 0;
-
-
-
-    /*
-     *  FIND EXTREMETIES
-     */
-    while( i-- > 0 ){
-      if( points[i].x < extremes[0].x ) extremes[0] = points[i];
-      if( points[i].x > extremes[1].x ) extremes[1] = points[i];
-
-      if( points[i].y < extremes[2].y ) extremes[2] = points[i];
-      if( points[i].y < extremes[3].y ) extremes[3] = points[i];
-
-      if( points[i].z < extremes[4].z ) extremes[4] = points[i];
-      if( points[i].z < extremes[5].z ) extremes[5] = points[i];
-    }
-
-
-    /*
-     *  Find the longest line between the extremeties
-     */
-
-    j = i = 6;
-    while( i-- > 0 ){
-      j = i - 1;
-      while( j-- > 0 ){
-          if( max < (dcur = extremes[i].distanceToSquared( extremes[j] )) ){
-        max = dcur;
-        v0 = extremes[ i ];
-        v1 = extremes[ j ];
-
-          }
-        }
-      }
-
-
-      // 3. Find the most distant point to the line segment, this creates a plane
-      i = 6;
-      max = 0;
-    while( i-- > 0 ){
-      dcur = distSqPointSegment( v0, v1, extremes[i]);
-      if( max < dcur ){
-        max = dcur;
-            v2 = extremes[ i ];
-          }
-    }
-
-
-      // 4. Find the most distant point to the plane.
-
-      N = norm(v0, v1, v2);
-      D = N.dot( v0 );
-
-
-      max = 0;
-      i = NUM_POINTS;
-      while( i-- > 0 ){
-        dcur = Math.abs( points[i].dot( N ) - D );
-          if( max < dcur ){
-            max = dcur;
-            v3 = points[i];
-      }
-      }
-
-
-
-      var v0Index = points.indexOf( v0 ),
-      v1Index = points.indexOf( v1 ),
-      v2Index = points.indexOf( v2 ),
-      v3Index = points.indexOf( v3 );
-
-
-    //  We now have a tetrahedron as the base geometry.
-    //  Now we must subdivide the
-
-      var tetrahedron =[
-        [ v2Index, v1Index, v0Index ],
-        [ v1Index, v3Index, v0Index ],
-        [ v2Index, v3Index, v1Index ],
-        [ v0Index, v3Index, v2Index ],
-    ];
-
-
-
-    subaA.subVectors( v1, v0 ).normalize();
-    subaB.subVectors( v2, v0 ).normalize();
-    subC.subVectors ( v3, v0 ).normalize();
-    var sign  = subC.dot( new THREE.Vector3().crossVectors( subaB, subaA ));
-
-
-    // Reverse the winding if negative sign
-    if( sign < 0 ){
-      tetrahedron[0].reverse();
-      tetrahedron[1].reverse();
-      tetrahedron[2].reverse();
-      tetrahedron[3].reverse();
-    }
-
-
-    //One for each face of the pyramid
-    var pointsCloned = points.slice();
-    pointsCloned.splice( pointsCloned.indexOf( v0 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v1 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v2 ), 1 );
-    pointsCloned.splice( pointsCloned.indexOf( v3 ), 1 );
-
-
-    var i = tetrahedron.length;
-    while( i-- > 0 ){
-      assignPoints( tetrahedron[i], pointsCloned, points );
-      if( tetrahedron[i].visiblePoints !== undefined ){
-        faceStack.push( tetrahedron[i] );
-      }
-      faces.push( tetrahedron[i] );
-    }
-
-    process( points );
-
-
-    //  Assign to our geometry object
-
-    var ll = faces.length;
-    while( ll-- > 0 ){
-      geometry.faces[ll] = new THREE.Face3( faces[ll][2], faces[ll][1], faces[ll][0], faces[ll].normal )
-    }
-
-    geometry.normalsNeedUpdate = true;
-
-    return geometry;
-
-  }
-
-}())
-
-},{}],17:[function(require,module,exports){
-var EPS = 0.1;
-
-module.exports = {
-  schema: {
-    enabled: {default: true},
-    mode: {default: 'teleport', oneOf: ['teleport', 'animate']},
-    animateSpeed: {default: 3.0}
-  },
-
-  init: function () {
-    this.active = true;
-    this.checkpoint = null;
-
-    this.offset = new THREE.Vector3();
-    this.position = new THREE.Vector3();
-    this.targetPosition = new THREE.Vector3();
-  },
-
-  play: function () { this.active = true; },
-  pause: function () { this.active = false; },
-
-  setCheckpoint: function (checkpoint) {
-    if (!this.active) return;
-
-    this.checkpoint = checkpoint;
-    if (this.data.mode === 'teleport') {
-      this.sync();
-      this.el.setAttribute('position', this.targetPosition);
-    }
-  },
-
-  isVelocityActive: function () {
-    return !!(this.active && this.checkpoint);
-  },
-
-  getVelocity: function () {
-    if (!this.active) return;
-
-    var data = this.data,
-        offset = this.offset,
-        position = this.position,
-        targetPosition = this.targetPosition;
-
-    this.sync();
-    if (position.distanceTo(targetPosition) < EPS) {
-      this.checkpoint = null;
-      return offset.set(0, 0, 0);
-    }
-    offset.setLength(data.animateSpeed);
-    return offset;
-  },
-
-  sync: function () {
-    var offset = this.offset,
-        position = this.position,
-        targetPosition = this.targetPosition;
-
-    position.copy(this.el.getComputedAttribute('position'));
-    targetPosition.copy(this.checkpoint.getComputedAttribute('position'));
-    // TODO - Cleverer ways around this?
-    targetPosition.y = position.y;
-    offset.copy(targetPosition).sub(position);
-  }
-};
-
-},{}],18:[function(require,module,exports){
-/**
- * Gamepad controls for A-Frame.
- *
- * Stripped-down version of: https://github.com/donmccurdy/aframe-gamepad-controls
- *
- * For more information about the Gamepad API, see:
- * https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
- */
-
-var GamepadButton = require('../../lib/GamepadButton'),
-    GamepadButtonEvent = require('../../lib/GamepadButtonEvent');
-
-var JOYSTICK_EPS = 0.2;
-
-module.exports = {
-
-  /*******************************************************************
-   * Statics
-   */
-
-  GamepadButton: GamepadButton,
-
-  /*******************************************************************
-   * Schema
-   */
-
-  schema: {
-    // Controller 0-3
-    controller:        { default: 0, oneOf: [0, 1, 2, 3] },
-
-    // Enable/disable features
-    enabled:           { default: true },
-
-    // Debugging
-    debug:             { default: false }
-  },
-
-  /*******************************************************************
-   * Core
-   */
-
-  /**
-   * Called once when component is attached. Generally for initial setup.
-   */
-  init: function () {
-    var scene = this.el.sceneEl;
-    this.prevTime = window.performance.now();
-
-    // Button state
-    this.buttons = {};
-
-    scene.addBehavior(this);
-
-    if (!this.getGamepad()) {
-      console.warn(
-        'Gamepad #%d not found. Connect controller and press any button to continue.',
-        this.data.controller
-      );
-    }
-  },
-
-  /**
-   * Called when component is attached and when component data changes.
-   * Generally modifies the entity based on the data.
-   */
-  update: function () { this.tick(); },
-
-  /**
-   * Called on each iteration of main render loop.
-   */
-  tick: function () {
-    this.updateButtonState();
-  },
-
-  /**
-   * Called when a component is removed (e.g., via removeAttribute).
-   * Generally undoes all modifications to the entity.
-   */
-  remove: function () { },
-
-  /*******************************************************************
-   * Universal controls - movement
-   */
-
-  isVelocityActive: function () {
-    if (!this.data.enabled || !this.isConnected()) return false;
-
-    var dpad = this.getDpad(),
-        joystick0 = this.getJoystick(0),
-        inputX = dpad.x || joystick0.x,
-        inputY = dpad.y || joystick0.y;
-
-    return Math.abs(inputX) > JOYSTICK_EPS || Math.abs(inputY) > JOYSTICK_EPS;
-  },
-
-  getVelocityDelta: function () {
-    var dpad = this.getDpad(),
-        joystick0 = this.getJoystick(0),
-        inputX = dpad.x || joystick0.x,
-        inputY = dpad.y || joystick0.y,
-        dVelocity = new THREE.Vector3();
-
-    if (Math.abs(inputX) > JOYSTICK_EPS) {
-      dVelocity.x += inputX;
-    }
-    if (Math.abs(inputY) > JOYSTICK_EPS) {
-      dVelocity.z += inputY;
-    }
-
-    return dVelocity;
-  },
-
-  /*******************************************************************
-   * Universal controls - rotation
-   */
-
-  isRotationActive: function () {
-    if (!this.data.enabled || !this.isConnected()) return false;
-
-    var joystick1 = this.getJoystick(1);
-
-    return Math.abs(joystick1.x) > JOYSTICK_EPS || Math.abs(joystick1.y) > JOYSTICK_EPS;
-  },
-
-  getRotationDelta: function () {
-    var lookVector = this.getJoystick(1);
-    if (Math.abs(lookVector.x) <= JOYSTICK_EPS) lookVector.x = 0;
-    if (Math.abs(lookVector.y) <= JOYSTICK_EPS) lookVector.y = 0;
-    return lookVector;
-  },
-
-  /*******************************************************************
-   * Button events
-   */
-
-  updateButtonState: function () {
-    var gamepad = this.getGamepad();
-    if (this.data.enabled && gamepad) {
-
-      // Fire DOM events for button state changes.
-      for (var i = 0; i < gamepad.buttons.length; i++) {
-        if (gamepad.buttons[i].pressed && !this.buttons[i]) {
-          this.emit(new GamepadButtonEvent('gamepadbuttondown', i, gamepad.buttons[i]));
-        } else if (!gamepad.buttons[i].pressed && this.buttons[i]) {
-          this.emit(new GamepadButtonEvent('gamepadbuttonup', i, gamepad.buttons[i]));
-        }
-        this.buttons[i] = gamepad.buttons[i].pressed;
-      }
-
-    } else if (Object.keys(this.buttons)) {
-      // Reset state if controls are disabled or controller is lost.
-      this.buttons = {};
-    }
-  },
-
-  emit: function (event) {
-    // Emit original event.
-    this.el.emit(event.type, event);
-
-    // Emit convenience event, identifying button index.
-    this.el.emit(
-      event.type + ':' + event.index,
-      new GamepadButtonEvent(event.type, event.index, event)
-    );
-  },
-
-  /*******************************************************************
-   * Gamepad state
-   */
-
-  /**
-   * Returns the Gamepad instance attached to the component. If connected,
-   * a proxy-controls component may provide access to Gamepad input from a
-   * remote device.
-   *
-   * @return {Gamepad}
-   */
-  getGamepad: function () {
-    var localGamepad = navigator.getGamepads
-          && navigator.getGamepads()[this.data.controller],
-        proxyControls = this.el.sceneEl.components['proxy-controls'],
-        proxyGamepad = proxyControls && proxyControls.isConnected()
-          && proxyControls.getGamepad(this.data.controller);
-    return proxyGamepad || localGamepad;
-  },
-
-  /**
-   * Returns the state of the given button.
-   * @param  {number} index The button (0-N) for which to find state.
-   * @return {GamepadButton}
-   */
-  getButton: function (index) {
-    return this.getGamepad().buttons[index];
-  },
-
-  /**
-   * Returns state of the given axis. Axes are labelled 0-N, where 0-1 will
-   * represent X/Y on the first joystick, and 2-3 X/Y on the second.
-   * @param  {number} index The axis (0-N) for which to find state.
-   * @return {number} On the interval [-1,1].
-   */
-  getAxis: function (index) {
-    return this.getGamepad().axes[index];
-  },
-
-  /**
-   * Returns the state of the given joystick (0 or 1) as a THREE.Vector2.
-   * @param  {number} id The joystick (0, 1) for which to find state.
-   * @return {THREE.Vector2}
-   */
-  getJoystick: function (index) {
-    var gamepad = this.getGamepad();
-    switch (index) {
-      case 0: return new THREE.Vector2(gamepad.axes[0], gamepad.axes[1]);
-      case 1: return new THREE.Vector2(gamepad.axes[2], gamepad.axes[3]);
-      default: throw new Error('Unexpected joystick index "%d".', index);
-    }
-  },
-
-  /**
-   * Returns the state of the dpad as a THREE.Vector2.
-   * @return {THREE.Vector2}
-   */
-  getDpad: function () {
-    var gamepad = this.getGamepad();
-    if (!gamepad.buttons[GamepadButton.DPAD_RIGHT]) {
-      return new THREE.Vector2();
-    }
-    return new THREE.Vector2(
-      (gamepad.buttons[GamepadButton.DPAD_RIGHT].pressed ? 1 : 0)
-      + (gamepad.buttons[GamepadButton.DPAD_LEFT].pressed ? -1 : 0),
-      (gamepad.buttons[GamepadButton.DPAD_UP].pressed ? -1 : 0)
-      + (gamepad.buttons[GamepadButton.DPAD_DOWN].pressed ? 1 : 0)
-    );
-  },
-
-  /**
-   * Returns true if the gamepad is currently connected to the system.
-   * @return {boolean}
-   */
-  isConnected: function () {
-    var gamepad = this.getGamepad();
-    return !!(gamepad && gamepad.connected);
-  },
-
-  /**
-   * Returns a string containing some information about the controller. Result
-   * may vary across browsers, for a given controller.
-   * @return {string}
-   */
-  getID: function () {
-    return this.getGamepad().id;
-  }
-};
-
-},{"../../lib/GamepadButton":2,"../../lib/GamepadButtonEvent":3}],19:[function(require,module,exports){
-var radToDeg = THREE.Math.radToDeg,
-    isMobile = AFRAME.utils.isMobile();
-
-module.exports = {
-  schema: {
-    enabled: {default: true},
-    standing: {default: true}
-  },
-
-  init: function () {
-    this.isPositionCalibrated = false;
-    this.dolly = new THREE.Object3D();
-    this.hmdEuler = new THREE.Euler();
-    this.previousHMDPosition = new THREE.Vector3();
-    this.deltaHMDPosition = new THREE.Vector3();
-    this.vrControls = new THREE.VRControls(this.dolly);
-    this.rotation = new THREE.Vector3();
-  },
-
-  update: function () {
-    var data = this.data;
-    var vrControls = this.vrControls;
-    vrControls.standing = data.standing;
-    vrControls.update();
-  },
-
-  tick: function () {
-    this.vrControls.update();
-  },
-
-  remove: function () {
-    this.vrControls.dispose();
-  },
-
-  isRotationActive: function () {
-    var hmdEuler = this.hmdEuler;
-    if (!this.data.enabled || !(this.el.sceneEl.is('vr-mode') || isMobile)) {
-      return false;
-    }
-    hmdEuler.setFromQuaternion(this.dolly.quaternion, 'YXZ');
-    return !isNullVector(hmdEuler);
-  },
-
-  getRotation: function () {
-    var hmdEuler = this.hmdEuler;
-    return this.rotation.set(
-      radToDeg(hmdEuler.x),
-      radToDeg(hmdEuler.y),
-      radToDeg(hmdEuler.z)
-    );
-  },
-
-  isVelocityActive: function () {
-    var deltaHMDPosition = this.deltaHMDPosition;
-    var previousHMDPosition = this.previousHMDPosition;
-    var currentHMDPosition = this.calculateHMDPosition();
-    this.isPositionCalibrated = this.isPositionCalibrated || !isNullVector(previousHMDPosition);
-    if (!this.data.enabled || !this.el.sceneEl.is('vr-mode') || isMobile) {
-      return false;
-    }
-    deltaHMDPosition.copy(currentHMDPosition).sub(previousHMDPosition);
-    previousHMDPosition.copy(currentHMDPosition);
-    return this.isPositionCalibrated && !isNullVector(deltaHMDPosition);
-  },
-
-  getPositionDelta: function () {
-    return this.deltaHMDPosition;
-  },
-
-  calculateHMDPosition: function () {
-    var dolly = this.dolly;
-    var position = new THREE.Vector3();
-    dolly.updateMatrix();
-    position.setFromMatrixPosition(dolly.matrix);
-    return position;
-  }
-};
-
-function isNullVector (vector) {
-  return vector.x === 0 && vector.y === 0 && vector.z === 0;
-}
-
-},{}],20:[function(require,module,exports){
-var physics = require('aframe-physics-system');
-
-module.exports = {
-  'checkpoint-controls': require('./checkpoint-controls'),
-  'gamepad-controls':    require('./gamepad-controls'),
-  'hmd-controls':        require('./hmd-controls'),
-  'keyboard-controls':   require('./keyboard-controls'),
-  'mouse-controls':      require('./mouse-controls'),
-  'touch-controls':      require('./touch-controls'),
-  'universal-controls':  require('./universal-controls'),
-
-  registerAll: function (AFRAME) {
-    if (this._registered) return;
-
-    AFRAME = AFRAME || window.AFRAME;
-
-    physics.registerAll();
-    if (!AFRAME.components['checkpoint-controls'])  AFRAME.registerComponent('checkpoint-controls', this['checkpoint-controls']);
-    if (!AFRAME.components['gamepad-controls'])     AFRAME.registerComponent('gamepad-controls',    this['gamepad-controls']);
-    if (!AFRAME.components['hmd-controls'])         AFRAME.registerComponent('hmd-controls',        this['hmd-controls']);
-    if (!AFRAME.components['keyboard-controls'])    AFRAME.registerComponent('keyboard-controls',   this['keyboard-controls']);
-    if (!AFRAME.components['mouse-controls'])       AFRAME.registerComponent('mouse-controls',      this['mouse-controls']);
-    if (!AFRAME.components['touch-controls'])       AFRAME.registerComponent('touch-controls',      this['touch-controls']);
-    if (!AFRAME.components['universal-controls'])   AFRAME.registerComponent('universal-controls',  this['universal-controls']);
-
-    this._registered = true;
-  }
-};
-
-},{"./checkpoint-controls":17,"./gamepad-controls":18,"./hmd-controls":19,"./keyboard-controls":21,"./mouse-controls":22,"./touch-controls":23,"./universal-controls":24,"aframe-physics-system":5}],21:[function(require,module,exports){
-require('../../lib/keyboard.polyfill');
-
-var MAX_DELTA = 0.2,
-    PROXY_FLAG = '__keyboard-controls-proxy';
-
-var KeyboardEvent = window.KeyboardEvent;
-
-/**
- * Keyboard Controls component.
- *
- * Stripped-down version of: https://github.com/donmccurdy/aframe-keyboard-controls
- *
- * Bind keyboard events to components, or control your entities with the WASD keys.
- *
- * Why use KeyboardEvent.code? "This is set to a string representing the key that was pressed to
- * generate the KeyboardEvent, without taking the current keyboard layout (e.g., QWERTY vs.
- * Dvorak), locale (e.g., English vs. French), or any modifier keys into account. This is useful
- * when you care about which physical key was pressed, rather thanwhich character it corresponds
- * to. For example, if you’re a writing a game, you might want a certain set of keys to move the
- * player in different directions, and that mapping should ideally be independent of keyboard
- * layout. See: https://developers.google.com/web/updates/2016/04/keyboardevent-keys-codes
- *
- * @namespace wasd-controls
- * keys the entity moves and if you release it will stop. Easing simulates friction.
- * to the entity when pressing the keys.
- * @param {bool} [enabled=true] - To completely enable or disable the controls
- */
-module.exports = {
-  schema: {
-    enabled:           { default: true },
-    debug:             { default: false }
-  },
-
-  init: function () {
-    this.dVelocity = new THREE.Vector3();
-    this.localKeys = {};
-    this.listeners = {
-      keydown: this.onKeyDown.bind(this),
-      keyup: this.onKeyUp.bind(this),
-      blur: this.onBlur.bind(this)
-    };
-    this.attachEventListeners();
-  },
-
-  /*******************************************************************
-  * Movement
-  */
-
-  isVelocityActive: function () {
-    return this.data.enabled && !!Object.keys(this.getKeys()).length;
-  },
-
-  getVelocityDelta: function () {
-    var data = this.data,
-        keys = this.getKeys();
-
-    this.dVelocity.set(0, 0, 0);
-    if (data.enabled) {
-      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; }
-      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; }
-      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; }
-      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; }
-    }
-
-    return this.dVelocity.clone();
-  },
-
-  /*******************************************************************
-  * Events
-  */
-
-  play: function () {
-    this.attachEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  attachEventListeners: function () {
-    window.addEventListener('keydown', this.listeners.keydown, false);
-    window.addEventListener('keyup', this.listeners.keyup, false);
-    window.addEventListener('blur', this.listeners.blur, false);
-  },
-
-  removeEventListeners: function () {
-    window.removeEventListener('keydown', this.listeners.keydown);
-    window.removeEventListener('keyup', this.listeners.keyup);
-    window.removeEventListener('blur', this.listeners.blur);
-  },
-
-  onKeyDown: function (event) {
-    this.localKeys[event.code] = true;
-    this.emit(event);
-  },
-
-  onKeyUp: function (event) {
-    delete this.localKeys[event.code];
-    this.emit(event);
-  },
-
-  onBlur: function () {
-    for (var code in this.localKeys) {
-      if (this.localKeys.hasOwnProperty(code)) {
-        delete this.localKeys[code];
-      }
-    }
-  },
-
-  emit: function (event) {
-    // TODO - keydown only initially?
-    // TODO - where the f is the spacebar
-
-    // Emit original event.
-    if (PROXY_FLAG in event) {
-      // TODO - Method never triggered.
-      this.el.emit(event.type, event);
-    }
-
-    // Emit convenience event, identifying key.
-    this.el.emit(event.type + ':' + event.code, new KeyboardEvent(event.type, event));
-    if (this.data.debug) console.log(event.type + ':' + event.code);
-  },
-
-  /*******************************************************************
-  * Accessors
-  */
-
-  isPressed: function (code) {
-    return code in this.getKeys();
-  },
-
-  getKeys: function () {
-    if (this.isProxied()) {
-      return this.el.sceneEl.components['proxy-controls'].getKeyboard();
-    }
-    return this.localKeys;
-  },
-
-  isProxied: function () {
-    var proxyControls = this.el.sceneEl.components['proxy-controls'];
-    return proxyControls && proxyControls.isConnected();
-  }
-
-};
-
-},{"../../lib/keyboard.polyfill":4}],22:[function(require,module,exports){
-/**
- * Mouse + Pointerlock controls.
- *
- * Based on: https://github.com/aframevr/aframe/pull/1056
- */
-module.exports = {
-  schema: {
-    enabled: { default: true },
-    pointerlockEnabled: { default: true },
-    sensitivity: { default: 1 / 25 }
-  },
-
-  init: function () {
-    this.mouseDown = false;
-    this.pointerLocked = false;
-    this.lookVector = new THREE.Vector2();
-    this.bindMethods();
-  },
-
-  play: function () {
-    this.addEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-    this.lookVector.set(0, 0);
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  bindMethods: function () {
-    this.onMouseDown = this.onMouseDown.bind(this);
-    this.onMouseMove = this.onMouseMove.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onMouseUp = this.onMouseUp.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-    this.onPointerLockChange = this.onPointerLockChange.bind(this);
-  },
-
-  addEventListeners: function () {
-    var sceneEl = this.el.sceneEl;
-    var canvasEl = sceneEl.canvas;
-    var data = this.data;
-
-    if (!canvasEl) {
-      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
-      return;
-    }
-
-    canvasEl.addEventListener('mousedown', this.onMouseDown, false);
-    canvasEl.addEventListener('mousemove', this.onMouseMove, false);
-    canvasEl.addEventListener('mouseup', this.onMouseUp, false);
-    canvasEl.addEventListener('mouseout', this.onMouseUp, false);
-
-    if (data.pointerlockEnabled) {
-      document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
-      document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
-      document.addEventListener('pointerlockerror', this.onPointerLockError, false);
-    }
-  },
-
-  removeEventListeners: function () {
-    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
-    if (canvasEl) {
-      canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
-      canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
-      canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
-      canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
-    }
-    document.removeEventListener('pointerlockchange', this.onPointerLockChange, false);
-    document.removeEventListener('mozpointerlockchange', this.onPointerLockChange, false);
-    document.removeEventListener('pointerlockerror', this.onPointerLockError, false);
-  },
-
-  isRotationActive: function () {
-    return this.data.enabled && (this.mouseDown || this.pointerLocked);
-  },
-
-  /**
-   * Returns the sum of all mouse movement since last call.
-   */
-  getRotationDelta: function () {
-    var dRotation = this.lookVector.clone().multiplyScalar(this.data.sensitivity);
-    this.lookVector.set(0, 0);
-    return dRotation;
-  },
-
-  onMouseMove: function (event) {
-    var previousMouseEvent = this.previousMouseEvent;
-
-    if (!this.data.enabled || !(this.mouseDown || this.pointerLocked)) {
-      return;
-    }
-
-    var movementX = event.movementX || event.mozMovementX || 0;
-    var movementY = event.movementY || event.mozMovementY || 0;
-
-    if (!this.pointerLocked) {
-      movementX = event.screenX - previousMouseEvent.screenX;
-      movementY = event.screenY - previousMouseEvent.screenY;
-    }
-
-    this.lookVector.x += movementX;
-    this.lookVector.y += movementY;
-
-    this.previousMouseEvent = event;
-  },
-
-  onMouseDown: function (event) {
-    var canvasEl = this.el.sceneEl.canvas;
-
-    this.mouseDown = true;
-    this.previousMouseEvent = event;
-
-    if (this.data.pointerlockEnabled && !this.pointerLocked) {
-      if (canvasEl.requestPointerLock) {
-        canvasEl.requestPointerLock();
-      } else if (canvasEl.mozRequestPointerLock) {
-        canvasEl.mozRequestPointerLock();
-      }
-    }
-  },
-
-  onMouseUp: function () {
-    this.mouseDown = false;
-  },
-
-  onPointerLockChange: function () {
-    this.pointerLocked = !!(document.pointerLockElement || document.mozPointerLockElement);
-  },
-
-  onPointerLockError: function () {
-    this.pointerLocked = false;
-  }
-};
-
-},{}],23:[function(require,module,exports){
-module.exports = {
-  schema: {
-    enabled: { default: true }
-  },
-
-  init: function () {
-    this.dVelocity = new THREE.Vector3();
-    this.bindMethods();
-  },
-
-  play: function () {
-    this.addEventListeners();
-  },
-
-  pause: function () {
-    this.removeEventListeners();
-    this.dVelocity.set(0, 0, 0);
-  },
-
-  remove: function () {
-    this.pause();
-  },
-
-  addEventListeners: function () {
-    var sceneEl = this.el.sceneEl;
-    var canvasEl = sceneEl.canvas;
-
-    if (!canvasEl) {
-      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
-      return;
-    }
-
-    canvasEl.addEventListener('touchstart', this.onTouchStart);
-    canvasEl.addEventListener('touchend', this.onTouchEnd);
-  },
-
-  removeEventListeners: function () {
-    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
-    if (!canvasEl) { return; }
-
-    canvasEl.removeEventListener('touchstart', this.onTouchStart);
-    canvasEl.removeEventListener('touchend', this.onTouchEnd);
-  },
-
-  isVelocityActive: function () {
-    return this.data.enabled && this.isMoving;
-  },
-
-  getVelocityDelta: function () {
-    this.dVelocity.z = this.isMoving ? -1 : 0;
-    return this.dVelocity.clone();
-  },
-
-  bindMethods: function () {
-    this.onTouchStart = this.onTouchStart.bind(this);
-    this.onTouchEnd = this.onTouchEnd.bind(this);
-  },
-
-  onTouchStart: function (e) {
-    this.isMoving = true;
-    e.preventDefault();
-  },
-
-  onTouchEnd: function (e) {
-    this.isMoving = false;
-    e.preventDefault();
-  }
-};
-
-},{}],24:[function(require,module,exports){
-/**
- * Universal Controls
- *
- * @author Don McCurdy <dm@donmccurdy.com>
- */
-
-var COMPONENT_SUFFIX = '-controls',
-    MAX_DELTA = 0.2, // ms
-    PI_2 = Math.PI / 2;
-
-module.exports = {
-
-  /*******************************************************************
-   * Schema
-   */
-
-  dependencies: ['velocity', 'rotation'],
-
-  schema: {
-    enabled:              { default: true },
-    movementEnabled:      { default: true },
-    movementControls:     { default: ['gamepad', 'keyboard', 'touch', 'hmd'] },
-    rotationEnabled:      { default: true },
-    rotationControls:     { default: ['hmd', 'gamepad', 'mouse'] },
-    movementSpeed:        { default: 5 }, // m/s
-    movementEasing:       { default: 15 }, // m/s2
-    movementAcceleration: { default: 80 }, // m/s2
-    rotationSensitivity:  { default: 0.05 }, // radians/frame, ish
-    fly:                  { default: false }
-  },
-
-  /*******************************************************************
-   * Lifecycle
-   */
-
-  init: function () {
-    // Movement
-    this.velocity = new THREE.Vector3();
-
-    // Rotation
-    this.pitch = new THREE.Object3D();
-    this.yaw = new THREE.Object3D();
-    this.yaw.position.y = 10;
-    this.yaw.add(this.pitch);
-    this.heading = new THREE.Euler(0, 0, 0, 'YXZ');
-
-    if (this.el.sceneEl.hasLoaded) {
-      this.injectControls();
-    } else {
-      this.el.sceneEl.addEventListener('loaded', this.injectControls.bind(this));
-    }
-  },
-
-  update: function () {
-    if (this.el.sceneEl.hasLoaded) {
-      this.injectControls();
-    }
-  },
-
-  injectControls: function () {
-    var i, name,
-        data = this.data;
-
-    for (i = 0; i < data.movementControls.length; i++) {
-      name = data.movementControls[i] + COMPONENT_SUFFIX;
-      if (!this.el.components[name]) {
-        this.el.setAttribute(name, '');
-      }
-    }
-
-    for (i = 0; i < data.rotationControls.length; i++) {
-      name = data.rotationControls[i] + COMPONENT_SUFFIX;
-      if (!this.el.components[name]) {
-        this.el.setAttribute(name, '');
-      }
-    }
-  },
-
-  /*******************************************************************
-   * Tick
-   */
-
-  tick: function (t, dt) {
-    if (!dt) { return; }
-
-    // Update rotation.
-    if (this.data.rotationEnabled) this.updateRotation(dt);
-
-    // Update velocity. If FPS is too low, reset.
-    if (this.data.movementEnabled && dt / 1000 > MAX_DELTA) {
-      this.velocity.set(0, 0, 0);
-      this.el.setAttribute('velocity', this.velocity);
-    } else {
-      this.updateVelocity(dt);
-    }
-  },
-
-  /*******************************************************************
-   * Rotation
-   */
-
-  updateRotation: function (dt) {
-    var control, dRotation,
-        data = this.data;
-
-    for (var i = 0, l = data.rotationControls.length; i < l; i++) {
-      control = this.el.components[data.rotationControls[i] + COMPONENT_SUFFIX];
-      if (control && control.isRotationActive()) {
-        if (control.getRotationDelta) {
-          dRotation = control.getRotationDelta(dt);
-          dRotation.multiplyScalar(data.rotationSensitivity);
-          this.yaw.rotation.y -= dRotation.x;
-          this.pitch.rotation.x -= dRotation.y;
-          this.pitch.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitch.rotation.x));
-          this.el.setAttribute('rotation', {
-            x: THREE.Math.radToDeg(this.pitch.rotation.x),
-            y: THREE.Math.radToDeg(this.yaw.rotation.y),
-            z: 0
-          });
-        } else if (control.getRotation) {
-          this.el.setAttribute('rotation', control.getRotation());
-        } else {
-          throw new Error('Incompatible rotation controls: %s', data.rotationControls[i]);
-        }
-        break;
-      }
-    }
-  },
-
-  /*******************************************************************
-   * Movement
-   */
-
-  updateVelocity: function (dt) {
-    var control, dVelocity,
-        velocity = this.velocity,
-        data = this.data;
-
-    if (data.movementEnabled) {
-      for (var i = 0, l = data.movementControls.length; i < l; i++) {
-        control = this.el.components[data.movementControls[i] + COMPONENT_SUFFIX];
-        if (control && control.isVelocityActive()) {
-          if (control.getVelocityDelta) {
-            dVelocity = control.getVelocityDelta(dt);
-          } else if (control.getVelocity) {
-            this.el.setAttribute('velocity', control.getVelocity());
-            return;
-          } else if (control.getPositionDelta) {
-            velocity.copy(control.getPositionDelta(dt).multiplyScalar(1000 / dt));
-            this.el.setAttribute('velocity', velocity);
-            return;
-          } else {
-            throw new Error('Incompatible movement controls: ', data.movementControls[i]);
-          }
-          break;
-        }
-      }
-    }
-
-    velocity.copy(this.el.getComputedAttribute('velocity'));
-    velocity.x -= velocity.x * data.movementEasing * dt / 1000;
-    velocity.z -= velocity.z * data.movementEasing * dt / 1000;
-
-    if (dVelocity && data.movementEnabled) {
-      // Set acceleration
-      if (dVelocity.length() > 1) {
-        dVelocity.setLength(this.data.movementAcceleration * dt / 1000);
-      } else {
-        dVelocity.multiplyScalar(this.data.movementAcceleration * dt / 1000);
-      }
-
-      // Rotate to heading
-      var rotation = this.el.getAttribute('rotation');
-      if (rotation) {
-        this.heading.set(
-          data.fly ? THREE.Math.degToRad(rotation.x) : 0,
-          THREE.Math.degToRad(rotation.y),
-          0
-        );
-        dVelocity.applyEuler(this.heading);
-      }
-
-      velocity.add(dVelocity);
-
-      // TODO - Several issues here:
-      // (1) Interferes w/ gravity.
-      // (2) Interferes w/ jumping.
-      // (3) Likely to interfere w/ relative position to moving platform.
-      // if (velocity.length() > data.movementSpeed) {
-      //   velocity.setLength(data.movementSpeed);
-      // }
-    }
-
-    this.el.setAttribute('velocity', velocity);
-  }
-};
-
-},{}],25:[function(require,module,exports){
+},{"../constants":14,"cannon":17}],16:[function(require,module,exports){
 module.exports={
-  "name": "cannon",
-  "version": "0.6.2",
+  "_args": [
+    [
+      {
+        "hosted": {
+          "directUrl": "https://raw.githubusercontent.com/donmccurdy/cannon.js/v0.6.2-dev1/package.json",
+          "gitUrl": "git://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "httpsUrl": "git+https://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "shortcut": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+          "ssh": "git@github.com:donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "sshUrl": "git+ssh://git@github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+          "type": "github"
+        },
+        "name": "cannon",
+        "raw": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "rawSpec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "scope": null,
+        "spec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+        "type": "hosted"
+      },
+      "/Users/donmccurdy/Documents/Projects/aframe-extras/node_modules/aframe-physics-system"
+    ]
+  ],
+  "_from": "donmccurdy/cannon.js#v0.6.2-dev1",
+  "_id": "cannon@0.6.2",
+  "_inCache": true,
+  "_installable": true,
+  "_location": "/cannon",
+  "_phantomChildren": {},
+  "_requested": {
+    "hosted": {
+      "directUrl": "https://raw.githubusercontent.com/donmccurdy/cannon.js/v0.6.2-dev1/package.json",
+      "gitUrl": "git://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "httpsUrl": "git+https://github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "shortcut": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+      "ssh": "git@github.com:donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "sshUrl": "git+ssh://git@github.com/donmccurdy/cannon.js.git#v0.6.2-dev1",
+      "type": "github"
+    },
+    "name": "cannon",
+    "raw": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "rawSpec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "scope": null,
+    "spec": "github:donmccurdy/cannon.js#v0.6.2-dev1",
+    "type": "hosted"
+  },
+  "_requiredBy": [
+    "/aframe-physics-system"
+  ],
+  "_resolved": "git://github.com/donmccurdy/cannon.js.git#022e8ba53fa83abf0ad8a0e4fd08623123838a17",
+  "_shasum": "f472d09c5bc75499b38a3a799d2c6083547a5b6a",
+  "_shrinkwrap": null,
+  "_spec": "cannon@github:donmccurdy/cannon.js#v0.6.2-dev1",
+  "_where": "/Users/donmccurdy/Documents/Projects/aframe-extras/node_modules/aframe-physics-system",
+  "author": {
+    "email": "schteppe@gmail.com",
+    "name": "Stefan Hedman",
+    "url": "http://steffe.se"
+  },
+  "bugs": {
+    "url": "https://github.com/schteppe/cannon.js/issues"
+  },
+  "dependencies": {},
   "description": "A lightweight 3D physics engine written in JavaScript.",
+  "devDependencies": {
+    "browserify": "*",
+    "grunt": "~0.4.0",
+    "grunt-browserify": "^2.1.4",
+    "grunt-contrib-concat": "~0.1.3",
+    "grunt-contrib-jshint": "~0.1.1",
+    "grunt-contrib-nodeunit": "^0.4.1",
+    "grunt-contrib-uglify": "^0.5.1",
+    "grunt-contrib-yuidoc": "^0.5.2",
+    "jshint": "latest",
+    "nodeunit": "^0.9.0",
+    "uglify-js": "latest"
+  },
+  "engines": {
+    "node": "*"
+  },
+  "gitHead": "022e8ba53fa83abf0ad8a0e4fd08623123838a17",
   "homepage": "https://github.com/schteppe/cannon.js",
-  "author": "Stefan Hedman <schteppe@gmail.com> (http://steffe.se)",
   "keywords": [
     "cannon.js",
     "cannon",
@@ -3306,39 +1680,24 @@ module.exports={
     "engine",
     "3d"
   ],
-  "main": "./src/Cannon.js",
-  "engines": {
-    "node": "*"
-  },
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/schteppe/cannon.js.git"
-  },
-  "bugs": {
-    "url": "https://github.com/schteppe/cannon.js/issues"
-  },
   "licenses": [
     {
       "type": "MIT"
     }
   ],
-  "devDependencies": {
-    "jshint": "latest",
-    "uglify-js": "latest",
-    "nodeunit": "^0.9.0",
-    "grunt": "~0.4.0",
-    "grunt-contrib-jshint": "~0.1.1",
-    "grunt-contrib-nodeunit": "^0.4.1",
-    "grunt-contrib-concat": "~0.1.3",
-    "grunt-contrib-uglify": "^0.5.1",
-    "grunt-browserify": "^2.1.4",
-    "grunt-contrib-yuidoc": "^0.5.2",
-    "browserify": "*"
+  "main": "./src/Cannon.js",
+  "name": "cannon",
+  "optionalDependencies": {},
+  "readme": "# cannon.js\n\n### Lightweight 3D physics for the web\nInspired by [three.js](https://github.com/mrdoob/three.js) and [ammo.js](https://github.com/kripken/ammo.js), and driven by the fact that the web lacks a physics engine, here comes cannon.js.\nThe rigid body physics engine includes simple collision detection, various body shapes, contacts, friction and constraints.\n\n[Demos](http://schteppe.github.com/cannon.js) - [Documentation](http://schteppe.github.com/cannon.js/docs) - [Rendering hints](https://github.com/schteppe/cannon.js/tree/master/examples) - [NPM package](https://npmjs.org/package/cannon) - [CDN](https://cdnjs.com/libraries/cannon.js)\n\n### Browser install\n\nJust include [cannon.js](https://github.com/schteppe/cannon.js/releases/download/v0.6.2/cannon.js) or [cannon.min.js](https://github.com/schteppe/cannon.js/releases/download/v0.6.2/cannon.min.js) in your html and you're done:\n\n```html\n<script src=\"cannon.min.js\"></script>\n```\n\n### Node.js install\n\nInstall the cannon package via NPM:\n\n```bash\nnpm install --save cannon\n```\n\nAlternatively, point to the Github repo directly to get the very latest version:\n\n```bash\nnpm install --save schteppe/cannon.js\n```\n\n### Example\n\nThe sample code below creates a sphere on a plane, steps the simulation, and prints the sphere simulation to the console. Note that Cannon.js uses [SI units](http://en.wikipedia.org/wiki/International_System_of_Units) (metre, kilogram, second, etc.).\n\n```javascript\n// Setup our world\nvar world = new CANNON.World();\nworld.gravity.set(0, 0, -9.82); // m/s²\n\n// Create a sphere\nvar radius = 1; // m\nvar sphereBody = new CANNON.Body({\n   mass: 5, // kg\n   position: new CANNON.Vec3(0, 0, 10), // m\n   shape: new CANNON.Sphere(radius)\n});\nworld.addBody(sphereBody);\n\n// Create a plane\nvar groundBody = new CANNON.Body({\n    mass: 0 // mass == 0 makes the body static\n});\nvar groundShape = new CANNON.Plane();\ngroundBody.addShape(groundShape);\nworld.addBody(groundBody);\n\nvar fixedTimeStep = 1.0 / 60.0; // seconds\nvar maxSubSteps = 3;\n\n// Start the simulation loop\nvar lastTime;\n(function simloop(time){\n  requestAnimationFrame(simloop);\n  if(lastTime !== undefined){\n     var dt = (time - lastTime) / 1000;\n     world.step(fixedTimeStep, dt, maxSubSteps);\n  }\n  console.log(\"Sphere z position: \" + sphereBody.position.z);\n  lastTime = time;\n})();\n```\n\nIf you want to know how to use cannon.js with a rendering engine, for example Three.js, see the [Examples](examples).\n\n### Features\n* Rigid body dynamics\n* Discrete collision detection\n* Contacts, friction and restitution\n* Constraints\n   * PointToPoint (a.k.a. ball/socket joint)\n   * Distance\n   * Hinge (with optional motor)\n   * Lock\n   * ConeTwist\n* Gauss-Seidel constraint solver and an island split algorithm\n* Collision filters\n* Body sleeping\n* Experimental SPH / fluid support\n* Various shapes and collision algorithms (see table below)\n\n|             | [Sphere](http://schteppe.github.io/cannon.js/docs/classes/Sphere.html) | [Plane](http://schteppe.github.io/cannon.js/docs/classes/Plane.html) | [Box](http://schteppe.github.io/cannon.js/docs/classes/Box.html) | [Convex](http://schteppe.github.io/cannon.js/docs/classes/ConvexPolyhedron.html) | [Particle](http://schteppe.github.io/cannon.js/docs/classes/Particle.html) | [Heightfield](http://schteppe.github.io/cannon.js/docs/classes/Heightfield.html) | [Trimesh](http://schteppe.github.io/cannon.js/docs/classes/Trimesh.html) |\n| :-----------|:------:|:-----:|:---:|:------:|:--------:|:-----------:|:-------:|\n| Sphere      | Yes    | Yes   | Yes | Yes    | Yes      | Yes         | Yes     |\n| Plane       | -      | -     | Yes | Yes    | Yes      | -           | Yes     |\n| Box         | -      | -     | Yes | Yes    | Yes      | Yes         | (todo)  |\n| Cylinder    | -      | -     | Yes | Yes    | Yes      | Yes         | (todo)  |\n| Convex      | -      | -     | -   | Yes    | Yes      | Yes         | (todo)  |\n| Particle    | -      | -     | -   | -      | -        | (todo)      | (todo)  |\n| Heightfield | -      | -     | -   | -      | -        | -           | (todo)  |\n| Trimesh     | -      | -     | -   | -      | -        | -           | -       |\n\n### Todo\nThe simpler todos are marked with ```@todo``` in the code. Github Issues can and should also be used for todos.\n\n### Help\nCreate an [issue](https://github.com/schteppe/cannon.js/issues) if you need help.\n",
+  "readmeFilename": "README.markdown",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/schteppe/cannon.js.git"
   },
-  "dependencies": {}
+  "version": "0.6.2"
 }
 
-},{}],26:[function(require,module,exports){
+},{}],17:[function(require,module,exports){
 // Export classes
 module.exports = {
     version :                       require('../package.json').version,
@@ -3393,7 +1752,7 @@ module.exports = {
     World :                         require('./world/World'),
 };
 
-},{"../package.json":25,"./collision/AABB":27,"./collision/ArrayCollisionMatrix":28,"./collision/Broadphase":29,"./collision/GridBroadphase":30,"./collision/NaiveBroadphase":31,"./collision/ObjectCollisionMatrix":32,"./collision/Ray":34,"./collision/RaycastResult":35,"./collision/SAPBroadphase":36,"./constraints/ConeTwistConstraint":37,"./constraints/Constraint":38,"./constraints/DistanceConstraint":39,"./constraints/HingeConstraint":40,"./constraints/LockConstraint":41,"./constraints/PointToPointConstraint":42,"./equations/ContactEquation":44,"./equations/Equation":45,"./equations/FrictionEquation":46,"./equations/RotationalEquation":47,"./equations/RotationalMotorEquation":48,"./material/ContactMaterial":49,"./material/Material":50,"./math/Mat3":52,"./math/Quaternion":53,"./math/Transform":54,"./math/Vec3":55,"./objects/Body":56,"./objects/RaycastVehicle":57,"./objects/RigidVehicle":58,"./objects/SPHSystem":59,"./objects/Spring":60,"./shapes/Box":62,"./shapes/ConvexPolyhedron":63,"./shapes/Cylinder":64,"./shapes/Heightfield":65,"./shapes/Particle":66,"./shapes/Plane":67,"./shapes/Shape":68,"./shapes/Sphere":69,"./shapes/Trimesh":70,"./solver/GSSolver":71,"./solver/Solver":72,"./solver/SplitSolver":73,"./utils/EventTarget":74,"./utils/Pool":76,"./utils/Vec3Pool":79,"./world/Narrowphase":80,"./world/World":81}],27:[function(require,module,exports){
+},{"../package.json":16,"./collision/AABB":18,"./collision/ArrayCollisionMatrix":19,"./collision/Broadphase":20,"./collision/GridBroadphase":21,"./collision/NaiveBroadphase":22,"./collision/ObjectCollisionMatrix":23,"./collision/Ray":25,"./collision/RaycastResult":26,"./collision/SAPBroadphase":27,"./constraints/ConeTwistConstraint":28,"./constraints/Constraint":29,"./constraints/DistanceConstraint":30,"./constraints/HingeConstraint":31,"./constraints/LockConstraint":32,"./constraints/PointToPointConstraint":33,"./equations/ContactEquation":35,"./equations/Equation":36,"./equations/FrictionEquation":37,"./equations/RotationalEquation":38,"./equations/RotationalMotorEquation":39,"./material/ContactMaterial":40,"./material/Material":41,"./math/Mat3":43,"./math/Quaternion":44,"./math/Transform":45,"./math/Vec3":46,"./objects/Body":47,"./objects/RaycastVehicle":48,"./objects/RigidVehicle":49,"./objects/SPHSystem":50,"./objects/Spring":51,"./shapes/Box":53,"./shapes/ConvexPolyhedron":54,"./shapes/Cylinder":55,"./shapes/Heightfield":56,"./shapes/Particle":57,"./shapes/Plane":58,"./shapes/Shape":59,"./shapes/Sphere":60,"./shapes/Trimesh":61,"./solver/GSSolver":62,"./solver/Solver":63,"./solver/SplitSolver":64,"./utils/EventTarget":65,"./utils/Pool":67,"./utils/Vec3Pool":70,"./world/Narrowphase":71,"./world/World":72}],18:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 var Utils = require('../utils/Utils');
 
@@ -3716,7 +2075,7 @@ AABB.prototype.overlapsRay = function(ray){
 
     return true;
 };
-},{"../math/Vec3":55,"../utils/Utils":78}],28:[function(require,module,exports){
+},{"../math/Vec3":46,"../utils/Utils":69}],19:[function(require,module,exports){
 module.exports = ArrayCollisionMatrix;
 
 /**
@@ -3789,7 +2148,7 @@ ArrayCollisionMatrix.prototype.setNumObjects = function(n) {
     this.matrix.length = n*(n-1)>>1;
 };
 
-},{}],29:[function(require,module,exports){
+},{}],20:[function(require,module,exports){
 var Body = require('../objects/Body');
 var Vec3 = require('../math/Vec3');
 var Quaternion = require('../math/Quaternion');
@@ -3997,7 +2356,7 @@ Broadphase.prototype.aabbQuery = function(world, aabb, result){
     console.warn('.aabbQuery is not implemented in this Broadphase subclass.');
     return [];
 };
-},{"../math/Quaternion":53,"../math/Vec3":55,"../objects/Body":56,"../shapes/Plane":67,"../shapes/Shape":68}],30:[function(require,module,exports){
+},{"../math/Quaternion":44,"../math/Vec3":46,"../objects/Body":47,"../shapes/Plane":58,"../shapes/Shape":59}],21:[function(require,module,exports){
 module.exports = GridBroadphase;
 
 var Broadphase = require('./Broadphase');
@@ -4227,7 +2586,7 @@ GridBroadphase.prototype.collisionPairs = function(world,pairs1,pairs2){
     this.makePairsUnique(pairs1,pairs2);
 };
 
-},{"../math/Vec3":55,"../shapes/Shape":68,"./Broadphase":29}],31:[function(require,module,exports){
+},{"../math/Vec3":46,"../shapes/Shape":59,"./Broadphase":20}],22:[function(require,module,exports){
 module.exports = NaiveBroadphase;
 
 var Broadphase = require('./Broadphase');
@@ -4302,7 +2661,7 @@ NaiveBroadphase.prototype.aabbQuery = function(world, aabb, result){
 
     return result;
 };
-},{"./AABB":27,"./Broadphase":29}],32:[function(require,module,exports){
+},{"./AABB":18,"./Broadphase":20}],23:[function(require,module,exports){
 module.exports = ObjectCollisionMatrix;
 
 /**
@@ -4375,7 +2734,7 @@ ObjectCollisionMatrix.prototype.reset = function() {
 ObjectCollisionMatrix.prototype.setNumObjects = function(n) {
 };
 
-},{}],33:[function(require,module,exports){
+},{}],24:[function(require,module,exports){
 module.exports = OverlapKeeper;
 
 /**
@@ -4471,7 +2830,7 @@ OverlapKeeper.prototype.getDiff = function(additions, removals) {
         }
     }
 };
-},{}],34:[function(require,module,exports){
+},{}],25:[function(require,module,exports){
 module.exports = Ray;
 
 var Vec3 = require('../math/Vec3');
@@ -5297,7 +3656,7 @@ function distanceFromIntersection(from, direction, position) {
 }
 
 
-},{"../collision/AABB":27,"../collision/RaycastResult":35,"../math/Quaternion":53,"../math/Transform":54,"../math/Vec3":55,"../shapes/Box":62,"../shapes/ConvexPolyhedron":63,"../shapes/Shape":68}],35:[function(require,module,exports){
+},{"../collision/AABB":18,"../collision/RaycastResult":26,"../math/Quaternion":44,"../math/Transform":45,"../math/Vec3":46,"../shapes/Box":53,"../shapes/ConvexPolyhedron":54,"../shapes/Shape":59}],26:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 
 module.exports = RaycastResult;
@@ -5420,7 +3779,7 @@ RaycastResult.prototype.set = function(
 	this.body = body;
 	this.distance = distance;
 };
-},{"../math/Vec3":55}],36:[function(require,module,exports){
+},{"../math/Vec3":46}],27:[function(require,module,exports){
 var Shape = require('../shapes/Shape');
 var Broadphase = require('../collision/Broadphase');
 
@@ -5744,7 +4103,7 @@ SAPBroadphase.prototype.aabbQuery = function(world, aabb, result){
 
     return result;
 };
-},{"../collision/Broadphase":29,"../shapes/Shape":68}],37:[function(require,module,exports){
+},{"../collision/Broadphase":20,"../shapes/Shape":59}],28:[function(require,module,exports){
 module.exports = ConeTwistConstraint;
 
 var Constraint = require('./Constraint');
@@ -5835,7 +4194,7 @@ ConeTwistConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ConeEquation":43,"../equations/ContactEquation":44,"../equations/RotationalEquation":47,"../math/Vec3":55,"./Constraint":38,"./PointToPointConstraint":42}],38:[function(require,module,exports){
+},{"../equations/ConeEquation":34,"../equations/ContactEquation":35,"../equations/RotationalEquation":38,"../math/Vec3":46,"./Constraint":29,"./PointToPointConstraint":33}],29:[function(require,module,exports){
 module.exports = Constraint;
 
 var Utils = require('../utils/Utils');
@@ -5928,7 +4287,7 @@ Constraint.prototype.disable = function(){
 
 Constraint.idCounter = 0;
 
-},{"../utils/Utils":78}],39:[function(require,module,exports){
+},{"../utils/Utils":69}],30:[function(require,module,exports){
 module.exports = DistanceConstraint;
 
 var Constraint = require('./Constraint');
@@ -5985,7 +4344,7 @@ DistanceConstraint.prototype.update = function(){
     normal.mult(halfDist, eq.ri);
     normal.mult(-halfDist, eq.rj);
 };
-},{"../equations/ContactEquation":44,"./Constraint":38}],40:[function(require,module,exports){
+},{"../equations/ContactEquation":35,"./Constraint":29}],31:[function(require,module,exports){
 module.exports = HingeConstraint;
 
 var Constraint = require('./Constraint');
@@ -6121,7 +4480,7 @@ HingeConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ContactEquation":44,"../equations/RotationalEquation":47,"../equations/RotationalMotorEquation":48,"../math/Vec3":55,"./Constraint":38,"./PointToPointConstraint":42}],41:[function(require,module,exports){
+},{"../equations/ContactEquation":35,"../equations/RotationalEquation":38,"../equations/RotationalMotorEquation":39,"../math/Vec3":46,"./Constraint":29,"./PointToPointConstraint":33}],32:[function(require,module,exports){
 module.exports = LockConstraint;
 
 var Constraint = require('./Constraint');
@@ -6215,7 +4574,7 @@ LockConstraint.prototype.update = function(){
 };
 
 
-},{"../equations/ContactEquation":44,"../equations/RotationalEquation":47,"../equations/RotationalMotorEquation":48,"../math/Vec3":55,"./Constraint":38,"./PointToPointConstraint":42}],42:[function(require,module,exports){
+},{"../equations/ContactEquation":35,"../equations/RotationalEquation":38,"../equations/RotationalMotorEquation":39,"../math/Vec3":46,"./Constraint":29,"./PointToPointConstraint":33}],33:[function(require,module,exports){
 module.exports = PointToPointConstraint;
 
 var Constraint = require('./Constraint');
@@ -6308,7 +4667,7 @@ PointToPointConstraint.prototype.update = function(){
     z.ri.copy(x.ri);
     z.rj.copy(x.rj);
 };
-},{"../equations/ContactEquation":44,"../math/Vec3":55,"./Constraint":38}],43:[function(require,module,exports){
+},{"../equations/ContactEquation":35,"../math/Vec3":46,"./Constraint":29}],34:[function(require,module,exports){
 module.exports = ConeEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -6387,7 +4746,7 @@ ConeEquation.prototype.computeB = function(h){
 };
 
 
-},{"../math/Mat3":52,"../math/Vec3":55,"./Equation":45}],44:[function(require,module,exports){
+},{"../math/Mat3":43,"../math/Vec3":46,"./Equation":36}],35:[function(require,module,exports){
 module.exports = ContactEquation;
 
 var Equation = require('./Equation');
@@ -6524,7 +4883,7 @@ ContactEquation.prototype.getImpactVelocityAlongNormal = function(){
 };
 
 
-},{"../math/Mat3":52,"../math/Vec3":55,"./Equation":45}],45:[function(require,module,exports){
+},{"../math/Mat3":43,"../math/Vec3":46,"./Equation":36}],36:[function(require,module,exports){
 module.exports = Equation;
 
 var JacobianElement = require('../math/JacobianElement'),
@@ -6788,7 +5147,7 @@ Equation.prototype.computeC = function(){
     return this.computeGiMGt() + this.eps;
 };
 
-},{"../math/JacobianElement":51,"../math/Vec3":55}],46:[function(require,module,exports){
+},{"../math/JacobianElement":42,"../math/Vec3":46}],37:[function(require,module,exports){
 module.exports = FrictionEquation;
 
 var Equation = require('./Equation');
@@ -6849,7 +5208,7 @@ FrictionEquation.prototype.computeB = function(h){
     return B;
 };
 
-},{"../math/Mat3":52,"../math/Vec3":55,"./Equation":45}],47:[function(require,module,exports){
+},{"../math/Mat3":43,"../math/Vec3":46,"./Equation":36}],38:[function(require,module,exports){
 module.exports = RotationalEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -6920,7 +5279,7 @@ RotationalEquation.prototype.computeB = function(h){
 };
 
 
-},{"../math/Mat3":52,"../math/Vec3":55,"./Equation":45}],48:[function(require,module,exports){
+},{"../math/Mat3":43,"../math/Vec3":46,"./Equation":36}],39:[function(require,module,exports){
 module.exports = RotationalMotorEquation;
 
 var Vec3 = require('../math/Vec3');
@@ -6992,7 +5351,7 @@ RotationalMotorEquation.prototype.computeB = function(h){
     return B;
 };
 
-},{"../math/Mat3":52,"../math/Vec3":55,"./Equation":45}],49:[function(require,module,exports){
+},{"../math/Mat3":43,"../math/Vec3":46,"./Equation":36}],40:[function(require,module,exports){
 var Utils = require('../utils/Utils');
 
 module.exports = ContactMaterial;
@@ -7073,7 +5432,7 @@ function ContactMaterial(m1, m2, options){
 
 ContactMaterial.idCounter = 0;
 
-},{"../utils/Utils":78}],50:[function(require,module,exports){
+},{"../utils/Utils":69}],41:[function(require,module,exports){
 module.exports = Material;
 
 /**
@@ -7123,7 +5482,7 @@ function Material(options){
 
 Material.idCounter = 0;
 
-},{}],51:[function(require,module,exports){
+},{}],42:[function(require,module,exports){
 module.exports = JacobianElement;
 
 var Vec3 = require('./Vec3');
@@ -7167,7 +5526,7 @@ JacobianElement.prototype.multiplyVectors = function(spatial,rotational){
     return spatial.dot(this.spatial) + rotational.dot(this.rotational);
 };
 
-},{"./Vec3":55}],52:[function(require,module,exports){
+},{"./Vec3":46}],43:[function(require,module,exports){
 module.exports = Mat3;
 
 var Vec3 = require('./Vec3');
@@ -7591,7 +5950,7 @@ Mat3.prototype.transpose = function( target ) {
     return target;
 };
 
-},{"./Vec3":55}],53:[function(require,module,exports){
+},{"./Vec3":46}],44:[function(require,module,exports){
 module.exports = Quaternion;
 
 var Vec3 = require('./Vec3');
@@ -8081,7 +6440,7 @@ Quaternion.prototype.integrate = function(angularVelocity, dt, angularFactor, ta
 
     return target;
 };
-},{"./Vec3":55}],54:[function(require,module,exports){
+},{"./Vec3":46}],45:[function(require,module,exports){
 var Vec3 = require('./Vec3');
 var Quaternion = require('./Quaternion');
 
@@ -8186,7 +6545,7 @@ Transform.vectorToLocalFrame = function(position, quaternion, worldVector, resul
     return result;
 };
 
-},{"./Quaternion":53,"./Vec3":55}],55:[function(require,module,exports){
+},{"./Quaternion":44,"./Vec3":46}],46:[function(require,module,exports){
 module.exports = Vec3;
 
 var Mat3 = require('./Mat3');
@@ -8670,7 +7029,7 @@ Vec3.prototype.isAntiparallelTo = function(v,precision){
 Vec3.prototype.clone = function(){
     return new Vec3(this.x, this.y, this.z);
 };
-},{"./Mat3":52}],56:[function(require,module,exports){
+},{"./Mat3":43}],47:[function(require,module,exports){
 module.exports = Body;
 
 var EventTarget = require('../utils/EventTarget');
@@ -8701,7 +7060,7 @@ var Box = require('../shapes/Box');
  * @param {number} [options.sleepSpeedLimit=0.1]
  * @param {number} [options.sleepTimeLimit=1]
  * @param {number} [options.collisionFilterGroup=1]
- * @param {number} [options.collisionFilterMask=-1]
+ * @param {number} [options.collisionFilterMask=1]
  * @param {boolean} [options.fixedRotation=false]
  * @param {Vec3} [options.linearFactor]
  * @param {Vec3} [options.angularFactor]
@@ -8754,7 +7113,7 @@ function Body(options){
     /**
      * @property {Number} collisionFilterMask
      */
-    this.collisionFilterMask = typeof(options.collisionFilterMask) === 'number' ? options.collisionFilterMask : -1;
+    this.collisionFilterMask = typeof(options.collisionFilterMask) === 'number' ? options.collisionFilterMask : 1;
 
     /**
      * Whether to produce contact forces when in contact with other bodies. Note that contacts will be generated, but they will be disabled.
@@ -8763,7 +7122,6 @@ function Body(options){
 	this.collisionResponse = true;
 
     /**
-     * World space position of the body.
      * @property position
      * @type {Vec3}
      */
@@ -8795,7 +7153,6 @@ function Body(options){
     }
 
     /**
-     * World space velocity of the body.
      * @property velocity
      * @type {Vec3}
      */
@@ -8812,7 +7169,7 @@ function Body(options){
     this.initVelocity = new Vec3();
 
     /**
-     * Linear force on the body in world space.
+     * Linear force on the body
      * @property force
      * @type {Vec3}
      */
@@ -8890,14 +7247,15 @@ function Body(options){
 
     this._wakeUpAfterNarrowphase = false;
 
+
     /**
-     * World space rotational force on the body, around center of mass.
+     * Rotational force on the body, around center of mass
      * @property {Vec3} torque
      */
     this.torque = new Vec3();
 
     /**
-     * World space orientation of the body.
+     * Orientation of the body
      * @property quaternion
      * @type {Quaternion}
      */
@@ -8928,7 +7286,6 @@ function Body(options){
     }
 
     /**
-     * Angular velocity of the body, in world space. Think of the angular velocity as a vector, which the body rotates around. The length of this vector determines how fast (in radians per second) the body rotates.
      * @property angularVelocity
      * @type {Vec3}
      */
@@ -8951,14 +7308,12 @@ function Body(options){
     this.shapes = [];
 
     /**
-     * Position of each Shape in the body, given in local Body space.
      * @property shapeOffsets
      * @type {array}
      */
     this.shapeOffsets = [];
 
     /**
-     * Orientation of each Shape, given in local Body space.
      * @property shapeOrientations
      * @type {array}
      */
@@ -9005,7 +7360,6 @@ function Body(options){
     this.angularDamping = typeof(options.angularDamping) !== 'undefined' ? options.angularDamping : 0.01;
 
     /**
-     * Use this property to limit the motion along any world axis. (1,1,1) will allow motion along all axes while (0,0,0) allows none.
      * @property {Vec3} linearFactor
      */
     this.linearFactor = new Vec3(1,1,1);
@@ -9014,7 +7368,6 @@ function Body(options){
     }
 
     /**
-     * Use this property to limit the rotational motion along any world axis. (1,1,1) will allow rotation along all axes while (0,0,0) allows none.
      * @property {Vec3} angularFactor
      */
     this.angularFactor = new Vec3(1,1,1);
@@ -9023,7 +7376,6 @@ function Body(options){
     }
 
     /**
-     * World space bounding box of the body and its shapes.
      * @property aabb
      * @type {AABB}
      */
@@ -9035,13 +7387,6 @@ function Body(options){
      * @type {Boolean}
      */
     this.aabbNeedsUpdate = true;
-
-    /**
-     * Total bounding radius of the Body including its shapes, relative to body.position.
-     * @property boundingRadius
-     * @type {Number}
-     */
-    this.boundingRadius = 0;
 
     this.wlambda = new Vec3();
 
@@ -9600,7 +7945,7 @@ Body.prototype.integrate = function(dt, quatNormalize, quatNormalizeFast){
     this.updateInertiaWorld();
 };
 
-},{"../collision/AABB":27,"../material/Material":50,"../math/Mat3":52,"../math/Quaternion":53,"../math/Vec3":55,"../shapes/Box":62,"../shapes/Shape":68,"../utils/EventTarget":74}],57:[function(require,module,exports){
+},{"../collision/AABB":18,"../material/Material":41,"../math/Mat3":43,"../math/Quaternion":44,"../math/Vec3":46,"../shapes/Box":53,"../shapes/Shape":59,"../utils/EventTarget":65}],48:[function(require,module,exports){
 var Body = require('./Body');
 var Vec3 = require('../math/Vec3');
 var Quaternion = require('../math/Quaternion');
@@ -10304,7 +8649,7 @@ function resolveSingleBilateral(body1, pos1, body2, pos2, normal, impulse){
 
     return impulse;
 }
-},{"../collision/Ray":34,"../collision/RaycastResult":35,"../math/Quaternion":53,"../math/Vec3":55,"../objects/WheelInfo":61,"./Body":56}],58:[function(require,module,exports){
+},{"../collision/Ray":25,"../collision/RaycastResult":26,"../math/Quaternion":44,"../math/Vec3":46,"../objects/WheelInfo":52,"./Body":47}],49:[function(require,module,exports){
 var Body = require('./Body');
 var Sphere = require('../shapes/Sphere');
 var Box = require('../shapes/Box');
@@ -10526,7 +8871,7 @@ RigidVehicle.prototype.getWheelSpeed = function(wheelIndex){
     return w.dot(worldAxis);
 };
 
-},{"../constraints/HingeConstraint":40,"../math/Vec3":55,"../shapes/Box":62,"../shapes/Sphere":69,"./Body":56}],59:[function(require,module,exports){
+},{"../constraints/HingeConstraint":31,"../math/Vec3":46,"../shapes/Box":53,"../shapes/Sphere":60,"./Body":47}],50:[function(require,module,exports){
 module.exports = SPHSystem;
 
 var Shape = require('../shapes/Shape');
@@ -10741,7 +9086,7 @@ SPHSystem.prototype.nablaw = function(r){
     return nabla;
 };
 
-},{"../material/Material":50,"../math/Quaternion":53,"../math/Vec3":55,"../objects/Body":56,"../shapes/Particle":66,"../shapes/Shape":68}],60:[function(require,module,exports){
+},{"../material/Material":41,"../math/Quaternion":44,"../math/Vec3":46,"../objects/Body":47,"../shapes/Particle":57,"../shapes/Shape":59}],51:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 
 module.exports = Spring;
@@ -10936,7 +9281,7 @@ Spring.prototype.applyForce = function(){
     bodyB.torque.vadd(rj_x_f,bodyB.torque);
 };
 
-},{"../math/Vec3":55}],61:[function(require,module,exports){
+},{"../math/Vec3":46}],52:[function(require,module,exports){
 var Vec3 = require('../math/Vec3');
 var Transform = require('../math/Transform');
 var RaycastResult = require('../collision/RaycastResult');
@@ -11219,7 +9564,7 @@ WheelInfo.prototype.updateWheel = function(chassis){
         this.clippedInvContactDotSuspension = 1.0;
     }
 };
-},{"../collision/RaycastResult":35,"../math/Transform":54,"../math/Vec3":55,"../utils/Utils":78}],62:[function(require,module,exports){
+},{"../collision/RaycastResult":26,"../math/Transform":45,"../math/Vec3":46,"../utils/Utils":69}],53:[function(require,module,exports){
 module.exports = Box;
 
 var Shape = require('./Shape');
@@ -11235,9 +9580,9 @@ var ConvexPolyhedron = require('./ConvexPolyhedron');
  * @extends Shape
  */
 function Box(halfExtents){
-    Shape.call(this, {
-        type: Shape.types.BOX
-    });
+    Shape.call(this);
+
+    this.type = Shape.types.BOX;
 
     /**
      * @property halfExtents
@@ -11456,7 +9801,7 @@ Box.prototype.calculateWorldAABB = function(pos,quat,min,max){
     // });
 };
 
-},{"../math/Vec3":55,"./ConvexPolyhedron":63,"./Shape":68}],63:[function(require,module,exports){
+},{"../math/Vec3":46,"./ConvexPolyhedron":54,"./Shape":59}],54:[function(require,module,exports){
 module.exports = ConvexPolyhedron;
 
 var Shape = require('./Shape');
@@ -11484,9 +9829,9 @@ var Transform = require('../math/Transform');
  * @todo Automatically merge coplanar polygons in constructor.
  */
 function ConvexPolyhedron(points, faces, uniqueAxes) {
-    Shape.call(this, {
-        type: Shape.types.CONVEXPOLYHEDRON
-    });
+    var that = this;
+    Shape.call(this);
+    this.type = Shape.types.CONVEXPOLYHEDRON;
 
     /**
      * Array of Vec3
@@ -12384,7 +10729,7 @@ ConvexPolyhedron.project = function(hull, axis, pos, quat, result){
     result[1] = min;
 };
 
-},{"../math/Quaternion":53,"../math/Transform":54,"../math/Vec3":55,"./Shape":68}],64:[function(require,module,exports){
+},{"../math/Quaternion":44,"../math/Transform":45,"../math/Vec3":46,"./Shape":59}],55:[function(require,module,exports){
 module.exports = Cylinder;
 
 var Shape = require('./Shape');
@@ -12460,12 +10805,13 @@ function Cylinder( radiusTop, radiusBottom, height , numSegments ) {
     }
     faces.push(temp);
 
+    this.type = Shape.types.CONVEXPOLYHEDRON;
     ConvexPolyhedron.call( this, verts, faces, axes );
 }
 
 Cylinder.prototype = new ConvexPolyhedron();
 
-},{"../math/Quaternion":53,"../math/Vec3":55,"./ConvexPolyhedron":63,"./Shape":68}],65:[function(require,module,exports){
+},{"../math/Quaternion":44,"../math/Vec3":46,"./ConvexPolyhedron":54,"./Shape":59}],56:[function(require,module,exports){
 var Shape = require('./Shape');
 var ConvexPolyhedron = require('./ConvexPolyhedron');
 var Vec3 = require('../math/Vec3');
@@ -12543,13 +10889,12 @@ function Heightfield(data, options){
 
     this.cacheEnabled = true;
 
-    Shape.call(this, {
-        type: Shape.types.HEIGHTFIELD
-    });
+    Shape.call(this);
 
     this.pillarConvex = new ConvexPolyhedron();
     this.pillarOffset = new Vec3();
 
+    this.type = Shape.types.HEIGHTFIELD;
     this.updateBoundingSphereRadius();
 
     // "i_j_isUpper" => { convex: ..., offset: ... }
@@ -13151,7 +11496,7 @@ Heightfield.prototype.setHeightsFromImage = function(image, scale){
     this.updateMinValue();
     this.update();
 };
-},{"../math/Vec3":55,"../utils/Utils":78,"./ConvexPolyhedron":63,"./Shape":68}],66:[function(require,module,exports){
+},{"../math/Vec3":46,"../utils/Utils":69,"./ConvexPolyhedron":54,"./Shape":59}],57:[function(require,module,exports){
 module.exports = Particle;
 
 var Shape = require('./Shape');
@@ -13165,9 +11510,9 @@ var Vec3 = require('../math/Vec3');
  * @extends Shape
  */
 function Particle(){
-    Shape.call(this, {
-        type: Shape.types.PARTICLE
-    });
+    Shape.call(this);
+
+    this.type = Shape.types.PARTICLE;
 }
 Particle.prototype = new Shape();
 Particle.prototype.constructor = Particle;
@@ -13198,23 +11543,22 @@ Particle.prototype.calculateWorldAABB = function(pos,quat,min,max){
     max.copy(pos);
 };
 
-},{"../math/Vec3":55,"./Shape":68}],67:[function(require,module,exports){
+},{"../math/Vec3":46,"./Shape":59}],58:[function(require,module,exports){
 module.exports = Plane;
 
 var Shape = require('./Shape');
 var Vec3 = require('../math/Vec3');
 
 /**
- * A plane, facing in the Z direction. The plane has its surface at z=0 and everything below z=0 is assumed to be solid plane. To make the plane face in some other direction than z, you must put it inside a Body and rotate that body. See the demos.
+ * A plane, facing in the Z direction. The plane has its surface at z=0 and everything below z=0 is assumed to be solid plane. To make the plane face in some other direction than z, you must put it inside a RigidBody and rotate that body. See the demos.
  * @class Plane
  * @constructor
  * @extends Shape
  * @author schteppe
  */
 function Plane(){
-    Shape.call(this, {
-        type: Shape.types.PLANE
-    });
+    Shape.call(this);
+    this.type = Shape.types.PLANE;
 
     // World oriented normal
     this.worldNormal = new Vec3();
@@ -13262,7 +11606,7 @@ Plane.prototype.calculateWorldAABB = function(pos, quat, min, max){
 Plane.prototype.updateBoundingSphereRadius = function(){
     this.boundingSphereRadius = Number.MAX_VALUE;
 };
-},{"../math/Vec3":55,"./Shape":68}],68:[function(require,module,exports){
+},{"../math/Vec3":46,"./Shape":59}],59:[function(require,module,exports){
 module.exports = Shape;
 
 var Shape = require('./Shape');
@@ -13274,15 +11618,10 @@ var Material = require('../material/Material');
  * Base class for shapes
  * @class Shape
  * @constructor
- * @param {object} [options]
- * @param {number} [options.collisionFilterGroup=1]
- * @param {number} [options.collisionFilterMask=-1]
- * @param {number} [options.collisionResponse=true]
- * @param {number} [options.material=null]
  * @author schteppe
+ * @todo Should have a mechanism for caching bounding sphere radius instead of calculating it each time
  */
-function Shape(options){
-    options = options || {};
+function Shape(){
 
     /**
      * Identifyer of the Shape.
@@ -13296,7 +11635,7 @@ function Shape(options){
      * @type {Number}
      * @see Shape.types
      */
-    this.type = options.type || 0;
+    this.type = 0;
 
     /**
      * The local bounding sphere radius of this shape.
@@ -13308,22 +11647,12 @@ function Shape(options){
      * Whether to produce contact forces when in contact with other bodies. Note that contacts will be generated, but they will be disabled.
      * @property {boolean} collisionResponse
      */
-    this.collisionResponse = options.collisionResponse ? options.collisionResponse : true;
-
-    /**
-     * @property {Number} collisionFilterGroup
-     */
-    this.collisionFilterGroup = options.collisionFilterGroup !== undefined ? options.collisionFilterGroup : 1;
-
-    /**
-     * @property {Number} collisionFilterMask
-     */
-    this.collisionFilterMask = options.collisionFilterMask !== undefined ? options.collisionFilterMask : -1;
+    this.collisionResponse = true;
 
     /**
      * @property {Material} material
      */
-    this.material = options.material ? options.material : null;
+    this.material = null;
 
     /**
      * @property {Body} body
@@ -13381,7 +11710,7 @@ Shape.types = {
 };
 
 
-},{"../material/Material":50,"../math/Quaternion":53,"../math/Vec3":55,"./Shape":68}],69:[function(require,module,exports){
+},{"../material/Material":41,"../math/Quaternion":44,"../math/Vec3":46,"./Shape":59}],60:[function(require,module,exports){
 module.exports = Sphere;
 
 var Shape = require('./Shape');
@@ -13396,14 +11725,13 @@ var Vec3 = require('../math/Vec3');
  * @author schteppe / http://github.com/schteppe
  */
 function Sphere(radius){
-    Shape.call(this, {
-        type: Shape.types.SPHERE
-    });
+    Shape.call(this);
 
     /**
      * @property {Number} radius
      */
-    this.radius = radius !== undefined ? radius : 1.0;
+    this.radius = radius!==undefined ? Number(radius) : 1.0;
+    this.type = Shape.types.SPHERE;
 
     if(this.radius < 0){
         throw new Error('The sphere radius cannot be negative.');
@@ -13441,7 +11769,7 @@ Sphere.prototype.calculateWorldAABB = function(pos,quat,min,max){
     }
 };
 
-},{"../math/Vec3":55,"./Shape":68}],70:[function(require,module,exports){
+},{"../math/Vec3":46,"./Shape":59}],61:[function(require,module,exports){
 module.exports = Trimesh;
 
 var Shape = require('./Shape');
@@ -13470,9 +11798,8 @@ var Octree = require('../utils/Octree');
  *     var trimeshShape = new Trimesh(vertices, indices);
  */
 function Trimesh(vertices, indices) {
-    Shape.call(this, {
-        type: Shape.types.TRIMESH
-    });
+    Shape.call(this);
+    this.type = Shape.types.TRIMESH;
 
     /**
      * @property vertices
@@ -14004,7 +12331,7 @@ Trimesh.createTorus = function (radius, tube, radialSegments, tubularSegments, a
     return new Trimesh(vertices, indices);
 };
 
-},{"../collision/AABB":27,"../math/Quaternion":53,"../math/Transform":54,"../math/Vec3":55,"../utils/Octree":75,"./Shape":68}],71:[function(require,module,exports){
+},{"../collision/AABB":18,"../math/Quaternion":44,"../math/Transform":45,"../math/Vec3":46,"../utils/Octree":66,"./Shape":59}],62:[function(require,module,exports){
 module.exports = GSSolver;
 
 var Vec3 = require('../math/Vec3');
@@ -14146,7 +12473,7 @@ GSSolver.prototype.solve = function(dt,world){
     return iter;
 };
 
-},{"../math/Quaternion":53,"../math/Vec3":55,"./Solver":72}],72:[function(require,module,exports){
+},{"../math/Quaternion":44,"../math/Vec3":46,"./Solver":63}],63:[function(require,module,exports){
 module.exports = Solver;
 
 /**
@@ -14207,7 +12534,7 @@ Solver.prototype.removeAllEquations = function(){
 };
 
 
-},{}],73:[function(require,module,exports){
+},{}],64:[function(require,module,exports){
 module.exports = SplitSolver;
 
 var Vec3 = require('../math/Vec3');
@@ -14362,7 +12689,7 @@ SplitSolver.prototype.solve = function(dt,world){
 function sortById(a, b){
     return b.id - a.id;
 }
-},{"../math/Quaternion":53,"../math/Vec3":55,"../objects/Body":56,"./Solver":72}],74:[function(require,module,exports){
+},{"../math/Quaternion":44,"../math/Vec3":46,"../objects/Body":47,"./Solver":63}],65:[function(require,module,exports){
 /**
  * Base class for objects that dispatches events.
  * @class EventTarget
@@ -14463,7 +12790,7 @@ EventTarget.prototype = {
     }
 };
 
-},{}],75:[function(require,module,exports){
+},{}],66:[function(require,module,exports){
 var AABB = require('../collision/AABB');
 var Vec3 = require('../math/Vec3');
 
@@ -14698,7 +13025,7 @@ OctreeNode.prototype.removeEmptyNodes = function() {
     }
 };
 
-},{"../collision/AABB":27,"../math/Vec3":55}],76:[function(require,module,exports){
+},{"../collision/AABB":18,"../math/Vec3":46}],67:[function(require,module,exports){
 module.exports = Pool;
 
 /**
@@ -14775,7 +13102,7 @@ Pool.prototype.resize = function (size) {
 };
 
 
-},{}],77:[function(require,module,exports){
+},{}],68:[function(require,module,exports){
 module.exports = TupleDictionary;
 
 /**
@@ -14842,7 +13169,7 @@ TupleDictionary.prototype.reset = function() {
     }
 };
 
-},{}],78:[function(require,module,exports){
+},{}],69:[function(require,module,exports){
 function Utils(){}
 
 module.exports = Utils;
@@ -14867,7 +13194,7 @@ Utils.defaults = function(options, defaults){
     return options;
 };
 
-},{}],79:[function(require,module,exports){
+},{}],70:[function(require,module,exports){
 module.exports = Vec3Pool;
 
 var Vec3 = require('../math/Vec3');
@@ -14893,7 +13220,7 @@ Vec3Pool.prototype.constructObject = function(){
     return new Vec3();
 };
 
-},{"../math/Vec3":55,"./Pool":76}],80:[function(require,module,exports){
+},{"../math/Vec3":46,"./Pool":67}],71:[function(require,module,exports){
 module.exports = Narrowphase;
 
 var AABB = require('../collision/AABB');
@@ -15155,10 +13482,6 @@ Narrowphase.prototype.getContacts = function(p1, p2, world, result, oldcontacts,
                 bj.quaternion.vmult(bj.shapeOffsets[j], xj);
                 xj.vadd(bj.position, xj);
                 var sj = bj.shapes[j];
-
-                if(!((si.collisionFilterMask & sj.collisionFilterGroup) && (sj.collisionFilterMask & si.collisionFilterGroup))){
-                    continue;
-                }
 
                 if(xi.distanceTo(xj) > si.boundingSphereRadius + sj.boundingSphereRadius){
                     continue;
@@ -16759,7 +15082,7 @@ Narrowphase.prototype.sphereHeightfield = function (
     }
 };
 
-},{"../collision/AABB":27,"../collision/Ray":34,"../equations/ContactEquation":44,"../equations/FrictionEquation":46,"../math/Quaternion":53,"../math/Transform":54,"../math/Vec3":55,"../objects/Body":56,"../shapes/ConvexPolyhedron":63,"../shapes/Shape":68,"../solver/Solver":72,"../utils/Vec3Pool":79}],81:[function(require,module,exports){
+},{"../collision/AABB":18,"../collision/Ray":25,"../equations/ContactEquation":35,"../equations/FrictionEquation":37,"../math/Quaternion":44,"../math/Transform":45,"../math/Vec3":46,"../objects/Body":47,"../shapes/ConvexPolyhedron":54,"../shapes/Shape":59,"../solver/Solver":63,"../utils/Vec3Pool":70}],72:[function(require,module,exports){
 /* global performance */
 
 module.exports = World;
@@ -17793,4 +16116,1793 @@ World.prototype.clearForces = function(){
     }
 };
 
-},{"../collision/AABB":27,"../collision/ArrayCollisionMatrix":28,"../collision/NaiveBroadphase":31,"../collision/OverlapKeeper":33,"../collision/Ray":34,"../collision/RaycastResult":35,"../equations/ContactEquation":44,"../equations/FrictionEquation":46,"../material/ContactMaterial":49,"../material/Material":50,"../math/Quaternion":53,"../math/Vec3":55,"../objects/Body":56,"../shapes/Shape":68,"../solver/GSSolver":71,"../utils/EventTarget":74,"../utils/TupleDictionary":77,"./Narrowphase":80}]},{},[1]);
+},{"../collision/AABB":18,"../collision/ArrayCollisionMatrix":19,"../collision/NaiveBroadphase":22,"../collision/OverlapKeeper":24,"../collision/Ray":25,"../collision/RaycastResult":26,"../equations/ContactEquation":35,"../equations/FrictionEquation":37,"../material/ContactMaterial":40,"../material/Material":41,"../math/Quaternion":44,"../math/Vec3":46,"../objects/Body":47,"../shapes/Shape":59,"../solver/GSSolver":62,"../utils/EventTarget":65,"../utils/TupleDictionary":68,"./Narrowphase":71}],73:[function(require,module,exports){
+var CANNON = require('cannon'),
+    quickhull = require('./lib/THREE.quickhull');
+
+var PI_2 = Math.PI / 2;
+
+var Type = {
+  BOX: 'Box',
+  CYLINDER: 'Cylinder',
+  SPHERE: 'Sphere',
+  HULL: 'ConvexPolyhedron'
+};
+
+// TEST TEST TEST TEST
+
+/**
+ * Given a THREE.Object3D instance, creates a corresponding CANNON shape.
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+module.exports = CANNON.mesh2shape = function (object, options) {
+  options = options || {};
+
+  if (options.type === Type.BOX) {
+    return createBoundingBoxShape(object);
+  } else if (options.type === Type.CYLINDER) {
+    return createBoundingCylinderShape(object, options);
+  } else if (options.type === Type.SPHERE) {
+    return createBoundingSphereShape(object, options);
+  } else if (options.type === Type.HULL) {
+    return createConvexPolyhedron(object);
+  } else if (options.type) {
+    throw new Error('[CANNON.mesh2shape] Invalid type "%s".', options.type);
+  }
+
+  var geometry = getGeometry(object);
+
+  if (!geometry) return null;
+
+  var type = geometry.metadata
+    ? geometry.metadata.type
+    : geometry.type;
+
+  switch (type) {
+    case 'BoxGeometry':
+    case 'BoxBufferGeometry':
+      return createBoxShape(geometry);
+    case 'CylinderGeometry':
+    case 'CylinderBufferGeometry':
+      return createCylinderShape(geometry);
+    case 'PlaneGeometry':
+    case 'PlaneBufferGeometry':
+      return createPlaneShape(geometry);
+    case 'SphereGeometry':
+    case 'SphereBufferGeometry':
+      return createSphereShape(geometry);
+    case 'TubeGeometry':
+      return createTubeShape(geometry);
+    case 'Geometry':
+    case 'BufferGeometry':
+      return createTrimeshShape(geometry);
+    default:
+      console.warn('Unrecognized geometry: "%s". Using bounding box as shape.', geometry.type);
+      return createBoxShape(geometry);
+  }
+};
+
+CANNON.mesh2shape.Type = Type;
+
+/******************************************************************************
+ * Shape construction
+ */
+
+ /**
+  * @param  {THREE.Geometry} geometry
+  * @return {CANNON.Shape}
+  */
+ function createBoxShape (geometry) {
+   var vertices = getVertices(geometry);
+
+   if (!vertices.length) return null;
+
+   geometry.computeBoundingBox();
+   var box = geometry.boundingBox;
+   return new CANNON.Box(new CANNON.Vec3(
+     (box.max.x - box.min.x) / 2,
+     (box.max.y - box.min.y) / 2,
+     (box.max.z - box.min.z) / 2
+   ));
+ }
+
+/**
+ * Bounding box needs to be computed with the entire mesh, not just geometry.
+ * @param  {THREE.Object3D} mesh
+ * @return {CANNON.Shape}
+ */
+function createBoundingBoxShape (object) {
+  var box, shape, localPosition, worldPosition,
+      helper = new THREE.BoundingBoxHelper(object);
+
+  helper.update();
+  box = helper.box;
+
+  if (!isFinite(box.min.lengthSq())) return null;
+
+  shape = new CANNON.Box(new CANNON.Vec3(
+    (box.max.x - box.min.x) / 2,
+    (box.max.y - box.min.y) / 2,
+    (box.max.z - box.min.z) / 2
+  ));
+
+  object.updateMatrixWorld();
+  worldPosition = new THREE.Vector3();
+  worldPosition.setFromMatrixPosition(object.matrixWorld);
+  localPosition = helper.position.sub(worldPosition);
+  if (localPosition.lengthSq()) {
+    shape.offset = localPosition;
+  }
+
+  return shape;
+}
+
+/**
+ * Computes 3D convex hull as a CANNON.ConvexPolyhedron.
+ * @param  {THREE.Object3D} mesh
+ * @return {CANNON.Shape}
+ */
+function createConvexPolyhedron (object) {
+  var i, vertices, faces, hull,
+      eps = 1e-4,
+      geometry = getGeometry(object);
+
+  if (!geometry || !geometry.vertices.length) return null;
+
+  // Perturb.
+  for (i = 0; i < geometry.vertices.length; i++) {
+    geometry.vertices[i].x += (Math.random() - 0.5) * eps;
+    geometry.vertices[i].y += (Math.random() - 0.5) * eps;
+    geometry.vertices[i].z += (Math.random() - 0.5) * eps;
+  }
+
+  // Compute the 3D convex hull.
+  hull = quickhull(geometry);
+
+  // Convert from THREE.Vector3 to CANNON.Vec3.
+  vertices = new Array(hull.vertices.length);
+  for (i = 0; i < hull.vertices.length; i++) {
+    vertices[i] = new CANNON.Vec3(hull.vertices[i].x, hull.vertices[i].y, hull.vertices[i].z);
+  }
+
+  // Convert from THREE.Face to Array<number>.
+  faces = new Array(hull.faces.length);
+  for (i = 0; i < hull.faces.length; i++) {
+    faces[i] = [hull.faces[i].a, hull.faces[i].b, hull.faces[i].c];
+  }
+
+  return new CANNON.ConvexPolyhedron(vertices, faces);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createCylinderShape (geometry) {
+  var shape,
+      params = geometry.metadata
+        ? geometry.metadata.parameters
+        : geometry.parameters;
+  shape = new CANNON.Cylinder(
+    params.radiusTop,
+    params.radiusBottom,
+    params.height,
+    params.radialSegments
+  );
+  shape.orientation = new CANNON.Quaternion();
+  shape.orientation.setFromEuler(THREE.Math.degToRad(-90), 0, 0, 'XYZ').normalize();
+  return shape;
+}
+
+/**
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+function createBoundingCylinderShape (object, options) {
+  var shape, height, radius,
+      geometry = getGeometry(object),
+      axes = ['x', 'y', 'z'],
+      majorAxis = options.cylinderAxis || 'y',
+      minorAxes = axes.splice(axes.indexOf(majorAxis), 1) && axes;
+
+  // Compute cylinder dimensions.
+  geometry.computeBoundingBox();
+  geometry.computeBoundingSphere();
+  height = geometry.boundingBox.max[majorAxis] - geometry.boundingBox.min[majorAxis];
+  radius = 0.5 * Math.max(
+    geometry.boundingBox.max[minorAxes[0]] - geometry.boundingBox.min[minorAxes[0]],
+    geometry.boundingBox.max[minorAxes[1]] - geometry.boundingBox.min[minorAxes[1]]
+  );
+
+  // Create shape.
+  shape = new CANNON.Cylinder(radius, radius, height, 12);
+  shape.orientation = new CANNON.Quaternion();
+  shape.orientation.setFromEuler(
+    majorAxis === 'y' ? PI_2 : 0,
+    majorAxis === 'z' ? PI_2 : 0,
+    0,
+    'XYZ'
+  ).normalize();
+  return shape;
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createPlaneShape (geometry) {
+  geometry.computeBoundingBox();
+  var box = geometry.boundingBox;
+  return new CANNON.Box(new CANNON.Vec3(
+    (box.max.x - box.min.x) / 2 || 0.1,
+    (box.max.y - box.min.y) / 2 || 0.1,
+    (box.max.z - box.min.z) / 2 || 0.1
+  ));
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createSphereShape (geometry) {
+  var params = geometry.metadata
+    ? geometry.metadata.parameters
+    : geometry.parameters;
+  return new CANNON.Sphere(params.radius);
+}
+
+/**
+ * @param  {THREE.Object3D} object
+ * @return {CANNON.Shape}
+ */
+function createBoundingSphereShape (object, options) {
+  var geometry = getGeometry(object);
+  geometry.computeBoundingSphere();
+  return new CANNON.Sphere(options.sphereRadius || geometry.boundingSphere.radius);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createTubeShape (geometry) {
+  var tmp = new THREE.BufferGeometry();
+  tmp.fromGeometry(geometry);
+  return createTrimeshShape(tmp);
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {CANNON.Shape}
+ */
+function createTrimeshShape (geometry) {
+  var indices,
+      vertices = getVertices(geometry);
+
+  if (!vertices.length) return null;
+
+  indices = Object.keys(vertices).map(Number);
+  return new CANNON.Trimesh(vertices, indices);
+}
+
+/******************************************************************************
+ * Utils
+ */
+
+/**
+ * Returns a single geometry for the given object. If the object is compound,
+ * its geometries are automatically merged.
+ * @param {THREE.Object3D} object
+ * @return {THREE.Geometry}
+ */
+function getGeometry (object) {
+  var matrix, mesh,
+      meshes = getMeshes(object),
+      tmp = new THREE.Geometry(),
+      combined = new THREE.Geometry();
+
+  if (meshes.length === 0) return null;
+
+  // Apply scale  – it can't easily be applied to a CANNON.Shape later.
+  if (meshes.length === 1) {
+    var position = new THREE.Vector3(),
+        quaternion = new THREE.Quaternion(),
+        scale = new THREE.Vector3();
+    tmp = meshes[0].geometry.clone();
+    tmp.metadata = meshes[0].geometry.metadata;
+    meshes[0].updateMatrixWorld();
+    meshes[0].matrixWorld.decompose(position, quaternion, scale);
+    return tmp.scale(scale.x, scale.y, scale.z);
+  }
+
+  // Recursively merge geometry, preserving local transforms.
+  while ((mesh = meshes.pop())) {
+    mesh.updateMatrixWorld();
+    if (mesh.geometry instanceof THREE.BufferGeometry) {
+      tmp.fromBufferGeometry(mesh.geometry);
+      combined.merge(tmp, mesh.matrixWorld);
+    } else {
+      combined.merge(mesh.geometry, mesh.matrixWorld);
+    }
+  }
+
+  matrix = new THREE.Matrix4();
+  matrix.scale(object.scale);
+  combined.applyMatrix(matrix);
+  return combined;
+}
+
+/**
+ * @param  {THREE.Geometry} geometry
+ * @return {Array<number>}
+ */
+function getVertices (geometry) {
+  if (!geometry.attributes) {
+    geometry = new THREE.BufferGeometry().fromGeometry(geometry);
+  }
+  return (geometry.attributes.position || {}).array || [];
+}
+
+/**
+ * Returns a flat array of THREE.Mesh instances from the given object. If
+ * nested transformations are found, they are applied to child meshes
+ * as mesh.userData.matrix, so that each mesh has its position/rotation/scale
+ * independently of all of its parents except the top-level object.
+ * @param  {THREE.Object3D} object
+ * @return {Array<THREE.Mesh>}
+ */
+function getMeshes (object) {
+  var meshes = [];
+  object.traverse(function (o) {
+    if (o.type === 'Mesh') {
+      meshes.push(o);
+    }
+  });
+  return meshes;
+}
+
+},{"./lib/THREE.quickhull":74,"cannon":17}],74:[function(require,module,exports){
+/**
+
+  QuickHull
+  ---------
+
+  The MIT License
+
+  Copyright &copy; 2010-2014 three.js authors
+
+  Permission is hereby granted, free of charge, to any person obtaining a copy
+  of this software and associated documentation files (the "Software"), to deal
+  in the Software without restriction, including without limitation the rights
+  to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+  copies of the Software, and to permit persons to whom the Software is
+  furnished to do so, subject to the following conditions:
+
+  The above copyright notice and this permission notice shall be included in
+  all copies or substantial portions of the Software.
+
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+  OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+
+  THE SOFTWARE.
+
+
+    @author mark lundin / http://mark-lundin.com
+
+    This is a 3D implementation of the Quick Hull algorithm.
+    It is a fast way of computing a convex hull with average complexity
+    of O(n log(n)).
+    It uses depends on three.js and is supposed to create THREE.Geometry.
+
+    It's also very messy
+
+ */
+
+module.exports = (function(){
+
+
+  var faces     = [],
+    faceStack   = [],
+    i, NUM_POINTS, extremes,
+    max     = 0,
+    dcur, current, j, v0, v1, v2, v3,
+    N, D;
+
+  var ab, ac, ax,
+    suba, subb, normal,
+    diff, subaA, subaB, subC;
+
+  function reset(){
+
+    ab    = new THREE.Vector3(),
+    ac    = new THREE.Vector3(),
+    ax    = new THREE.Vector3(),
+    suba  = new THREE.Vector3(),
+    subb  = new THREE.Vector3(),
+    normal  = new THREE.Vector3(),
+    diff  = new THREE.Vector3(),
+    subaA = new THREE.Vector3(),
+    subaB = new THREE.Vector3(),
+    subC  = new THREE.Vector3();
+
+  }
+
+  //temporary vectors
+
+  function process( points ){
+
+    // Iterate through all the faces and remove
+    while( faceStack.length > 0  ){
+      cull( faceStack.shift(), points );
+    }
+  }
+
+
+  var norm = function(){
+
+    var ca = new THREE.Vector3(),
+      ba = new THREE.Vector3(),
+      N = new THREE.Vector3();
+
+    return function( a, b, c ){
+
+      ca.subVectors( c, a );
+      ba.subVectors( b, a );
+
+      N.crossVectors( ca, ba );
+
+      return N.normalize();
+    }
+
+  }();
+
+
+  function getNormal( face, points ){
+
+    if( face.normal !== undefined ) return face.normal;
+
+    var p0 = points[face[0]],
+      p1 = points[face[1]],
+      p2 = points[face[2]];
+
+    ab.subVectors( p1, p0 );
+    ac.subVectors( p2, p0 );
+    normal.crossVectors( ac, ab );
+    normal.normalize();
+
+    return face.normal = normal.clone();
+
+  }
+
+
+  function assignPoints( face, pointset, points ){
+
+    // ASSIGNING POINTS TO FACE
+    var p0 = points[face[0]],
+      dots = [], apex,
+      norm = getNormal( face, points );
+
+
+    // Sory all the points by there distance from the plane
+    pointset.sort( function( aItem, bItem ){
+
+
+      dots[aItem.x/3] = dots[aItem.x/3] !== undefined ? dots[aItem.x/3] : norm.dot( suba.subVectors( aItem, p0 ));
+      dots[bItem.x/3] = dots[bItem.x/3] !== undefined ? dots[bItem.x/3] : norm.dot( subb.subVectors( bItem, p0 ));
+
+      return dots[aItem.x/3] - dots[bItem.x/3] ;
+    });
+
+    //TODO :: Must be a faster way of finding and index in this array
+    var index = pointset.length;
+
+    if( index === 1 ) dots[pointset[0].x/3] = norm.dot( suba.subVectors( pointset[0], p0 ));
+    while( index-- > 0 && dots[pointset[index].x/3] > 0 )
+
+    var point;
+    if( index + 1 < pointset.length && dots[pointset[index+1].x/3] > 0 ){
+
+      face.visiblePoints  = pointset.splice( index + 1 );
+    }
+  }
+
+
+
+
+  function cull( face, points ){
+
+    var i = faces.length,
+      dot, visibleFace, currentFace,
+      visibleFaces = [face];
+
+    var apex = points.indexOf( face.visiblePoints.pop() );
+
+    // Iterate through all other faces...
+    while( i-- > 0 ){
+      currentFace = faces[i];
+      if( currentFace !== face ){
+        // ...and check if they're pointing in the same direction
+        dot = getNormal( currentFace, points ).dot( diff.subVectors( points[apex], points[currentFace[0]] ));
+        if( dot > 0 ){
+          visibleFaces.push( currentFace );
+        }
+      }
+    }
+
+    var index, neighbouringIndex, vertex;
+
+    // Determine Perimeter - Creates a bounded horizon
+
+    // 1. Pick an edge A out of all possible edges
+    // 2. Check if A is shared by any other face. a->b === b->a
+      // 2.1 for each edge in each triangle, isShared = ( f1.a == f2.a && f1.b == f2.b ) || ( f1.a == f2.b && f1.b == f2.a )
+    // 3. If not shared, then add to convex horizon set,
+        //pick an end point (N) of the current edge A and choose a new edge NA connected to A.
+        //Restart from 1.
+    // 4. If A is shared, it is not an horizon edge, therefore flag both faces that share this edge as candidates for culling
+    // 5. If candidate geometry is a degenrate triangle (ie. the tangent space normal cannot be computed) then remove that triangle from all further processing
+
+
+    var j = i = visibleFaces.length;
+    var isDistinct = false,
+      hasOneVisibleFace = i === 1,
+      cull = [],
+      perimeter = [],
+      edgeIndex = 0, compareFace, nextIndex,
+      a, b;
+
+    var allPoints = [];
+    var originFace = [visibleFaces[0][0], visibleFaces[0][1], visibleFaces[0][1], visibleFaces[0][2], visibleFaces[0][2], visibleFaces[0][0]];
+
+
+    if( visibleFaces.length === 1 ){
+      currentFace = visibleFaces[0];
+
+      perimeter = [currentFace[0], currentFace[1], currentFace[1], currentFace[2], currentFace[2], currentFace[0]];
+      // remove visible face from list of faces
+      if( faceStack.indexOf( currentFace ) > -1 ){
+        faceStack.splice( faceStack.indexOf( currentFace ), 1 );
+      }
+
+
+      if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
+      faces.splice( faces.indexOf( currentFace ), 1 );
+
+    }else{
+
+      while( i-- > 0  ){  // for each visible face
+
+        currentFace = visibleFaces[i];
+
+        // remove visible face from list of faces
+        if( faceStack.indexOf( currentFace ) > -1 ){
+          faceStack.splice( faceStack.indexOf( currentFace ), 1 );
+        }
+
+        if( currentFace.visiblePoints ) allPoints = allPoints.concat( currentFace.visiblePoints );
+        faces.splice( faces.indexOf( currentFace ), 1 );
+
+
+        var isSharedEdge;
+        cEdgeIndex = 0;
+
+        while( cEdgeIndex < 3 ){ // Iterate through it's edges
+
+          isSharedEdge = false;
+          j = visibleFaces.length;
+          a = currentFace[cEdgeIndex]
+          b = currentFace[(cEdgeIndex+1)%3];
+
+
+          while( j-- > 0 && !isSharedEdge ){ // find another visible faces
+
+            compareFace = visibleFaces[j];
+            edgeIndex = 0;
+
+            // isSharedEdge = compareFace == currentFace;
+            if( compareFace !== currentFace ){
+
+              while( edgeIndex < 3 && !isSharedEdge ){ //Check all it's indices
+
+                nextIndex = ( edgeIndex + 1 );
+                isSharedEdge = ( compareFace[edgeIndex] === a && compareFace[nextIndex%3] === b ) ||
+                         ( compareFace[edgeIndex] === b && compareFace[nextIndex%3] === a );
+
+                edgeIndex++;
+              }
+            }
+          }
+
+          if( !isSharedEdge || hasOneVisibleFace ){
+            perimeter.push( a );
+            perimeter.push( b );
+          }
+
+          cEdgeIndex++;
+        }
+      }
+    }
+
+    // create new face for all pairs around edge
+    i = 0;
+    var l = perimeter.length/2;
+    var f;
+
+    while( i < l ){
+      f = [ perimeter[i*2+1], apex, perimeter[i*2] ];
+      assignPoints( f, allPoints, points );
+      faces.push( f )
+      if( f.visiblePoints !== undefined  )faceStack.push( f );
+      i++;
+    }
+
+  }
+
+  var distSqPointSegment = function(){
+
+    var ab = new THREE.Vector3(),
+      ac = new THREE.Vector3(),
+      bc = new THREE.Vector3();
+
+    return function( a, b, c ){
+
+        ab.subVectors( b, a );
+        ac.subVectors( c, a );
+        bc.subVectors( c, b );
+
+        var e = ac.dot(ab);
+        if (e < 0.0) return ac.dot( ac );
+        var f = ab.dot( ab );
+        if (e >= f) return bc.dot(  bc );
+        return ac.dot( ac ) - e * e / f;
+
+      }
+
+  }();
+
+
+
+
+
+  return function( geometry ){
+
+    reset();
+
+
+    points    = geometry.vertices;
+    faces     = [],
+    faceStack   = [],
+    i       = NUM_POINTS = points.length,
+    extremes  = points.slice( 0, 6 ),
+    max     = 0;
+
+
+
+    /*
+     *  FIND EXTREMETIES
+     */
+    while( i-- > 0 ){
+      if( points[i].x < extremes[0].x ) extremes[0] = points[i];
+      if( points[i].x > extremes[1].x ) extremes[1] = points[i];
+
+      if( points[i].y < extremes[2].y ) extremes[2] = points[i];
+      if( points[i].y < extremes[3].y ) extremes[3] = points[i];
+
+      if( points[i].z < extremes[4].z ) extremes[4] = points[i];
+      if( points[i].z < extremes[5].z ) extremes[5] = points[i];
+    }
+
+
+    /*
+     *  Find the longest line between the extremeties
+     */
+
+    j = i = 6;
+    while( i-- > 0 ){
+      j = i - 1;
+      while( j-- > 0 ){
+          if( max < (dcur = extremes[i].distanceToSquared( extremes[j] )) ){
+        max = dcur;
+        v0 = extremes[ i ];
+        v1 = extremes[ j ];
+
+          }
+        }
+      }
+
+
+      // 3. Find the most distant point to the line segment, this creates a plane
+      i = 6;
+      max = 0;
+    while( i-- > 0 ){
+      dcur = distSqPointSegment( v0, v1, extremes[i]);
+      if( max < dcur ){
+        max = dcur;
+            v2 = extremes[ i ];
+          }
+    }
+
+
+      // 4. Find the most distant point to the plane.
+
+      N = norm(v0, v1, v2);
+      D = N.dot( v0 );
+
+
+      max = 0;
+      i = NUM_POINTS;
+      while( i-- > 0 ){
+        dcur = Math.abs( points[i].dot( N ) - D );
+          if( max < dcur ){
+            max = dcur;
+            v3 = points[i];
+      }
+      }
+
+
+
+      var v0Index = points.indexOf( v0 ),
+      v1Index = points.indexOf( v1 ),
+      v2Index = points.indexOf( v2 ),
+      v3Index = points.indexOf( v3 );
+
+
+    //  We now have a tetrahedron as the base geometry.
+    //  Now we must subdivide the
+
+      var tetrahedron =[
+        [ v2Index, v1Index, v0Index ],
+        [ v1Index, v3Index, v0Index ],
+        [ v2Index, v3Index, v1Index ],
+        [ v0Index, v3Index, v2Index ],
+    ];
+
+
+
+    subaA.subVectors( v1, v0 ).normalize();
+    subaB.subVectors( v2, v0 ).normalize();
+    subC.subVectors ( v3, v0 ).normalize();
+    var sign  = subC.dot( new THREE.Vector3().crossVectors( subaB, subaA ));
+
+
+    // Reverse the winding if negative sign
+    if( sign < 0 ){
+      tetrahedron[0].reverse();
+      tetrahedron[1].reverse();
+      tetrahedron[2].reverse();
+      tetrahedron[3].reverse();
+    }
+
+
+    //One for each face of the pyramid
+    var pointsCloned = points.slice();
+    pointsCloned.splice( pointsCloned.indexOf( v0 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v1 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v2 ), 1 );
+    pointsCloned.splice( pointsCloned.indexOf( v3 ), 1 );
+
+
+    var i = tetrahedron.length;
+    while( i-- > 0 ){
+      assignPoints( tetrahedron[i], pointsCloned, points );
+      if( tetrahedron[i].visiblePoints !== undefined ){
+        faceStack.push( tetrahedron[i] );
+      }
+      faces.push( tetrahedron[i] );
+    }
+
+    process( points );
+
+
+    //  Assign to our geometry object
+
+    var ll = faces.length;
+    while( ll-- > 0 ){
+      geometry.faces[ll] = new THREE.Face3( faces[ll][2], faces[ll][1], faces[ll][0], faces[ll].normal )
+    }
+
+    geometry.normalsNeedUpdate = true;
+
+    return geometry;
+
+  }
+
+}())
+
+},{}],75:[function(require,module,exports){
+var EPS = 0.1;
+
+module.exports = {
+  schema: {
+    enabled: {default: true},
+    mode: {default: 'teleport', oneOf: ['teleport', 'animate']},
+    animateSpeed: {default: 3.0}
+  },
+
+  init: function () {
+    this.active = true;
+    this.checkpoint = null;
+
+    this.offset = new THREE.Vector3();
+    this.position = new THREE.Vector3();
+    this.targetPosition = new THREE.Vector3();
+  },
+
+  play: function () { this.active = true; },
+  pause: function () { this.active = false; },
+
+  setCheckpoint: function (checkpoint) {
+    if (!this.active) return;
+
+    this.checkpoint = checkpoint;
+    if (this.data.mode === 'teleport') {
+      this.sync();
+      this.el.setAttribute('position', this.targetPosition);
+    }
+  },
+
+  isVelocityActive: function () {
+    return !!(this.active && this.checkpoint);
+  },
+
+  getVelocity: function () {
+    if (!this.active) return;
+
+    var data = this.data,
+        offset = this.offset,
+        position = this.position,
+        targetPosition = this.targetPosition;
+
+    this.sync();
+    if (position.distanceTo(targetPosition) < EPS) {
+      this.checkpoint = null;
+      return offset.set(0, 0, 0);
+    }
+    offset.setLength(data.animateSpeed);
+    return offset;
+  },
+
+  sync: function () {
+    var offset = this.offset,
+        position = this.position,
+        targetPosition = this.targetPosition;
+
+    position.copy(this.el.getAttribute('position'));
+    targetPosition.copy(this.checkpoint.getAttribute('position'));
+    // TODO - Cleverer ways around this?
+    targetPosition.y = position.y;
+    offset.copy(targetPosition).sub(position);
+  }
+};
+
+},{}],76:[function(require,module,exports){
+/**
+ * Gamepad controls for A-Frame.
+ *
+ * Stripped-down version of: https://github.com/donmccurdy/aframe-gamepad-controls
+ *
+ * For more information about the Gamepad API, see:
+ * https://developer.mozilla.org/en-US/docs/Web/API/Gamepad_API/Using_the_Gamepad_API
+ */
+
+var GamepadButton = require('../../lib/GamepadButton'),
+    GamepadButtonEvent = require('../../lib/GamepadButtonEvent');
+
+var JOYSTICK_EPS = 0.2;
+
+module.exports = {
+
+  /*******************************************************************
+   * Statics
+   */
+
+  GamepadButton: GamepadButton,
+
+  /*******************************************************************
+   * Schema
+   */
+
+  schema: {
+    // Controller 0-3
+    controller:        { default: 0, oneOf: [0, 1, 2, 3] },
+
+    // Enable/disable features
+    enabled:           { default: true },
+
+    // Debugging
+    debug:             { default: false }
+  },
+
+  /*******************************************************************
+   * Core
+   */
+
+  /**
+   * Called once when component is attached. Generally for initial setup.
+   */
+  init: function () {
+    var scene = this.el.sceneEl;
+    this.prevTime = window.performance.now();
+
+    // Button state
+    this.buttons = {};
+
+    scene.addBehavior(this);
+  },
+
+  /**
+   * Called when component is attached and when component data changes.
+   * Generally modifies the entity based on the data.
+   */
+  update: function () { this.tick(); },
+
+  /**
+   * Called on each iteration of main render loop.
+   */
+  tick: function () {
+    this.updateButtonState();
+  },
+
+  /**
+   * Called when a component is removed (e.g., via removeAttribute).
+   * Generally undoes all modifications to the entity.
+   */
+  remove: function () { },
+
+  /*******************************************************************
+   * Universal controls - movement
+   */
+
+  isVelocityActive: function () {
+    if (!this.data.enabled || !this.isConnected()) return false;
+
+    var dpad = this.getDpad(),
+        joystick0 = this.getJoystick(0),
+        inputX = dpad.x || joystick0.x,
+        inputY = dpad.y || joystick0.y;
+
+    return Math.abs(inputX) > JOYSTICK_EPS || Math.abs(inputY) > JOYSTICK_EPS;
+  },
+
+  getVelocityDelta: function () {
+    var dpad = this.getDpad(),
+        joystick0 = this.getJoystick(0),
+        inputX = dpad.x || joystick0.x,
+        inputY = dpad.y || joystick0.y,
+        dVelocity = new THREE.Vector3();
+
+    if (Math.abs(inputX) > JOYSTICK_EPS) {
+      dVelocity.x += inputX;
+    }
+    if (Math.abs(inputY) > JOYSTICK_EPS) {
+      dVelocity.z += inputY;
+    }
+
+    return dVelocity;
+  },
+
+  /*******************************************************************
+   * Universal controls - rotation
+   */
+
+  isRotationActive: function () {
+    if (!this.data.enabled || !this.isConnected()) return false;
+
+    var joystick1 = this.getJoystick(1);
+
+    return Math.abs(joystick1.x) > JOYSTICK_EPS || Math.abs(joystick1.y) > JOYSTICK_EPS;
+  },
+
+  getRotationDelta: function () {
+    var lookVector = this.getJoystick(1);
+    if (Math.abs(lookVector.x) <= JOYSTICK_EPS) lookVector.x = 0;
+    if (Math.abs(lookVector.y) <= JOYSTICK_EPS) lookVector.y = 0;
+    return lookVector;
+  },
+
+  /*******************************************************************
+   * Button events
+   */
+
+  updateButtonState: function () {
+    var gamepad = this.getGamepad();
+    if (this.data.enabled && gamepad) {
+
+      // Fire DOM events for button state changes.
+      for (var i = 0; i < gamepad.buttons.length; i++) {
+        if (gamepad.buttons[i].pressed && !this.buttons[i]) {
+          this.emit(new GamepadButtonEvent('gamepadbuttondown', i, gamepad.buttons[i]));
+        } else if (!gamepad.buttons[i].pressed && this.buttons[i]) {
+          this.emit(new GamepadButtonEvent('gamepadbuttonup', i, gamepad.buttons[i]));
+        }
+        this.buttons[i] = gamepad.buttons[i].pressed;
+      }
+
+    } else if (Object.keys(this.buttons)) {
+      // Reset state if controls are disabled or controller is lost.
+      this.buttons = {};
+    }
+  },
+
+  emit: function (event) {
+    // Emit original event.
+    this.el.emit(event.type, event);
+
+    // Emit convenience event, identifying button index.
+    this.el.emit(
+      event.type + ':' + event.index,
+      new GamepadButtonEvent(event.type, event.index, event)
+    );
+  },
+
+  /*******************************************************************
+   * Gamepad state
+   */
+
+  /**
+   * Returns the Gamepad instance attached to the component. If connected,
+   * a proxy-controls component may provide access to Gamepad input from a
+   * remote device.
+   *
+   * @return {Gamepad}
+   */
+  getGamepad: function () {
+    var localGamepad = navigator.getGamepads
+          && navigator.getGamepads()[this.data.controller],
+        proxyControls = this.el.sceneEl.components['proxy-controls'],
+        proxyGamepad = proxyControls && proxyControls.isConnected()
+          && proxyControls.getGamepad(this.data.controller);
+    return proxyGamepad || localGamepad;
+  },
+
+  /**
+   * Returns the state of the given button.
+   * @param  {number} index The button (0-N) for which to find state.
+   * @return {GamepadButton}
+   */
+  getButton: function (index) {
+    return this.getGamepad().buttons[index];
+  },
+
+  /**
+   * Returns state of the given axis. Axes are labelled 0-N, where 0-1 will
+   * represent X/Y on the first joystick, and 2-3 X/Y on the second.
+   * @param  {number} index The axis (0-N) for which to find state.
+   * @return {number} On the interval [-1,1].
+   */
+  getAxis: function (index) {
+    return this.getGamepad().axes[index];
+  },
+
+  /**
+   * Returns the state of the given joystick (0 or 1) as a THREE.Vector2.
+   * @param  {number} id The joystick (0, 1) for which to find state.
+   * @return {THREE.Vector2}
+   */
+  getJoystick: function (index) {
+    var gamepad = this.getGamepad();
+    switch (index) {
+      case 0: return new THREE.Vector2(gamepad.axes[0], gamepad.axes[1]);
+      case 1: return new THREE.Vector2(gamepad.axes[2], gamepad.axes[3]);
+      default: throw new Error('Unexpected joystick index "%d".', index);
+    }
+  },
+
+  /**
+   * Returns the state of the dpad as a THREE.Vector2.
+   * @return {THREE.Vector2}
+   */
+  getDpad: function () {
+    var gamepad = this.getGamepad();
+    if (!gamepad.buttons[GamepadButton.DPAD_RIGHT]) {
+      return new THREE.Vector2();
+    }
+    return new THREE.Vector2(
+      (gamepad.buttons[GamepadButton.DPAD_RIGHT].pressed ? 1 : 0)
+      + (gamepad.buttons[GamepadButton.DPAD_LEFT].pressed ? -1 : 0),
+      (gamepad.buttons[GamepadButton.DPAD_UP].pressed ? -1 : 0)
+      + (gamepad.buttons[GamepadButton.DPAD_DOWN].pressed ? 1 : 0)
+    );
+  },
+
+  /**
+   * Returns true if the gamepad is currently connected to the system.
+   * @return {boolean}
+   */
+  isConnected: function () {
+    var gamepad = this.getGamepad();
+    return !!(gamepad && gamepad.connected);
+  },
+
+  /**
+   * Returns a string containing some information about the controller. Result
+   * may vary across browsers, for a given controller.
+   * @return {string}
+   */
+  getID: function () {
+    return this.getGamepad().id;
+  }
+};
+
+},{"../../lib/GamepadButton":2,"../../lib/GamepadButtonEvent":3}],77:[function(require,module,exports){
+var radToDeg = THREE.Math.radToDeg,
+    isMobile = AFRAME.utils.device.isMobile();
+
+module.exports = {
+  schema: {
+    enabled: {default: true},
+    standing: {default: true}
+  },
+
+  init: function () {
+    this.isPositionCalibrated = false;
+    this.dolly = new THREE.Object3D();
+    this.hmdEuler = new THREE.Euler();
+    this.previousHMDPosition = new THREE.Vector3();
+    this.deltaHMDPosition = new THREE.Vector3();
+    this.vrControls = new THREE.VRControls(this.dolly);
+    this.rotation = new THREE.Vector3();
+  },
+
+  update: function () {
+    var data = this.data;
+    var vrControls = this.vrControls;
+    vrControls.standing = data.standing;
+    vrControls.update();
+  },
+
+  tick: function () {
+    this.vrControls.update();
+  },
+
+  remove: function () {
+    this.vrControls.dispose();
+  },
+
+  isRotationActive: function () {
+    var hmdEuler = this.hmdEuler;
+    if (!this.data.enabled || !(this.el.sceneEl.is('vr-mode') || isMobile)) {
+      return false;
+    }
+    hmdEuler.setFromQuaternion(this.dolly.quaternion, 'YXZ');
+    return !isNullVector(hmdEuler);
+  },
+
+  getRotation: function () {
+    var hmdEuler = this.hmdEuler;
+    return this.rotation.set(
+      radToDeg(hmdEuler.x),
+      radToDeg(hmdEuler.y),
+      radToDeg(hmdEuler.z)
+    );
+  },
+
+  isVelocityActive: function () {
+    var deltaHMDPosition = this.deltaHMDPosition;
+    var previousHMDPosition = this.previousHMDPosition;
+    var currentHMDPosition = this.calculateHMDPosition();
+    this.isPositionCalibrated = this.isPositionCalibrated || !isNullVector(previousHMDPosition);
+    if (!this.data.enabled || !this.el.sceneEl.is('vr-mode') || isMobile) {
+      return false;
+    }
+    deltaHMDPosition.copy(currentHMDPosition).sub(previousHMDPosition);
+    previousHMDPosition.copy(currentHMDPosition);
+    return this.isPositionCalibrated && !isNullVector(deltaHMDPosition);
+  },
+
+  getPositionDelta: function () {
+    return this.deltaHMDPosition;
+  },
+
+  calculateHMDPosition: function () {
+    var dolly = this.dolly;
+    var position = new THREE.Vector3();
+    dolly.updateMatrix();
+    position.setFromMatrixPosition(dolly.matrix);
+    return position;
+  }
+};
+
+function isNullVector (vector) {
+  return vector.x === 0 && vector.y === 0 && vector.z === 0;
+}
+
+},{}],78:[function(require,module,exports){
+var physics = require('aframe-physics-system');
+
+module.exports = {
+  'checkpoint-controls': require('./checkpoint-controls'),
+  'gamepad-controls':    require('./gamepad-controls'),
+  'hmd-controls':        require('./hmd-controls'),
+  'keyboard-controls':   require('./keyboard-controls'),
+  'mouse-controls':      require('./mouse-controls'),
+  'touch-controls':      require('./touch-controls'),
+  'universal-controls':  require('./universal-controls'),
+
+  registerAll: function (AFRAME) {
+    if (this._registered) return;
+
+    AFRAME = AFRAME || window.AFRAME;
+
+    physics.registerAll();
+    if (!AFRAME.components['checkpoint-controls'])  AFRAME.registerComponent('checkpoint-controls', this['checkpoint-controls']);
+    if (!AFRAME.components['gamepad-controls'])     AFRAME.registerComponent('gamepad-controls',    this['gamepad-controls']);
+    if (!AFRAME.components['hmd-controls'])         AFRAME.registerComponent('hmd-controls',        this['hmd-controls']);
+    if (!AFRAME.components['keyboard-controls'])    AFRAME.registerComponent('keyboard-controls',   this['keyboard-controls']);
+    if (!AFRAME.components['mouse-controls'])       AFRAME.registerComponent('mouse-controls',      this['mouse-controls']);
+    if (!AFRAME.components['touch-controls'])       AFRAME.registerComponent('touch-controls',      this['touch-controls']);
+    if (!AFRAME.components['universal-controls'])   AFRAME.registerComponent('universal-controls',  this['universal-controls']);
+
+    this._registered = true;
+  }
+};
+
+},{"./checkpoint-controls":75,"./gamepad-controls":76,"./hmd-controls":77,"./keyboard-controls":79,"./mouse-controls":80,"./touch-controls":81,"./universal-controls":82,"aframe-physics-system":5}],79:[function(require,module,exports){
+require('../../lib/keyboard.polyfill');
+
+var MAX_DELTA = 0.2,
+    PROXY_FLAG = '__keyboard-controls-proxy';
+
+var KeyboardEvent = window.KeyboardEvent;
+
+/**
+ * Keyboard Controls component.
+ *
+ * Stripped-down version of: https://github.com/donmccurdy/aframe-keyboard-controls
+ *
+ * Bind keyboard events to components, or control your entities with the WASD keys.
+ *
+ * Why use KeyboardEvent.code? "This is set to a string representing the key that was pressed to
+ * generate the KeyboardEvent, without taking the current keyboard layout (e.g., QWERTY vs.
+ * Dvorak), locale (e.g., English vs. French), or any modifier keys into account. This is useful
+ * when you care about which physical key was pressed, rather thanwhich character it corresponds
+ * to. For example, if you’re a writing a game, you might want a certain set of keys to move the
+ * player in different directions, and that mapping should ideally be independent of keyboard
+ * layout. See: https://developers.google.com/web/updates/2016/04/keyboardevent-keys-codes
+ *
+ * @namespace wasd-controls
+ * keys the entity moves and if you release it will stop. Easing simulates friction.
+ * to the entity when pressing the keys.
+ * @param {bool} [enabled=true] - To completely enable or disable the controls
+ */
+module.exports = {
+  schema: {
+    enabled:           { default: true },
+    debug:             { default: false }
+  },
+
+  init: function () {
+    this.dVelocity = new THREE.Vector3();
+    this.localKeys = {};
+    this.listeners = {
+      keydown: this.onKeyDown.bind(this),
+      keyup: this.onKeyUp.bind(this),
+      blur: this.onBlur.bind(this)
+    };
+    this.attachEventListeners();
+  },
+
+  /*******************************************************************
+  * Movement
+  */
+
+  isVelocityActive: function () {
+    return this.data.enabled && !!Object.keys(this.getKeys()).length;
+  },
+
+  getVelocityDelta: function () {
+    var data = this.data,
+        keys = this.getKeys();
+
+    this.dVelocity.set(0, 0, 0);
+    if (data.enabled) {
+      if (keys.KeyW || keys.ArrowUp)    { this.dVelocity.z -= 1; }
+      if (keys.KeyA || keys.ArrowLeft)  { this.dVelocity.x -= 1; }
+      if (keys.KeyS || keys.ArrowDown)  { this.dVelocity.z += 1; }
+      if (keys.KeyD || keys.ArrowRight) { this.dVelocity.x += 1; }
+    }
+
+    return this.dVelocity.clone();
+  },
+
+  /*******************************************************************
+  * Events
+  */
+
+  play: function () {
+    this.attachEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  attachEventListeners: function () {
+    window.addEventListener('keydown', this.listeners.keydown, false);
+    window.addEventListener('keyup', this.listeners.keyup, false);
+    window.addEventListener('blur', this.listeners.blur, false);
+  },
+
+  removeEventListeners: function () {
+    window.removeEventListener('keydown', this.listeners.keydown);
+    window.removeEventListener('keyup', this.listeners.keyup);
+    window.removeEventListener('blur', this.listeners.blur);
+  },
+
+  onKeyDown: function (event) {
+    this.localKeys[event.code] = true;
+    this.emit(event);
+  },
+
+  onKeyUp: function (event) {
+    delete this.localKeys[event.code];
+    this.emit(event);
+  },
+
+  onBlur: function () {
+    for (var code in this.localKeys) {
+      if (this.localKeys.hasOwnProperty(code)) {
+        delete this.localKeys[code];
+      }
+    }
+  },
+
+  emit: function (event) {
+    // TODO - keydown only initially?
+    // TODO - where the f is the spacebar
+
+    // Emit original event.
+    if (PROXY_FLAG in event) {
+      // TODO - Method never triggered.
+      this.el.emit(event.type, event);
+    }
+
+    // Emit convenience event, identifying key.
+    this.el.emit(event.type + ':' + event.code, new KeyboardEvent(event.type, event));
+    if (this.data.debug) console.log(event.type + ':' + event.code);
+  },
+
+  /*******************************************************************
+  * Accessors
+  */
+
+  isPressed: function (code) {
+    return code in this.getKeys();
+  },
+
+  getKeys: function () {
+    if (this.isProxied()) {
+      return this.el.sceneEl.components['proxy-controls'].getKeyboard();
+    }
+    return this.localKeys;
+  },
+
+  isProxied: function () {
+    var proxyControls = this.el.sceneEl.components['proxy-controls'];
+    return proxyControls && proxyControls.isConnected();
+  }
+
+};
+
+},{"../../lib/keyboard.polyfill":4}],80:[function(require,module,exports){
+/**
+ * Mouse + Pointerlock controls.
+ *
+ * Based on: https://github.com/aframevr/aframe/pull/1056
+ */
+module.exports = {
+  schema: {
+    enabled: { default: true },
+    pointerlockEnabled: { default: true },
+    sensitivity: { default: 1 / 25 }
+  },
+
+  init: function () {
+    this.mouseDown = false;
+    this.pointerLocked = false;
+    this.lookVector = new THREE.Vector2();
+    this.bindMethods();
+  },
+
+  play: function () {
+    this.addEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+    this.lookVector.set(0, 0);
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  bindMethods: function () {
+    this.onMouseDown = this.onMouseDown.bind(this);
+    this.onMouseMove = this.onMouseMove.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onMouseUp = this.onMouseUp.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+    this.onPointerLockChange = this.onPointerLockChange.bind(this);
+  },
+
+  addEventListeners: function () {
+    var sceneEl = this.el.sceneEl;
+    var canvasEl = sceneEl.canvas;
+    var data = this.data;
+
+    if (!canvasEl) {
+      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
+      return;
+    }
+
+    canvasEl.addEventListener('mousedown', this.onMouseDown, false);
+    canvasEl.addEventListener('mousemove', this.onMouseMove, false);
+    canvasEl.addEventListener('mouseup', this.onMouseUp, false);
+    canvasEl.addEventListener('mouseout', this.onMouseUp, false);
+
+    if (data.pointerlockEnabled) {
+      document.addEventListener('pointerlockchange', this.onPointerLockChange, false);
+      document.addEventListener('mozpointerlockchange', this.onPointerLockChange, false);
+      document.addEventListener('pointerlockerror', this.onPointerLockError, false);
+    }
+  },
+
+  removeEventListeners: function () {
+    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
+    if (canvasEl) {
+      canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
+      canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
+      canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
+      canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
+    }
+    document.removeEventListener('pointerlockchange', this.onPointerLockChange, false);
+    document.removeEventListener('mozpointerlockchange', this.onPointerLockChange, false);
+    document.removeEventListener('pointerlockerror', this.onPointerLockError, false);
+  },
+
+  isRotationActive: function () {
+    return this.data.enabled && (this.mouseDown || this.pointerLocked);
+  },
+
+  /**
+   * Returns the sum of all mouse movement since last call.
+   */
+  getRotationDelta: function () {
+    var dRotation = this.lookVector.clone().multiplyScalar(this.data.sensitivity);
+    this.lookVector.set(0, 0);
+    return dRotation;
+  },
+
+  onMouseMove: function (event) {
+    var previousMouseEvent = this.previousMouseEvent;
+
+    if (!this.data.enabled || !(this.mouseDown || this.pointerLocked)) {
+      return;
+    }
+
+    var movementX = event.movementX || event.mozMovementX || 0;
+    var movementY = event.movementY || event.mozMovementY || 0;
+
+    if (!this.pointerLocked) {
+      movementX = event.screenX - previousMouseEvent.screenX;
+      movementY = event.screenY - previousMouseEvent.screenY;
+    }
+
+    this.lookVector.x += movementX;
+    this.lookVector.y += movementY;
+
+    this.previousMouseEvent = event;
+  },
+
+  onMouseDown: function (event) {
+    var canvasEl = this.el.sceneEl.canvas;
+
+    this.mouseDown = true;
+    this.previousMouseEvent = event;
+
+    if (this.data.pointerlockEnabled && !this.pointerLocked) {
+      if (canvasEl.requestPointerLock) {
+        canvasEl.requestPointerLock();
+      } else if (canvasEl.mozRequestPointerLock) {
+        canvasEl.mozRequestPointerLock();
+      }
+    }
+  },
+
+  onMouseUp: function () {
+    this.mouseDown = false;
+  },
+
+  onPointerLockChange: function () {
+    this.pointerLocked = !!(document.pointerLockElement || document.mozPointerLockElement);
+  },
+
+  onPointerLockError: function () {
+    this.pointerLocked = false;
+  }
+};
+
+},{}],81:[function(require,module,exports){
+module.exports = {
+  schema: {
+    enabled: { default: true }
+  },
+
+  init: function () {
+    this.dVelocity = new THREE.Vector3();
+    this.bindMethods();
+  },
+
+  play: function () {
+    this.addEventListeners();
+  },
+
+  pause: function () {
+    this.removeEventListeners();
+    this.dVelocity.set(0, 0, 0);
+  },
+
+  remove: function () {
+    this.pause();
+  },
+
+  addEventListeners: function () {
+    var sceneEl = this.el.sceneEl;
+    var canvasEl = sceneEl.canvas;
+
+    if (!canvasEl) {
+      sceneEl.addEventListener('render-target-loaded', this.addEventListeners.bind(this));
+      return;
+    }
+
+    canvasEl.addEventListener('touchstart', this.onTouchStart);
+    canvasEl.addEventListener('touchend', this.onTouchEnd);
+  },
+
+  removeEventListeners: function () {
+    var canvasEl = this.el.sceneEl && this.el.sceneEl.canvas;
+    if (!canvasEl) { return; }
+
+    canvasEl.removeEventListener('touchstart', this.onTouchStart);
+    canvasEl.removeEventListener('touchend', this.onTouchEnd);
+  },
+
+  isVelocityActive: function () {
+    return this.data.enabled && this.isMoving;
+  },
+
+  getVelocityDelta: function () {
+    this.dVelocity.z = this.isMoving ? -1 : 0;
+    return this.dVelocity.clone();
+  },
+
+  bindMethods: function () {
+    this.onTouchStart = this.onTouchStart.bind(this);
+    this.onTouchEnd = this.onTouchEnd.bind(this);
+  },
+
+  onTouchStart: function (e) {
+    this.isMoving = true;
+    e.preventDefault();
+  },
+
+  onTouchEnd: function (e) {
+    this.isMoving = false;
+    e.preventDefault();
+  }
+};
+
+},{}],82:[function(require,module,exports){
+/**
+ * Universal Controls
+ *
+ * @author Don McCurdy <dm@donmccurdy.com>
+ */
+
+var COMPONENT_SUFFIX = '-controls',
+    MAX_DELTA = 0.2, // ms
+    PI_2 = Math.PI / 2;
+
+module.exports = {
+
+  /*******************************************************************
+   * Schema
+   */
+
+  dependencies: ['velocity', 'rotation'],
+
+  schema: {
+    enabled:              { default: true },
+    movementEnabled:      { default: true },
+    movementControls:     { default: ['gamepad', 'keyboard', 'touch', 'hmd'] },
+    rotationEnabled:      { default: true },
+    rotationControls:     { default: ['hmd', 'gamepad', 'mouse'] },
+    movementSpeed:        { default: 5 }, // m/s
+    movementEasing:       { default: 15 }, // m/s2
+    movementAcceleration: { default: 80 }, // m/s2
+    rotationSensitivity:  { default: 0.05 }, // radians/frame, ish
+    fly:                  { default: false }
+  },
+
+  /*******************************************************************
+   * Lifecycle
+   */
+
+  init: function () {
+    var rotation = this.el.getAttribute('rotation');
+
+    // Movement
+    this.velocity = new THREE.Vector3();
+
+    // Rotation
+    this.pitch = new THREE.Object3D();
+    this.pitch.rotation.x = THREE.Math.degToRad(rotation.x);
+    this.yaw = new THREE.Object3D();
+    this.yaw.position.y = 10;
+    this.yaw.rotation.y = THREE.Math.degToRad(rotation.y);
+    this.yaw.add(this.pitch);
+    this.heading = new THREE.Euler(0, 0, 0, 'YXZ');
+
+    if (this.el.sceneEl.hasLoaded) {
+      this.injectControls();
+    } else {
+      this.el.sceneEl.addEventListener('loaded', this.injectControls.bind(this));
+    }
+  },
+
+  update: function () {
+    if (this.el.sceneEl.hasLoaded) {
+      this.injectControls();
+    }
+  },
+
+  injectControls: function () {
+    var i, name,
+        data = this.data;
+
+    for (i = 0; i < data.movementControls.length; i++) {
+      name = data.movementControls[i] + COMPONENT_SUFFIX;
+      if (!this.el.components[name]) {
+        this.el.setAttribute(name, '');
+      }
+    }
+
+    for (i = 0; i < data.rotationControls.length; i++) {
+      name = data.rotationControls[i] + COMPONENT_SUFFIX;
+      if (!this.el.components[name]) {
+        this.el.setAttribute(name, '');
+      }
+    }
+  },
+
+  /*******************************************************************
+   * Tick
+   */
+
+  tick: function (t, dt) {
+    if (!dt) { return; }
+
+    // Update rotation.
+    if (this.data.rotationEnabled) this.updateRotation(dt);
+
+    // Update velocity. If FPS is too low, reset.
+    if (this.data.movementEnabled && dt / 1000 > MAX_DELTA) {
+      this.velocity.set(0, 0, 0);
+      this.el.setAttribute('velocity', this.velocity);
+    } else {
+      this.updateVelocity(dt);
+    }
+  },
+
+  /*******************************************************************
+   * Rotation
+   */
+
+  updateRotation: function (dt) {
+    var control, dRotation,
+        data = this.data;
+
+    for (var i = 0, l = data.rotationControls.length; i < l; i++) {
+      control = this.el.components[data.rotationControls[i] + COMPONENT_SUFFIX];
+      if (control && control.isRotationActive()) {
+        if (control.getRotationDelta) {
+          dRotation = control.getRotationDelta(dt);
+          dRotation.multiplyScalar(data.rotationSensitivity);
+          this.yaw.rotation.y -= dRotation.x;
+          this.pitch.rotation.x -= dRotation.y;
+          this.pitch.rotation.x = Math.max(-PI_2, Math.min(PI_2, this.pitch.rotation.x));
+          this.el.setAttribute('rotation', {
+            x: THREE.Math.radToDeg(this.pitch.rotation.x),
+            y: THREE.Math.radToDeg(this.yaw.rotation.y),
+            z: 0
+          });
+        } else if (control.getRotation) {
+          this.el.setAttribute('rotation', control.getRotation());
+        } else {
+          throw new Error('Incompatible rotation controls: %s', data.rotationControls[i]);
+        }
+        break;
+      }
+    }
+  },
+
+  /*******************************************************************
+   * Movement
+   */
+
+  updateVelocity: function (dt) {
+    var control, dVelocity,
+        velocity = this.velocity,
+        data = this.data;
+
+    if (data.movementEnabled) {
+      for (var i = 0, l = data.movementControls.length; i < l; i++) {
+        control = this.el.components[data.movementControls[i] + COMPONENT_SUFFIX];
+        if (control && control.isVelocityActive()) {
+          if (control.getVelocityDelta) {
+            dVelocity = control.getVelocityDelta(dt);
+          } else if (control.getVelocity) {
+            this.el.setAttribute('velocity', control.getVelocity());
+            return;
+          } else if (control.getPositionDelta) {
+            velocity.copy(control.getPositionDelta(dt).multiplyScalar(1000 / dt));
+            this.el.setAttribute('velocity', velocity);
+            return;
+          } else {
+            throw new Error('Incompatible movement controls: ', data.movementControls[i]);
+          }
+          break;
+        }
+      }
+    }
+
+    velocity.copy(this.el.getAttribute('velocity'));
+    velocity.x -= velocity.x * data.movementEasing * dt / 1000;
+    velocity.z -= velocity.z * data.movementEasing * dt / 1000;
+
+    if (dVelocity && data.movementEnabled) {
+      // Set acceleration
+      if (dVelocity.length() > 1) {
+        dVelocity.setLength(this.data.movementAcceleration * dt / 1000);
+      } else {
+        dVelocity.multiplyScalar(this.data.movementAcceleration * dt / 1000);
+      }
+
+      // Rotate to heading
+      var rotation = this.el.getAttribute('rotation');
+      if (rotation) {
+        this.heading.set(
+          data.fly ? THREE.Math.degToRad(rotation.x) : 0,
+          THREE.Math.degToRad(rotation.y),
+          0
+        );
+        dVelocity.applyEuler(this.heading);
+      }
+
+      velocity.add(dVelocity);
+
+      // TODO - Several issues here:
+      // (1) Interferes w/ gravity.
+      // (2) Interferes w/ jumping.
+      // (3) Likely to interfere w/ relative position to moving platform.
+      // if (velocity.length() > data.movementSpeed) {
+      //   velocity.setLength(data.movementSpeed);
+      // }
+    }
+
+    this.el.setAttribute('velocity', velocity);
+  }
+};
+
+},{}]},{},[1]);
