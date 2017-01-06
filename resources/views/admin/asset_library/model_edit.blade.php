@@ -34,17 +34,17 @@
                 <strong>{{ trans('template_asset_library_models.uploaded_on') }}</strong> {{ $uploaded_on }}<br>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="caption">{{ trans('template_asset_library_models.caption') }}</label>
                 <textarea class="form-control" rows="3" id="caption">{{ $caption }}</textarea>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="description">{{ trans('template_asset_library_models.description') }}</label>
                 <textarea class="form-control" rows="3" id="description">{{ $description }}</textarea>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="scale">{{ trans('template_asset_library_models.scale') }}</label>
                 <select class="form-control" id="scale">
                     <option value="0.01 0.01 0.01" @if ($scale == '0.01 0.01 0.01') selected="selected" @endif>{{ trans('template_asset_library_models.scale_0_0_1') }}</option>
@@ -79,7 +79,7 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-x">{{ trans('template_asset_library_models.rotate_x') }}</label>
                 <select class="form-control" id="rotation-x">
                     @for ($i = 0; $i <= 360; $i++)
@@ -87,7 +87,7 @@
                     @endfor
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-y">{{ trans('template_asset_library_models.rotate_y') }}</label>
                 <select class="form-control" id="rotation-y">
                     @for ($i = 0; $i <= 360; $i++)
@@ -95,7 +95,7 @@
                     @endfor
                 </select>
             </div>
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-z">{{ trans('template_asset_library_models.rotate_z') }}</label>
                 <select class="form-control" id="rotation-z">
                     @for ($i = 0; $i <= 360; $i++)

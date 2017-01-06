@@ -34,7 +34,7 @@
                 <strong>{{ trans('template_asset_library_models.uploaded_on') }}</strong> {{ $uploaded_on }}<br>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="distance-to-model">{{ trans('template_asset_library_models.distance_to_model') }}</label>
                 <select class="form-control" id="distance-to-model">
                     <option value="0.5">{{ trans('template_asset_library_models.0_5_meters') }}</option>
@@ -53,7 +53,7 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-group" style="margin-bottom:0">
                 <label for="user-height">{{ trans('template_asset_library_models.user_height') }}</label>
                 <select class="form-control" id="user-height">
                     <option value="0">{{ trans('template_asset_library_models.0_meters') }}</option>
