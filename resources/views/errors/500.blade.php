@@ -23,7 +23,7 @@
     <meta property="og:url" content="" />
 
     <script src="{{ asset('public/aframe/aframe.min.js') }}"></script>
-    <script src="{{ asset('public/aframe/aframe-text-component.min.js') }}"></script>
+    <script src="{{ asset('public/kframe/aframe-text-component.min.js') }}"></script>
 </head>
 <body style="background-color:#000000">
 
