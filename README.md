@@ -26,18 +26,19 @@ The IdeaSpace Theme API is currently in development. That's why the developer do
 
 https://www.ideaspacevr.org/documentation/master/contributions
 
-### Roadmap
+## Roadmap
 
-1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations and links... and much more.
+v1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations and links... and much more.
 
-### License
+## License
 
 The IdeaSpace CMS is open-sourced software licensed under the [GPL-2.0 license](https://opensource.org/licenses/GPL-2.0)
 
-### Credits
+## Credits
 
 IdeaSpace would not exist without these awesome projects:
 
 - https://github.com/aframevr/aframe
+- https://github.com/mrdoob/three.js
 - https://github.com/laravel/laravel
 
