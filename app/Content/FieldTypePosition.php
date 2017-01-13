@@ -5,17 +5,14 @@ namespace App\Content;
 use App\Field;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 
-class FieldTypeTextarea {
+class FieldTypePosition {
 
     use FieldTypeTrait;
 
-    const DEFAULT_ROWS = 5;
-    const DEFAULT_MAXLENGTH = 550000;
-    const CONTENTFORMAT_HTML_TEXT = 'html/text';
-    const CONTENTFORMAT_TEXT = 'text';
-
-    private $template_add = 'admin.space.content.field_textarea_add';
-    private $template_edit = 'admin.space.content.field_textarea_edit';
+    private $template_add = 'admin.space.content.field_position_add';
+    private $template_edit = 'admin.space.content.field_position_edit';
+    private $template_add_script = 'public/assets/admin/space/content/js/field_position_add.js';
+    private $template_edit_script = 'public/assets/admin/space/content/js/field_position_edit.js';
 
 
     /**
@@ -39,19 +36,21 @@ class FieldTypeTextarea {
     public function prepare($field_key, $field_properties, $all_fields) {
 
         $field = [];
-
-        /* optional */
-        if (!isset($field_properties['#rows'])) {
-            $field_properties['#rows'] = FieldTypeTextarea::DEFAULT_ROWS;
-        }
-
-        /* optional */
-        if (!isset($field_properties['#maxlength'])) {
-            $field_properties['#maxlength'] = FieldTypeTextarea::DEFAULT_MAXLENGTH;
-        }
-
         $field = $field_properties;
         $field['#template'] = $this->template_add;
+        $field['#template_script'] = $this->template_add_script;
+
+        if (array_key_exists('#field', $field) && array_key_exists($field['#field'], $all_fields)) {
+
+            $subject = $all_fields[$field['#field']];
+            
+            $field['#field-type'] = $subject['#type'];
+
+        } else {
+
+            /* empty room */
+            $field['#field-type'] = '';
+        }
 
         return $field;
     }
@@ -97,45 +96,10 @@ class FieldTypeTextarea {
      */
     public function get_validation_rules_messages($request, $validation_rules_messages, $field_key, $properties) {
 
-        /* optional */
-        if (!isset($properties['#maxlength'])) {
-            $properties['#maxlength'] = FieldTypeTextarea::DEFAULT_MAXLENGTH;
-        }
-
-        if ($properties['#required']) {
-
-            $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'required|max:' . $properties['#maxlength']);
-
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
-            $validation_rules_messages['messages'] = array_dot(array_add(
-                $validation_rules_messages['messages'],
-                $field_key . '.required',
-                trans('fieldtype_textarea.validation_required', ['label' => $properties['#label']])
-            ));
-
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
-            $validation_rules_messages['messages'] = array_dot(array_add(
-                $validation_rules_messages['messages'],
-                $field_key . '.max',
-                trans('fieldtype_textarea.validation_max', ['label' => $properties['#label'], 'max' => $properties['#maxlength']])
-            ));
-
-        } else {
-
-            $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'max:' . $properties['#maxlength']);
-
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
-            $validation_rules_messages['messages'] = array_dot(array_add(
-                $validation_rules_messages['messages'],
-                $field_key . '.max',
-                trans('fieldtype_textarea.validation_max', ['label' => $properties['#label'], 'max' => $properties['#maxlength']])
-            ));
-        }        
-
         return $validation_rules_messages;
     }
 
-  
+
     /**
      * Save entry.
      *
@@ -202,9 +166,9 @@ class FieldTypeTextarea {
             '#label' => 'string',
             '#description' => 'string',
             '#required' => 'boolean',
-            '#rows' => 'string',
-            '#maxlength' => 'number',
-            '#contentformat' => 'string'];
+            '#content' => 'string',
+            /* '#field' => 'string', field is optional */
+            '#maxnumber' => 'number'];
 
         return $this->validateFieldType($mandatoryKeys, $field);
     }

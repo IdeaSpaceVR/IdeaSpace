@@ -26,14 +26,15 @@ class FieldTypeDate {
      * Prepare template.
      *
      * @param String $field_key
-     * @param Array $properties
+     * @param Array $field_properties
+     * @param Array $all_fields
      *
      * @return Array
      */
-    public function prepare($field_key, $properties) {
+    public function prepare($field_key, $field_properties, $all_fields) {
 
         $field = [];
-        $field = $properties;
+        $field = $field_properties;
         $field['#template'] = $this->template_add;
 
         return $field;

@@ -12,6 +12,7 @@ use App\Content\FieldTypeVideosphere;
 use App\Content\FieldTypeImage;
 use App\Content\FieldTypePhotosphere;
 use App\Content\FieldTypeModel3D;
+use App\Content\FieldTypePosition;
 use App\Content;
 use App\Field;
 use Log;
@@ -28,6 +29,7 @@ class ContentType {
     const FIELD_TYPE_VIDEO = 'video';
     const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
     const FIELD_TYPE_MODEL3D = 'model3d';
+    const FIELD_TYPE_POSITION = 'position';
 
     public $fieldTypes;
 
@@ -50,6 +52,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_DATE] = new FieldTypeDate();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTFIELD] = new FieldTypeTextfield();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTAREA] = new FieldTypeTextarea();
+        $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition();
     }
 
 
@@ -66,7 +69,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($field_key, $properties);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($field_key, $properties, $contenttype['#fields']);
 
             } else {
 
