@@ -1,12 +1,12 @@
-## IdeaSpace 
+## IdeaSpaceVR 
 
-![IdeaSpace - CMS for WebVR](preview.png "IdeaSpace - CMS for WebVR")
+![IdeaSpaceVR - CMS for WebVR](preview.png "IdeaSpaceVR - CMS for WebVR")
 
 We believe that everyone should be able to easily create and publish virtual reality web experiences with the focus on content creation and creativity. 
 
 Software developers should have the possibility to create and share virtual reality web themes.
 
-![IdeaSpace - CMS for WebVR](preview2.png "IdeaSpace - CMS for WebVR")
+![IdeaSpaceVR - CMS for WebVR](preview2.png "IdeaSpaceVR - CMS for WebVR")
 
 ## VR Themes
 
