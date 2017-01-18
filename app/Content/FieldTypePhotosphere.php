@@ -182,6 +182,8 @@ class FieldTypePhotosphere {
      */
     public function save($space_id, $content_id, $field_key, $type, $request_all) {
 
+        $first_or_updated = false;
+
         try {
             /* there is only one field key per content (id) */
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
