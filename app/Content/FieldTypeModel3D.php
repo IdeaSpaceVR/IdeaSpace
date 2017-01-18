@@ -36,7 +36,7 @@ class FieldTypeModel3D {
      *
      * @param String $field_key
      * @param Array $field_properties
-     * @param Array $all_fields
+     * @param Array $all_fields 
      *
      * @return Array
      */
@@ -57,14 +57,15 @@ class FieldTypeModel3D {
      * @param integer $content_id
      * @param String $field_key
      * @param Array $properties
+     * @param Array $all_fields
      *
      * @return Array
      */
-    public function load($content_id, $field_key, $properties) {
+    public function load($content_id, $field_key, $properties, $all_fields) {
 
         $field_arr = [];
 
-        $field_arr = $this->prepare($field_key, $properties);
+        $field_arr = $this->prepare($field_key, $properties, $all_fields);
         $field_arr['#template'] = $this->template_edit;
         $field_arr['#template_script'] = $this->template_edit_script;
         $field_arr['#content'] = array('#value' => null);
@@ -191,6 +192,7 @@ class FieldTypeModel3D {
             if (array_has($request_all, $field_key . '__model3d_id')) {
                 $field->data = $request_all[$field_key . '__model3d_id'];
 
+                /* get model data and copy it to field meta data */
                 $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
                 $model_data = json_decode($model->data, true);
                 if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
@@ -211,6 +213,7 @@ class FieldTypeModel3D {
                 $field->type = $type;
                 $field->data = $request_all[$field_key . '__model3d_id'];
 
+                /* get model data and copy it to field meta data */
                 $model = Model3D::where('id', $request_all[$field_key . '__model3d_id'])->first();
                 $model_data = json_decode($model->data, true);
                 if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {

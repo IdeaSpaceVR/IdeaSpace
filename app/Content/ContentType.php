@@ -107,7 +107,7 @@ class ContentType {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key, $properties);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key, $properties, $contenttype['#fields']);
 
             } else {
 

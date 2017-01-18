@@ -32,7 +32,7 @@ class FieldTypeTextarea {
      *
      * @param String $field_key
      * @param Array $field_properties
-     * @param Array $all_fields
+     * @param Array $all_fields 
      *
      * @return Array
      */
@@ -63,14 +63,15 @@ class FieldTypeTextarea {
      * @param integer $content_id
      * @param String $field_key
      * @param Array $properties
+     * @param Array $all_fields
      *
      * @return Array
      */
-    public function load($content_id, $field_key, $properties) {
+    public function load($content_id, $field_key, $properties, $all_fields) {
 
         $field_arr = [];
 
-        $field_arr = $this->prepare($field_key, $properties);
+        $field_arr = $this->prepare($field_key, $properties, $all_fields);
         $field_arr['#template'] = $this->template_edit;
 
         try {
