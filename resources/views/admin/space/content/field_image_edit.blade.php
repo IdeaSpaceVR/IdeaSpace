@@ -4,7 +4,7 @@
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="@if (isset($form['#content']['#id'])) {{ $form['#content']['#id'] }} @endif" name="{{ $field_id }}" class="image-id">
+        <input type="hidden" @if (isset($form['#content']['#id'])) value="{{ $form['#content']['#id'] }}" @else value="" @endif name="{{ $field_id }}" class="image-id">
 
         <div class="image-add" @if (isset($form['#content']['#value'])) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg" data-toggle="modal" data-target="#assets" data-opentab="#images-tab">
