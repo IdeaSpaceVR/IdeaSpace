@@ -59,22 +59,23 @@ class ContentType {
     /**
      * Prepare a template, content add, first time.
      * 
+     * @param int $space_id
      * @param Array $contenttype
      *
      * @return $vars
      */
-    public function prepare($contenttype) {
+    public function prepare($space_id, $contenttype) {
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($field_key, $properties, $contenttype['#fields']);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($space_id, $field_key, $properties, $contenttype['#fields']);
 
             } else {
 
                 /* ignore unknown field type */
-                Log::debug('Unknown field type in found: ' . $properties['#type']);
+                Log::debug('Unknown field type found: ' . $properties['#type']);
             }
         }
 
@@ -96,18 +97,19 @@ class ContentType {
     /**
      * Load content for a template, content edit.
      *
-     * @param integer $content_id
+     * @param int $space_id
+     * @param int $content_id
      * @param Array $contenttype
      *
      * @return $vars
      */
-    public function load($content_id, $contenttype) {
+    public function load($space_id, $content_id, $contenttype) {
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type'])) {
 
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($content_id, $field_key, $properties, $contenttype['#fields']);
+                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($space_id, $content_id, $field_key, $properties, $contenttype['#fields']);
 
             } else {
 

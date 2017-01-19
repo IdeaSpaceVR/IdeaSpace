@@ -41,13 +41,14 @@ class FieldTypePhotosphere {
     /**
      * Prepare template.
      *
+     * @param int $space_id
      * @param String $field_key
      * @param Array $field_properties
      * @param Array $all_fields 
      *
      * @return Array
      */
-    public function prepare($field_key, $field_properties, $all_fields) {
+    public function prepare($space_id, $field_key, $field_properties, $all_fields) {
 
         $field = [];
         $field = $field_properties;
@@ -61,18 +62,19 @@ class FieldTypePhotosphere {
     /**
      * Load content.
      *
-     * @param integer $content_id
+     * @param int $space_id
+     * @param int $content_id
      * @param String $field_key
      * @param Array $properties
      * @param Array $all_fields
      *
      * @return Array
      */
-    public function load($content_id, $field_key, $properties, $all_fields) {
+    public function load($space_id, $content_id, $field_key, $properties, $all_fields) {
 
         $field_arr = [];
 
-        $field_arr = $this->prepare($field_key, $properties, $all_fields);
+        $field_arr = $this->prepare($space_id, $field_key, $properties, $all_fields);
         $field_arr['#template'] = $this->template_edit;
         $field_arr['#template_script'] = $this->template_edit_script;
         $field_arr['#content'] = array('#value' => null);
