@@ -60,6 +60,8 @@
 
     {!! Form::close() !!}
 
+    @stack('field_modals')
+
     @include('admin.asset_library.assets_modal')
 
 @endsection
