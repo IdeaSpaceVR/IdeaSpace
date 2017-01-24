@@ -46,7 +46,7 @@
 
             <div class="form-group" style="margin-bottom:0">
                 <label for="scale">{{ trans('template_asset_library_models.scale') }}</label>
-                <select class="form-control" id="scale">
+                <select class="form-control" id="scale" autocomplete="off">
                     <option value="0.01 0.01 0.01" @if ($scale == '0.01 0.01 0.01') selected="selected" @endif>{{ trans('template_asset_library_models.scale_0_0_1') }}</option>
                     <option value="0.02 0.02 0.02" @if ($scale == '0.02 0.02 0.02') selected="selected" @endif>{{ trans('template_asset_library_models.scale_0_0_2') }}</option>
                     <option value="0.03 0.03 0.03" @if ($scale == '0.03 0.03 0.03') selected="selected" @endif>{{ trans('template_asset_library_models.scale_0_0_3') }}</option>
@@ -81,7 +81,7 @@
 
             <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-x">{{ trans('template_asset_library_models.rotate_x') }}</label>
-                <select class="form-control" id="rotation-x">
+                <select class="form-control" id="rotation-x" autocomplete="off">
                     @for ($i = 0; $i <= 360; $i++)
                     <option value="{{ $i }}" @if ($rotation_x == $i) selected="selected" @endif>{{ $i }}</option>
                     @endfor
@@ -89,7 +89,7 @@
             </div>
             <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-y">{{ trans('template_asset_library_models.rotate_y') }}</label>
-                <select class="form-control" id="rotation-y">
+                <select class="form-control" id="rotation-y" autocomplete="off">
                     @for ($i = 0; $i <= 360; $i++)
                     <option value="{{ $i }}" @if ($rotation_y == $i) selected="selected" @endif>{{ $i }}</option>
                     @endfor
@@ -97,7 +97,7 @@
             </div>
             <div class="form-group" style="margin-bottom:0">
                 <label for="rotation-z">{{ trans('template_asset_library_models.rotate_z') }}</label>
-                <select class="form-control" id="rotation-z">
+                <select class="form-control" id="rotation-z" autocomplete="off">
                     @for ($i = 0; $i <= 360; $i++)
                     <option value="{{ $i }}" @if ($rotation_z == $i) selected="selected" @endif>{{ $i }}</option>
                     @endfor

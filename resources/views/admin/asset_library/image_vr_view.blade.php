@@ -56,7 +56,7 @@
      
             <div class="form-group">
                 <label for="distance-to-image">{{ trans('template_asset_library_images.distance_to_image') }}</label>
-                <select class="form-control" id="distance-to-image">
+                <select class="form-control" id="distance-to-image" autocomplete="off">
                     <option value="0.5">{{ trans('template_asset_library_images.0_5_meters') }}</option>
                     <option value="1" selected="selected">{{ trans('template_asset_library_images.1_meter') }}</option>
                     <option value="1.5">{{ trans('template_asset_library_images.1_5_meters') }}</option>
