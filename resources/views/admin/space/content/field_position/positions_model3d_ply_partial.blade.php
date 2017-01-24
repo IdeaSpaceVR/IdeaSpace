@@ -5,8 +5,8 @@
         <a-asset-item id="plyModel" src="{{ $model_ply }}"></a-asset-item>
     </a-assets>
 
-    <a-entity id="camera" position="0 1.6 4">
-        <a-camera></a-camera>
+    <a-entity id="camera" position="0 0 4">
+        <a-camera wasd-controls="fly:true"></a-camera>
     </a-entity>
 
     <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
