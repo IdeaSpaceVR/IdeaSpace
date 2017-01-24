@@ -67,7 +67,7 @@ class SpaceContentEditController extends Controller {
         if (array_has($config, '#content-types.' . $contenttype)) {
 
             /* load and process content type and field content */
-            $vars = $this->contentType->load($content_id, $config['#content-types'][$contenttype]);
+            $vars = $this->contentType->load($space_id, $content_id, $config['#content-types'][$contenttype]);
 
         } else {
 
@@ -96,7 +96,8 @@ class SpaceContentEditController extends Controller {
         ];
 
         $form['js_header'] = [
-            asset('public/aframe/aframe.min.js'),
+            //asset('public/aframe/aframe.min.js'),
+            asset('public/aframe/aframe-for-position-field-modal-wasd-navigation.min.js'),
             asset('public/aframe-extras/aframe-extras.loaders.min.js'),
             asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),
