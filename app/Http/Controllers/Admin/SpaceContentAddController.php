@@ -103,8 +103,9 @@ class SpaceContentAddController extends Controller {
 
         $form['js_header'] = [
             //asset('public/aframe/aframe.min.js'),
-            asset('public/aframe/aframe-for-position-field-modal-wasd-navigation.min.js'),
+            asset('public/aframe/aframe-embedded-for-wasd-navigation.min.js'),
             asset('public/aframe-extras/aframe-extras.loaders.min.js'),
+            asset('public/aframe-bmfont-text-component/aframe-bmfont-text-component.min.js'),
             asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-video-aframe-comp.js'),

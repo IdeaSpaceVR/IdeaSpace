@@ -64,7 +64,9 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete', 'uses' => 'Admin\SpaceContentEditController@content_delete']);
   Route::post('admin/space/{space_id}/edit/{contenttype}/{content_id}/delete', ['as' => 'content_delete_submit', 'uses' => 'Admin\SpaceContentEditController@content_delete_submit']);
 
-  
+
+  /* space content field type specific routes */
+  Route::get('admin/space/{space_id}/edit/{contenttype}/positions/subject/{subject_type}/{subject_id?}', ['as' => 'fieldtype_position', 'uses' => 'Admin\FieldTypePositionController@positions_subject']); 
 
 
   Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);

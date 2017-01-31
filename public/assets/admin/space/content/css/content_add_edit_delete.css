@@ -45,7 +45,20 @@ label.large {
   background-color: #FFFFFF;
 }
 
+.form-control-add-positions {
+  border-style: solid;
+  border-color: #ddd;
+  border-width: 1px;
+  border-radius: 4px 4px 4px 4px;
+  padding: 15px 15px 15px 15px;
+  background-color: #FFFFFF;
+}
+
 .form-control-add-file.has-error {
+  border-color: #a94442;
+}
+
+.form-control-add-positions.has-error {
   border-color: #a94442;
 }
 

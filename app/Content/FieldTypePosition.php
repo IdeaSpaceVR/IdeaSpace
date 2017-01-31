@@ -3,6 +3,9 @@
 namespace App\Content; 
 
 use App\Field;
+use App\Space;
+use App\Theme;
+use App\Content;
 use App\Content\ContentType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Log;
@@ -62,16 +65,21 @@ class FieldTypePosition {
             $field['#field-type'] = $subject['#type'];
             $field['#field-name'] = $field['#field'];
 
-            $space = Space::where('id', $space_id)->first();
-            $theme = Theme::where('id', $space->theme_id)->first();
-            //$field['#content-label']
-
         } else {
 
             /* blank room */
             $field['#field-type'] = '';
             $field['#field-name'] = '';
         }
+
+        $space = Space::where('id', $space_id)->first();
+        $theme = Theme::where('id', $space->theme_id)->first();
+        $config = json_decode($theme->config, true);
+        $contenttype = $config['#content-types'][$field['#content']];
+
+        $field['#content-label'] = $contenttype['#label'];
+
+        $field['#contents'] = Content::where('space_id', $space_id)->where('key', $field['#content'])->get();
 
         return $field;
     }
