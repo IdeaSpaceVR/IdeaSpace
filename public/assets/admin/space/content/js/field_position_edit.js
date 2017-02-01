@@ -23,8 +23,8 @@ jQuery(document).ready(function($) {
         $('#positions .modal-body .content-target').load(window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/positions/subject/' + subject_type + '/' + subject_id, function() {
 
             /* set height dynamically, because of mobile */
-            $('#positions .modal-body a-scene').css('max-height', '600px');
-            $('#positions .modal-body a-scene').css('height', $(window).height() * 0.6);
+            $('#positions .modal-body a-scene').css('max-height', '700px');
+            $('#positions .modal-body a-scene').css('height', $(window).height() * 0.7);
 
             $('#positions').on('shown.bs.modal', function() {
 
@@ -48,6 +48,31 @@ jQuery(document).ready(function($) {
 
             var scene = document.querySelector('a-scene');
             scene.addEventListener('enter-vr', window.positions_reset_content_selector);
+
+            var entity = document.querySelector('a-camera'); 
+            var position = new THREE.Vector3();
+            var quaternion = new THREE.Quaternion();
+            var rotation_radians = new THREE.Euler();
+            /* use componentchanged event to get position and rotation from reticle */
+            entity.addEventListener('componentchanged', function(evt) {
+                if (evt.detail.name === 'position') {
+                    var reticle_text = document.querySelector('#reticle-text');
+                    position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
+                    $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
+                    $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
+                    $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
+                } else if (evt.detail.name === 'rotation') {
+                    var reticle_text = document.querySelector('#reticle-text');
+                    reticle_text.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
+                    rotation_radians.setFromQuaternion(quaternion, 'YXZ');
+                    var rotation_x = THREE.Math.radToDeg(rotation_radians.x);
+                    var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
+                    var rotation_z = THREE.Math.radToDeg(rotation_radians.z);
+                    $('#positions #content-selector-rotation-x').val(parseFloat(rotation_x).toFixed(2));
+                    $('#positions #content-selector-rotation-y').val(parseFloat(rotation_y).toFixed(2));
+                    $('#positions #content-selector-rotation-z').val(parseFloat(rotation_z).toFixed(2));
+                }
+            });
 
             $('#positions').modal('show');
         });
@@ -90,7 +115,7 @@ jQuery(document).ready(function($) {
         position.setFromMatrixPosition( content.object3D.matrixWorld );
 
         var quaternion = new THREE.Quaternion();
-        content.object3D.matrixWorld.decompose( new THREE.Vector3(), quaternion, new THREE.Vector3() );
+        content.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
 
         var rotation_radians = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
         var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
@@ -172,13 +197,19 @@ jQuery(document).ready(function($) {
             /* reset camera position and rotation */
             camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
             camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-            camera.setAttribute('position', {x: 0, y:0, z:0});
-            camera.setAttribute('rotation', {x: 0, y:0, z:0});
             camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
             camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', true);
             $('#positions #content-scale').prop('disabled', true);
+
+            $('#positions #reticle-position-x').text('-');
+            $('#positions #reticle-position-y').text('-');
+            $('#positions #reticle-position-z').text('-');
+
+            $('#positions #reticle-rotation-x').text('-');
+            $('#positions #reticle-rotation-y').text('-');
+            $('#positions #reticle-rotation-z').text('-');
 
             $('#positions #content-scale option[value="1.0"]').prop('selected', true); 
         } else {
@@ -186,12 +217,20 @@ jQuery(document).ready(function($) {
             var json = jQuery.parseJSON($(this).val());
             camera_wrapper.setAttribute('position', {x: parseFloat(json.position.x), y: parseFloat(json.position.y), z: parseFloat(json.position.z)});
             camera_wrapper.setAttribute('rotation', {x: parseFloat(json.rotation.x), y: parseFloat(json.rotation.y), z: parseFloat(json.rotation.z)});
-            /* it is not possible to add this one meter to the z position of the wrapper directly; why? */
+            /* it is not possible to add this one meter to the z position of the camera wrapper directly; why? */
             camera.setAttribute('position', {x: 0, y:0, z:1});
             camera.setAttribute('rotation', {x: 0, y:0, z:0});
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', false);
             $('#positions #content-scale').prop('disabled', false);
+
+            $('#positions #reticle-position-x').text(parseFloat(json.position.x).toFixed(2));
+            $('#positions #reticle-position-y').text(parseFloat(json.position.y).toFixed(2));
+            $('#positions #reticle-position-z').text(parseFloat(json.position.z).toFixed(2));
+
+            $('#positions #reticle-rotation-x').text(parseFloat(json.rotation.x).toFixed(2));
+            $('#positions #reticle-rotation-y').text(parseFloat(json.rotation.y).toFixed(2));
+            $('#positions #reticle-rotation-z').text(parseFloat(json.rotation.z).toFixed(2));
 
             $('#positions #content-scale option[value="' + json.scale.x + '"]').prop('selected', true); 
         }
@@ -200,6 +239,36 @@ jQuery(document).ready(function($) {
     };
     window.positions_content_attached_selector = positions_content_attached_selector;
     $('#positions #content-attached').change(window.positions_content_attached_selector);
+
+
+    $('#positions #navigation-center').click(function() {
+        
+        var camera = document.querySelector('a-camera'); 
+        var camera_wrapper = document.querySelector('#camera'); 
+
+        camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
+        camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
+        camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
+    });
+
+
+/*    $(document).keydown(function(e) {
+            //var entity = document.querySelector('#reticle-text');
+            var entity = document.querySelector('#reticle-text'); 
+            var position = new THREE.Vector3();
+console.log('moving');
+//entity.sceneEl.object3D.updateMatrixWorld();
+            position.setFromMatrixPosition( entity.object3D.matrixWorld );
+                    $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
+                    $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
+                    $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
+    });
+*/
+
+    $('#positions #navigation-up').click(function() {
+
+    });
 
 
 });

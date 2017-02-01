@@ -24,7 +24,7 @@
 
                             <div class="panel-body">
 
-                                <div class="form-group" style="margin-bottom:0px">
+                                <div class="form-group" style="margin-bottom:0px;margin-top:0px">
                                     <label for="content-selector">{{ trans('fieldtype_position.available') }} {{ $form['#content-label'] }}</label>
 
                                     <div class="row">
@@ -75,7 +75,15 @@
 
                                 </div>
 
-                                <div class="form-group" style="margin-bottom:0">
+                                <div class="form-group" style="margin-bottom:20px">
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2 text-center">
+                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.center') }}</button>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!--div class="form-group" style="margin-bottom:0">
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
                                             <button class="btn btn-default" type="button" id="navigation-up">
@@ -89,7 +97,47 @@
                                             </button>
                                         </div>
                                     </div>
-                                </div>
+                                </div//-->
+
+                                <div class="panel panel-default">
+                                    <div class="panel-heading" role="tab" id="headingOne" style="background-color:#FFF">
+                                        <h4 class="panel-title">
+                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ trans('fieldtype_position.advanced') }}</a>
+                                        </h4>
+                                    </div>
+                                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+                                        <div class="panel-body">
+                                            <div class="form-group" style="margin-bottom:0;margin-top:0">
+                                                <label>{{ trans('fieldtype_position.position') }}</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control" id="content-selector-position-x" min="0">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control" id="content-selector-position-y" min="0">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control" id="content-selector-position-z" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                            <div class="form-group" style="margin-bottom:0">
+                                                <label>{{ trans('fieldtype_position.rotation') }}</label>
+                                                <div class="row">
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control" id="content-selector-rotation-x" min="0">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control" id="content-selector-rotation-y" min="0">
+                                                    </div>
+                                                    <div class="col-md-4">
+                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control" id="content-selector-rotation-z" min="0">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div><!-- panel //-->
 
                             </div>
                         </div><!-- panel //-->
@@ -98,9 +146,18 @@
 
                             <div class="panel-body">
 
-                                <div class="form-group" style="margin-bottom:0">
+                                <div class="form-group" style="margin-bottom:0;margin-top:0">
                                     <label for="content-attached">{{ trans('fieldtype_position.attached') }} {{ $form['#content-label'] }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }})</label>
 
+                                    <div class="row">
+                                        <div class="col-md-8 col-md-offset-2">
+                                            <div class="well well-sm">
+                                                <span style="font-weight:bold">{{ trans('fieldtype_position.position') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-position-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-position-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-position-z">-</span><br>
+                                                <span style="font-weight:bold">{{ trans('fieldtype_position.rotation') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-rotation-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-rotation-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-rotation-z">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                            
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
                                             <div class="form-inline">
@@ -149,6 +206,22 @@
                                                     <option value="1.8">{{ trans('fieldtype_position.scale_1_8') }}</option>
                                                     <option value="1.9">{{ trans('fieldtype_position.scale_1_9') }}</option>
                                                     <option value="2.0">{{ trans('fieldtype_position.scale_2_0') }}</option>
+                                                    <option value="2.5">{{ trans('fieldtype_position.scale_2_5') }}</option>
+                                                    <option value="3.0">{{ trans('fieldtype_position.scale_3_0') }}</option>
+                                                    <option value="3.5">{{ trans('fieldtype_position.scale_3_5') }}</option>
+                                                    <option value="4.0">{{ trans('fieldtype_position.scale_4_0') }}</option>
+                                                    <option value="4.5">{{ trans('fieldtype_position.scale_4_5') }}</option>
+                                                    <option value="5.0">{{ trans('fieldtype_position.scale_5_0') }}</option>
+                                                    <option value="5.5">{{ trans('fieldtype_position.scale_5_5') }}</option>
+                                                    <option value="6.0">{{ trans('fieldtype_position.scale_6_0') }}</option>
+                                                    <option value="6.5">{{ trans('fieldtype_position.scale_6_5') }}</option>
+                                                    <option value="7.0">{{ trans('fieldtype_position.scale_7_0') }}</option>
+                                                    <option value="7.5">{{ trans('fieldtype_position.scale_7_5') }}</option>
+                                                    <option value="8.0">{{ trans('fieldtype_position.scale_8_0') }}</option>
+                                                    <option value="8.5">{{ trans('fieldtype_position.scale_8_5') }}</option>
+                                                    <option value="9.0">{{ trans('fieldtype_position.scale_9_0') }}</option>
+                                                    <option value="9.5">{{ trans('fieldtype_position.scale_9_5') }}</option>
+                                                    <option value="10.0">{{ trans('fieldtype_position.scale_10_0') }}</option>
                                                 </select>
                                             </div>
                                         </div>
