@@ -352,16 +352,20 @@ jQuery(document).ready(function($) {
         var reticle = document.querySelector('#reticle');
         var reticle_text = document.querySelector('#reticle-text');
 
-        camera_wrapper.setAttribute('rotation', {x: parseFloat(rotation_x), y: parseFloat(rotation_y), z: parseFloat(rotation_z)});
-
-        /* reticle and reticle-text position correction */
-        //camera_wrapper.object3D.translateX(-0.15);
-        //camera_wrapper.object3D.translateY(0.05);
-        //camera_wrapper.object3D.translateZ(1);
-
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});
         reticle.setAttribute('rotation', {x: 0, y: 0, z: 0});
         reticle_text.setAttribute('rotation', {x: 0, y: 0, z: 0});
+
+        camera_wrapper.object3D.translateX(0.15);
+        camera_wrapper.object3D.translateY(-0.05);
+        camera_wrapper.object3D.translateZ(-1);
+
+        camera_wrapper.setAttribute('rotation', {x: parseFloat(rotation_x), y: parseFloat(rotation_y), z: parseFloat(rotation_z)});
+
+        camera_wrapper.object3D.translateX(-0.15);
+        camera_wrapper.object3D.translateY(0.05);
+        camera_wrapper.object3D.translateZ(1);
+
     };
     window.content_selector_rotation_change_handler = content_selector_rotation_change_handler;
 
