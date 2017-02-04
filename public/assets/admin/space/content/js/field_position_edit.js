@@ -8,6 +8,33 @@ jQuery(document).ready(function($) {
     });
 
 
+    var componentchanged_eventhandler = function(evt) {
+
+        if (evt.detail.name === 'position') {
+            var position = new THREE.Vector3();
+            var reticle_text = document.querySelector('#reticle-text');
+            position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
+            $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
+            $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
+            $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
+        } else if (evt.detail.name === 'rotation' && evt.detail.oldData.y !== evt.detail.newData.y) {
+            /* confirmed a-frame bug: it would fire constantly and preventing editing the input fields if I would not compare old with new data */
+            var quaternion = new THREE.Quaternion();
+            var rotation_radians = new THREE.Euler();
+            var reticle_text = document.querySelector('#reticle-text');
+            reticle_text.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
+            rotation_radians.setFromQuaternion(quaternion, 'YXZ');
+            var rotation_x = THREE.Math.radToDeg(rotation_radians.x);
+            var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
+            var rotation_z = THREE.Math.radToDeg(rotation_radians.z);
+            $('#positions #content-selector-rotation-x').val(parseFloat(rotation_x).toFixed(2));
+            $('#positions #content-selector-rotation-y').val(parseFloat(rotation_y).toFixed(2));
+            $('#positions #content-selector-rotation-z').val(parseFloat(rotation_z).toFixed(2));
+        }
+    };
+    window.componentchanged_eventhandler = componentchanged_eventhandler;
+
+
     /* click on positions button and get file id of subject, if it exists */
     var positions_add_edit_click_handler = function(e) {
 
@@ -51,28 +78,20 @@ jQuery(document).ready(function($) {
 
             var entity = document.querySelector('a-camera'); 
             var position = new THREE.Vector3();
-            var quaternion = new THREE.Quaternion();
-            var rotation_radians = new THREE.Euler();
-            /* use componentchanged event to get position and rotation from reticle */
-            entity.addEventListener('componentchanged', function(evt) {
-                if (evt.detail.name === 'position') {
-                    var reticle_text = document.querySelector('#reticle-text');
-                    position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
-                    $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
-                    $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
-                    $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
-                } else if (evt.detail.name === 'rotation') {
-                    var reticle_text = document.querySelector('#reticle-text');
-                    reticle_text.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
-                    rotation_radians.setFromQuaternion(quaternion, 'YXZ');
-                    var rotation_x = THREE.Math.radToDeg(rotation_radians.x);
-                    var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
-                    var rotation_z = THREE.Math.radToDeg(rotation_radians.z);
-                    $('#positions #content-selector-rotation-x').val(parseFloat(rotation_x).toFixed(2));
-                    $('#positions #content-selector-rotation-y').val(parseFloat(rotation_y).toFixed(2));
-                    $('#positions #content-selector-rotation-z').val(parseFloat(rotation_z).toFixed(2));
-                }
+            var reticle_text = document.querySelector('#reticle-text');
+            scene.addEventListener('loaded', function() {
+                /* init */
+                position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
+                $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
+                $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
+                $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
             });
+            //var quaternion = new THREE.Quaternion();
+            //var rotation_radians = new THREE.Euler();
+            /* use componentchanged event to get position and rotation from reticle */
+            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
+            //entity.addEventListener('componentchanged', function(evt) {
+            //});
 
             $('#positions').modal('show');
         });
@@ -153,12 +172,14 @@ jQuery(document).ready(function($) {
 
     var positions_content_detach = function() {
 
-        var json = jQuery.parseJSON($('#positions #content-attached option:selected').val()); 
-        var entity = $('#positions a-scene').find('[data-id="' + json.id + '"]'); 
+        if ($('#positions #content-attached option:selected').val() != '') {
+            var json = jQuery.parseJSON($('#positions #content-attached option:selected').val()); 
+            var entity = $('#positions a-scene').find('[data-id="' + json.id + '"]'); 
 
-        entity.remove(); 
-        /* important: keep quotes as they are, otherwise value is not being found */
-        $("#positions #content-attached option[value='" + $('#positions #content-attached option:selected').val() + "']").remove();
+            entity.remove(); 
+            /* important: keep quotes as they are, otherwise value is not being found */
+            $("#positions #content-attached option[value='" + $('#positions #content-attached option:selected').val() + "']").remove();
+        }
     };
     window.positions_content_detach = positions_content_detach;
     $('#positions #btn-detach').click(window.positions_content_detach);
@@ -253,18 +274,98 @@ jQuery(document).ready(function($) {
     });
 
 
-/*    $(document).keydown(function(e) {
-            //var entity = document.querySelector('#reticle-text');
-            var entity = document.querySelector('#reticle-text'); 
-            var position = new THREE.Vector3();
-console.log('moving');
-//entity.sceneEl.object3D.updateMatrixWorld();
-            position.setFromMatrixPosition( entity.object3D.matrixWorld );
-                    $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
-                    $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
-                    $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
+    $('#positions .content-selector-position').blur(function(e) {
+        /* remove event listener */
+        var entity = document.querySelector('a-camera');
+        entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
+
+        window.content_selector_position_change_handler();
+
+        /* add event listener */
+        entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
     });
-*/
+    $('#positions .content-selector-position').keyup(function(e) {
+        /* enter key */
+        if (e.keyCode == 13) {
+            /* remove event listener */
+            var entity = document.querySelector('a-camera');
+            entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
+
+            window.content_selector_position_change_handler();
+
+            /* add event listener */
+            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
+        }
+    });
+    $('#positions .content-selector-rotation').blur(function(e) {
+        /* remove event listener */
+        var entity = document.querySelector('a-camera');
+        entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
+
+        window.content_selector_rotation_change_handler();
+
+        /* add event listener */
+        entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
+    });
+    $('#positions .content-selector-rotation').keyup(function(e) {
+        /* enter key */
+        if (e.keyCode == 13) {
+            /* remove event listener */
+            var entity = document.querySelector('a-camera');
+            entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
+
+            window.content_selector_rotation_change_handler();
+
+            /* add event listener */
+            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
+        }
+    });
+
+    var content_selector_position_change_handler = function() {
+
+        var position_x = $('#positions #content-selector-position-x').val();
+        var position_y = $('#positions #content-selector-position-y').val();
+        var position_z = $('#positions #content-selector-position-z').val();
+
+        var camera_wrapper = document.querySelector('#camera');
+        var camera = document.querySelector('a-camera');
+
+        camera_wrapper.setAttribute('position', {x: parseFloat(position_x), y: parseFloat(position_y), z: parseFloat(position_z)});
+
+        /* reticle and reticle-text position correction */
+        camera_wrapper.object3D.translateX(-0.15);
+        camera_wrapper.object3D.translateY(0.05);
+        camera_wrapper.object3D.translateZ(1);
+
+        camera.setAttribute('position', {x: 0, y: 0, z: 0});
+    };
+    window.content_selector_position_change_handler = content_selector_position_change_handler;
+
+    var content_selector_rotation_change_handler = function() {
+
+        var rotation_x = $('#positions #content-selector-rotation-x').val();
+        var rotation_y = $('#positions #content-selector-rotation-y').val();
+        var rotation_z = $('#positions #content-selector-rotation-z').val();
+
+        var camera_wrapper = document.querySelector('#camera');
+        var camera = document.querySelector('a-camera');
+        var reticle = document.querySelector('#reticle');
+        var reticle_text = document.querySelector('#reticle-text');
+
+        camera_wrapper.setAttribute('rotation', {x: parseFloat(rotation_x), y: parseFloat(rotation_y), z: parseFloat(rotation_z)});
+
+        /* reticle and reticle-text position correction */
+        //camera_wrapper.object3D.translateX(-0.15);
+        //camera_wrapper.object3D.translateY(0.05);
+        //camera_wrapper.object3D.translateZ(1);
+
+        camera.setAttribute('rotation', {x: 0, y: 0, z: 0});
+        reticle.setAttribute('rotation', {x: 0, y: 0, z: 0});
+        reticle_text.setAttribute('rotation', {x: 0, y: 0, z: 0});
+    };
+    window.content_selector_rotation_change_handler = content_selector_rotation_change_handler;
+
+
 
     $('#positions #navigation-up').click(function() {
 
