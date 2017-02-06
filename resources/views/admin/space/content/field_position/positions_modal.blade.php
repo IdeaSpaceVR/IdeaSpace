@@ -42,7 +42,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group" style="margin-bottom:0">
+                                <div class="form-group" style="margin-bottom:20px">
                                     <label>{{ trans('fieldtype_position.navigation') }}</label>
 
                                     <div class="row">
@@ -57,9 +57,7 @@
                                             <button class="btn btn-default" type="button" id="navigation-left">
                                                 <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> {{ trans('fieldtype_position.a') }}
                                             </button>
-                                            <button class="btn btn-default" type="button" id="navigation-up">
-                                                <span class="glyphicon glyphicon-repeat" aria-hidden="true"></span> 
-                                            </button>
+                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.center') }}</button>
                                             <button class="btn btn-default" type="button" id="navigation-right">
                                                 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ trans('fieldtype_position.d') }}
                                             </button>
@@ -75,29 +73,6 @@
 
                                 </div>
 
-                                <div class="form-group" style="margin-bottom:20px">
-                                    <div class="row">
-                                        <div class="col-md-8 col-md-offset-2 text-center">
-                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.center') }}</button>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <!--div class="form-group" style="margin-bottom:0">
-                                    <div class="row">
-                                        <div class="col-md-8 col-md-offset-2 text-center">
-                                            <button class="btn btn-default" type="button" id="navigation-up">
-                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span>
-                                            </button>
-                                            <button class="btn btn-default" type="button" id="navigation-up">
-                                                {{ trans('fieldtype_position.reset') }} 
-                                            </button>
-                                            <button class="btn btn-default" type="button" id="navigation-up">
-                                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span>
-                                            </button>
-                                        </div>
-                                    </div>
-                                </div//-->
 
                                 <div class="panel panel-default">
                                     <div class="panel-heading" role="tab" id="headingOne" style="background-color:#FFF">
@@ -108,6 +83,7 @@
                                     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="panel-body">
                                             <div class="form-group" style="margin-bottom:0;margin-top:0">
+                                                <span class="info-block text-center">{{ trans('fieldtype_position.set_position_rotation') }}</span>
                                                 <label>{{ trans('fieldtype_position.position') }}</label>
                                                 <div class="row">
                                                     <div class="col-md-4">
@@ -238,6 +214,7 @@
 
             </div>
             <div class="modal-footer">
+                <button type="button" class="btn btn-default insert-btn" data-dismiss="modal" style="display:none"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> {{ trans('fieldtype_position.insert') }}</button>
                 <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('fieldtype_position.close') }}</button>
             </div>
         </div>

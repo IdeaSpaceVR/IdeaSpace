@@ -9,7 +9,7 @@
     </div>
     <div class="form-control-add-positions text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="{{ old($field_id . '__positions_id') }}" name="{{ $field_id }}" class="positions-id">
+        <input type="hidden" value="{{ old($field_id . '__positions_id') }}" name="{{ $field_id }}" class="positions-info">
 
         <div class="positions-add" @if (old($field_id . '__positions_id') !== null) style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">

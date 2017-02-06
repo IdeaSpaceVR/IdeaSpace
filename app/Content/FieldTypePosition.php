@@ -20,8 +20,7 @@ class FieldTypePosition {
 
     private $template_add = 'admin.space.content.field_position_add';
     private $template_edit = 'admin.space.content.field_position_edit';
-    private $template_add_script = 'public/assets/admin/space/content/js/field_position_add.js';
-    private $template_edit_script = 'public/assets/admin/space/content/js/field_position_edit.js';
+    private $template_add_edit_script = 'public/assets/admin/space/content/js/field_position_add_edit.js';
 
 
     /**
@@ -56,7 +55,7 @@ class FieldTypePosition {
         $field = [];
         $field = $field_properties;
         $field['#template'] = $this->template_add;
-        $field['#template_script'] = $this->template_add_script;
+        $field['#template_script'] = $this->template_add_edit_script;
 
         if (array_key_exists('#field', $field) && array_key_exists($field['#field'], $all_fields)) {
 
@@ -102,7 +101,7 @@ class FieldTypePosition {
 
         $field_arr = $this->prepare($space_id, $field_key, $properties, $all_fields);
         $field_arr['#template'] = $this->template_edit;
-        $field_arr['#template_script'] = $this->template_edit_script;
+        $field_arr['#template_script'] = $this->template_add_edit_script;
 
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();

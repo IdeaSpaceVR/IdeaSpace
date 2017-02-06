@@ -73,5 +73,7 @@ return [
     'scale_9_0' => '9.0',
     'scale_9_5' => '9.5',
     'scale_10_0' => '10.0',
+    'set_position_rotation' => 'Set position and rotation.',
+    'insert' => 'Insert',
 
 ];

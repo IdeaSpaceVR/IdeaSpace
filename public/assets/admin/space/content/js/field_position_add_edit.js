@@ -92,6 +92,8 @@ jQuery(document).ready(function($) {
             $('#positions').modal('show');
         });
 
+        /* needed for insert operation */
+        window.open_fieldtype_positions_ref = $(this).parent().parent();
     };
     $('.add-edit-positions-btn').unbind('click');
     $('.add-edit-positions-btn').click(positions_add_edit_click_handler);
@@ -161,6 +163,8 @@ jQuery(document).ready(function($) {
         } else {
             $('#positions #btn-attach').prop('disabled', true);
         }
+
+        $('#positions .insert-btn').show();
     };
     window.positions_content_attach = positions_content_attach;
     $('#positions #btn-attach').click(window.positions_content_attach);
@@ -181,6 +185,10 @@ jQuery(document).ready(function($) {
             maxnumber_counter--;
             $('#positions #maxnumber').text(maxnumber_counter);
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
+
+            if (maxnumber_counter < 1) {
+                $('#positions .insert-btn').hide();
+            }
         }
     };
     window.positions_content_detach = positions_content_detach;
@@ -480,9 +488,22 @@ jQuery(document).ready(function($) {
         }
     });
 
-    $('#positions #navigation-rotate').mousedown(function() {
 
+    $('#positions .insert-btn').click(function() {
 
+        var value = '{';
+        $('#positions #content-attached option').each(function() {
+            if ($(this).val() != '' && $(this).val() != null) {
+                value = value + $(this).val() + ',';
+            }
+        });
+        value = value.substring(0, value.length - 1);
+        value = value + '}';
+
+        window.open_fieldtype_positions_ref.find('.positions-info').val(value);
+        window.open_fieldtype_positions_ref.find('.add-positions-btn').hide();
+        window.open_fieldtype_positions_ref.find('.add-edit-positions-btn').show();
+        window.open_fieldtype_positions_ref.find('.remove-positions-btn').show();
     });
 
 
