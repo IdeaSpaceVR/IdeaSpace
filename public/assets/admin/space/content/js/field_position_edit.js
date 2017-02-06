@@ -86,12 +86,8 @@ jQuery(document).ready(function($) {
                 $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
                 $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
             });
-            //var quaternion = new THREE.Quaternion();
-            //var rotation_radians = new THREE.Euler();
             /* use componentchanged event to get position and rotation from reticle */
             entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
-            //entity.addEventListener('componentchanged', function(evt) {
-            //});
 
             $('#positions').modal('show');
         });
@@ -376,8 +372,116 @@ jQuery(document).ready(function($) {
     window.content_selector_rotation_change_handler = content_selector_rotation_change_handler;
 
 
+    $('#positions #navigation-up').mousedown(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 87;
+            window.fireEvent('onkeydown', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keydown', true, true);
+            eventObj.which = 87; 
+            eventObj.keyCode = 87;
+            window.dispatchEvent(eventObj);
+        }
+    });
+    $('#positions #navigation-up').mouseup(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 87;
+            window.fireEvent('onkeyup', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keyup', true, true);
+            eventObj.which = 87; 
+            eventObj.keyCode = 87;
+            window.dispatchEvent(eventObj);
+        }
+    });
 
-    $('#positions #navigation-up').click(function() {
+    $('#positions #navigation-down').mousedown(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 83;
+            window.fireEvent('onkeydown', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keydown', true, true);
+            eventObj.which = 83; 
+            eventObj.keyCode = 83;
+            window.dispatchEvent(eventObj);
+        }
+    });
+    $('#positions #navigation-down').mouseup(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 83;
+            window.fireEvent('onkeyup', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keyup', true, true);
+            eventObj.which = 83; 
+            eventObj.keyCode = 83;
+            window.dispatchEvent(eventObj);
+        }
+    });
+
+    $('#positions #navigation-left').mousedown(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 65;
+            window.fireEvent('onkeydown', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keydown', true, true);
+            eventObj.which = 65; 
+            eventObj.keyCode = 65;
+            window.dispatchEvent(eventObj);
+        }
+    });
+    $('#positions #navigation-left').mouseup(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 65;
+            window.fireEvent('onkeyup', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keyup', true, true);
+            eventObj.which = 65; 
+            eventObj.keyCode = 65;
+            window.dispatchEvent(eventObj);
+        }
+    });
+
+    $('#positions #navigation-right').mousedown(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 68;
+            window.fireEvent('onkeydown', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keydown', true, true);
+            eventObj.which = 68; 
+            eventObj.keyCode = 68;
+            window.dispatchEvent(eventObj);
+        }
+    });
+    $('#positions #navigation-right').mouseup(function() {
+        if (document.createEventObject) {
+            var eventObj = document.createEventObject();
+            eventObj.keyCode = 68;
+            window.fireEvent('onkeyup', eventObj);
+        } else if (document.createEvent) {
+            var eventObj = document.createEvent('Events');
+            eventObj.initEvent('keyup', true, true);
+            eventObj.which = 68; 
+            eventObj.keyCode = 68;
+            window.dispatchEvent(eventObj);
+        }
+    });
+
+    $('#positions #navigation-rotate').mousedown(function() {
+
 
     });
 
