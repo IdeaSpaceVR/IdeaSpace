@@ -38,6 +38,9 @@ jQuery(document).ready(function($) {
     /* click on positions button and get file id of subject, if it exists */
     var positions_add_edit_click_handler = function(e) {
 
+        /* needed for insert operation */
+        window.open_fieldtype_positions_ref = $(this).parent().parent();
+
         var space_id = $(e.target).attr('data-space-id');
         var contenttype_name = $(e.target).attr('data-contenttype-name');
 
@@ -89,11 +92,54 @@ jQuery(document).ready(function($) {
             /* use componentchanged event to get position and rotation from reticle */
             entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
 
+
+            /* init positions */           
+            if (window.open_fieldtype_positions_ref.find('.positions-info').val() != '') {
+
+                var json = jQuery.parseJSON(window.open_fieldtype_positions_ref.find('.positions-info').val()); 
+                /* clean up */
+                $('#positions #content-attached option').not(':first').remove();
+                $.each(json, function(index, value) {
+                    var content = document.querySelector('#reticle-text');
+                    /* clean up */
+                    var entity = document.querySelector('a-entity[data-id="' + value.id + '"]');
+                    if (entity != null) {
+                        content.sceneEl.removeChild(entity);
+                    }
+ 
+                    entity = document.createElement('a-entity');
+                    entity.setAttribute('position', { x: value.position.x, y: value.position.y, z: value.position.z });
+                    entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });
+                    entity.setAttribute('scale', { x: value.scale.x, y: value.scale.y, z: value.scale.z });
+                    entity.setAttribute('bmfont-text', { text: $('#positions #content-selector option[value="' + value.content_id + '"]').text(), color: '#FFFFFF' });
+                    entity.setAttribute('data-id', value.id);
+                    content.sceneEl.appendChild(entity);
+                    entity.setAttribute('visible', true);
+                    $('#positions #content-attached').append($('<option>', {
+                        value: JSON.stringify(value), text: $('#positions #content-selector option[value="' + value.content_id + '"]').text()
+                    }));
+                    /* counter */
+                    if ($('#positions #content-attached').attr('data-maxnumber-counter') < $('#positions #content-attached').attr('data-maxnumber')) {
+                        var maxnumber_counter = $('#positions #content-attached').attr('data-maxnumber-counter');
+                        maxnumber_counter++;
+                        $('#positions #maxnumber').text(maxnumber_counter);
+                        $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
+                        if (maxnumber_counter >= $('#positions #content-attached').attr('data-maxnumber')) {
+                            $('#positions #btn-attach').prop('disabled', true);
+                        }
+                    } else {
+                        $('#positions #btn-attach').prop('disabled', true);
+                    }
+
+                });
+
+                $('#positions .insert-btn').show();
+            }
+    
+
             $('#positions').modal('show');
         });
 
-        /* needed for insert operation */
-        window.open_fieldtype_positions_ref = $(this).parent().parent();
     };
     $('.add-edit-positions-btn').unbind('click');
     $('.add-edit-positions-btn').click(positions_add_edit_click_handler);
@@ -491,14 +537,14 @@ jQuery(document).ready(function($) {
 
     $('#positions .insert-btn').click(function() {
 
-        var value = '{';
+        var value = '[';
         $('#positions #content-attached option').each(function() {
             if ($(this).val() != '' && $(this).val() != null) {
                 value = value + $(this).val() + ',';
             }
         });
         value = value.substring(0, value.length - 1);
-        value = value + '}';
+        value = value + ']';
 
         window.open_fieldtype_positions_ref.find('.positions-info').val(value);
         window.open_fieldtype_positions_ref.find('.add-positions-btn').hide();
