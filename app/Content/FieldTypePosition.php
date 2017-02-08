@@ -127,6 +127,19 @@ class FieldTypePosition {
      */
     public function get_validation_rules_messages($request, $validation_rules_messages, $field_key, $properties) {
 
+        if ($properties['#required']) {
+
+            $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'required');
+
+            /* array_dot is flattens the array because $field_key . '.required' creates new array */
+            $validation_rules_messages['messages'] = array_dot(array_add(
+                $validation_rules_messages['messages'],
+                $field_key . '.required',
+                trans('fieldtype_position.validation_required', ['label' => $properties['#label']])
+            ));
+
+        } 
+
         return $validation_rules_messages;
     }
 
