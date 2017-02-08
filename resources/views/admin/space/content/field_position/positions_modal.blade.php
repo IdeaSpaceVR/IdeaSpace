@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} {{ $form['#content-label'] }}</h2>
+                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }}</h2>
             </div>
             <div class="modal-body">
 
@@ -25,7 +25,7 @@
                             <div class="panel-body">
 
                                 <div class="form-group" style="margin-bottom:0px;margin-top:0px">
-                                    <label for="content-selector">{{ trans('fieldtype_position.available') }} {{ $form['#content-label'] }}</label>
+                                    <label for="content-selector">{{ trans('fieldtype_position.available_items') }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.attach_content_type_hint', ['content_type' => $form['#content-label']]) }}"></span></label>
 
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
@@ -123,7 +123,7 @@
                             <div class="panel-body">
 
                                 <div class="form-group" style="margin-bottom:0;margin-top:0">
-                                    <label for="content-attached">{{ trans('fieldtype_position.attached') }} {{ $form['#content-label'] }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }})</label>
+                                    <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }})</label>
 
                                     <div class="row">
                                         <div class="col-md-12">

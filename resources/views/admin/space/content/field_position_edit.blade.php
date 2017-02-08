@@ -15,17 +15,17 @@
 
         <div class="positions-add" @if (isset($form['#content']['#value']) && $form['#content']['#value'] != '') style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg add-positions-btn add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">
-                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} {{ $form['#content-label'] }} 
+                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} 
             </button>
         </div>
 
         <div class="positions-edit" @if (isset($form['#content']['#value']) && $form['#content']['#value'] == '') style="display:none" @endif>
             <div class="positions-placeholder" style="margin-bottom:10px"><i class="fa fa-crosshairs" aria-hidden="true" style="font-size:60px"></i></div>
             <button type="button" class="btn btn-primary add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">
-                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} {{ $form['#content-label'] }}
+                <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }}
             </button>
             <button type="button" class="btn btn-primary remove-positions-btn">
-                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('fieldtype_position.remove_all') }} {{ $form['#content-label'] }}
+                <span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('fieldtype_position.remove_all') }}
             </button>
         </div>
 

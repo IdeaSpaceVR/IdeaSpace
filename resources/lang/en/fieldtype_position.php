@@ -9,7 +9,9 @@ return [
     'set_positions' => 'Set Positions',
     'close' => 'Close',
     'attached' => 'Attached',
+    'attached_items' => 'Attached items',
     'available' => 'Available',
+    'available_items' => 'Available items',
     'out_of' => 'out of',
     'select' => 'Select',
     'attach' => 'Attach',
@@ -76,5 +78,6 @@ return [
     'set_position_rotation' => 'Set position and rotation.',
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
+    'attach_content_type_hint' => 'Please make sure that you already created :content_type content in order to select it here.',
 
 ];
