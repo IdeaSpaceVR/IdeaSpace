@@ -57,12 +57,12 @@ class FieldTypePosition {
         $field['#template'] = $this->template_add;
         $field['#template_script'] = $this->template_add_edit_script;
 
-        if (array_key_exists('#field', $field) && array_key_exists($field['#field'], $all_fields)) {
+        if (array_key_exists('#field-reference', $field) && array_key_exists($field['#field-reference'], $all_fields)) {
 
-            $subject = $all_fields[$field['#field']];
+            $subject = $all_fields[$field['#field-reference']];
             
             $field['#field-type'] = $subject['#type'];
-            $field['#field-name'] = $field['#field'];
+            $field['#field-name'] = $field['#field-reference'];
 
         } else {
 
@@ -74,11 +74,11 @@ class FieldTypePosition {
         $space = Space::where('id', $space_id)->first();
         $theme = Theme::where('id', $space->theme_id)->first();
         $config = json_decode($theme->config, true);
-        $contenttype = $config['#content-types'][$field['#content']];
+        $contenttype = $config['#content-types'][$field['#content-type-reference']];
 
         $field['#content-label'] = $contenttype['#label'];
 
-        $field['#contents'] = Content::where('space_id', $space_id)->where('key', $field['#content'])->get();
+        $field['#contents'] = Content::where('space_id', $space_id)->where('key', $field['#content-type-reference'])->get();
 
         return $field;
     }
@@ -210,8 +210,9 @@ class FieldTypePosition {
             '#label' => 'string',
             '#description' => 'string',
             '#required' => 'boolean',
-            '#content' => 'string',
-            /* '#field' => 'string', field is optional */
+            '#content-type-reference' => 'string',
+            /* '#field-reference' => 'string', is optional */
+            /* '#render-content' => 'string', is optional */
             '#maxnumber' => 'number'];
 
         return $this->validateFieldType($mandatoryKeys, $field);
