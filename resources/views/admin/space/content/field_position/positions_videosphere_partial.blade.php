@@ -6,8 +6,12 @@
         <video id="videosphere" src="{{ $uri }}">
     </a-assets>
 
-    <a-entity>
-        <a-camera></a-camera>
+    <a-entity id="camera" position="0 0 4">
+        <a-camera wasd-controls="fly:true">
+
+            @include('admin.space.content.field_position.positions_model3d_reticle_partial')
+
+        </a-camera>
     </a-entity>
 
     <a-sky id="default-sky" color="#000000"></a-sky>
