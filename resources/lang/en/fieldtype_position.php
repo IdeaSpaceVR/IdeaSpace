@@ -75,5 +75,6 @@ return [
     'scale_10_0' => '10.0',
     'set_position_rotation' => 'Set position and rotation.',
     'insert' => 'Insert',
+    'validation_required' => 'The :label field is required.',
 
 ];
