@@ -78,6 +78,6 @@ return [
     'set_position_rotation' => 'Set position and rotation.',
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
-    'attach_content_type_hint' => 'Please make sure that you already created :content_type content in order to select it here.',
+    'attach_content_type_hint' => 'In order to select an item, there must be some :content_type content. If not, add some :content_type content on the Edit Space page.',
 
 ];
