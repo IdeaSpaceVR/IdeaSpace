@@ -1,6 +1,6 @@
 @extends('layouts.frontpage_app')
 
-@section('title', 'IdeaSpace')
+@section('title', 'IdeaSpaceVR')
 
 @section('content')
 

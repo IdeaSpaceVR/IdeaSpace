@@ -1,6 +1,6 @@
 @extends('layouts.install_app')
 
-@section('title', 'IdeaSpace')
+@section('title', 'IdeaSpaceVR')
 
 @section('content')
 
