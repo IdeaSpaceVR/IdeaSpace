@@ -1,8 +1,4 @@
 
-@push('field_modals')
-@include('admin.space.content.field_position.positions_modal')
-@endpush
-
 <div id="{{ $field_id }}" class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
     <div>
         <label class="control-label large">{{ $form['#label'] }}</label>

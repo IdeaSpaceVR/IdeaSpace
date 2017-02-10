@@ -39,8 +39,18 @@
             {!! $errors->has('isvr_content_title')?$errors->first('isvr_content_title', '<span class="help-block">:message</span>'):'' !!}
             </div>
 
+            <?php
+            /* include template modals only once */
+            $field_template_arr = [];
+            ?>
             @foreach ($form['#fields'] as $field_id => $properties)
                 @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
+                @if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
+                    @push('field_modals')
+                        @include($properties['#template_modal'], ['field_id' => $field_id, 'form' => $properties])
+                    @endpush
+                    <?php $field_template_arr[] = $properties['#template_modal'];  ?>
+                @endif
             @endforeach        
 
             <div class="form-group text-center">

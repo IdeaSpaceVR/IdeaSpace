@@ -20,6 +20,7 @@ class FieldTypePosition {
 
     private $template_add = 'admin.space.content.field_position_add';
     private $template_edit = 'admin.space.content.field_position_edit';
+    private $template_modal = 'admin.space.content.field_position.positions_modal';
     private $template_add_edit_script = 'public/assets/admin/space/content/js/field_position_add_edit.js';
 
 
@@ -56,6 +57,7 @@ class FieldTypePosition {
         $field = $field_properties;
         $field['#template'] = $this->template_add;
         $field['#template_script'] = $this->template_add_edit_script;
+        $field['#template_modal'] = $this->template_modal;
 
         if (array_key_exists('#field-reference', $field) && array_key_exists($field['#field-reference'], $all_fields)) {
 
