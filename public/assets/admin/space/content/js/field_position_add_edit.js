@@ -92,13 +92,18 @@ jQuery(document).ready(function($) {
             /* use componentchanged event to get position and rotation from reticle */
             entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
 
+            /* clean up */
+            $('#positions #content-attached option').not(':first').remove();
+            /* reset counter */
+            var maxnumber_counter = 0;
+            $('#positions #maxnumber').text(maxnumber_counter);
+            $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
+
 
             /* init positions */           
             if (window.open_fieldtype_positions_ref.find('.positions-info').val() != '') {
 
                 var json = jQuery.parseJSON(window.open_fieldtype_positions_ref.find('.positions-info').val()); 
-                /* clean up */
-                $('#positions #content-attached option').not(':first').remove();
                 $.each(json, function(index, value) {
                     var content = document.querySelector('#reticle-text');
                     /* clean up */
@@ -131,10 +136,11 @@ jQuery(document).ready(function($) {
                         $('#positions #btn-attach').prop('disabled', true);
                     }
 
-                });
+                }); /* each */
 
                 $('#positions .insert-btn').show();
-            }
+
+            } /* init positions */
     
 
             $('#positions').modal('show');
@@ -575,9 +581,9 @@ jQuery(document).ready(function($) {
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
         });
 
-        $('.form-control-add-positions .positions-info').val('');
-        $('.form-control-add-positions .positions-add').show();
-        $('.form-control-add-positions .positions-edit').hide();
+        $(this).parent().parent().find('.positions-info').val('');
+        $(this).parent().parent().find('.positions-add').show();
+        $(this).parent().parent().find('.positions-edit').hide();
     };
     window.positions_remove_click_handler = positions_remove_click_handler;
     $('.form-control-add-positions .positions-edit .remove-positions-btn').click(window.positions_remove_click_handler);          
