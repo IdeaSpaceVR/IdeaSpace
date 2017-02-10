@@ -13,10 +13,10 @@ jQuery(document).ready(function($) {
             success: function(data) {
                 $(self).html(data.status_text);
                 $(self).attr('data-theme-status', data.status);
-                if ($(self).parent().parent().find('.installed').css('display') == 'inline') {
-                    $(self).parent().parent().find('.installed').hide(); 
+                if ($(self).parent().parent().find('.installed').css('visibility') == 'visible') {
+                    $(self).parent().parent().find('.installed').css('visibility', 'hidden'); 
                 } else {
-                    $(self).parent().parent().find('.installed').show(); 
+                    $(self).parent().parent().find('.installed').css('visibility', 'visible'); 
                 }
             }
         });    

@@ -21,9 +21,9 @@
                 <div class="caption">
                     <h3 class="name">{{ $theme['theme-name'] }}</h3>
                     @if ($theme['status_aria_pressed'] == 'true')
-                    <span class="label label-success installed" style="font-size:100%"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</span>
+                    <div class="label label-success installed" style="padding-top:4px;font-size:14px"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</div>
                     @else
-                    <span class="label label-success installed" style="font-size:100%;display:none"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</span>
+                    <div class="label label-success installed" style="padding-top:4px;font-size:14px;visibility:hidden"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_themes_config.installed') }}</div>
                     @endif
                     <h5><strong>{{ trans('template_themes_config.version') }}</strong> {{ $theme['theme-version'] }}</h5>
                     <h5><strong>{{ trans('template_themes_config.author') }}</strong> {{ $theme['theme-author-name'] }}</h5>
