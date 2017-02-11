@@ -3,7 +3,7 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }}</h2>
+                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} {{ trans('fieldtype_position.items') }} @if ($isvr_content_title != '') {{ trans('fieldtype_position.on') }} {{ $isvr_content_title }} @endif</h2>
             </div>
             <div class="modal-body">
 

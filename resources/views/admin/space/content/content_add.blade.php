@@ -36,7 +36,7 @@
                 @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
                 @if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
                     @push('field_modals')
-                        @include($properties['#template_modal'], ['field_id' => $field_id, 'form' => $properties])
+                        @include($properties['#template_modal'], ['isvr_content_title' => '', 'field_id' => $field_id, 'form' => $properties])
                     @endpush
                     <?php $field_template_arr[] = $properties['#template_modal'];  ?>
                 @endif

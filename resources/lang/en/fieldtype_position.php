@@ -16,6 +16,8 @@ return [
     'select' => 'Select',
     'attach' => 'Attach',
     'detach' => 'Detach',
+    'items' => 'Items',
+    'on' => 'on',
     'navigation' => 'Navigation',
     'position' => 'Position:',
     'rotation' => 'Rotation:',
