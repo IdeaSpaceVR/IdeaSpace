@@ -35,6 +35,7 @@ Route::group(['middleware' => 'web'], function () {
    * Auth middleware protected
    */
   Route::get('admin', ['as' => 'dashboard', 'uses' => 'Admin\DashboardController@index']);
+  Route::post('admin/dashboard/news', ['as' => 'dashboard_news', 'uses' => 'Admin\DashboardController@submit_dashboard_news']);
 
   Route::get('admin/space/add/select-theme', ['as' => 'space_add_select_theme', 'uses' => 'Admin\SpaceAddController@select_theme']);
   Route::post('admin/space/add/select-theme', ['as' => 'space_add_select_theme_submit', 'uses' => 'Admin\SpaceAddController@select_theme_submit']);
