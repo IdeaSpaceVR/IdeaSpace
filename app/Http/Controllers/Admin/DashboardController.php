@@ -45,6 +45,7 @@ class DashboardController extends Controller {
                 $vars = [
                     'js' => array(asset('public/assets/admin/dashboard/js/dashboard-json-news.js'),
                         asset('public/assets/admin/dashboard/js/dashboard.js')),
+                    'css' => array(asset('public/assets/admin/dashboard/css/dashboard.css')),
                     'number_spaces' => $number_spaces,
                     'upload_max_filesize' => $upload_max_filesize,
                     'post_max_size' => $post_max_size,
@@ -56,6 +57,7 @@ class DashboardController extends Controller {
                 /* fetch cached news */
                 $vars = [
                     'js' => array(asset('public/assets/admin/dashboard/js/dashboard.js')),
+                    'css' => array(asset('public/assets/admin/dashboard/css/dashboard.css')),
                     'cached_news' => Cache::get('dashboard-news'),
                     'number_spaces' => $number_spaces,
                     'upload_max_filesize' => $upload_max_filesize,
@@ -70,6 +72,7 @@ class DashboardController extends Controller {
             $vars = [
                 'js' => array(asset('public/assets/admin/dashboard/js/dashboard-json-news.js'),
                     asset('public/assets/admin/dashboard/js/dashboard.js')),
+                'css' => array(asset('public/assets/admin/dashboard/css/dashboard.css')),
                 'number_spaces' => $number_spaces,
                 'upload_max_filesize' => $upload_max_filesize,
                 'post_max_size' => $post_max_size,
