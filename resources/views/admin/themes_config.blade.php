@@ -6,13 +6,15 @@
 
     {!! Form::open(array('route' => 'themes', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
+    <h1 style="padding-left:35px">{{ trans('template_themes_config.themes') }} <a href="{{ env('THEME_DIRECTORY_URL') }}" style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" target="_blank">{{ trans('template_themes_config.find_themes') }}</a></h1> 
+
     <?php $i=0; ?>
     @foreach ($themes as $theme)
     <?php if ($i % 3 == 0) { ?>
       <?php if ($i != 0) { ?>
       </div> <!-- end row //-->
       <?php } ?>
-    <div class="row">
+    <div class="row" style="padding-left:35px">
     <?php } ?>
         <div class="col-md-4 text-center">
             <input type="hidden" name="id-{{ $theme['id'] }}" value="{{ $theme['id'] }}">
