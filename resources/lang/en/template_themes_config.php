@@ -2,6 +2,8 @@
 
 return [
 
+    'themes' => 'Themes',
+    'get_themes' => 'Get more themes',
     'installed' => 'Installed',
     'version' => 'Version:',
     'author' => 'Author:',
