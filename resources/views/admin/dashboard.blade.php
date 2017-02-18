@@ -15,7 +15,7 @@
                 <div class="panel-body welcome">
                     <p style="font-weight:bold;font-size:25px" class="lead">{{ trans('template_dashboard.welcome_to_ideaspacevr') }}</p>
                     <p style="font-size:16px;color:#999">{{ trans('template_dashboard.links_to_get_you_started') }}</p>
-                    <div class="row" style="margin-top:20px">
+                    <div class="row" style="margin-top:20px;padding-bottom:10px">
                         <div class="col-md-4">
                             <div> 
                                 <a href="{{ route('general_settings') }}" style="font-size:16px"><i class="fa fa-btn fa-font"></i> {{ trans('template_dashboard.site_title') }}</a>

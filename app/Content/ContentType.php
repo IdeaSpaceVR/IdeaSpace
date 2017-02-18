@@ -52,7 +52,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_DATE] = new FieldTypeDate();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTFIELD] = new FieldTypeTextfield();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTAREA] = new FieldTypeTextarea();
-        $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition();
+        $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition($this);
     }
 
 
