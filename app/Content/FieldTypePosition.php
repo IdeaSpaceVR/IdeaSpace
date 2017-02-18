@@ -8,7 +8,6 @@ use App\Theme;
 use App\Content;
 use App\Content\ContentType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Log;
 
 class FieldTypePosition {
 
@@ -17,6 +16,8 @@ class FieldTypePosition {
     CONST NONE = 'none';
 
     public $subjectTypeTemplates;
+
+    private $contentType;
 
     private $template_add = 'admin.space.content.field_position_add';
     private $template_edit = 'admin.space.content.field_position_edit';
@@ -29,7 +30,10 @@ class FieldTypePosition {
      *
      * @return void
      */
-    public function __construct() {
+    public function __construct(ContentType $ct) {
+
+        $this->contentType = $ct;
+
         $this->subjectTypeTemplates[FieldTypePosition::NONE] = 'admin.space.content.field_position.positions_blank_partial';
         $this->subjectTypeTemplates[ContentType::FIELD_TYPE_VIDEO] = 'admin.space.content.field_position.positions_video_partial';
         $this->subjectTypeTemplates[ContentType::FIELD_TYPE_VIDEOSPHERE] = 'admin.space.content.field_position.positions_videosphere_partial';
@@ -233,7 +237,33 @@ class FieldTypePosition {
         $content_arr = [];
 
         $content_arr['#type'] = $field->type;
-        $content_arr['#value'] = $field->data;
+        $content_arr['#positions'] = [];
+
+        $data_arr = json_decode($field->data, true);
+
+        if (sizeof($data_arr) > 0) {
+
+            $thisContent = Content::where('id', $field->content_id)->first();
+        
+            foreach ($data_arr as $data) {
+
+                $temp_arr = [];
+                $temp_arr['#scale'] = ['#x' => $data['scale']['x'], '#y' => $data['scale']['y'], '#z' => $data['scale']['z']];
+                $temp_arr['#rotation'] = ['#x' => $data['rotation']['x'], '#y' => $data['rotation']['y'], '#z' => $data['rotation']['z']];
+                $temp_arr['#position'] = ['#x' => $data['position']['x'], '#y' => $data['position']['y'], '#z' => $data['position']['z']];
+
+                $fields = Field::where('content_id', $data['content_id'])->get();
+
+                foreach ($fields as $f) {
+                    /* avoiding recursion */
+                    if ($field->type != $f->type) {
+                        $temp_arr['#content'] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
+                    }
+                }
+
+                $content_arr['#positions'][] = $temp_arr;
+            }
+        }
 
         return $content_arr;
     }
