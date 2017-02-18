@@ -10,7 +10,6 @@ use App\FieldDataText;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use File;
 use App\Content;
-use Log;
 
 trait SpaceTrait {
 

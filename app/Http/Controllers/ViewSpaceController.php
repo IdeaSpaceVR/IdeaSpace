@@ -15,7 +15,6 @@ use App\FieldDataImage;
 use App\FieldDataText;
 use Auth;
 use App\Content\ContentType;
-use Log;
 
 class ViewSpaceController extends Controller {
 
@@ -60,7 +59,7 @@ class ViewSpaceController extends Controller {
 
 
     /**
-     * Preview published space.
+     * Preview space.
      *
      * @param string $space_uri The space URI identifier.
      *
