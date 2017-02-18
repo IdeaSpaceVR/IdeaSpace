@@ -285,15 +285,20 @@ class FieldTypeModel3D {
         $genericFile_0 = GenericFile::where('id', $model->file_id_0)->first();
         $pathinfo_0 = pathinfo($genericFile_0->uri);        
 
-        $content_arr[0]['#uri']['#value'] = asset($genericFile_0->uri);
-        $content_arr[0]['#uri']['#filetype'] = $pathinfo_0['extension'];
+        //$content_arr[0]['#uri']['#value'] = asset($genericFile_0->uri);
+        //$content_arr[0]['#uri']['#filetype'] = $pathinfo_0['extension'];
+        // alternative?
+        $content_arr['#model'][0]['#uri']['#value'] = asset($genericFile_0->uri);
+        $content_arr['#model'][0]['#uri']['#filetype'] = $pathinfo_0['extension'];
 
         try {
             $genericFile_1 = GenericFile::where('id', $model->file_id_1)->firstOrFail();
             $pathinfo_1 = pathinfo($genericFile_1->uri);        
 
-            $content_arr[1]['#uri']['#value'] = asset($genericFile_1->uri);
-            $content_arr[1]['#uri']['#filetype'] = $pathinfo_1['extension'];
+            //$content_arr[1]['#uri']['#value'] = asset($genericFile_1->uri);
+            //$content_arr[1]['#uri']['#filetype'] = $pathinfo_1['extension'];
+            $content_arr['#model'][1]['#uri']['#value'] = asset($genericFile_1->uri);
+            $content_arr['#model'][1]['#uri']['#filetype'] = $pathinfo_1['extension'];
         } catch (ModelNotFoundException $e) {
         }
 
