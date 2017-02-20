@@ -256,6 +256,7 @@ class FieldTypeVideosphere {
         $videosphere = Videosphere::where('id', $field->data)->first();
         $genericFile = GenericFile::where('id', $videosphere->file_id)->first();
 
+        $content_arr['#id'] = $field->id;
         $content_arr['#type'] = $field->type;
         $content_arr['#caption'] = $videosphere->caption;
         $content_arr['#description'] = $videosphere->description;

@@ -236,6 +236,7 @@ class FieldTypePosition {
 
         $content_arr = [];
 
+        $content_arr['#id'] = $field->id;
         $content_arr['#type'] = $field->type;
         $content_arr['#positions'] = [];
 

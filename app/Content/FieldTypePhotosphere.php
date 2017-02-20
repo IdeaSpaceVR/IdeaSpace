@@ -346,6 +346,7 @@ class FieldTypePhotosphere {
             }
         }
 
+        $content_arr['#id'] = $field->id;
         $content_arr['#type'] = $field->type;
         $content_arr['#caption'] = $photosphere->caption;
         $content_arr['#description'] = $photosphere->description;
