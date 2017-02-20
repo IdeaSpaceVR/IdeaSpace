@@ -35,6 +35,7 @@ class DashboardController extends Controller {
         $upload_max_filesize = $this->phpFileUploadSizeSettings();
         $post_max_size = $this->phpPostMaxSizeSettings();
         $memory_usage = (memory_get_peak_usage(true)/1024/1024) . 'MiB';
+        $memory_limit = ini_get('memory_limit');
 
         if (Cache::has('dashboard-news-update-counter')) {
 
@@ -49,7 +50,9 @@ class DashboardController extends Controller {
                     'number_spaces' => $number_spaces,
                     'upload_max_filesize' => $upload_max_filesize,
                     'post_max_size' => $post_max_size,
-                    'memory_usage' => $memory_usage
+                    'post_max_size' => $post_max_size,
+                    'memory_usage' => $memory_usage,
+                    'memory_limit' => $memory_limit
                 ];
                 /* minutes parameter just works with cron setup */
                 Cache::put('dashboard-news-update-counter', 0, 2400);
@@ -62,7 +65,8 @@ class DashboardController extends Controller {
                     'number_spaces' => $number_spaces,
                     'upload_max_filesize' => $upload_max_filesize,
                     'post_max_size' => $post_max_size,
-                    'memory_usage' => $memory_usage
+                    'memory_usage' => $memory_usage,
+                    'memory_limit' => $memory_limit
                 ];      
             }
 

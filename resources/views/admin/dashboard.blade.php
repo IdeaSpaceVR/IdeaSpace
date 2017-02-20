@@ -49,14 +49,21 @@
                     <div>
                         <a href="{{ route('spaces_all') }}" style="font-size:16px"><i class="fa fa-btn fa-cube"></i> {{ $number_spaces }} {{ trans('template_dashboard.spaces') }}</a>
                     </div>
-                    <div style="margin-top:10px">
-                        <p style="font-size:16px"><i class="fa fa-btn fa-upload" aria-hidden="true"></i> {{ trans('template_dashboard.upload_max_filesize') }} {{ $upload_max_filesize }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="" data-original-title="{{ trans('template_dashboard.upload_post_size_help') }}"></span></p>
+                    <div class="row" style="margin-top:20px">
+                        <div class="col-md-6">
+                            <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.upload_post_size_help') }}"><i class="fa fa-btn fa-upload" aria-hidden="true"></i> {{ trans('template_dashboard.upload_max_filesize') }} {{ $upload_max_filesize }}</span></p>
+                       </div>
+                        <div class="col-md-6">
+                            <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.upload_post_size_help') }}"><i class="fa fa-btn fa-file" aria-hidden="true"></i> {{ trans('template_dashboard.post_max_size') }} {{ $post_max_size }}</span></p>
+                        </div>
                     </div>
-                    <div style="margin-top:10px">
-                        <p style="font-size:16px"><i class="fa fa-btn fa-file" aria-hidden="true"></i> {{ trans('template_dashboard.post_max_size') }} {{ $post_max_size }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="" data-original-title="{{ trans('template_dashboard.upload_post_size_help') }}"></span></p>
-                    </div>
-                    <div style="margin-top:10px">
-                        <p style="font-size:16px"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_usage') }} {{ $memory_usage }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="" data-original-title="{{ trans('template_dashboard.memory_usage_help') }}"></span></p>
+                    <div class="row" style="margin-top:10px">
+                        <div class="col-md-6">
+                            <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_usage_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_usage') }} {{ $memory_usage }}</span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_limit_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_limit') }} {{ $memory_limit }}</span></p>
+                        </div>
                     </div>
                 </div>
             </div>

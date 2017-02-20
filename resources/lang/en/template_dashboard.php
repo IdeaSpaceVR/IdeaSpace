@@ -17,5 +17,7 @@ return [
     'upload_post_size_help' => 'You can configure these settings in your php configuraton file (php.ini). Ask your web administrator for help.',
     'memory_usage' => 'Memory usage:',
     'memory_usage_help' => 'MiB = Mebibyte. A Mebibyte is a multiple of the unit byte for digital information.',
+    'memory_limit' => 'Memory limit:',
+    'memory_limit_help' => 'The minimum memory limit should be set to 128M. You can configure these settings in your php configuraton file (php.ini). Ask your web administrator for help.',
 
 ];
