@@ -256,6 +256,7 @@ class FieldTypeVideo {
         $genericFile = GenericFile::where('id', $video->file_id)->first();
 
         $content_arr['#id'] = $field->id;
+        $content_arr['#content-id'] = $field->content_id;
         $content_arr['#type'] = $field->type;
         $content_arr['#caption'] = $video->caption;
         $content_arr['#description'] = $video->description;
