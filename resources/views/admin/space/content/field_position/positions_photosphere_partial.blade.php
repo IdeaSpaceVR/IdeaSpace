@@ -5,12 +5,12 @@
         <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
     </a-assets>
 
-    <a-entity id="camera" position="0 0 0">
-        <a-camera wasd-controls="fly:true">
+    <a-entity id="camera-wrapper" position="0 0 0">
+        <a-entity id="camera" camera="userHeight: 1.6" look-controls wasd-controls="fly:false">
 
             @include('admin.space.content.field_position.positions_model3d_reticle_partial')
 
-        </a-camera>
+        </a-entity>
     </a-entity>
 
     <a-sky id="default-sky" color="#000000"></a-sky>

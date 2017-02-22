@@ -5,12 +5,12 @@
         <a-asset-item id="model-dae" src="{{ $model_dae }}"></a-asset-item>
     </a-assets>
 
-    <a-entity id="camera" position="0 0 4">
-        <a-camera wasd-controls="fly:true">
+    <a-entity id="camera-wrapper" position="0 0 4">
+        <a-entity id="camera" camera="userHeight: 1.6" look-controls wasd-controls="fly:true">
 
             @include('admin.space.content.field_position.positions_model3d_reticle_partial')
 
-        </a-camera>
+        </a-entity>
     </a-entity>
 
     <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>

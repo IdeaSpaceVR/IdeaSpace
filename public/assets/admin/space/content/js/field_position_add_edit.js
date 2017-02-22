@@ -79,7 +79,7 @@ jQuery(document).ready(function($) {
             var scene = document.querySelector('a-scene');
             scene.addEventListener('enter-vr', window.positions_reset_content_selector);
 
-            var entity = document.querySelector('a-camera'); 
+            var entity = document.querySelector('#camera'); 
             var position = new THREE.Vector3();
             var reticle_text = document.querySelector('#reticle-text');
             scene.addEventListener('loaded', function() {
@@ -273,14 +273,15 @@ jQuery(document).ready(function($) {
     
     var positions_content_attached_selector = function() {
 
-        var camera = document.querySelector('a-camera'); 
-        var camera_wrapper = document.querySelector('#camera'); 
+        var camera = document.querySelector('#camera'); 
+        var camera_wrapper = document.querySelector('#camera-wrapper'); 
 
         if ($(this).val() == '') {
             /* reset camera position and rotation */
             camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
             camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-            camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+            //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+            camera.setAttribute('position', {x: 0, y: 0, z: 0});            
             camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', true);
@@ -326,19 +327,20 @@ jQuery(document).ready(function($) {
 
     $('#positions #navigation-center').click(function() {
         
-        var camera = document.querySelector('a-camera'); 
-        var camera_wrapper = document.querySelector('#camera'); 
+        var camera = document.querySelector('#camera'); 
+        var camera_wrapper = document.querySelector('#camera-wrapper'); 
 
         camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
         camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-        camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        camera.setAttribute('position', {x: 0, y: 0, z: 0});            
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
     });
 
 
     $('#positions .content-selector-position').blur(function(e) {
         /* remove event listener */
-        var entity = document.querySelector('a-camera');
+        var entity = document.querySelector('#camera');
         entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
 
         window.content_selector_position_change_handler();
@@ -350,7 +352,7 @@ jQuery(document).ready(function($) {
         /* enter key */
         if (e.keyCode == 13) {
             /* remove event listener */
-            var entity = document.querySelector('a-camera');
+            var entity = document.querySelector('#camera');
             entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
 
             window.content_selector_position_change_handler();
@@ -361,7 +363,7 @@ jQuery(document).ready(function($) {
     });
     $('#positions .content-selector-rotation').blur(function(e) {
         /* remove event listener */
-        var entity = document.querySelector('a-camera');
+        var entity = document.querySelector('#camera');
         entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
 
         window.content_selector_rotation_change_handler();
@@ -373,7 +375,7 @@ jQuery(document).ready(function($) {
         /* enter key */
         if (e.keyCode == 13) {
             /* remove event listener */
-            var entity = document.querySelector('a-camera');
+            var entity = document.querySelector('#camera');
             entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
 
             window.content_selector_rotation_change_handler();
@@ -389,8 +391,8 @@ jQuery(document).ready(function($) {
         var position_y = $('#positions #content-selector-position-y').val();
         var position_z = $('#positions #content-selector-position-z').val();
 
-        var camera_wrapper = document.querySelector('#camera');
-        var camera = document.querySelector('a-camera');
+        var camera_wrapper = document.querySelector('#camera-wrapper');
+        var camera = document.querySelector('#camera');
 
         camera_wrapper.setAttribute('position', {x: parseFloat(position_x), y: parseFloat(position_y), z: parseFloat(position_z)});
 
@@ -409,8 +411,8 @@ jQuery(document).ready(function($) {
         var rotation_y = $('#positions #content-selector-rotation-y').val();
         var rotation_z = $('#positions #content-selector-rotation-z').val();
 
-        var camera_wrapper = document.querySelector('#camera');
-        var camera = document.querySelector('a-camera');
+        var camera_wrapper = document.querySelector('#camera-wrapper');
+        var camera = document.querySelector('#camera');
         var reticle = document.querySelector('#reticle');
         var reticle_text = document.querySelector('#reticle-text');
 
