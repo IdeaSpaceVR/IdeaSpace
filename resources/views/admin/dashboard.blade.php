@@ -61,9 +61,11 @@
                         <div class="col-md-6">
                             <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_usage_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_usage') }} {{ $memory_usage }}</span></p>
                         </div>
+                        @if (isset($memory_limit))
                         <div class="col-md-6">
                             <p style="font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_limit_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_limit') }} {{ $memory_limit }}</span></p>
                         </div>
+                        @endif
                     </div>
                 </div>
             </div>
