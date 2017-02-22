@@ -26,7 +26,7 @@ return [
     'y' => 'Y:',
     'z' => 'Z:',
     'reset' => 'Reset',
-    'center' => 'Center',
+    'origin' => 'Origin',
     'w' => 'W',
     's' => 'S',
     'd' => 'D',
