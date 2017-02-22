@@ -7,7 +7,7 @@
     </a-assets>
 
     <a-entity id="camera-wrapper" position="0 0 0">
-        <a-entity id="camera" camera="userHeight: 1.6" look-controls wasd-controls="fly:false">
+        <a-entity id="camera" camera position="0 1.6 0" look-controls wasd-controls="fly:false">
 
             @include('admin.space.content.field_position.positions_model3d_reticle_partial')
 
