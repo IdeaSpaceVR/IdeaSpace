@@ -106,6 +106,7 @@ jQuery(document).ready(function($) {
                 var json = jQuery.parseJSON(window.open_fieldtype_positions_ref.find('.positions-info').val()); 
                 $.each(json, function(index, value) {
                     var content = document.querySelector('#reticle-text');
+
                     /* clean up */
                     var entity = document.querySelector('a-entity[data-id="' + value.id + '"]');
                     if (entity != null) {
@@ -118,18 +119,21 @@ jQuery(document).ready(function($) {
                     entity.setAttribute('scale', { x: value.scale.x, y: value.scale.y, z: value.scale.z });
                     entity.setAttribute('bmfont-text', { text: $('#positions #content-selector option[value="' + value.content_id + '"]').text(), color: '#FFFFFF' });
                     entity.setAttribute('data-id', value.id);
-                    content.sceneEl.appendChild(entity);
+
+                    //content.sceneEl.appendChild(entity);
+                    scene.appendChild(entity);                  
+
                     entity.setAttribute('visible', true);
                     $('#positions #content-attached').append($('<option>', {
                         value: JSON.stringify(value), text: $('#positions #content-selector option[value="' + value.content_id + '"]').text()
                     }));
                     /* counter */
-                    if ($('#positions #content-attached').attr('data-maxnumber-counter') < $('#positions #content-attached').attr('data-maxnumber')) {
-                        var maxnumber_counter = $('#positions #content-attached').attr('data-maxnumber-counter');
+                    if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
+                        var maxnumber_counter = parseInt($('#positions #content-attached').attr('data-maxnumber-counter'));
                         maxnumber_counter++;
                         $('#positions #maxnumber').text(maxnumber_counter);
                         $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
-                        if (maxnumber_counter >= $('#positions #content-attached').attr('data-maxnumber')) {
+                        if (maxnumber_counter >= parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
                             $('#positions #btn-attach').prop('disabled', true);
                         }
                     } else {
@@ -158,7 +162,7 @@ jQuery(document).ready(function($) {
                 document.querySelector('#reticle-text').setAttribute('bmfont-text', { text: '', color: '#FFFFFF' });
                 $('#positions #btn-attach').prop('disabled', true);
             } else {
-                if ($('#positions #content-attached').attr('data-maxnumber-counter') < $('#positions #content-attached').attr('data-maxnumber')) {
+                if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
                     document.querySelector('#reticle-text').setAttribute('bmfont-text', { text: $('#positions #content-selector option[value="' + $(this).val() + '"]').text(), color: '#FFFFFF' });
                     document.querySelector('#reticle').setAttribute('visible', true);
                     $('#positions #btn-attach').prop('disabled', false);
@@ -204,12 +208,12 @@ jQuery(document).ready(function($) {
         }));
 
         /* counter */
-        if ($('#positions #content-attached').attr('data-maxnumber-counter') < $('#positions #content-attached').attr('data-maxnumber')) {
-            var maxnumber_counter = $('#positions #content-attached').attr('data-maxnumber-counter');
+        if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
+            var maxnumber_counter = parseInt($('#positions #content-attached').attr('data-maxnumber-counter'));
             maxnumber_counter++;
             $('#positions #maxnumber').text(maxnumber_counter);
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
-            if (maxnumber_counter >= $('#positions #content-attached').attr('data-maxnumber')) {
+            if (maxnumber_counter >= parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
                 $('#positions #btn-attach').prop('disabled', true);
             }
         } else {
@@ -233,7 +237,7 @@ jQuery(document).ready(function($) {
             $("#positions #content-attached option[value='" + $('#positions #content-attached option:selected').val() + "']").remove();
 
             /* counter */
-            var maxnumber_counter = $('#positions #content-attached').attr('data-maxnumber-counter');
+            var maxnumber_counter = parseInt($('#positions #content-attached').attr('data-maxnumber-counter'));
             maxnumber_counter--;
             $('#positions #maxnumber').text(maxnumber_counter);
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
@@ -280,8 +284,8 @@ jQuery(document).ready(function($) {
             /* reset camera position and rotation */
             camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
             camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-            //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
-            camera.setAttribute('position', {x: 0, y: 0, z: 0});            
+            camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+            //camera.setAttribute('position', {x: 0, y: 0, z: 0});            
             camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', true);
@@ -332,8 +336,8 @@ jQuery(document).ready(function($) {
 
         camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
         camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-        //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
-        camera.setAttribute('position', {x: 0, y: 0, z: 0});            
+        camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        //camera.setAttribute('position', {x: 0, y: 0, z: 0});            
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
     });
 
