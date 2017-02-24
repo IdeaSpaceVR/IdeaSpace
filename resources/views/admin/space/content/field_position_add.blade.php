@@ -6,6 +6,7 @@
     <div class="form-control-add-positions text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
         <input type="hidden" value="{{ old($field_id) }}" name="{{ $field_id }}" class="positions-info">
+        <input type="hidden" value="{{ json_encode($form['#contents']) }}" class="content-selector">
 
         <div class="positions-add">
             <button type="button" class="btn btn-primary btn-lg add-positions-btn add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">

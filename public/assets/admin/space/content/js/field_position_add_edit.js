@@ -93,11 +93,24 @@ jQuery(document).ready(function($) {
             entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
 
             /* clean up */
+            $('#positions #content-selector option').not(':first').remove();
+            /* clean up */
             $('#positions #content-attached option').not(':first').remove();
             /* reset counter */
             var maxnumber_counter = 0;
             $('#positions #maxnumber').text(maxnumber_counter);
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
+
+            /* init content selector */
+            if (window.open_fieldtype_positions_ref.find('.content-selector').val() != '') {
+
+                var json = jQuery.parseJSON(window.open_fieldtype_positions_ref.find('.content-selector').val());            
+                $.each(json, function(index, value) {
+                    $('#positions #content-selector').append($('<option>', {
+                        value: JSON.stringify(value.id), text: value.title
+                    }));
+                });
+            }
 
 
             /* init positions */           

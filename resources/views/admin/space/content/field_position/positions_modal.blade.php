@@ -32,9 +32,6 @@
                                             <div class="form-inline">
                                                 <select class="form-control" id="content-selector" autocomplete="off" style="min-width:150px;margin-bottom:20px">
                                                     <option value="">{{ trans('fieldtype_position.select') }}</option>
-                                                    @foreach ($form['#contents'] as $content)
-                                                    <option value="{{ $content->id }}">{{ $content->title }}</option>
-                                                    @endforeach
                                                 </select>
                                                 <button class="btn btn-primary" type="button" id="btn-attach" disabled="disabled" style="margin-bottom:20px">{{ trans('fieldtype_position.attach') }}</button>
                                             </div>
