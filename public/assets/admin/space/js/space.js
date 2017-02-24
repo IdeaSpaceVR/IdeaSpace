@@ -77,9 +77,10 @@ jQuery(document).ready(function($) {
         return $helper;
     };
 
-    /* make diagnosis table sortable */
+    /* make table sortable */
     $('.table-responsive').each(function(i, obj) {
         $(this).find('tbody').sortable({
+            handle: '.field-drag',
             helper: fixHelperModified,
             stop: function(event, ui) {
                 weight_table($(this))
