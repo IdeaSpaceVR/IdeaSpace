@@ -73,6 +73,13 @@ class ThemesController extends Controller {
                     $contents = (require($directory . '/' . Theme::CONFIG_FILE));
                     $theme->config = json_encode($contents);
 
+                    $theme_ideaspacevr_version = substr($contents['#theme-ideaspacevr-version'], 2); 
+                    if ($theme_ideaspacevr_version > env('VERSION')) {
+                        $theme->status = Theme::STATUS_INCOMPATIBLE;
+                    } else if ($theme->status == Theme::STATUS_INCOMPATIBLE) {
+                        $theme->status = Theme::STATUS_INACTIVE;
+                    } 
+
                     /* theme passed validation but has error status */
                     if ($theme->status == Theme::STATUS_ERROR) {
                         $theme->status = Theme::STATUS_INACTIVE;
@@ -106,6 +113,8 @@ class ThemesController extends Controller {
                 $status_text = trans('template_themes_config.uninstall');
             } else if ($theme->status==Theme::STATUS_INACTIVE) {
                 $status_text = trans('template_themes_config.install_theme');
+            } else if ($theme->status==Theme::STATUS_INCOMPATIBLE) {
+                $status_text = trans('template_themes_config.incompatible_theme');
             } else {
                 $status_text = trans('template_themes_config.invalid_theme');
             }
@@ -194,6 +203,10 @@ class ThemesController extends Controller {
                 if (array_has($config, '#theme-name') && strlen($config['#theme-name']) > 0 && 
                     array_has($config, '#theme-key') && strlen($config['#theme-key']) > 0 &&
                     array_has($config, '#theme-version') && strlen($config['#theme-version']) > 0 &&
+
+                    array_has($config, '#theme-ideaspacevr-version') && strlen($config['#theme-ideaspacevr-version']) > 0 &&
+                    strpos($config['#theme-ideaspacevr-version'], '>=') !== false &&  
+
                     array_has($config, '#theme-description') && strlen($config['#theme-description']) > 0 &&
                     array_has($config, '#theme-author-name') && strlen($config['#theme-author-name']) > 0 &&
                     array_has($config, '#theme-author-email') && strlen($config['#theme-author-email']) > 0 &&
@@ -201,6 +214,7 @@ class ThemesController extends Controller {
                     array_has($config, '#theme-keywords') && strlen($config['#theme-keywords']) > 0 &&
                     array_has($config, '#theme-compatibility') && strlen($config['#theme-compatibility']) > 0 &&
                     array_has($config, '#content-types')) {
+
 
                     $all_content_types = array_only($config, ['#content-types']);
                     foreach ($all_content_types as $content_types) {

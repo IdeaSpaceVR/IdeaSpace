@@ -4,12 +4,12 @@ namespace App;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Theme extends Model
-{
+class Theme extends Model {
 
     const STATUS_ACTIVE = 'active';
     const STATUS_INACTIVE = 'inactive';
     const STATUS_ERROR = 'error';
+    const STATUS_INCOMPATIBLE = 'incompatible';
     
     const THEMES_DIR = 'themes';
     const TEMPLATES_DIR = 'templates';

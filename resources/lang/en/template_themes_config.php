@@ -10,5 +10,6 @@ return [
     'uninstall' => 'Uninstall',
     'install_theme' => 'Install Theme',
     'invalid_theme' => 'Configuration Error!',
+    'incompatible_theme' => 'Incompatible with IdeaSpaceVR version!',
 
 ];
