@@ -257,10 +257,11 @@ class FieldTypePosition {
 
                 $fields = Field::where('content_id', $data['content_id'])->get();
 
+                /* append all content fields from content for use in theme; results in flexibility with theme development */
                 foreach ($fields as $f) {
-                    /* avoiding recursion */
+                    /* avoid recursion */
                     if ($field->type != $f->type) {
-                        $temp_arr['#content'] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
+                        $temp_arr['#content'][] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
                     }
                 }
 
