@@ -84,13 +84,13 @@
                                                 <label>{{ trans('fieldtype_position.position') }}</label>
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-x" min="0" step="0.01">
+                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-x" step="0.1">
                                                     </div>
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-y" min="0" step="0.01">
+                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-y" step="0.1">
                                                     </div>
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-z" min="0" step="0.01">
+                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-z" step="0.1">
                                                     </div>
                                                 </div>
                                             </div>
@@ -98,13 +98,13 @@
                                                 <label>{{ trans('fieldtype_position.rotation') }}</label>
                                                 <div class="row">
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-x" min="0" step="0.01" value="0.00">
+                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-x" step="0.1" value="0.00">
                                                     </div>
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-y" min="0" step="0.01" value="0.00">
+                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-y" step="0.1" value="0.00">
                                                     </div>
                                                     <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-z" min="0" step="0.01" value="0.00">
+                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-z" step="0.1" value="0.00">
                                                     </div>
                                                 </div>
                                             </div>
