@@ -30,6 +30,7 @@ class ContentType {
     const FIELD_TYPE_VIDEOSPHERE = 'videosphere';
     const FIELD_TYPE_MODEL3D = 'model3d';
     const FIELD_TYPE_POSITION = 'position';
+    const FIELD_TYPE_OPTIONS_SELECT = 'options-select';
 
     public $fieldTypes;
 
@@ -53,6 +54,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTFIELD] = new FieldTypeTextfield();
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTAREA] = new FieldTypeTextarea();
         $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition($this);
+        $this->fieldTypes[ContentType::FIELD_TYPE_OPTIONS_SELECT] = new FieldTypeOptionsSelect();
     }
 
 
