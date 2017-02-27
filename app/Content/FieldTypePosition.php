@@ -112,6 +112,7 @@ class FieldTypePosition {
         try {
             $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
         } catch (ModelNotFoundException $e) {
+            $field_arr['#content'] = array('#value' => '');
             return $field_arr;
         }
 
@@ -163,20 +164,31 @@ class FieldTypePosition {
      */
     public function save($space_id, $content_id, $field_key, $type, $request_all) {
 
-        try {
-            /* there is only one field key per content (id) */
-            $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
-            $field->data = $request_all[$field_key];
-            $field->save();
+        if ($request_all[$field_key] != '') {
 
-        } catch (ModelNotFoundException $e) {
+            try {
+                /* there is only one field key per content (id) */
+                $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+                $field->data = $request_all[$field_key];
+                $field->save();
 
-            $field = new Field;
-            $field->content_id = $content_id;
-            $field->key = $field_key;
-            $field->type = $type;
-            $field->data = $request_all[$field_key];
-            $field->save();
+            } catch (ModelNotFoundException $e) {
+
+                $field = new Field;
+                $field->content_id = $content_id;
+                $field->key = $field_key;
+                $field->type = $type;
+                $field->data = $request_all[$field_key];
+                $field->save();
+            }
+
+        } else {
+
+            try {
+                $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+                $field->delete();
+            } catch (ModelNotFoundException $e) {
+            }
         }
 
         return true;
