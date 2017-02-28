@@ -10,6 +10,7 @@ use App\FieldDataText;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use File;
 use App\Content;
+use App\Setting;
 
 trait SpaceTrait {
 
@@ -31,9 +32,19 @@ trait SpaceTrait {
             abort(404);
         }
 
+      
+        $origin_trial_token = '';
+        try {
+            $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+            $origin_trial_token = $setting_origin_trial_token->value;
+        } catch (ModelNotFoundException $e) {
+        }
+
+
         $vars = [
             'space_url' => url($space->uri) . (($preview==false)?'':'/preview'),
             'space_title' => $space->title,
+            'origin_trial_token' => $origin_trial_token,
             'theme_dir' => $theme->root_dir,
             'content' => []
         ];

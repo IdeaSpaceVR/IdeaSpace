@@ -15,6 +15,8 @@
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
+    <meta http-equiv="origin-trial" content="{{ $origin_trial_token }}">
+
     <meta property="og:site_name" content="" />
     <meta property="og:image:secure_url" content="" />
     <meta property="og:image" content="" />

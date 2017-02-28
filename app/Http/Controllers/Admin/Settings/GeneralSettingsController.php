@@ -9,8 +9,12 @@ use App\User;
 use App\Space;
 use App\Setting;
 use App;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class GeneralSettingsController extends Controller {
+
+    const SITE_TITLE = 'site-title';
+    const ORIGIN_TRIAL_TOKEN = 'origin-trial-token';
 
     /**
      * Create a new controller instance.
@@ -30,7 +34,15 @@ class GeneralSettingsController extends Controller {
      */
     public function index() {
 
-        $setting = Setting::where('key', 'site-title')->first();
+        $setting_site_title = Setting::where('key', GeneralSettingsController::SITE_TITLE)->first();
+
+        /* all master view templates get variable in app/Providers/AppServiceProvider.php */
+        $origin_trial_token = '';        
+        try {
+            $setting_origin_trial_token = Setting::where('key', GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+            $origin_trial_token = $setting_origin_trial_token->value;
+        } catch (ModelNotFoundException $e) {
+        }
 
         /* gets FALLBACK_LOCALE in .env if necessary */
         $site_localization = App::getLocale();
@@ -43,9 +55,10 @@ class GeneralSettingsController extends Controller {
         ];
 
         $vars = [
-            'site_title' => $setting->value,
+            'site_title' => $setting_site_title->value,
             'site_localization_options' => $localization_options,
             'site_localization' => $site_localization,
+            'origin_trial_token' => $origin_trial_token,
             'js' => array(asset('public/assets/admin/settings/js/space_settings.js')),
             'css' => array(asset('public/assets/admin/settings/css/space_settings.css'))
         ];
@@ -63,15 +76,26 @@ class GeneralSettingsController extends Controller {
      */
     public function save(Request $request) {
 
-        $site_title = $request->input('site-title');
+        $setting_site_title = Setting::where('key', GeneralSettingsController::SITE_TITLE)->first();
 
-        $setting = Setting::where('key', 'site-title')->first();
+        $setting_site_title->value = $request->input(GeneralSettingsController::SITE_TITLE);
+        $setting_site_title->save();             
 
-        $setting->value = $site_title;
-        $setting->save();             
 
         $site_localization = $request->input('site-localization');
         App::setLocale($site_localization);
+
+
+        try {
+            $setting_origin_trial_token = Setting::where('key', GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+            $setting_origin_trial_token->value = $request->input(GeneralSettingsController::ORIGIN_TRIAL_TOKEN);
+            $setting_origin_trial_token->save();
+        } catch (ModelNotFoundException $e) {
+            Setting::create([
+                'key' => GeneralSettingsController::ORIGIN_TRIAL_TOKEN,
+                'value' => $request->input(GeneralSettingsController::ORIGIN_TRIAL_TOKEN)
+            ]);
+        } 
 
         return redirect('admin/settings/general')->withInput()->with('alert-success', 'Settings saved.');
     }

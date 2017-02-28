@@ -9,15 +9,17 @@
 
     <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
-    <meta name="abstract" content="IdeaSpace is a content management system for the virtual reality web" />
-    <meta name="description" content="IdeaSpace is a content management system for the virtual reality web" />
+    <meta name="abstract" content="IdeaSpaceVR is a content management system for the virtual reality web" />
+    <meta name="description" content="IdeaSpaceVR is a content management system for the virtual reality web" />
     <meta name="keywords" content="web vr webvr virtual reality" />
     <meta name="robots" content="follow, index" />
+
+    <meta http-equiv="origin-trial" content="{{ $origin_trial_token }}">
 
     <meta property="og:site_name" content="@yield('title')" />
     <meta property="og:image:secure_url" content="" />
     <meta property="og:image" content="" />
-    <meta property="og:description" content="IdeaSpace is a content management system for the virtual reality web" />
+    <meta property="og:description" content="IdeaSpaceVR is a content management system for the virtual reality web" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="" />
