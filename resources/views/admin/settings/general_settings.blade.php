@@ -19,12 +19,20 @@
     @endif
 
     <div class="row" style="margin-top:20px;padding-left:35px">
-
         <div class="col-md-2">
             <label for="site-title" class="control-label">{{ trans('template_general_settings.site_title') }}</label>
         </div>
         <div class="col-md-4">
             <input type="text" class="form-control" id="site-title" name="site-title" value="{{ $site_title }}" placeholder="{{ trans('template_general_settings.enter_site_title') }}">
+        </div> <!-- end col-md //-->
+    </div> <!-- end row //-->
+
+    <div class="row" style="margin-top:20px;padding-left:35px">
+        <div class="col-md-2">
+            <label for="site-title" class="control-label">{{ trans('template_general_settings.language') }}</label>
+        </div>
+        <div class="col-md-4">
+            {!! Form::select('site-localization', $site_localization_options, $site_localization, array('class' => 'form-control')) !!}
         </div> <!-- end col-md //-->
     </div> <!-- end row //-->
 
