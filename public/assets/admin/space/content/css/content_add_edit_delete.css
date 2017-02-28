@@ -62,14 +62,22 @@ label.large {
   border-color: #a94442;
 }
 
-.form-control-color input,
-.form-control-date input {
-  width: 200px; 
+.form-control-options-select select {
+  width: 300px; 
   display: block;
   margin: 0 auto;
   cursor: pointer;
 }
 
+.form-control-color input,
+.form-control-date input {
+  width: 300px; 
+  display: block;
+  margin: 0 auto;
+  cursor: pointer;
+}
+
+.form-control-options-select,
 .form-control-color,
 .form-control-date {
   border-style: solid;
@@ -80,6 +88,7 @@ label.large {
   background-color: #FFFFFF;
 }
 
+.form-control-options-select.has-error, 
 .form-control-date.has-error, 
 .form-control-color.has-error {
   border-color: #a94442;
