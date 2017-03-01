@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>@yield('title')</title>
+    <title>IdeaSpaceVR</title>
 
     <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
@@ -23,7 +23,6 @@
     <meta property="og:url" content="" />
 
     <script src="{{ asset('public/aframe/aframe.min.js') }}"></script>
-    <script src="{{ asset('public/kframe/aframe-text-component.min.js') }}"></script>
 </head>
 <body style="background-color:#000000">
 
@@ -41,8 +40,8 @@
 
     <a-entity id="tunnelgeom" geometry="primitive: cylinder; height: 2000; radius: 40; open-ended: true" position="0 0 -1000" rotation="-90 0 0" material="side: double; src: #tunnel; "></a-entity>
 
-    <a-entity text="text: 404 Not Found" material="color: #fff" position="-2.3 0 -2005"></a-entity>
-    <a-entity id="back" visible="false" rotation="0 180 0" text="text: 404 Not Found" material="color: #fff" position="2.3 0 -1995"></a-entity>
+    <a-text value="404 Not Found" width="30" align="center" position="0 0 -2005"></a-text>
+    <a-text id="back" visible="false" value="404 Not Found" width="30" align="center" position="0 0 -1995" rotation="0 180 0"></a-text>
 
   </a-scene>
 
