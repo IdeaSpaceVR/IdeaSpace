@@ -3,16 +3,16 @@
 use Illuminate\Database\Seeder;
 use App\Theme;
 
-class ThemesTableSeeder extends Seeder
-{
+class ThemesTableSeeder extends Seeder {
+
     /**
      * Run the database seeds.
      *
      * @return void
      */
-    public function run()
-    {
-        $contents = (require 'themes/hello-world/config.php');
+    public function run() {
+
+        /*$contents = (require 'themes/hello-world/config.php');
 
         DB::table('themes')->insert([
           ['root_dir' => 'themes/hello-world', 'user_id' => 1, 'config' => json_encode($contents), 'status' => Theme::STATUS_ACTIVE]
@@ -22,6 +22,6 @@ class ThemesTableSeeder extends Seeder
 
         DB::table('themes')->insert([
           ['root_dir' => 'themes/photosphere-viewer', 'user_id' => 1, 'config' => json_encode($contents), 'status' => Theme::STATUS_ACTIVE]
-        ]); 
+        ]);*/ 
     }
 }

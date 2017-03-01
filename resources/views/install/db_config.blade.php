@@ -7,11 +7,11 @@
     <div class="row">
 
         <div class="col-md-8 col-md-offset-2">
-            <h1>IdeaSpace</h1>
+            <h1>IdeaSpaceVR</h1>
         </div>
     </div>
 
-    {!! Form::open(array('route' => 'install', 'method' => 'POST', 'autocomplete' => 'false', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('route' => 'install_db', 'method' => 'POST', 'autocomplete' => 'false', 'class' => 'form-horizontal')) !!}
 
     <div class="row">
 
@@ -83,7 +83,7 @@
                 <div class="form-group">
                     <label for="" class="col-sm-2 col-sm-offset-2 control-label"></label>
                     <div class="col-sm-4">
-                        <button class="btn btn-primary" type="submit">Submit</button>
+                        <button class="btn btn-primary center-block" type="submit">Submit</button>
                     </div>
                 </div>
 

@@ -170,8 +170,11 @@ Route::group(['middleware' => 'web'], function () {
   /**
    * Installation
    */
-  Route::get('install', ['as' => 'install', 'uses' => 'InstallationController@install']);
-  Route::post('install', ['as' => 'install', 'uses' => 'InstallationController@install_submit']);
+  //Route::get('install', ['as' => 'install', 'uses' => 'InstallationController@install']);
+  Route::get('install', ['as' => 'server_requirements', 'uses' => 'InstallationController@server_requirements']);
+  Route::post('install', ['as' => 'server_requirements_submit', 'uses' => 'InstallationController@server_requirements_submit']);
+  Route::get('install-db', ['as' => 'install_db', 'uses' => 'InstallationController@install_db']);
+  Route::post('install-db', ['as' => 'install_db_submit', 'uses' => 'InstallationController@install_db_submit']);
 
 });
 

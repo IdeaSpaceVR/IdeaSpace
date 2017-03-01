@@ -11,9 +11,10 @@ use Validator;
 use Artisan;
 use Hash;
 use App\User;
-use Log;
 
 class InstallationController extends Controller {
+
+    const REQUIRED_PHP_VERSION = '5.5.9';
 
     /**
      * Create a new controller instance.
@@ -26,11 +27,87 @@ class InstallationController extends Controller {
 
 
     /**
+     * Show the server requirements page.
+     *
+     * @return Response
+     */
+    public function server_requirements() {
+
+        if (Schema::hasTable('spaces') && Schema::hasTable('themes')) {
+    
+            return redirect('login');
+        }
+
+        $errors = [];
+
+        if (version_compare(phpversion(), InstallationController::REQUIRED_PHP_VERSION, '<=')) {
+            $errors[] = 'phpversion';
+        }
+
+        if (!extension_loaded('openssl')) {
+            $errors[] = 'openssl';
+        }
+
+        if (!extension_loaded('pdo')) {
+            $errors[] = 'pdo';
+        }
+
+        if (!extension_loaded('fileinfo')) {
+            $errors[] = 'fileinfo';
+        }
+
+        if (!extension_loaded('mbstring')) {
+            $errors[] = 'mbstring';
+        }
+
+        if (!extension_loaded('tokenizer')) {
+            $errors[] = 'tokenizer';
+        }
+
+        if (!extension_loaded('gd') && !extension_loaded('imagick')) {
+            $errors[] = 'gd_imagick';
+        }
+
+        if (extension_loaded('gd')) {
+          $gd_imagick = 'GD Library';
+        } else if (extension_loaded('imagick')) {
+          $gd_imagick = 'ImageMagick';
+        }
+
+        //\Log::debug(PHP_VERSION_ID);
+        $phpversion_arr = explode('.', phpversion());
+        $phpversion = $phpversion_arr[0] . '.' . $phpversion_arr[1] . '.' . substr($phpversion_arr[2], 0, strpos($phpversion_arr[2], '-')); 
+
+        $vars = [
+            'css' => array(asset('public/assets/install/css/server_requirements.css')),
+            'phpversion' => $phpversion,
+            'gd_imagick' => $gd_imagick,
+            'errors' => $errors
+        ];
+
+        return view('install.server_requirements', $vars);
+    }
+
+
+    /**
+     * Server Requirements submit.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function server_requirements_submit(Request $request) {
+
+        return redirect('install-db');
+    }
+
+
+    /**
      * Show the installation page.
      *
      * @return Response
      */
-    public function install() {
+    public function install_db() {
 
         /* .env file exists */
         if (File::exists('.env') && 
@@ -68,7 +145,7 @@ class InstallationController extends Controller {
      *
      * @return Response
      */
-    public function install_submit(Request $request) {
+    public function install_db_submit(Request $request) {
 
         /* .env file exists and DB_HOST variable is empty */
         if (env('DB_HOST', '') == '') {
@@ -92,7 +169,7 @@ class InstallationController extends Controller {
             $validator = Validator::make($request->all(), $validation_rules, $validation_messages);
 
             if ($validator->fails()) {
-                return redirect('install')->withErrors($validator)->withInput();
+                return redirect('install-db')->withErrors($validator)->withInput();
             }
 
             /* write .env variables */
@@ -106,7 +183,7 @@ class InstallationController extends Controller {
             file_put_contents('.env', str_replace('DB_PASSWORD=', 'DB_PASSWORD=' . trim($request->input('db_user_password')), file_get_contents('.env')));
             file_put_contents('.env', str_replace('DB_PREFIX=', 'DB_PREFIX=' . trim($request->input('db_table_prefix')), file_get_contents('.env')));
 
-            return redirect('install')->withInput()->with('alert-success', 'The database connection details have been saved.');
+            return redirect('install-db')->withInput()->with('alert-success', 'The database connection details have been saved.');
 
         } 
 
@@ -125,7 +202,7 @@ class InstallationController extends Controller {
         $validator = Validator::make($request->all(), $validation_rules, $validation_messages);
 
         if ($validator->fails()) {
-            return redirect('install')->withErrors($validator)->withInput();
+            return redirect('install-db')->withErrors($validator)->withInput();
         }
 
         /* create database tables */
@@ -140,6 +217,6 @@ class InstallationController extends Controller {
             'password' => Hash::make($request->input('password'))
         ]);        
      
-        return redirect('login')->with('alert-success', 'IdeaSpace has been successfully installed!');   
+        return redirect('login')->with('alert-success', 'IdeaSpaceVR has been successfully installed!');   
     }
 }
