@@ -10,6 +10,7 @@ use App\Space;
 use App\Setting;
 use App;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Auth;
 
 class GeneralSettingsController extends Controller {
 
@@ -91,7 +92,10 @@ class GeneralSettingsController extends Controller {
             $setting_origin_trial_token->value = $request->input(GeneralSettingsController::ORIGIN_TRIAL_TOKEN);
             $setting_origin_trial_token->save();
         } catch (ModelNotFoundException $e) {
+            $user = Auth::user();
             Setting::create([
+                'user_id' => $user->id,
+                'namespace' => 'system',
                 'key' => GeneralSettingsController::ORIGIN_TRIAL_TOKEN,
                 'value' => $request->input(GeneralSettingsController::ORIGIN_TRIAL_TOKEN)
             ]);
