@@ -36,8 +36,8 @@ class FrontpageController extends Controller {
      *
      * @return Response
      */
-    public function index()
-    {
+    public function index() {
+
         if (env('DB_HOST', '') == '' || 
             env('DB_DATABASE', '') == '' || 
             env('DB_USERNAME', '') == '' || 
