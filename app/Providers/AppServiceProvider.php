@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Setting;
+use Schema;
 
 class AppServiceProvider extends ServiceProvider {
 
@@ -15,10 +16,13 @@ class AppServiceProvider extends ServiceProvider {
     public function boot() {
 
         $origin_trial_token = '';
-        try {
-            $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
-            $origin_trial_token = $setting_origin_trial_token->value;
-        } catch (ModelNotFoundException $e) {
+
+        if (Schema::hasTable('spaces') && Schema::hasTable('themes')) {        
+            try {
+                $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+                $origin_trial_token = $setting_origin_trial_token->value;
+            } catch (ModelNotFoundException $e) {
+            }
         }
 
         view()->composer('layouts.app', function($view) use ($origin_trial_token) {
