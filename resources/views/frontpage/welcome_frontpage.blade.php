@@ -9,8 +9,8 @@
         <div class="col-sm-12">
             <div class="row" style="margin-top:20px">
                 <div class="col-md-12 text-center">
-                    <h1 style="font-size:72px;font-weight:300;margin-bottom:20px">IdeaSpace</h1>
-                    <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);margin-bottom:20px">Open source content management system<br> for the virtual reality web.</p>
+                    <h1 style="font-size:72px;font-weight:300;margin-bottom:20px">IdeaSpaceVR</h1>
+                    <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);margin-bottom:20px">Create beautiful virtual reality web experiences</p>
                     <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);"><a style="text-decoration:underline;color:#0080e5;" href="https://www.ideaspacevr.org">www.ideaspacevr.org</a></p>
                 </div>
             </div>
