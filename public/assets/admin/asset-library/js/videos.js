@@ -296,26 +296,31 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#videos #file-' + id + ':first').html('<div><video class="edit img-thumbnail" width="152" height="152" preload="metadata" data-video-id="'+data.video_id+'">' +
-                    '<source src="' + data.uri + '" type="video/mp4"></video></div>');
-                $('#videos #file-' + id + ':first').attr('data-video-id', data.video_id);
-                $('#videos #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
-                    '<a href="#" class="vr-view" data-video-id="'+data.video_id+'">'+localization_strings['vr_view']+'</a> | ' +
-                    '<a href="#" class="edit" data-video-id="'+data.video_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-video-id="'+data.video_id+'">'+localization_strings['insert']+'</a></span></div>');
+                /* workaround for trying to avoid 412 precondition failed errors */
+                setTimeout(function() {
 
-                $('#videos .files .list-item').unbind('click');
-                $('#videos .files .list-item').click(window.list_item_menu_click_handler);
-                $('#videos .files .list-item').unbind('hover');
-                $('#videos .files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
-                $('#videos .files .list-item .edit').unbind('click');
-                $('#videos .files .list-item .edit').click(window.list_item_edit_click_handler);
-                $('#videos .files .list-item .vr-view').unbind('click');
-                $('#videos .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+                    $('#videos #file-' + id + ':first').html('<div><video class="edit img-thumbnail" width="152" height="152" preload="metadata" data-video-id="'+data.video_id+'">' +
+                        '<source src="' + data.uri + '" type="video/mp4"></video></div>');
+                    $('#videos #file-' + id + ':first').attr('data-video-id', data.video_id);
+                    $('#videos #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
+                        '<a href="#" class="vr-view" data-video-id="'+data.video_id+'">'+localization_strings['vr_view']+'</a> | ' +
+                        '<a href="#" class="edit" data-video-id="'+data.video_id+'">'+localization_strings['edit']+'</a> ' +
+                        '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-video-id="'+data.video_id+'">'+localization_strings['insert']+'</a></span></div>');
 
-                /* hide upload area */
-                $('.upload-area').removeClass('visible');
-                $('.upload-area').hide();
+                    $('#videos .files .list-item').unbind('click');
+                    $('#videos .files .list-item').click(window.list_item_menu_click_handler);
+                    $('#videos .files .list-item').unbind('hover');
+                    $('#videos .files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
+                    $('#videos .files .list-item .edit').unbind('click');
+                    $('#videos .files .list-item .edit').click(window.list_item_edit_click_handler);
+                    $('#videos .files .list-item .vr-view').unbind('click');
+                    $('#videos .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+                    /* hide upload area */
+                    $('.upload-area').removeClass('visible');
+                    $('.upload-area').hide();
+
+                }, 3000);
 
                 /* show insert link when opened from space edit content page */
                 if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
