@@ -40,8 +40,8 @@
 
     <a-entity id="tunnelgeom" geometry="primitive: cylinder; height: 2000; radius: 40; open-ended: true" position="0 0 -1000" rotation="-90 0 0" material="side: double; src: #tunnel; "></a-entity>
 
-    <a-text value="404 Not Found" width="30" align="center" position="0 0 -2005"></a-text>
-    <a-text id="back" visible="false" value="404 Not Found" width="30" align="center" position="0 0 -1995" rotation="0 180 0"></a-text>
+    <a-text font="{{ asset('public/aframe/fonts/Roboto-msdf.json') }}" value="404 Not Found" width="30" align="center" position="0 0 -2005"></a-text>
+    <a-text font="{{ asset('public/aframe/fonts/Roboto-msdf.json') }}" id="back" visible="false" value="404 Not Found" width="30" align="center" position="0 0 -1995" rotation="0 180 0"></a-text>
 
   </a-scene>
 
