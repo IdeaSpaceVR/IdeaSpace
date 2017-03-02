@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 style="padding-left:35px">{{ trans('template_general_settings.general_settings') }}</h1>
+    <h1 style="padding-left:35px;">{{ trans('template_general_settings.general_settings') }}</h1>
 
     {!! Form::open(array('route' => 'general_settings', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
