@@ -238,25 +238,30 @@ jQuery(document).ready(function($) {
 
             if (data.status == 'success') {
 
-                $('#audio #file-' + id + ':first').html('<div><audio controls="controls" data-audio-id="'+data.audio_id+'">' +
-                    '<source src="' + data.uri + '" type="audio/mpeg"></audio></div>');
-                $('#audio #file-' + id + ':first').attr('data-audio-id', data.audio_id);
-                $('#audio #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
-                    '<a href="#" class="edit" data-audio-id="'+data.audio_id+'">'+localization_strings['edit']+'</a> ' +
-                    '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-audio-id="'+data.audio_id+'">'+localization_strings['insert']+'</a></span></div>');
+                /* workaround for trying to avoid 412 precondition failed errors */
+                setTimeout(function() {
 
-                $('#audio .files .list-item').unbind('click');
-                $('#audio .files .list-item').click(window.list_item_menu_click_handler);
-                $('#audio .files .list-item').unbind('hover');
-                $('#audio .files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
-                $('#audio .files .list-item .edit').unbind('click');
-                $('#audio .files .list-item .edit').click(window.list_item_edit_click_handler);
-                $('#audio .files .list-item .vr-view').unbind('click');
-                $('#audio .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+                    $('#audio #file-' + id + ':first').html('<div><audio controls="controls" data-audio-id="'+data.audio_id+'">' +
+                        '<source src="' + data.uri + '" type="audio/mpeg"></audio></div>');
+                    $('#audio #file-' + id + ':first').attr('data-audio-id', data.audio_id);
+                    $('#audio #file-' + id + ':first').append('<div class="menu" style="text-align:center;margin-top:5px;display:none">' +
+                        '<a href="#" class="edit" data-audio-id="'+data.audio_id+'">'+localization_strings['edit']+'</a> ' +
+                        '<span class="insert-link" style="display:none">| <a href="#" class="insert" data-audio-id="'+data.audio_id+'">'+localization_strings['insert']+'</a></span></div>');
 
-                /* hide upload area */
-                $('.upload-area').removeClass('visible');
-                $('.upload-area').hide();
+                    $('#audio .files .list-item').unbind('click');
+                    $('#audio .files .list-item').click(window.list_item_menu_click_handler);
+                    $('#audio .files .list-item').unbind('hover');
+                    $('#audio .files .list-item').hover(window.list_item_menu_hover_in_handler, window.list_item_menu_hover_out_handler);
+                    $('#audio .files .list-item .edit').unbind('click');
+                    $('#audio .files .list-item .edit').click(window.list_item_edit_click_handler);
+                    $('#audio .files .list-item .vr-view').unbind('click');
+                    $('#audio .files .list-item .vr-view').click(window.list_item_vr_view_click_handler);
+
+                    /* hide upload area */
+                    $('.upload-area').removeClass('visible');
+                    $('.upload-area').hide();
+  
+                }, 3000);      
 
                 /* show insert link when opened from space edit content page */
                 if ($('.asset-library-nav').find('#audio-tab').hasClass('auto-opentab')) {
