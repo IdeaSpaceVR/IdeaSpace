@@ -121,16 +121,19 @@ jQuery(document).ready(function($) {
                     var content = document.querySelector('#reticle-text');
 
                     /* clean up */
-                    var entity = document.querySelector('a-entity[data-id="' + value.id + '"]');
+                    var entity = document.querySelector('a-text[data-id="' + value.id + '"]');
                     if (entity != null) {
                         content.sceneEl.removeChild(entity);
                     }
  
-                    entity = document.createElement('a-entity');
+                    entity = document.createElement('a-text');
                     entity.setAttribute('position', { x: value.position.x, y: value.position.y, z: value.position.z });
                     entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });
                     entity.setAttribute('scale', { x: value.scale.x, y: value.scale.y, z: value.scale.z });
-                    entity.setAttribute('bmfont-text', { text: $('#positions #content-selector option[value="' + value.content_id + '"]').text(), color: '#FFFFFF' });
+                    entity.setAttribute('value', $('#positions #content-selector option[value="' + value.content_id + '"]').text());
+                    entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
+                    entity.setAttribute('align', 'center');
+                    entity.setAttribute('width', '3');
                     entity.setAttribute('data-id', value.id);
 
                     //content.sceneEl.appendChild(entity);
@@ -171,13 +174,15 @@ jQuery(document).ready(function($) {
     var positions_content_selector = function() {
 
             if ($(this).val() == '') {
-                document.querySelector('#reticle').setAttribute('visible', false);
-                document.querySelector('#reticle-text').setAttribute('bmfont-text', { text: '', color: '#FFFFFF' });
+                //document.querySelector('#reticle').setAttribute('visible', false);
+                document.querySelector('#reticle-text').setAttribute('visible', false);
+                document.querySelector('#reticle-text').setAttribute('value', '');
                 $('#positions #btn-attach').prop('disabled', true);
             } else {
                 if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
-                    document.querySelector('#reticle-text').setAttribute('bmfont-text', { text: $('#positions #content-selector option[value="' + $(this).val() + '"]').text(), color: '#FFFFFF' });
-                    document.querySelector('#reticle').setAttribute('visible', true);
+                    document.querySelector('#reticle-text').setAttribute('value', $('#positions #content-selector option[value="' + $(this).val() + '"]').text());
+                    //document.querySelector('#reticle').setAttribute('visible', true);
+                    document.querySelector('#reticle-text').setAttribute('visible', true);
                     $('#positions #btn-attach').prop('disabled', false);
                 }
             }
@@ -190,7 +195,8 @@ jQuery(document).ready(function($) {
 
     var positions_content_attach = function() {
 
-        var entity = document.createElement('a-entity');
+        //var entity = document.createElement('a-entity');
+        var entity = document.createElement('a-text');
         var content = document.querySelector('#reticle-text');
 
         var id = new Date().getUTCMilliseconds();
@@ -208,7 +214,10 @@ jQuery(document).ready(function($) {
 
         entity.setAttribute('position', { x: position.x, y: position.y, z: position.z }); 
         entity.setAttribute('rotation', { x: 0, y: rotation_y, z: 0 }); 
-        entity.setAttribute('bmfont-text', { text: $('#positions #content-selector option:selected').text(), color: '#FFFFFF' }); 
+        entity.setAttribute('value', $('#positions #content-selector option:selected').text()); 
+        entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
+        entity.setAttribute('align', 'center');
+        entity.setAttribute('width', '3');
         entity.setAttribute('data-id', id);
 
         content.sceneEl.appendChild(entity);
@@ -267,7 +276,7 @@ jQuery(document).ready(function($) {
     var positions_content_scale = function() {
 
         var json = jQuery.parseJSON($('#positions #content-attached option:selected').val()); 
-        var entity = document.querySelector('a-entity[data-id="' + json.id + '"]');
+        var entity = document.querySelector('a-text[data-id="' + json.id + '"]');
         entity.setAttribute('scale', { x: parseFloat($(this).val()), y: parseFloat($(this).val()), z: parseFloat($(this).val()) });
         json.scale.x = $(this).val();
         json.scale.y = $(this).val();
@@ -280,8 +289,9 @@ jQuery(document).ready(function($) {
 
     var positions_reset_content_selector = function() {
 
-        document.querySelector('#reticle').setAttribute('visible', false);
-        document.querySelector('#reticle-text').setAttribute('bmfont-text', { text: '', color: '#FFFFFF' });
+        //document.querySelector('#reticle').setAttribute('visible', false);
+        document.querySelector('#reticle-text').setAttribute('visible', false);
+        document.querySelector('#reticle-text').setAttribute('value', '');
         $('#positions #btn-attach').prop('disabled', true);
         $('#positions #content-selector').find('option:eq(0)').prop('selected', true);
     };
@@ -414,9 +424,9 @@ jQuery(document).ready(function($) {
         camera_wrapper.setAttribute('position', {x: parseFloat(position_x), y: parseFloat(position_y), z: parseFloat(position_z)});
 
         /* reticle and reticle-text position correction */
-        camera_wrapper.object3D.translateX(-0.15);
-        camera_wrapper.object3D.translateY(0.05);
-        camera_wrapper.object3D.translateZ(1);
+        //camera_wrapper.object3D.translateX(-0.15);
+        //camera_wrapper.object3D.translateY(0.05);
+        //camera_wrapper.object3D.translateZ(1);
 
         camera.setAttribute('position', {x: 0, y: 0, z: 0});
     };
@@ -430,11 +440,11 @@ jQuery(document).ready(function($) {
 
         var camera_wrapper = document.querySelector('#camera-wrapper');
         var camera = document.querySelector('#camera');
-        var reticle = document.querySelector('#reticle');
+        //var reticle = document.querySelector('#reticle');
         var reticle_text = document.querySelector('#reticle-text');
 
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});
-        reticle.setAttribute('rotation', {x: 0, y: 0, z: 0});
+        //reticle.setAttribute('rotation', {x: 0, y: 0, z: 0});
         reticle_text.setAttribute('rotation', {x: 0, y: 0, z: 0});
 
         camera_wrapper.object3D.translateX(0.15);
@@ -590,7 +600,7 @@ jQuery(document).ready(function($) {
         $.each(json, function(index, value) {
             var content = document.querySelector('#reticle-text');
             /* clean up */
-            var entity = document.querySelector('a-entity[data-id="' + value.id + '"]');
+            var entity = document.querySelector('a-text[data-id="' + value.id + '"]');
             if (entity != null) {
                 content.sceneEl.removeChild(entity);
             }
