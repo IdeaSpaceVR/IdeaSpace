@@ -62,6 +62,11 @@
                     <option value="3.0">{{ trans('template_asset_library_models.3_meters') }}</option>
                     <option value="4.0">{{ trans('template_asset_library_models.4_meters') }}</option>
                     <option value="5.0">{{ trans('template_asset_library_models.5_meters') }}</option>
+                    <option value="6.0">{{ trans('template_asset_library_models.6_meters') }}</option>
+                    <option value="7.0">{{ trans('template_asset_library_models.7_meters') }}</option>
+                    <option value="8.0">{{ trans('template_asset_library_models.8_meters') }}</option>
+                    <option value="9.0">{{ trans('template_asset_library_models.9_meters') }}</option>
+                    <option value="10.0">{{ trans('template_asset_library_models.10_meters') }}</option>
                 </select>
             </div>
 
