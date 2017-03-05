@@ -74,13 +74,13 @@
                                 <div class="panel panel-default">
                                     <div class="panel-heading" role="tab" id="headingOne" style="background-color:#FFF">
                                         <h4 class="panel-title">
-                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ trans('fieldtype_position.advanced') }}</a>
+                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ trans('fieldtype_position.advanced_navigation') }}</a>
                                         </h4>
                                     </div>
                                     <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
                                         <div class="panel-body">
                                             <div class="form-group" style="margin-bottom:0;margin-top:0">
-                                                <span class="info-block text-center">{{ trans('fieldtype_position.set_position_rotation') }}</span>
+                                                <span class="info-block text-center">{{ trans('fieldtype_position.set_position_rotation_camera') }}</span>
                                                 <label>{{ trans('fieldtype_position.position') }}</label>
                                                 <div class="row">
                                                     <div class="col-md-4">
