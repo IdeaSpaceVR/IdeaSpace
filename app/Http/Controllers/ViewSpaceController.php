@@ -54,7 +54,7 @@ class ViewSpaceController extends Controller {
         $vars = $this->prepare_space_content($space, $this->contentType, false);
 
         /* cut off .blade.php */
-        return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
+        return view('theme::' . $vars['theme_view'], $vars);
     }
 
 
@@ -80,7 +80,7 @@ class ViewSpaceController extends Controller {
             $vars = $this->prepare_space_content($space, $this->contentType, true);
         
             /* cut off .blade.php */
-            return view('theme::' . substr(Theme::TEMPLATES_SCENE_FILE, 0, -10), $vars);
+            return view('theme::' . $vars['theme_view'], $vars);
         }
 
         return redirect('login');

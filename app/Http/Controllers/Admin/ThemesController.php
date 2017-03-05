@@ -129,6 +129,7 @@ class ThemesController extends Controller {
             $theme_mod['theme-homepage'] = $config['#theme-homepage'];          
             $theme_mod['theme-keywords'] = $config['#theme-keywords'];          
             $theme_mod['theme-compatibility'] = explode(',', $config['#theme-compatibility']);          
+            $theme_mod['theme-view'] = $config['#theme-view'];          
 
             $theme_mod['status'] = $theme->status;          
             $theme_mod['status_class'] = (($theme->status==Theme::STATUS_ACTIVE)?Theme::STATUS_ACTIVE:'');          
@@ -193,9 +194,6 @@ class ThemesController extends Controller {
 
         if (File::exists($directory . '/' . Theme::CONFIG_FILE) &&
             File::exists($directory . '/' . Theme::FUNCTIONS_FILE) &&
-            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_INDEX_FILE) &&
-            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_SCENE_FILE) &&
-            File::exists($directory . '/' . Theme::TEMPLATES_DIR . '/' . Theme::TEMPLATES_ASSETS_FILE) &&
             File::exists($directory . '/' . Theme::SCREENSHOT_FILE)) {
 
                 $config = (require($directory . '/' . Theme::CONFIG_FILE));
@@ -203,6 +201,9 @@ class ThemesController extends Controller {
                 if (array_has($config, '#theme-name') && strlen($config['#theme-name']) > 0 && 
                     array_has($config, '#theme-key') && strlen($config['#theme-key']) > 0 &&
                     array_has($config, '#theme-version') && strlen($config['#theme-version']) > 0 &&
+                    array_has($config, '#theme-view') && strlen($config['#theme-view']) > 0 &&
+
+                    File::exists($directory . '/' . Theme::VIEWS_DIR . '/' . $config['#theme-view'] . '.blade.php') &&
 
                     array_has($config, '#theme-ideaspacevr-version') && strlen($config['#theme-ideaspacevr-version']) > 0 &&
                     strpos($config['#theme-ideaspacevr-version'], '>=') !== false &&  
@@ -213,6 +214,7 @@ class ThemesController extends Controller {
                     array_has($config, '#theme-homepage') && strlen($config['#theme-homepage']) > 0 &&
                     array_has($config, '#theme-keywords') && strlen($config['#theme-keywords']) > 0 &&
                     array_has($config, '#theme-compatibility') && strlen($config['#theme-compatibility']) > 0 &&
+                    array_has($config, '#theme-view') && strlen($config['#theme-view']) > 0 &&
                     array_has($config, '#content-types')) {
 
 

@@ -12,14 +12,10 @@ class Theme extends Model {
     const STATUS_INCOMPATIBLE = 'incompatible';
     
     const THEMES_DIR = 'themes';
-    const TEMPLATES_DIR = 'templates';
+    const VIEWS_DIR = 'views';
     const CONFIG_FILE = 'config.php';
     const FUNCTIONS_FILE = 'functions.php';
     const SCREENSHOT_FILE = 'screenshot.png';
-
-    const TEMPLATES_INDEX_FILE = 'index.blade.php';
-    const TEMPLATES_SCENE_FILE = 'scene.blade.php';
-    const TEMPLATES_ASSETS_FILE = 'assets.blade.php';
 
     const INFINITE = 'infinite';
 

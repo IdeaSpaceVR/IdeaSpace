@@ -28,6 +28,7 @@ trait SpaceTrait {
 
         try {
             $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+            $config = json_decode($theme->config, true);
         } catch (ModelNotFoundException $e) {
             abort(404);
         }
@@ -46,6 +47,7 @@ trait SpaceTrait {
             'space_title' => $space->title,
             'origin_trial_token' => $origin_trial_token,
             'theme_dir' => $theme->root_dir,
+            'theme_view' => $config['#theme-view'],
             'content' => []
         ];
 
@@ -57,7 +59,7 @@ trait SpaceTrait {
             $vars['content'][$content->key][] = $contentType->loadContent($content->id);
         }
 
-        view()->addNamespace('theme', base_path($theme->root_dir . '/' . Theme::TEMPLATES_DIR));
+        view()->addNamespace('theme', base_path($theme->root_dir . '/' . Theme::VIEWS_DIR));
 
         return $vars;
     }
