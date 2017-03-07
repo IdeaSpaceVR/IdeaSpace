@@ -81,6 +81,10 @@ class SpaceContentAddController extends Controller {
             }
         }
 
+        $has_contenttype_uri = false;
+        if (isset($config['#content-types'][$contenttype]['#content-type-view']) && strlen($config['#content-types'][$contenttype]['#content-type-view']) > 0) {
+            $has_contenttype_uri = true; 
+        }
 
         $theme_mod = array();
         $theme_mod['theme-name'] = $config['#theme-name'];
@@ -91,8 +95,11 @@ class SpaceContentAddController extends Controller {
         $form = array('form' => $vars);
         //$form['space_status'] = Space::STATUS_DRAFT;
         $form['space_id'] = $id;
+        $form['space_uri'] = $space->uri;
         $form['theme'] = $theme_mod;
         $form['contenttype_name'] = $contenttype;
+        $form['has_contenttype_uri'] = $has_contenttype_uri;         
+
 
         $form['css'] = [
             asset('public/medium-editor/css/medium-editor.min.css'),
@@ -168,12 +175,29 @@ class SpaceContentAddController extends Controller {
             /* add content title rule and message */
             $validation_rules_messages = $this->add_isvr_content_title_rules_messages($validation_rules_messages);
 
+            /* add content uri rule and message if parameter exists */
+            if (isset($config['#content-types'][$contenttype]['#content-type-view']) && strlen($config['#content-types'][$contenttype]['#content-type-view']) > 0) {
+                $validation_rules_messages = $this->add_isvr_content_uri_rules_messages($validation_rules_messages);
+            }
+
             $validator = Validator::make($request->all(), $validation_rules_messages['rules'], $validation_rules_messages['messages']);
 
             if ($validator->fails()) {
                 return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); 
             }
 
+            /* check if uri exists already; must be unique per space */
+            if (isset($config['#content-types'][$contenttype]['#content-type-view']) && strlen($config['#content-types'][$contenttype]['#content-type-view']) > 0 && $request->has('isvr_content_uri')) {
+                $count = Content::where('space_id', $space->id)->where('uri', str_slug($request->input('isvr_content_uri')))->count();
+                if ($count > 0) {
+                    $validator->after(function($validator) {
+                        $validator->errors()->add('isvr_content_uri', trans('space_content_add_controller.validation_content_uri_exists'));
+                    });
+                    if ($validator->fails()) {
+                        return redirect('admin/space/' . $id . '/edit/' . $contenttype . '/add')->withErrors($validator)->withInput(); 
+                    }
+                }
+            }
 
             /* id = space id */
             $content_id = $this->contentType->create($id, $contenttype, $config['#content-types'][$contenttype], $request->all());
@@ -188,7 +212,7 @@ class SpaceContentAddController extends Controller {
 
 
     /**
-     * Add rules and messages for content title.
+     * Add rules and messages for content.
      * 
      * @param Array $validation_rules_messages
      *
@@ -210,6 +234,35 @@ class SpaceContentAddController extends Controller {
             $validation_rules_messages['messages'],
             'isvr_content_title.max',
             trans('space_content_add_controller.validation_max', ['label' => 'title', 'max' => '250'])
+        ));
+
+        return $validation_rules_messages;
+    }
+
+
+    /**
+     * Add rules and messages for content.
+     * 
+     * @param Array $validation_rules_messages
+     *
+     * @return Array
+     */
+    function add_isvr_content_uri_rules_messages($validation_rules_messages) { 
+
+        $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], 'isvr_content_uri', 'required|max:255');
+
+        /* array_dot is flattens the array because $field_key . '.required' creates new array */
+        $validation_rules_messages['messages'] = array_dot(array_add(
+            $validation_rules_messages['messages'],
+            'isvr_content_uri.required',
+            trans('space_content_add_controller.validation_required', ['label' => 'path'])
+        ));
+
+        /* array_dot flattens the array because $field_key . '.required' creates new array */
+        $validation_rules_messages['messages'] = array_dot(array_add(
+            $validation_rules_messages['messages'],
+            'isvr_content_uri.max',
+            trans('space_content_add_controller.validation_max', ['label' => 'path', 'max' => '250'])
         ));
 
         return $validation_rules_messages;

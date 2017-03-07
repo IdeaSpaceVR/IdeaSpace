@@ -8,5 +8,6 @@ return [
     'content_title_info' => 'Enter a descriptive title which makes it easy for you to identify this content on the overview page.',
     'cancel' => 'Cancel',
     'save' => 'Save',
+    'content_uri_placeholder' => 'Enter path here',
 
 ];

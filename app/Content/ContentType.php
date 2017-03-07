@@ -133,6 +133,7 @@ class ContentType {
         /* load default content title */
         $content = Content::where('id', $content_id)->first();
         $contenttype['isvr_content_title'] = $content->title;
+        $contenttype['isvr_content_uri'] = $content->uri;
         $contenttype['field_type_scripts'] = $field_type_scripts;
 
         return $contenttype;
@@ -193,6 +194,9 @@ class ContentType {
         $content->weight = $c->weight - 1;
 
         $content->title = $request_all['isvr_content_title'];
+        if (isset($request_all['isvr_content_uri'])) {
+            $content->uri = str_slug($request_all['isvr_content_uri']);
+        }
         $content->save();
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
@@ -221,6 +225,9 @@ class ContentType {
 
         $content = Content::where('id', $content_id)->first();
         $content->title = $request_all['isvr_content_title'];
+        if (isset($request_all['isvr_content_uri'])) {
+            $content->uri = str_slug($request_all['isvr_content_uri']);
+        }
         $content->save();
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {

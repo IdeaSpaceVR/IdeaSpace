@@ -20,6 +20,7 @@ class CreateContentTable extends Migration
             $table->string('key');
             $table->integer('weight')->default(0);
             $table->string('title');
+            $table->string('uri', 512);
 
             $table->timestamps();
         });

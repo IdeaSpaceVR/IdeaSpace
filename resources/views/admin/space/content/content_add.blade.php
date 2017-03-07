@@ -23,11 +23,22 @@
         <!-- mainbar //-->
         <div class="col-md-9" style="padding-left:35px">
 
-            <div class="form-group {{ $errors->has('isvr_content_title')?'has-error':'' }}">
-            {!! Form::text('isvr_content_title', '', array('class'=>'form-control input-lg', 'placeholder'=> trans('template_content_add.content_title_placeholder'), 'maxlength' => '250')) !!}
-            <span class="info-block">{{ trans('template_content_add.content_title_info') }}</span>
-            {!! $errors->has('isvr_content_title')?$errors->first('isvr_content_title', '<span class="help-block">:message</span>'):'' !!}
+            <div class="form-group {{ $errors->has('isvr_content_title')?'has-error':'' }}" @if ($has_contenttype_uri) style="margin-bottom:15px" @endif>
+                {!! Form::text('isvr_content_title', '', array('class'=>'form-control input-lg', 'placeholder'=> trans('template_content_add.content_title_placeholder'), 'maxlength' => '250')) !!}
+                <span class="info-block">{{ trans('template_content_add.content_title_info') }}</span>
+                {!! $errors->has('isvr_content_title')?$errors->first('isvr_content_title', '<span class="help-block">:message</span>'):'' !!}
             </div>
+
+            @if ($has_contenttype_uri)
+            <div class="form-group {{ $errors->has('isvr_content_uri')?'has-error':'' }}">
+                <div class="input-group">
+                    <div class="input-group-addon">{{ url('/') . '/' . $space_uri . '/' }}</div>
+                    {!! Form::text('isvr_content_uri', '', array('class'=>'form-control', 'placeholder'=> trans('template_content_add.content_uri_placeholder'), 'maxlength' => '255')) !!}
+                </div>
+                {!! $errors->has('isvr_content_uri')?$errors->first('isvr_content_uri', '<span class="help-block">:message</span>'):'' !!}
+            </div>
+            @endif
+
             <?php 
             /* include template modals only once */
             $field_template_arr = []; 

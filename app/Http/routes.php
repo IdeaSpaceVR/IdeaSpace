@@ -159,22 +159,22 @@ Route::group(['middleware' => 'web'], function () {
 
 
   /**
-   * Preview Space and JSON GET endpoint.
-   *
-   * Not auth middleware protected.
-   */
-  Route::get('{uri}/preview/content/{contenttype_key}', ['as' => 'preview_content_json', 'uses' => 'ViewSpaceController@preview_content_json']);
-  Route::get('{uri}/preview', ['as' => 'view_space', 'uses' => 'ViewSpaceController@preview_space']);
-
-
-  /**
    * Installation
    */
-  //Route::get('install', ['as' => 'install', 'uses' => 'InstallationController@install']);
   Route::get('install', ['as' => 'server_requirements', 'uses' => 'InstallationController@server_requirements']);
   Route::post('install', ['as' => 'server_requirements_submit', 'uses' => 'InstallationController@server_requirements_submit']);
   Route::get('install-db', ['as' => 'install_db', 'uses' => 'InstallationController@install_db']);
   Route::post('install-db', ['as' => 'install_db_submit', 'uses' => 'InstallationController@install_db_submit']);
+
+
+  /**
+   * Preview Space and JSON GET endpoint.
+   *
+   * Not auth middleware protected.
+   */
+  Route::get('{space_uri}/preview/content/{contenttype_key}', ['as' => 'preview_content_json', 'uses' => 'ViewSpaceController@preview_content_json']);
+  Route::get('{space_uri}/preview', ['as' => 'preview_space', 'uses' => 'ViewSpaceController@preview_space']);
+  Route::get('{space_uri}/{content_uri}/preview', ['as' => 'view_space_content', 'uses' => 'ViewSpaceController@preview_space_content']);
 
 });
 
@@ -184,7 +184,8 @@ Route::group(['middleware' => 'web'], function () {
  *
  * Not auth middleware protected.
  */
-Route::get('{uri}/content/{contenttype_key}', ['as' => 'content_json', 'uses' => 'ViewSpaceController@content_json']);
-Route::get('{uri}', ['as' => 'view_space', 'uses' => 'ViewSpaceController@view_space']);
+Route::get('{space_uri}/content/{contenttype_key}', ['as' => 'content_json', 'uses' => 'ViewSpaceController@content_json']);
+Route::get('{space_uri}', ['as' => 'view_space', 'uses' => 'ViewSpaceController@view_space']);
+Route::get('{space_uri}/{content_uri}', ['as' => 'view_space_content', 'uses' => 'ViewSpaceController@view_space_content']);
 
 

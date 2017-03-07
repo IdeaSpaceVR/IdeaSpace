@@ -10,6 +10,7 @@ use App\GenericFile;
 use File;
 use Image;
 use App\Space;
+use App\Content;
 use App\FieldControl;
 use App\FieldDataImage;
 use App\FieldDataText;
@@ -53,8 +54,35 @@ class ViewSpaceController extends Controller {
 
         $vars = $this->prepare_space_content($space, $this->contentType, false);
 
-        /* cut off .blade.php */
         return view('theme::' . $vars['theme_view'], $vars);
+    }
+
+
+    /**
+     * View published space content.
+     *
+     * @param string $space_uri The space URI identifier.
+     * @param string $content_uri The content URI identifier.
+     *
+     * @return Response
+     */
+    public function view_space_content($space_uri, $content_uri) {
+
+        try {
+            $space = Space::where('uri', $space_uri)->where('status', Space::STATUS_PUBLISHED)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        try {
+            $content = Content::where('uri', $content_uri)->where('space_id', $space->id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+        $vars = $this->prepare_contenttype_content($space, $content->key, $this->contentType, false);
+
+        return view('theme::' . $vars['content_type_view'], $vars);
     }
 
 
@@ -79,8 +107,42 @@ class ViewSpaceController extends Controller {
 
             $vars = $this->prepare_space_content($space, $this->contentType, true);
         
-            /* cut off .blade.php */
             return view('theme::' . $vars['theme_view'], $vars);
+        }
+
+        return redirect('login');
+    }
+
+
+    /**
+     * Preview space content.
+     *
+     * @param string $space_uri The space URI identifier.
+     * @param string $content_uri The content URI identifier.
+     *
+     * @return Response
+     */
+    public function preview_space_content($space_uri, $content_uri) {
+
+        if (Auth::check()) {
+
+            $user = Auth::user();
+
+            try {
+                $space = Space::where('uri', $space_uri)->where('user_id', $user->id)->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                abort(404);
+            }
+
+            try {
+                $content = Content::where('uri', $content_uri)->where('space_id', $space->id)->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                abort(404);
+            }
+
+            $vars = $this->prepare_contenttype_content($space, $content->key, $this->contentType, true);
+        
+            return view('theme::' . $vars['content_type_view'], $vars);
         }
 
         return redirect('login');

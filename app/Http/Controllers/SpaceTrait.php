@@ -66,6 +66,57 @@ trait SpaceTrait {
 
 
     /**
+     * Prepare content type content for theme templates.
+     *
+     * @param Space $space The space.
+     * @param Content $content_key The content key.
+     * @param ContentType $contentType 
+     * @param bool $preview True if preview.
+     *
+     * @return String $vars
+     */
+    private function prepare_contenttype_content($space, $content_key, $contentType, $preview = false) {
+
+        try {
+            $theme = Theme::where('id', $space->theme_id)->where('status', Theme::STATUS_ACTIVE)->firstOrFail();
+            $config = json_decode($theme->config, true);
+        } catch (ModelNotFoundException $e) {
+            abort(404);
+        }
+
+      
+        $origin_trial_token = '';
+        try {
+            $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+            $origin_trial_token = $setting_origin_trial_token->value;
+        } catch (ModelNotFoundException $e) {
+        }
+
+
+        $vars = [
+            'space_url' => url($space->uri) . (($preview==false)?'':'/preview'),
+            'space_title' => $space->title,
+            'origin_trial_token' => $origin_trial_token,
+            'theme_dir' => $theme->root_dir,
+            'content_type_view' => $config['#content-types'][$content_key]['#content-type-view'],
+            'content' => []
+        ];
+
+
+        $content_all = Content::where('space_id', $space->id)->where('key', $content_key)->orderBy('weight', 'asc')->get();
+
+        foreach ($content_all as $content) {
+
+            $vars['content'][$content->key][] = $contentType->loadContent($content->id);
+        }
+
+        view()->addNamespace('theme', base_path($theme->root_dir . '/' . Theme::VIEWS_DIR));
+
+        return $vars;
+    }
+
+
+    /**
      * Prepare space content for theme templates in JSON format.
      *
      * @param Request $request The request.

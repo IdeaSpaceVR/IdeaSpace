@@ -9,5 +9,6 @@ return [
     'cancel' => 'Cancel',
     'delete' => 'Delete',
     'save' => 'Save',
+    'content_uri_placeholder' => 'Enter path here',
 
 ];
