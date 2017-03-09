@@ -73,7 +73,7 @@ class ThemesController extends Controller {
                     $contents = (require($directory . '/' . Theme::CONFIG_FILE));
                     $theme->config = json_encode($contents);
 
-                    $theme_ideaspacevr_version = substr($contents['#theme-ideaspacevr-version'], 2); 
+                    $theme_ideaspacevr_version = substr($contents['#ideaspace-version'], 2); 
                     if (version_compare($theme_ideaspacevr_version, env('VERSION'), '>') === true) {
                         $theme->status = Theme::STATUS_INCOMPATIBLE;
                     } else if ($theme->status == Theme::STATUS_INCOMPATIBLE) {
@@ -205,8 +205,8 @@ class ThemesController extends Controller {
 
                     File::exists($directory . '/' . Theme::VIEWS_DIR . '/' . $config['#theme-view'] . '.blade.php') &&
 
-                    array_has($config, '#theme-ideaspacevr-version') && strlen($config['#theme-ideaspacevr-version']) > 0 &&
-                    strpos($config['#theme-ideaspacevr-version'], '>=') !== false &&  
+                    array_has($config, '#ideaspace-version') && strlen($config['#ideaspace-version']) > 0 &&
+                    strpos($config['#ideaspace-version'], '>=') !== false &&  
 
                     array_has($config, '#theme-description') && strlen($config['#theme-description']) > 0 &&
                     array_has($config, '#theme-author-name') && strlen($config['#theme-author-name']) > 0 &&
