@@ -33,14 +33,31 @@
                                                 <select class="form-control" id="content-selector" autocomplete="off" style="min-width:150px;margin-bottom:20px">
                                                     <option value="">{{ trans('fieldtype_position.select') }}</option>
                                                 </select>
-                                                <button class="btn btn-primary" type="button" id="btn-attach" disabled="disabled" style="margin-bottom:20px">{{ trans('fieldtype_position.attach') }}</button>
+                                                <button class="btn btn-primary" type="button" id="btn-attach" disabled="disabled" style="margin-bottom:0px">{{ trans('fieldtype_position.attach') }}</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:20px">
-                                    <label>{{ trans('fieldtype_position.navigation') }}</label>
+                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }}</label>
+
+                                    <div class="row" style="margin-top:5px">
+                                        <div class="col-md-12 text-center">
+                                            <button class="btn btn-default" type="button" id="z-axis-minus" disabled="disabled">
+                                                <span class="glyphicon glyphicon-minus" aria-hidden="true"></span> 
+                                            </button>
+                                            <button class="btn btn-default" type="button" id="z-axis-reset" disabled="disabled">{{ trans('fieldtype_position.reset') }}</button>
+                                            <button class="btn btn-default" type="button" id="z-axis-plus" disabled="disabled">
+                                                <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> 
+                                            </button>
+                                        </div>
+                                    </div>
+
+                                </div>
+
+                                <div class="form-group" style="margin-bottom:20px">
+                                    <label>{{ trans('fieldtype_position.camera_navigation') }}</label>
 
                                     <div class="row">
                                         <div class="col-md-4 col-md-offset-4 text-center">
@@ -54,7 +71,7 @@
                                             <button class="btn btn-default" type="button" id="navigation-left">
                                                 <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> {{ trans('fieldtype_position.a') }}
                                             </button>
-                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.origin') }}</button>
+                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.reset') }}</button>
                                             <button class="btn btn-default" type="button" id="navigation-right">
                                                 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ trans('fieldtype_position.d') }}
                                             </button>
@@ -69,48 +86,6 @@
                                     </div>
 
                                 </div>
-
-
-                                <div class="panel panel-default">
-                                    <div class="panel-heading" role="tab" id="headingOne" style="background-color:#FFF">
-                                        <h4 class="panel-title">
-                                            <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">{{ trans('fieldtype_position.advanced_navigation') }}</a>
-                                        </h4>
-                                    </div>
-                                    <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
-                                        <div class="panel-body">
-                                            <div class="form-group" style="margin-bottom:0;margin-top:0">
-                                                <span class="info-block text-center">{{ trans('fieldtype_position.set_position_rotation_camera') }}</span>
-                                                <label>{{ trans('fieldtype_position.position') }}</label>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-x" step="0.1">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-y" step="0.1">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-position" id="content-selector-position-z" step="0.1">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            <div class="form-group" style="margin-bottom:0">
-                                                <label>{{ trans('fieldtype_position.rotation') }}</label>
-                                                <div class="row">
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.x') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-x" step="0.1" value="0.00">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.y') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-y" step="0.1" value="0.00">
-                                                    </div>
-                                                    <div class="col-md-4">
-                                                    {{ trans('fieldtype_position.z') }} <input type="number" class="form-control content-selector-rotation" id="content-selector-rotation-z" step="0.1" value="0.00">
-                                                    </div>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-                                </div><!-- panel //-->
 
                             </div>
                         </div><!-- panel //-->

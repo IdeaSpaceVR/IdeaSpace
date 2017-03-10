@@ -8,33 +8,6 @@ jQuery(document).ready(function($) {
     });
 
 
-    var componentchanged_eventhandler = function(evt) {
-
-        if (evt.detail.name === 'position') {
-            var position = new THREE.Vector3();
-            var reticle_text = document.querySelector('#reticle-text');
-            position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
-            $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
-            $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
-            $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
-        } else if (evt.detail.name === 'rotation' && evt.detail.oldData.y !== evt.detail.newData.y) {
-            /* confirmed a-frame bug: it would fire constantly and preventing editing the input fields if I would not compare old with new data */
-            var quaternion = new THREE.Quaternion();
-            var rotation_radians = new THREE.Euler();
-            var reticle_text = document.querySelector('#reticle-text');
-            reticle_text.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
-            rotation_radians.setFromQuaternion(quaternion, 'YXZ');
-            var rotation_x = THREE.Math.radToDeg(rotation_radians.x);
-            var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
-            var rotation_z = THREE.Math.radToDeg(rotation_radians.z);
-            $('#positions #content-selector-rotation-x').val(parseFloat(rotation_x).toFixed(2));
-            $('#positions #content-selector-rotation-y').val(parseFloat(rotation_y).toFixed(2));
-            $('#positions #content-selector-rotation-z').val(parseFloat(rotation_z).toFixed(2));
-        }
-    };
-    window.componentchanged_eventhandler = componentchanged_eventhandler;
-
-
     /* click on positions button and get file id of subject, if it exists */
     var positions_add_edit_click_handler = function(e) {
 
@@ -85,12 +58,7 @@ jQuery(document).ready(function($) {
             scene.addEventListener('loaded', function() {
                 /* init */
                 position.setFromMatrixPosition(reticle_text.object3D.matrixWorld);
-                $('#positions #content-selector-position-x').val(parseFloat(position.x).toFixed(2));
-                $('#positions #content-selector-position-y').val(parseFloat(position.y).toFixed(2));
-                $('#positions #content-selector-position-z').val(parseFloat(position.z).toFixed(2));
             });
-            /* use componentchanged event to get position and rotation from reticle */
-            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
 
             /* clean up */
             $('#positions #content-selector option').not(':first').remove();
@@ -130,7 +98,7 @@ jQuery(document).ready(function($) {
                     entity.setAttribute('position', { x: value.position.x, y: value.position.y, z: value.position.z });
                     entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });
                     entity.setAttribute('scale', { x: value.scale.x, y: value.scale.y, z: value.scale.z });
-                    entity.setAttribute('value', $('#positions #content-selector option[value="' + value.content_id + '"]').text());
+                    entity.setAttribute('value', '[' + $('#positions #content-selector option[value="' + value.content_id + '"]').text() + ']');
                     entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
                     entity.setAttribute('align', 'center');
                     entity.setAttribute('width', '3');
@@ -173,19 +141,35 @@ jQuery(document).ready(function($) {
 
     var positions_content_selector = function() {
 
-            if ($(this).val() == '') {
-                //document.querySelector('#reticle').setAttribute('visible', false);
-                document.querySelector('#reticle-text').setAttribute('visible', false);
-                document.querySelector('#reticle-text').setAttribute('value', '');
-                $('#positions #btn-attach').prop('disabled', true);
-            } else {
-                if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
-                    document.querySelector('#reticle-text').setAttribute('value', $('#positions #content-selector option[value="' + $(this).val() + '"]').text());
-                    //document.querySelector('#reticle').setAttribute('visible', true);
-                    document.querySelector('#reticle-text').setAttribute('visible', true);
-                    $('#positions #btn-attach').prop('disabled', false);
-                }
+        var camera = document.querySelector('#camera'); 
+        var camera_wrapper = document.querySelector('#camera-wrapper'); 
+
+        camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
+        camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
+        camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
+
+        if ($(this).val() == '') {
+            //document.querySelector('#reticle').setAttribute('visible', false);
+            document.querySelector('#reticle-text').setAttribute('visible', false);
+            document.querySelector('#reticle-text').setAttribute('value', '');
+            document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
+            $('#positions #btn-attach').prop('disabled', true);
+            $('#positions #z-axis-minus').prop('disabled', true);
+            $('#positions #z-axis-reset').prop('disabled', true);
+            $('#positions #z-axis-plus').prop('disabled', true);
+        } else {
+            if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
+                document.querySelector('#reticle-text').setAttribute('value', '[' + $('#positions #content-selector option[value="' + $(this).val() + '"]').text() + ']');
+                //document.querySelector('#reticle').setAttribute('visible', true);
+                document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
+                document.querySelector('#reticle-text').setAttribute('visible', true);
+                $('#positions #btn-attach').prop('disabled', false);
+                $('#positions #z-axis-minus').prop('disabled', false);
+                $('#positions #z-axis-reset').prop('disabled', false);
+                $('#positions #z-axis-plus').prop('disabled', false);
             }
+        }
 
         $(this).blur();
     };
@@ -214,7 +198,7 @@ jQuery(document).ready(function($) {
 
         entity.setAttribute('position', { x: position.x, y: position.y, z: position.z }); 
         entity.setAttribute('rotation', { x: 0, y: rotation_y, z: 0 }); 
-        entity.setAttribute('value', $('#positions #content-selector option:selected').text()); 
+        entity.setAttribute('value', '[' + $('#positions #content-selector option:selected').text() + ']'); 
         entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
         entity.setAttribute('align', 'center');
         entity.setAttribute('width', '3');
@@ -305,7 +289,8 @@ jQuery(document).ready(function($) {
 
         if ($(this).val() == '') {
             /* reset camera position and rotation */
-            camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
+            //camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
+            camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
             camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
             camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
             //camera.setAttribute('position', {x: 0, y: 0, z: 0});            
@@ -360,105 +345,8 @@ jQuery(document).ready(function($) {
         camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
         camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
         camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
-        //camera.setAttribute('position', {x: 0, y: 0, z: 0});            
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
     });
-
-
-    $('#positions .content-selector-position').blur(function(e) {
-        /* remove event listener */
-        var entity = document.querySelector('#camera');
-        entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
-
-        window.content_selector_position_change_handler();
-
-        /* add event listener */
-        entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
-    });
-    $('#positions .content-selector-position').keyup(function(e) {
-        /* enter key */
-        if (e.keyCode == 13) {
-            /* remove event listener */
-            var entity = document.querySelector('#camera');
-            entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
-
-            window.content_selector_position_change_handler();
-
-            /* add event listener */
-            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
-        }
-    });
-    $('#positions .content-selector-rotation').blur(function(e) {
-        /* remove event listener */
-        var entity = document.querySelector('#camera');
-        entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
-
-        window.content_selector_rotation_change_handler();
-
-        /* add event listener */
-        entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
-    });
-    $('#positions .content-selector-rotation').keyup(function(e) {
-        /* enter key */
-        if (e.keyCode == 13) {
-            /* remove event listener */
-            var entity = document.querySelector('#camera');
-            entity.removeEventListener('componentchanged', window.componentchanged_eventhandler);
-
-            window.content_selector_rotation_change_handler();
-
-            /* add event listener */
-            entity.addEventListener('componentchanged', window.componentchanged_eventhandler);
-        }
-    });
-
-    var content_selector_position_change_handler = function() {
-
-        var position_x = $('#positions #content-selector-position-x').val();
-        var position_y = $('#positions #content-selector-position-y').val();
-        var position_z = $('#positions #content-selector-position-z').val();
-
-        var camera_wrapper = document.querySelector('#camera-wrapper');
-        var camera = document.querySelector('#camera');
-
-        camera_wrapper.setAttribute('position', {x: parseFloat(position_x), y: parseFloat(position_y), z: parseFloat(position_z)});
-
-        /* reticle and reticle-text position correction */
-        //camera_wrapper.object3D.translateX(-0.15);
-        //camera_wrapper.object3D.translateY(0.05);
-        //camera_wrapper.object3D.translateZ(1);
-
-        camera.setAttribute('position', {x: 0, y: 0, z: 0});
-    };
-    window.content_selector_position_change_handler = content_selector_position_change_handler;
-
-    var content_selector_rotation_change_handler = function() {
-
-        var rotation_x = $('#positions #content-selector-rotation-x').val();
-        var rotation_y = $('#positions #content-selector-rotation-y').val();
-        var rotation_z = $('#positions #content-selector-rotation-z').val();
-
-        var camera_wrapper = document.querySelector('#camera-wrapper');
-        var camera = document.querySelector('#camera');
-        //var reticle = document.querySelector('#reticle');
-        var reticle_text = document.querySelector('#reticle-text');
-
-        camera.setAttribute('rotation', {x: 0, y: 0, z: 0});
-        //reticle.setAttribute('rotation', {x: 0, y: 0, z: 0});
-        reticle_text.setAttribute('rotation', {x: 0, y: 0, z: 0});
-
-        camera_wrapper.object3D.translateX(0.15);
-        camera_wrapper.object3D.translateY(-0.05);
-        camera_wrapper.object3D.translateZ(-1);
-
-        camera_wrapper.setAttribute('rotation', {x: parseFloat(rotation_x), y: parseFloat(rotation_y), z: parseFloat(rotation_z)});
-
-        camera_wrapper.object3D.translateX(-0.15);
-        camera_wrapper.object3D.translateY(0.05);
-        camera_wrapper.object3D.translateZ(1);
-
-    };
-    window.content_selector_rotation_change_handler = content_selector_rotation_change_handler;
 
 
     $('#positions #navigation-up').mousedown(function() {
@@ -616,6 +504,41 @@ jQuery(document).ready(function($) {
     };
     window.positions_remove_click_handler = positions_remove_click_handler;
     $('.form-control-add-positions .positions-edit .remove-positions-btn').click(window.positions_remove_click_handler);          
+
+  
+    var positions_z_axis_minus_handler = function() {
+
+        var content = document.querySelector('#reticle-text');
+        var pos = content.getAttribute('position');
+        if (pos.z < -1) {
+            content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z+1 }); 
+        }
+        console.log(content.getAttribute('position'));
+    };
+    window.positions_z_axis_minus_handler = positions_z_axis_minus_handler;
+    $('#positions #z-axis-minus').click(window.positions_z_axis_minus_handler); 
+
+
+    var positions_z_axis_reset_handler = function() {
+ 
+        var content = document.querySelector('#reticle-text');
+        content.setAttribute('position', { x: 0, y: 0, z: -1 }); 
+        
+    };
+    window.positions_z_axis_reset_handler = positions_z_axis_reset_handler;
+    $('#positions #z-axis-reset').click(window.positions_z_axis_reset_handler); 
+
+
+    var positions_z_axis_plus_handler = function() {
+
+        var content = document.querySelector('#reticle-text');
+        var pos = content.getAttribute('position');
+        content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z-1 }); 
+        console.log(content.getAttribute('position'));
+    };
+    window.positions_z_axis_plus_handler = positions_z_axis_plus_handler;
+    $('#positions #z-axis-plus').click(window.positions_z_axis_plus_handler); 
+
 
 });
 

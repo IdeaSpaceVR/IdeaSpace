@@ -18,7 +18,7 @@ return [
     'detach' => 'Detach',
     'items' => 'Items',
     'on' => 'on',
-    'navigation' => 'Navigation',
+    'camera_navigation' => 'Camera navigation',
     'position' => 'Position:',
     'rotation' => 'Rotation:',
     'advanced_navigation' => 'Advanced navigation',
@@ -26,7 +26,6 @@ return [
     'y' => 'Y:',
     'z' => 'Z:',
     'reset' => 'Reset',
-    'origin' => 'Origin',
     'w' => 'W',
     's' => 'S',
     'd' => 'D',
@@ -81,5 +80,7 @@ return [
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
     'attach_content_type_hint' => 'In order to select an item, there must be some :content_type content. If not, add some :content_type content on the Edit Space page.',
+    'placeholder_item_z_axis' => 'Placeholder item z-axis',
+    'reset' => 'Reset',
 
 ];
