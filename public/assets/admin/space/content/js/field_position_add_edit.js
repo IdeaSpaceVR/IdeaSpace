@@ -104,7 +104,12 @@ jQuery(document).ready(function($) {
                     entity.setAttribute('width', '3');
                     entity.setAttribute('data-id', value.id);
 
-                    //content.sceneEl.appendChild(entity);
+                    var entity_dot = document.createElement('a-circle');
+                    entity_dot.setAttribute('position', {x:0, y:-0.07, z:0});
+                    entity_dot.setAttribute('color', 'red');
+                    entity_dot.setAttribute('radius', 0.01);
+                    entity.appendChild(entity_dot);
+
                     scene.appendChild(entity);                  
 
                     entity.setAttribute('visible', true);
@@ -179,8 +184,12 @@ jQuery(document).ready(function($) {
 
     var positions_content_attach = function() {
 
-        //var entity = document.createElement('a-entity');
         var entity = document.createElement('a-text');
+        var entity_dot = document.createElement('a-circle');
+        entity_dot.setAttribute('position', {x:0, y:-0.07, z:0});
+        entity_dot.setAttribute('color', 'red');
+        entity_dot.setAttribute('radius', 0.01);
+
         var content = document.querySelector('#reticle-text');
 
         var id = new Date().getUTCMilliseconds();
@@ -203,6 +212,7 @@ jQuery(document).ready(function($) {
         entity.setAttribute('align', 'center');
         entity.setAttribute('width', '3');
         entity.setAttribute('data-id', id);
+        entity.appendChild(entity_dot);
 
         content.sceneEl.appendChild(entity);
 
