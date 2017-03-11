@@ -11,7 +11,7 @@ return [
     'get_themes' => 'Get themes for your spaces',
     'contact' => 'Contact us',
     'links_to_get_you_started' => 'Some links to get you started:',
-    'spaces' => 'Spaces',
+    'spaces' => 'Space|Spaces',
     'upload_max_filesize' => 'Max. upload file size:',
     'post_max_size' => 'Max. post size:',
     'upload_post_size_help' => 'You can configure these settings in your php configuraton file (php.ini). Ask your web administrator for help.',

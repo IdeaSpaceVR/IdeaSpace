@@ -47,7 +47,7 @@
                 <div class="panel-body at-a-glance">
                     <p class="lead">{{ trans('template_dashboard.at_a_glance') }}</p>
                     <div>
-                        <a href="{{ route('spaces_all') }}" style="font-size:16px"><i class="fa fa-btn fa-cube"></i> {{ $number_spaces }} {{ trans('template_dashboard.spaces') }}</a>
+                        <a href="{{ route('spaces_all') }}" style="font-size:16px"><i class="fa fa-btn fa-cube"></i> {{ $number_spaces }} {{ trans_choice('template_dashboard.spaces', $number_spaces) }}</a>
                     </div>
                     <div class="row" style="margin-top:20px">
                         <div class="col-md-6">
