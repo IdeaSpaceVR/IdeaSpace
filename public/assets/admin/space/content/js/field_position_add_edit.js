@@ -46,8 +46,8 @@ jQuery(document).ready(function($) {
             $('#positions #btn-detach').unbind('click');
             $('#positions #btn-detach').click(window.positions_content_detach);
 
-            $('#positions #content-scale').unbind('change');
-            $('#positions #content-scale').change(window.positions_content_scale);
+            //$('#positions #content-scale').unbind('change');
+            //$('#positions #content-scale').change(window.positions_content_scale);
 
             var scene = document.querySelector('a-scene');
             scene.addEventListener('enter-vr', window.positions_reset_content_selector);
@@ -198,6 +198,7 @@ jQuery(document).ready(function($) {
 
         var position = new THREE.Vector3();
         position.setFromMatrixPosition( content.object3D.matrixWorld );
+        //console.log(position);
 
         var quaternion = new THREE.Quaternion();
         content.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
@@ -236,6 +237,10 @@ jQuery(document).ready(function($) {
             $('#positions #btn-attach').prop('disabled', true);
         }
 
+        $('#positions #z-axis-minus').prop('disabled', true);
+        $('#positions #z-axis-reset').prop('disabled', true);
+        $('#positions #z-axis-plus').prop('disabled', true);
+
         $('#positions .insert-btn').show();
     };
     window.positions_content_attach = positions_content_attach;
@@ -267,7 +272,7 @@ jQuery(document).ready(function($) {
     $('#positions #btn-detach').click(window.positions_content_detach);
 
 
-    var positions_content_scale = function() {
+    /*var positions_content_scale = function() {
 
         var json = jQuery.parseJSON($('#positions #content-attached option:selected').val()); 
         var entity = document.querySelector('a-text[data-id="' + json.id + '"]');
@@ -278,7 +283,7 @@ jQuery(document).ready(function($) {
         $('#positions #content-attached option:selected').val(JSON.stringify(json));
     };
     window.positions_content_scale = positions_content_scale;
-    $('#positions #content-scale').change(window.positions_content_scale);
+    $('#positions #content-scale').change(window.positions_content_scale);*/
     
 
     var positions_reset_content_selector = function() {
@@ -307,7 +312,7 @@ jQuery(document).ready(function($) {
             camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', true);
-            $('#positions #content-scale').prop('disabled', true);
+            //$('#positions #content-scale').prop('disabled', true);
 
             $('#positions #reticle-position-x').text('-');
             $('#positions #reticle-position-y').text('-');
@@ -317,7 +322,7 @@ jQuery(document).ready(function($) {
             $('#positions #reticle-rotation-y').text('-');
             $('#positions #reticle-rotation-z').text('-');
 
-            $('#positions #content-scale option[value="1.0"]').prop('selected', true); 
+            //$('#positions #content-scale option[value="1.0"]').prop('selected', true); 
         } else {
             /* put camera in front of content */
             var json = jQuery.parseJSON($(this).val());
@@ -328,7 +333,7 @@ jQuery(document).ready(function($) {
             camera.setAttribute('rotation', {x: 0, y:0, z:0});
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', false);
-            $('#positions #content-scale').prop('disabled', false);
+            //$('#positions #content-scale').prop('disabled', false);
 
             $('#positions #reticle-position-x').text(parseFloat(json.position.x).toFixed(2));
             $('#positions #reticle-position-y').text(parseFloat(json.position.y).toFixed(2));
@@ -338,7 +343,7 @@ jQuery(document).ready(function($) {
             $('#positions #reticle-rotation-y').text(parseFloat(json.rotation.y).toFixed(2));
             $('#positions #reticle-rotation-z').text(parseFloat(json.rotation.z).toFixed(2));
 
-            $('#positions #content-scale option[value="' + json.scale.x + '"]').prop('selected', true); 
+            //$('#positions #content-scale option[value="' + json.scale.x + '"]').prop('selected', true); 
         }
 
         $(this).blur();
@@ -523,7 +528,7 @@ jQuery(document).ready(function($) {
         if (pos.z < -1) {
             content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z+1 }); 
         }
-        console.log(content.getAttribute('position'));
+        //console.log(content.getAttribute('position'));
     };
     window.positions_z_axis_minus_handler = positions_z_axis_minus_handler;
     $('#positions #z-axis-minus').click(window.positions_z_axis_minus_handler); 
@@ -544,7 +549,7 @@ jQuery(document).ready(function($) {
         var content = document.querySelector('#reticle-text');
         var pos = content.getAttribute('position');
         content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z-1 }); 
-        console.log(content.getAttribute('position'));
+        //console.log(content.getAttribute('position'));
     };
     window.positions_z_axis_plus_handler = positions_z_axis_plus_handler;
     $('#positions #z-axis-plus').click(window.positions_z_axis_plus_handler); 

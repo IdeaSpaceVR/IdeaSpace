@@ -95,7 +95,7 @@
                             <div class="panel-body">
 
                                 <div class="form-group" style="margin-bottom:0;margin-top:0">
-                                    <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }})</label>
+                                    <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }}) <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.content_attached_hint') }}"></span></label>
 
                                     <div class="row">
                                         <div class="col-md-12">
@@ -118,7 +118,7 @@
                                     </div>
                                 </div>
 
-                                <div class="form-group" style="margin-bottom:0">
+                                <!--div class="form-group" style="margin-bottom:0">
                                     <label for="content-scale">{{ trans('fieldtype_position.scale') }}</label>
 
                                     <div class="row">
@@ -174,7 +174,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div//-->
 
                             </div>
 
