@@ -30,6 +30,7 @@
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-thumb-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-navigation-component.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-hotspot-wrapper-listener.js') }}"></script>
 </head>
 <body>
 

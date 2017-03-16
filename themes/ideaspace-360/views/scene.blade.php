@@ -116,20 +116,31 @@
                 @if (isset($photosphere['attach-text-notes']))
                     @foreach ($photosphere['attach-text-notes']['#positions'] as $text_note)
 
-                        <a-sphere class="hotspot hotspot-content-id-{{ $photosphere['attach-text-notes']['#content-id']}} show-content-id-{{ $text_note['#content-id'] }}" position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}" rotation="{{ $text_note['#rotation']['#x'] }} {{ $text_note['#rotation']['#y'] }} {{ $text_note['#rotation']['#z'] }}" scale="{{ $text_note['#scale']['#x'] }} {{ $text_note['#scale']['#y'] }} {{ $text_note['#scale']['#z'] }}" material="color: #FFFFFF; side: double; shader: flat; opacity: 0.5" radius="0.1" visible="false" isvr-hotspot-listener>
-                            <a-animation
-                                attribute="radius"
-                                begin="hotspot-intro-{{ $photosphere['attach-text-notes']['#content-id']}}"
-                                direction="alternate"
-                                dur="300"
-                                from="0.1"
-                                repeat="1"
-                                to="0.01">
-                            </a-animation>
+                        <a-sphere class="hotspot-wrapper hotspot-wrapper-content-id-{{ $photosphere['attach-text-notes']['#content-id'] }}" material="color: #FFFFFF; side: double; shader: flat; opacity: 0" radius="0.5" visible="true" position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}" rotation="{{ $text_note['#rotation']['#x'] }} {{ $text_note['#rotation']['#y'] }} {{ $text_note['#rotation']['#z'] }}" scale="1 1 1" isvr-hotspot-wrapper-listener data-text-content-id="{{ $text_note['#content-id'] }}">
+                            <a-sphere class="hotspot hotspot-content-id-{{ $photosphere['attach-text-notes']['#content-id'] }}" scale="1 1 1" material="color: #FFFFFF; side: double; shader: flat; opacity: 0.5" radius="0.1" visible="false">
+                                <a-animation
+                                    attribute="radius"
+                                    begin="hotspot-intro-{{ $photosphere['attach-text-notes']['#content-id']}}"
+                                    direction="alternate"
+                                    dur="300"
+                                    from="0.1"
+                                    repeat="1"
+                                    to="0.01">
+                                </a-animation>
+                            </a-sphere>
                         </a-sphere>
 
-                    @endforeach
+                        <a-entity
+                            class="hotspot-text hotspot-text-content-id-{{ $text_note['#content-id']}}"
+                            position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}"
+                            rotation="{{ $text_note['#rotation']['#x'] }} {{ $text_note['#rotation']['#y'] }} {{ $text_note['#rotation']['#z'] }}"
+                            geometry="primitive: plane; width: 4; height: auto"
+                            material="color: #000; opacity: 0.5"
+                            visible="false" 
+                            text="color: #FFF; align: left; wrapCount: 30; font: {{ asset('/public/aframe/fonts/Roboto-msdf.json') }}; value: {{ $text_note['#content'][0]['#value'] }}">
+                        </a-entity>
 
+                    @endforeach
 
                 @endif
 

@@ -26,6 +26,11 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
         document.querySelector('#photosphere').setAttribute('material', 'src', '#img-photosphere-' + image_id);
       
         setTimeout(function() { 
+            /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
+            var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
+            for (var i = 0; i < hotspot_wrapper.length; i++) {
+                hotspot_wrapper[i].setAttribute('visible', true);
+            }
             var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
             for (var i = 0; i < hotspots.length; i++) {
                 hotspots[i].setAttribute('visible', 'true');

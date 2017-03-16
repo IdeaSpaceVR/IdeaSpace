@@ -39,7 +39,7 @@ AFRAME.registerComponent('isvr-init-assets', {
 
                     var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
                     for (var i = 0; i < hotspots.length; i++) {
-                        hotspots[i].setAttribute('visible', 'true');
+                        hotspots[i].setAttribute('visible', true);
                     }
 
                     sphere.emit('photosphere-fading');
