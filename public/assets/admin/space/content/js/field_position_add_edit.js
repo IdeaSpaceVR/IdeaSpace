@@ -266,6 +266,14 @@ jQuery(document).ready(function($) {
             if (maxnumber_counter < 1) {
                 $('#positions .insert-btn').hide();
             }
+
+            /* center camera */
+            var camera = document.querySelector('#camera');
+            var camera_wrapper = document.querySelector('#camera-wrapper');
+            camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
+            camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
+            camera.setAttribute('position', {x: 0, y: 1.6, z: 0});
+            camera.setAttribute('rotation', {x: 0, y: 0, z: 0});
         }
     };
     window.positions_content_detach = positions_content_detach;
