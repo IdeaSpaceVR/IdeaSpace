@@ -34,6 +34,21 @@ AFRAME.registerComponent('isvr-init-assets', {
 
                     var sphere = document.querySelector('#photosphere');
                     sphere.setAttribute('material', 'src', '#img-photosphere-1');
+
+                    var materialtextureloaded_listener = function() {
+console.log('in 2: '+content_id);
+                        var title = document.querySelector('#photosphere-title-content-id-' + content_id);
+                        if (title != null) {
+                            title.setAttribute('position', { x: 0, y:1.6, z:-2 });
+                            title.setAttribute('visible', true);
+                            setTimeout(function() {
+                                title.setAttribute('visible', false);
+                            }, 10000);
+                        }
+                    };
+                    window.materialtextureloaded_listener = materialtextureloaded_listener;
+                    sphere.addEventListener('materialtextureloaded', window.materialtextureloaded_listener);
+
                     document.querySelector('#photosphere-loading').setAttribute('visible', false);
                     document.querySelector('#photosphere-loading-anim').stop();
 

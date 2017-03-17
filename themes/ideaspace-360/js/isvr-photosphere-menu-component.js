@@ -27,13 +27,23 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
             }
         }            
 
+        var hide_photosphere_title = false;
+        var photosphere_title = document.querySelectorAll('.photosphere-title');
+        for (var i = 0; i < photosphere_title.length; i++) {
+            if (photosphere_title[i].getAttribute('visible') == true) {
+                photosphere_title[i].setAttribute('visible', false);
+                /* hide photo sphere title on this click first, next click is for showing menu */
+                hide_photosphere_title = true;
+            }
+        }
+
         var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
         for (var i = 0; i < hotspot_wrapper.length; i++) {
             hotspot_wrapper[i].setAttribute('visible', true);
         }
 
 
-        if (hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && 
+        if (hide_photosphere_title == false && hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && 
             this.el.getAttribute('visible') == false && 
             document.querySelector('#photosphere-loading').getAttribute('visible') == false) {
 
@@ -55,7 +65,7 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
             this.el.setAttribute('visible', true);
             document.querySelector('#cursor').setAttribute('visible', true);
 
-        } else if (hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && this.el.getAttribute('visible') == true) {
+        } else if (hide_photosphere_title == false && hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && this.el.getAttribute('visible') == true) {
 
             /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
             var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');

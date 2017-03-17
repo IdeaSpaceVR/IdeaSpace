@@ -103,7 +103,7 @@ AFRAME.registerComponent('isvr-photosphere-menu-navigation', {
                                         /* show thumbnails if thumb and its photo sphere have been loaded */
                                         thumb.setAttribute('material', 'src', '#img-photosphere-thumb-' + id);
                                         thumb.setAttribute('data-image-id', id);
-                                        thumb.setAttribute('data-content-id', id);
+                                        thumb.setAttribute('data-content-id', content_id);
                                         thumb.setAttribute('visible', true);
                                     }
                                 }(id, thumb, content_id));

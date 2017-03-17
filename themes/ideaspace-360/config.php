@@ -44,11 +44,11 @@ return [
         'title' => [
           '#label' => 'Photo Sphere Title',
           '#description' => 'Enter a title.',
-          '#help' => 'The title is shown for each photo sphere',
+          '#help' => 'Enter a title for this photo sphere (optional). The title is shown after the photo sphere has been loaded.',
           '#type' => 'textfield',
           '#maxlength' => 140, 
           '#contentformat' => 'text', 
-          '#required' => true,
+          '#required' => false,
         ],
 
         'photo-sphere' => [

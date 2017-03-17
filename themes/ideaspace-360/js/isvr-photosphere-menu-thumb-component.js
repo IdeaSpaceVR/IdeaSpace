@@ -23,7 +23,25 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
 
         document.querySelector('#photosphere-menu').setAttribute('visible', false);
         document.querySelector('#cursor').setAttribute('visible', false);
-        document.querySelector('#photosphere').setAttribute('material', 'src', '#img-photosphere-' + image_id);
+
+        var sphere = document.querySelector('#photosphere');
+        sphere.setAttribute('material', 'src', '#img-photosphere-' + image_id);
+
+        var materialtextureloaded_listener = function() {
+console.log('in 1: '+content_id);
+            var title = document.querySelector('#photosphere-title-content-id-' + content_id);
+            if (title != null) {
+                title.setAttribute('position', { x: 0, y:1.6, z:-2 });
+                title.setAttribute('visible', true);
+                setTimeout(function() {
+                    title.setAttribute('visible', false);
+                }, 10000);
+            }
+        };
+        window.materialtextureloaded_listener = materialtextureloaded_listener;
+        sphere.removeEventListener('materialtextureloaded', window.materialtextureloaded_listener);
+        sphere.addEventListener('materialtextureloaded', window.materialtextureloaded_listener);
+
       
         setTimeout(function() { 
             /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
