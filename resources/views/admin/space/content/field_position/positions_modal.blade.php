@@ -71,7 +71,7 @@
                                             <button class="btn btn-default" type="button" id="navigation-left">
                                                 <span class="glyphicon glyphicon-arrow-left" aria-hidden="true"></span> {{ trans('fieldtype_position.a') }}
                                             </button>
-                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.reset') }}</button>
+                                            <button class="btn btn-default" type="button" id="navigation-center">{{ trans('fieldtype_position.center') }}</button>
                                             <button class="btn btn-default" type="button" id="navigation-right">
                                                 <span class="glyphicon glyphicon-arrow-right" aria-hidden="true"></span> {{ trans('fieldtype_position.d') }}
                                             </button>
