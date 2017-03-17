@@ -33,14 +33,14 @@
                                                 <select class="form-control" id="content-selector" autocomplete="off" style="min-width:150px;margin-bottom:20px">
                                                     <option value="">{{ trans('fieldtype_position.select') }}</option>
                                                 </select>
-                                                <button class="btn btn-primary" type="button" id="btn-attach" disabled="disabled" style="margin-bottom:0px">{{ trans('fieldtype_position.attach') }}</button>
+                                                <button class="btn btn-primary" type="button" id="btn-attach" disabled="disabled" style="margin-bottom:20px">{{ trans('fieldtype_position.attach') }}</button>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:20px">
-                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }}</label>
+                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }} (<span id="z-axis-counter">-1</span>)</label>
 
                                     <div class="row" style="margin-top:5px">
                                         <div class="col-md-12 text-center">

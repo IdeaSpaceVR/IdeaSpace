@@ -154,6 +154,8 @@ jQuery(document).ready(function($) {
         camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
         camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
 
+        $('#positions #z-axis-counter').text('-1');
+
         if ($(this).val() == '') {
             //document.querySelector('#reticle').setAttribute('visible', false);
             document.querySelector('#reticle-text').setAttribute('visible', false);
@@ -301,6 +303,7 @@ jQuery(document).ready(function($) {
         document.querySelector('#reticle-text').setAttribute('value', '');
         $('#positions #btn-attach').prop('disabled', true);
         $('#positions #content-selector').find('option:eq(0)').prop('selected', true);
+        $('#positions #z-axis-counter').text('-1');
     };
     window.positions_reset_content_selector = positions_reset_content_selector;
 
@@ -535,6 +538,7 @@ jQuery(document).ready(function($) {
         var pos = content.getAttribute('position');
         if (pos.z < -1) {
             content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z+1 }); 
+            $('#positions #z-axis-counter').text(pos.z+1);
         }
         //console.log(content.getAttribute('position'));
     };
@@ -546,6 +550,7 @@ jQuery(document).ready(function($) {
  
         var content = document.querySelector('#reticle-text');
         content.setAttribute('position', { x: 0, y: 0, z: -1 }); 
+        $('#positions #z-axis-counter').text('-1');
         
     };
     window.positions_z_axis_reset_handler = positions_z_axis_reset_handler;
@@ -557,6 +562,7 @@ jQuery(document).ready(function($) {
         var content = document.querySelector('#reticle-text');
         var pos = content.getAttribute('position');
         content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z-1 }); 
+        $('#positions #z-axis-counter').text(pos.z-1);
         //console.log(content.getAttribute('position'));
     };
     window.positions_z_axis_plus_handler = positions_z_axis_plus_handler;
