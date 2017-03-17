@@ -27,5 +27,6 @@ return [
     'draft' => 'Draft',
     'move_to_trash' => 'Move to Trash',
     'update' => 'Update',
+    'back' => 'Back to All Spaces',
 
 ];
