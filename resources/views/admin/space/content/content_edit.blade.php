@@ -64,7 +64,7 @@
             @endforeach        
 
             <div class="form-group text-center">
-                <button type="button" class="btn btn-primary btn-lg content-add-save" style="margin-right:20px"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_content_edit.save') }}</button> <a href="{{ route('content_delete', ['space_id' => $space_id, 'contenttype' => $contenttype_name, 'content_id' => $content_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{ trans('template_content_edit.delete') }}</a> <a href="{{ route('space_edit', ['id' => $space_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('template_content_edit.cancel') }}</a> 
+                <button type="button" class="btn btn-primary btn-lg content-add-save" style="margin-right:20px"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_content_edit.save') }}</button> <a href="{{ route('content_delete', ['space_id' => $space_id, 'contenttype' => $contenttype_name, 'content_id' => $content_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{ trans('template_content_edit.delete') }}</a> <a href="{{ route('space_edit', ['id' => $space_id]) }}#{{ $contenttype_name }}" role="button" class="btn btn-default btn-lg content-add-cancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('template_content_edit.cancel') }}</a> 
             </div>
 
         </div>
