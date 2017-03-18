@@ -37,17 +37,18 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
             }
         }
 
-        var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
-        for (var i = 0; i < hotspot_wrapper.length; i++) {
-            hotspot_wrapper[i].setAttribute('visible', true);
+        var content_id = document.querySelector('#photosphere').getAttribute('data-content-id');
+        var hotspots = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
+        for (var i = 0; i < hotspots.length; i++) {
+            hotspots[i].setAttribute('visible', true);
         }
+
 
 
         if (hide_photosphere_title == false && hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && 
             this.el.getAttribute('visible') == false && 
             document.querySelector('#photosphere-loading').getAttribute('visible') == false) {
 
-            /* set visible to false on hotspot wrapper in order to avoid transparency issues; opacity is still 0 */
             var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
             for (var i = 0; i < hotspot_wrapper.length; i++) {
                 hotspot_wrapper[i].setAttribute('visible', false);
@@ -67,14 +68,24 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
 
         } else if (hide_photosphere_title == false && hide_hotspot_text == false && document.getElementsByClassName('img-photosphere-thumb').length > 1 && this.el.getAttribute('visible') == true) {
 
-            /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
-            var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
-            for (var i = 0; i < hotspot_wrapper.length; i++) {
-                hotspot_wrapper[i].setAttribute('visible', true);
-            }
-
             this.el.setAttribute('visible', false);
             document.querySelector('#cursor').setAttribute('visible', false);
+
+            setTimeout(function() {
+                var content_id = document.querySelector('#photosphere').getAttribute('data-content-id');
+                /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
+                var hotspots = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
+                for (var i = 0; i < hotspots.length; i++) {
+                    hotspots[i].setAttribute('visible', true);
+                }
+                /* animation */
+                var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
+                for (var i = 0; i < hotspots.length; i++) {
+                    hotspots[i].setAttribute('visible', 'true');
+                    hotspots[i].emit('hotspot-intro-' + content_id);
+                }
+            }, 1000);
+
         }
 
     },

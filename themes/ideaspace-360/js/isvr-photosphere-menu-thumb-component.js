@@ -8,55 +8,53 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
 
     onClick: function(evt) {
 
-      var position = this.el.getAttribute('position');
+        var position = this.el.getAttribute('position');
 
-      /* prevent immediate selection of image after menu appears */
-      if (this.el.parentEl.getAttribute('visible') && position.z == 0.5) {
+        /* prevent immediate selection of image after menu appears */
+        if (this.el.parentEl.getAttribute('visible') && position.z == 0.5) {
 
-        var image_id = this.el.getAttribute('data-image-id');
-        var content_id = this.el.getAttribute('data-content-id');
+            var image_id = this.el.getAttribute('data-image-id');
+            var content_id = this.el.getAttribute('data-content-id');
 
-        var hotspots = document.querySelectorAll('.hotspot');
-        for (var i = 0; i < hotspots.length; i++) {
-            hotspots[i].setAttribute('visible', 'false');
-        }
-
-        document.querySelector('#photosphere-menu').setAttribute('visible', false);
-        document.querySelector('#cursor').setAttribute('visible', false);
-
-        var sphere = document.querySelector('#photosphere');
-        sphere.setAttribute('material', 'src', '#img-photosphere-' + image_id);
-
-        var materialtextureloaded_listener = function() {
-console.log('in 1: '+content_id);
-            var title = document.querySelector('#photosphere-title-content-id-' + content_id);
-            if (title != null) {
-                title.setAttribute('position', { x: 0, y:1.6, z:-2 });
-                title.setAttribute('visible', true);
-                setTimeout(function() {
-                    title.setAttribute('visible', false);
-                }, 10000);
-            }
-        };
-        window.materialtextureloaded_listener = materialtextureloaded_listener;
-        sphere.removeEventListener('materialtextureloaded', window.materialtextureloaded_listener);
-        sphere.addEventListener('materialtextureloaded', window.materialtextureloaded_listener);
-
-      
-        setTimeout(function() { 
-            /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
-            var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper');
-            for (var i = 0; i < hotspot_wrapper.length; i++) {
-                hotspot_wrapper[i].setAttribute('visible', true);
-            }
-            var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
+            var hotspots = document.querySelectorAll('.hotspot-wrapper');
             for (var i = 0; i < hotspots.length; i++) {
-                hotspots[i].setAttribute('visible', 'true');
-                hotspots[i].emit('hotspot-intro-' + content_id);
+                hotspots[i].setAttribute('visible', 'false');
             }
-        }, 1000);
 
-      }
+            var sphere = document.querySelector('#photosphere');
+            sphere.setAttribute('material', 'src', '#img-photosphere-' + image_id);
+            sphere.setAttribute('data-content-id', content_id);
+
+            var materialtextureloaded_listener = function() {
+
+                document.querySelector('#photosphere-menu').setAttribute('visible', false);
+                document.querySelector('#cursor').setAttribute('visible', false);
+
+                /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
+                var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
+                for (var i = 0; i < hotspot_wrapper.length; i++) {
+                    hotspot_wrapper[i].setAttribute('visible', true);
+                }
+                /* animation */
+                var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
+                for (var i = 0; i < hotspots.length; i++) {
+                    hotspots[i].setAttribute('visible', 'true');
+                    hotspots[i].emit('hotspot-intro-' + content_id);
+                }
+
+                var title = document.querySelector('#photosphere-title-content-id-' + content_id);
+                if (title != null) {
+                    title.setAttribute('position', { x: 0, y:1.6, z:-2 });
+                    title.setAttribute('visible', true);
+                    setTimeout(function() {
+                        title.setAttribute('visible', false);
+                    }, 10000);
+                }
+                sphere.removeEventListener('materialtextureloaded', materialtextureloaded_listener);
+            };
+            sphere.addEventListener('materialtextureloaded', materialtextureloaded_listener);
+
+        } /* if */
 
     },
 

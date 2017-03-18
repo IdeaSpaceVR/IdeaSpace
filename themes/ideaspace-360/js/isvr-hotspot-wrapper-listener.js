@@ -4,21 +4,30 @@ AFRAME.registerComponent('isvr-hotspot-wrapper-listener', {
 
         this.el.addEventListener('mouseenter', function() {
 
-            document.querySelector('#cursor').setAttribute('visible', true);
+            if (this.getAttribute('data-content-id') == document.querySelector('#photosphere').getAttribute('data-content-id') && 
+                document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
+
+                document.querySelector('#cursor').setAttribute('visible', true);
+            }
         });
 
         this.el.addEventListener('mouseleave', function() {
 
-            if (document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
+            if (this.getAttribute('data-content-id') == document.querySelector('#photosphere').getAttribute('data-content-id') && 
+                document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
+
                 document.querySelector('#cursor').setAttribute('visible', false);
             }
         });
 
         this.el.addEventListener('click', function() {
 
-            //this.emit('hotspot-outro-' + this.getAttribute('data-content-id'));        
-            this.setAttribute('visible', false);
-            document.querySelector('.hotspot-text-content-id-' + this.getAttribute('data-text-content-id')).setAttribute('visible', true);
+            if (this.getAttribute('data-content-id') == document.querySelector('#photosphere').getAttribute('data-content-id') && 
+                document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
+
+                this.setAttribute('visible', false);
+                document.querySelector('.hotspot-text-content-id-' + this.getAttribute('data-text-content-id')).setAttribute('visible', true);
+            }
         });
 
     }

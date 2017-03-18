@@ -34,9 +34,29 @@ AFRAME.registerComponent('isvr-init-assets', {
 
                     var sphere = document.querySelector('#photosphere');
                     sphere.setAttribute('material', 'src', '#img-photosphere-1');
+                    sphere.setAttribute('data-content-id', content_id);
 
-                    var materialtextureloaded_listener = function() {
-console.log('in 2: '+content_id);
+                    var photosphere_texture_loaded_listener = function() {
+
+                        document.querySelector('#photosphere-loading').setAttribute('visible', false);
+                        document.querySelector('#photosphere-loading-anim').stop();
+
+                        setTimeout(function() {
+                            /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
+                            var hotspots = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
+                            for (var i = 0; i < hotspots.length; i++) {
+                                hotspots[i].setAttribute('visible', true);
+                            }
+                            /* animation */
+                            var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
+                            for (var i = 0; i < hotspots.length; i++) {
+                                hotspots[i].setAttribute('visible', 'true');
+                                hotspots[i].emit('hotspot-intro-' + content_id);
+                            }
+                        }, 1000);
+
+                        sphere.emit('photosphere-fading');
+
                         var title = document.querySelector('#photosphere-title-content-id-' + content_id);
                         if (title != null) {
                             title.setAttribute('position', { x: 0, y:1.6, z:-2 });
@@ -45,19 +65,9 @@ console.log('in 2: '+content_id);
                                 title.setAttribute('visible', false);
                             }, 10000);
                         }
+                        sphere.removeEventListener('materialtextureloaded', photosphere_texture_loaded_listener);
                     };
-                    window.materialtextureloaded_listener = materialtextureloaded_listener;
-                    sphere.addEventListener('materialtextureloaded', window.materialtextureloaded_listener);
-
-                    document.querySelector('#photosphere-loading').setAttribute('visible', false);
-                    document.querySelector('#photosphere-loading-anim').stop();
-
-                    var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
-                    for (var i = 0; i < hotspots.length; i++) {
-                        hotspots[i].setAttribute('visible', true);
-                    }
-
-                    sphere.emit('photosphere-fading');
+                    sphere.addEventListener('materialtextureloaded', photosphere_texture_loaded_listener); 
                 }
             }(obj['photo-spheres'][0]['photo-sphere']['#content-id']));
             photosphere_image.src = obj['photo-spheres'][0]['photo-sphere']['#uri']['#value'];
@@ -80,7 +90,7 @@ console.log('in 2: '+content_id);
 
                         var thumb = document.querySelector('#photosphere-thumb-' + (i+1));
 
-                        /* img-photosphere-1 has already been loaded */
+                        // img-photosphere-1 has already been loaded 
                         if (id != 1) {
 
                             var photosphere_image = new Image();
