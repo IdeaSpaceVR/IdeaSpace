@@ -8,21 +8,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
 
-    <meta name="abstract" content="" />
-    <meta name="description" content="" />
+    <meta name="abstract" content="{{ $space_title }}" />
+    <meta name="description" content="{{ $space_title }}" />
     <meta name="keywords" content="" />
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
     <meta http-equiv="origin-trial" data-feature="WebVR" data-expires="04/11/17" content="{{ $origin_trial_token }}">
 
-    <meta property="og:site_name" content="" />
-    <meta property="og:image:secure_url" content="" />
-    <meta property="og:image" content="" />
+    <meta property="og:site_name" content="{{ $space_title }}" />
+    @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0)
+    <meta property="og:image:secure_url" content="{{ $content['photo-spheres'][0]['photo-sphere']['#uri']['#value'] }}" />
+    <meta property="og:image" content="{{ $content['photo-spheres'][0]['photo-sphere']['#uri']['#value'] }}" />
+    @endif
     <meta property="og:description" content="" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:type" content="website" />
-    <meta property="og:url" content="" />
+    <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
@@ -36,7 +38,23 @@
 </head>
 <body>
 
+    <div class="outer" id="intro">
+        <div class="middle">
+            <div class="inner">
+                <div class="title">{{ $space_title }}</div>
+                <div class="start">
+                    <button id="start-btn" href="#">Start</button>
+                </div>
+                <div class="instructions">
+                    <div class="instruction"><strong>Mobile VR:</strong><br> Press button to view menu. A photo sphere containing hotspots renders a cursor. Press button to activate a hotspot.</div>
+                    <div class="instruction"><strong>Desktop VR (seated):</strong><br> Press space on keyboard to view menu. Mouse click to select photo sphere. A photo sphere containing hotspots renders a cursor. Hover the cursor over a hotspot and click to activate a hotspot. </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
 @yield('scene')
 
+    <script src="{{ url($theme_dir . '/js/main.js') }}"></script>
 </body>
 </html>
