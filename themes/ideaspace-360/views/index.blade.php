@@ -8,20 +8,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes"> <!-- Fullscreen Landscape on iOS -->
 
-    <meta name="abstract" content="{{ $space_title }}" />
-    <meta name="description" content="{{ $space_title }}" />
+    <meta name="abstract" content="@yield('title')" />
+    <meta name="description" content="@yield('title')" />
     <meta name="keywords" content="" />
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
     <meta http-equiv="origin-trial" data-feature="WebVR" data-expires="04/11/17" content="{{ $origin_trial_token }}">
 
-    <meta property="og:site_name" content="{{ $space_title }}" />
+    <meta property="og:site_name" content="@yield('title')" />
     @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0)
     <meta property="og:image:secure_url" content="{{ $content['photo-spheres'][0]['photo-sphere']['#uri']['#value'] }}" />
     <meta property="og:image" content="{{ $content['photo-spheres'][0]['photo-sphere']['#uri']['#value'] }}" />
     @endif
-    <meta property="og:description" content="" />
+    <meta property="og:description" content="@yield('title')" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ \Request::url() }}" />
@@ -41,7 +41,7 @@
     <div class="outer" id="intro">
         <div class="middle">
             <div class="inner">
-                <div class="title">{{ $space_title }}</div>
+                <div class="title">@yield('title')</div>
                 <div class="start">
                     <button id="start-btn" href="#">Start</button>
                 </div>

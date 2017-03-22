@@ -10,8 +10,8 @@ return [
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
-  '#theme-keywords' => 'photo sphere, VR, mobile, gaze input navigation',
-  '#theme-compatibility' => 'Google Cardboard, Google Daydream, Oculus Rift, Vive',
+  '#theme-keywords' => 'photo sphere, gaze input navigation, mobile, desktop (seated), 360, photography',
+  '#theme-compatibility' => 'Google Cardboard, Oculus Rift',
   '#theme-view' => 'scene',
 
   '#content-types' => [
@@ -72,9 +72,11 @@ return [
         ],
 
       ], /* fields */
+
     ], /* photo-spheres */
 
-  ],
+  ], /* content types */
+
 ];
 
 

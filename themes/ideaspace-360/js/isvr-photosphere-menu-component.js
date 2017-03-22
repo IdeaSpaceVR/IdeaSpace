@@ -2,7 +2,7 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
 
     init: function() {
 
-        if (AFRAME.utils.device.isMobile() || AFRAME.utils.device.isGearVR() || AFRAME.utils.device.checkHeadsetConnected()) {
+        if (AFRAME.utils.device.isMobile() /*|| AFRAME.utils.device.isGearVR() || AFRAME.utils.device.checkHeadsetConnected()*/) {
             document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
         } else {
             window.onkeydown = (function(e) {

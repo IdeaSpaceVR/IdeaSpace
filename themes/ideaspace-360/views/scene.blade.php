@@ -128,7 +128,11 @@
             @if (isset($photosphere['attach-text-notes']))
                 @foreach ($photosphere['attach-text-notes']['#positions'] as $text_note)
 
-                    <a-sphere class="hotspot-wrapper hotspot-wrapper-content-id-{{ $photosphere['attach-text-notes']['#content-id'] }}" material="color: #FFFFFF; side: double; shader: flat; opacity: 0" radius="0.5" visible="false" position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}" rotation="{{ $text_note['#rotation']['#x'] }} {{ $text_note['#rotation']['#y'] }} {{ $text_note['#rotation']['#z'] }}" scale="1 1 1" isvr-hotspot-wrapper-listener data-content-id="{{ $photosphere['attach-text-notes']['#content-id'] }}" data-text-content-id="{{ $text_note['#content-id'] }}">
+                    @php 
+                    $rand = str_random();
+                    @endphp
+
+                    <a-sphere class="hotspot-wrapper hotspot-wrapper-content-id-{{ $photosphere['attach-text-notes']['#content-id'] }}" material="color: #FFFFFF; side: double; shader: flat; opacity: 0" radius="0.5" visible="false" position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}" rotation="{{ $text_note['#rotation']['#x'] }} {{ $text_note['#rotation']['#y'] }} {{ $text_note['#rotation']['#z'] }}" scale="1 1 1" isvr-hotspot-wrapper-listener data-content-id="{{ $photosphere['attach-text-notes']['#content-id'] }}" data-text-content-id="{{ $text_note['#content-id'] . $rand }}">
                         <a-sphere class="hotspot hotspot-content-id-{{ $photosphere['attach-text-notes']['#content-id'] }}" scale="1 1 1" material="color: #0080e5; side: double; shader: flat; opacity: 0.5" radius="0.1" visible="false">
                             <a-animation
                                 attribute="radius"
@@ -143,7 +147,7 @@
                     </a-sphere>
 
                     <a-entity
-                        class="hotspot-text hotspot-text-content-id-{{ $text_note['#content-id'] }}"
+                        class="hotspot-text hotspot-text-content-id-{{ $text_note['#content-id'] . $rand }}"
                         isvr-hotspot-text-listener
                         data-content-id="{{ $photosphere['attach-text-notes']['#content-id'] }}"
                         position="{{ $text_note['#position']['#x'] }} {{ $text_note['#position']['#y'] }} {{ $text_note['#position']['#z'] }}"
