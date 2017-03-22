@@ -12,7 +12,6 @@ use App\Space;
 use App\Theme;
 use App\Content;
 use File;
-use Log;
 
 class FieldTypeImage {
 
