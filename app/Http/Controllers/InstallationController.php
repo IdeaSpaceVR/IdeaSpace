@@ -33,7 +33,10 @@ class InstallationController extends Controller {
      */
     public function server_requirements() {
 
-        if (Schema::hasTable('spaces') && Schema::hasTable('themes')) {
+        if (env('DB_HOST', '') != '' &&
+            env('DB_DATABASE', '') != '' &&
+            env('DB_USERNAME', '') != '' &&
+            env('DB_PASSWORD', '') != '') {
     
             return redirect('login');
         }

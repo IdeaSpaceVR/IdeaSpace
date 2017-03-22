@@ -4,8 +4,8 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Setting;
-use Schema;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Schema;
 
 class AppServiceProvider extends ServiceProvider {
 
@@ -18,11 +18,17 @@ class AppServiceProvider extends ServiceProvider {
 
         $origin_trial_token = '';
 
-        if (Schema::hasTable('spaces') && Schema::hasTable('themes')) {        
-            try {
-                $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
-                $origin_trial_token = $setting_origin_trial_token->value;
-            } catch (ModelNotFoundException $e) {
+        if (env('DB_HOST', '') != '' &&
+            env('DB_DATABASE', '') != '' &&
+            env('DB_USERNAME', '') != '' &&
+            env('DB_PASSWORD', '') != '') {
+
+            if (Schema::hasTable('settings')) {
+                try {
+                    $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
+                    $origin_trial_token = $setting_origin_trial_token->value;
+                } catch (ModelNotFoundException $e) {
+                }
             }
         }
 
