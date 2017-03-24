@@ -26,10 +26,10 @@
                         </div>
                         <div class="col-md-4">
                             <div> 
-                                <a href="{{ env('THEME_DIRECTORY_URL') }}" target="_blank" style="font-size:16px"><i class="fa fa-btn fa-paint-brush"></i> {{ trans('template_dashboard.get_themes') }}</a>
+                                <a href="{{ config('app.theme_directory_url') }}" target="_blank" style="font-size:16px"><i class="fa fa-btn fa-paint-brush"></i> {{ trans('template_dashboard.get_themes') }}</a>
                             </div> 
                             <div style="margin-top:10px"> 
-                                <a href="{{ env('CONTACT_URL') }}" target="_blank" style="font-size:16px"><i class="fa fa-btn fa-envelope"></i> {{ trans('template_dashboard.contact') }}</a>
+                                <a href="{{ config('app.contact_url') }}" target="_blank" style="font-size:16px"><i class="fa fa-btn fa-envelope"></i> {{ trans('template_dashboard.contact') }}</a>
                             </div> 
                         </div>
                         <div class="col-md-4">

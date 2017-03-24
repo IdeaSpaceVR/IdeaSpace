@@ -179,7 +179,7 @@
         Made on Earth <i class="fa fa-globe" aria-hidden="true"></i> 
         </div>
         <div class="pull-right" style="margin: 0 20px 0 0;font-size:12px">
-        {{ trans('template_app.version') }} {{ env('VERSION') }} 
+        {{ trans('template_app.version') }} {{ config('app.version') }} 
         </div>
     </div>
 

@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'env' => env('APP_ENV', 'production'),
+    'env' => 'local',
 
     /*
     |--------------------------------------------------------------------------
@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'debug' => env('APP_DEBUG', false),
+    'debug' => true,
 
     /*
     |--------------------------------------------------------------------------
@@ -66,7 +66,7 @@ return [
     */
 
     //'locale' => 'en',
-    'locale' => env('LOCALE'),
+    'locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -79,8 +79,7 @@ return [
     |
     */
 
-    //'fallback_locale' => 'en',
-    'fallback_locale' => env('FALLBACK_LOCALE'),
+    'fallback_locale' => 'en',
 
     /*
     |--------------------------------------------------------------------------
@@ -93,7 +92,7 @@ return [
     |
     */
 
-    'key' => env('APP_KEY'),
+    'key' => 'v4oJdL6AssbleL0rWSRmJyi2RsJy3p9d',
 
     'cipher' => 'AES-256-CBC',
 
@@ -110,7 +109,7 @@ return [
     |
     */
 
-    'log' => env('APP_LOG', 'single'),
+    'log' => 'single',
 
     /*
     |--------------------------------------------------------------------------
@@ -158,6 +157,7 @@ return [
         App\Providers\EventServiceProvider::class,
         App\Providers\RouteServiceProvider::class,
         App\Providers\HelperServiceProvider::class,
+        App\Providers\ConfigServiceProvider::class,
         App\Providers\ContentTypeServiceProvider::class,
         Collective\Html\HtmlServiceProvider::class,
         Intervention\Image\ImageServiceProvider::class,
@@ -210,5 +210,12 @@ return [
         'Html'      => Collective\Html\HtmlFacade::class,
         'Image'     => Intervention\Image\Facades\Image::class,
     ],
+
+
+    'theme_directory_url' => 'https://www.ideaspacevr.org/themes',
+    'theme_howto_url' => 'https://forum.ideaspacevr.org',
+    'contact_url' => 'https://www.ideaspacevr.org/contact',
+
+    'version' => '1.0.0',
 
 ];

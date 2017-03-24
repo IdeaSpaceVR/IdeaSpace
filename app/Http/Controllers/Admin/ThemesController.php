@@ -74,7 +74,7 @@ class ThemesController extends Controller {
                     $theme->config = json_encode($contents);
 
                     $theme_ideaspacevr_version = substr($contents['#ideaspace-version'], 2); 
-                    if (version_compare($theme_ideaspacevr_version, env('VERSION'), '>') === true) {
+                    if (version_compare($theme_ideaspacevr_version, config('app.version'), '>') === true) {
                         $theme->status = Theme::STATUS_INCOMPATIBLE;
                     } else if ($theme->status == Theme::STATUS_INCOMPATIBLE) {
                         $theme->status = Theme::STATUS_INACTIVE;

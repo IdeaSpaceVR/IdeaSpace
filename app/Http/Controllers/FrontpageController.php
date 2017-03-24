@@ -38,10 +38,12 @@ class FrontpageController extends Controller {
      */
     public function index() {
 
-        if (env('DB_HOST', '') == '' || 
-            env('DB_DATABASE', '') == '' || 
-            env('DB_USERNAME', '') == '' || 
-            env('DB_PASSWORD', '') == '' || 
+        $db_config = config('database.connections.'.config('database.default'));
+
+        if ($db_config['host'] == '' || 
+            $db_config['database'] == '' || 
+            $db_config['username'] == '' || 
+            $db_config['password'] == '' || 
             Schema::hasTable('spaces') === false || 
             Schema::hasTable('themes') === false) {
 

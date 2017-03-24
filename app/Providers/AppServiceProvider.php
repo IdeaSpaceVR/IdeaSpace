@@ -18,10 +18,12 @@ class AppServiceProvider extends ServiceProvider {
 
         $origin_trial_token = '';
 
-        if (env('DB_HOST', '') != '' &&
-            env('DB_DATABASE', '') != '' &&
-            env('DB_USERNAME', '') != '' &&
-            env('DB_PASSWORD', '') != '') {
+        $db_config = config('database.connections.'.config('database.default'));
+
+        if ($db_config['host'] != '' &&
+            $db_config['database'] != '' &&
+            $db_config['username'] != '' &&
+            $db_config['password'] != '') {
 
             if (Schema::hasTable('settings')) {
                 try {

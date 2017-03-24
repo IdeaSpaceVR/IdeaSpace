@@ -33,10 +33,12 @@ class InstallationController extends Controller {
      */
     public function server_requirements() {
 
-        if (env('DB_HOST', '') != '' &&
-            env('DB_DATABASE', '') != '' &&
-            env('DB_USERNAME', '') != '' &&
-            env('DB_PASSWORD', '') != '') {
+        $db_config = config('database.connections.'.config('database.default'));
+
+        if ($db_config['host'] != '' &&
+            $db_config['database'] != '' &&
+            $db_config['username'] != '' &&
+            $db_config['password'] != '') {
     
             return redirect('login');
         }
@@ -112,12 +114,12 @@ class InstallationController extends Controller {
      */
     public function install_db() {
 
-        /* .env file exists */
-        if (File::exists('.env') && 
-            env('DB_HOST', '') == '' ||
-            env('DB_DATABASE', '') == '' ||
-            env('DB_USERNAME', '') == '' ||
-            env('DB_PASSWORD', '') == '') {
+        $db_config = config('database.connections.'.config('database.default'));
+
+        if ($db_config['host'] == '' ||
+            $db_config['database'] == '' ||
+            $db_config['username'] == '' ||
+            $db_config['password'] == '') {
 
             $vars = [
                 'css' => array(asset('public/assets/install/css/db_config.css'))
@@ -150,8 +152,10 @@ class InstallationController extends Controller {
      */
     public function install_db_submit(Request $request) {
 
-        /* .env file exists and DB_HOST variable is empty */
-        if (env('DB_HOST', '') == '') {
+        $db_config = config('database.connections.'.config('database.default'));
+
+        /* host variable is empty */
+        if ($db_config['host'] == '') {
 
             $validation_rules = [
                 'db_name' => 'required',
@@ -177,17 +181,17 @@ class InstallationController extends Controller {
 
             /* write .env variables */
            
-            /* generate app key and write it to .env file */ 
-            Artisan::call('key:generate');
+            /* generate app key and write it to the config file */ 
+            /* src/Illuminate/Foundation/Console/KeyGenerateCommand.php */
+            app('config')->write('app.key', 'base64:'.base64_encode(random_bytes(config('app.cipher') == 'AES-128-CBC' ? 16 : 32)));
 
-            file_put_contents('.env', str_replace('DB_HOST=', 'DB_HOST=' . trim($request->input('db_host')), file_get_contents('.env')));
-            file_put_contents('.env', str_replace('DB_DATABASE=', 'DB_DATABASE=' . trim($request->input('db_name')), file_get_contents('.env')));
-            file_put_contents('.env', str_replace('DB_USERNAME=', 'DB_USERNAME=' . trim($request->input('db_user_name')), file_get_contents('.env')));
-            file_put_contents('.env', str_replace('DB_PASSWORD=', 'DB_PASSWORD=' . trim($request->input('db_user_password')), file_get_contents('.env')));
-            file_put_contents('.env', str_replace('DB_PREFIX=', 'DB_PREFIX=' . trim($request->input('db_table_prefix')), file_get_contents('.env')));
+            app('config')->write('database.connections.' . config('database.default') . '.host', trim($request->input('db_host')));
+            app('config')->write('database.connections.' . config('database.default') . '.database', trim($request->input('db_name')));
+            app('config')->write('database.connections.' . config('database.default') . '.username', trim($request->input('db_user_name')));
+            app('config')->write('database.connections.' . config('database.default') . '.password', trim($request->input('db_user_password')));
+            app('config')->write('database.connections.' . config('database.default') . '.prefix', trim($request->input('db_table_prefix')));
 
             return redirect('install-db')->withInput()->with('alert-success', 'The database connection details have been saved.');
-
         } 
 
         $validation_rules = [
