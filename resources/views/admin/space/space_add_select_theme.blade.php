@@ -4,13 +4,13 @@
 
 @section('content')
 
-    <h1>Add New Space</h1> 
-    <h3>Select a theme:</h3>
+    <h1 style="padding-left:35px">Add New Space</h1> 
+    <h3 style="padding-left:35px">Select a theme:</h3>
 
     {!! Form::open(array('route' => 'space_add_select_theme_submit', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
     @if (count($themes) === 0) 
-        <div class="row">
+        <div class="row" style="padding-left:35px">
             <div class="col-md-12" style="font-size:16px">
             There are no installed themes. <a href="{{ route('themes') }}" style="color:#000000;text-decoration:underline">Install some themes here</a>.
             </div>    
