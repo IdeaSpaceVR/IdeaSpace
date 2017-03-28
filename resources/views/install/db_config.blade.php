@@ -27,6 +27,12 @@
                     </div>
                     @endif
 
+                    @if (session('alert-error'))
+                    <div class="alert alert-danger">
+                        {!! session('alert-error') !!}
+                    </div>
+                    @endif
+
                     @if (count($errors) > 0)
                     <div class="alert alert-danger">
                         There are errors in the fields below.

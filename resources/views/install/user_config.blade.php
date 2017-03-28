@@ -11,7 +11,7 @@
         </div>
     </div>
 
-    {!! Form::open(array('route' => 'install_db', 'method' => 'POST', 'autocomplete' => 'false', 'class' => 'form-horizontal')) !!}
+    {!! Form::open(array('route' => 'install_user_config', 'method' => 'POST', 'autocomplete' => 'false', 'class' => 'form-horizontal')) !!}
 
     <div class="row">
 
