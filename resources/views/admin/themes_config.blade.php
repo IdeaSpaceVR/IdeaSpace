@@ -6,7 +6,7 @@
 
     {!! Form::open(array('route' => 'themes', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
-    <h1 style="padding-left:35px">{{ trans('template_themes_config.themes') }} <a href="{{ config('app.theme_directory_url') }}" style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" target="_blank">{{ trans('template_themes_config.get_themes') }}</a> <a href="{{ config('app.theme_howto_url') }}" style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" target="_blank">{{ trans('template_themes_config.howto_themes') }}</a></h1> 
+    <h1 style="padding-left:35px">{{ trans('template_themes_config.themes') }} <a href="{{ config('app.theme_directory_url') }}" style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button" target="_blank"><i class="fa fa-btn fa-download"></i> {{ trans('template_themes_config.get_themes') }}</a> <a href="{{ route('space_add') }}" style="margin-left:20px;margin-bottom:6px;" class="btn btn-primary btn-sm" role="button"><i class="fa fa-btn fa-pencil"></i> {{ trans('template_themes_config.add_new_space') }}</a></h1> 
 
     <?php $i=0; ?>
     @foreach ($themes as $theme)

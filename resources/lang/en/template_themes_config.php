@@ -4,7 +4,6 @@ return [
 
     'themes' => 'Themes',
     'get_themes' => 'Get more themes',
-    'howto_themes' => 'How to install new themes',
     'installed' => 'Installed',
     'version' => 'Version:',
     'author' => 'Author:',
@@ -12,5 +11,6 @@ return [
     'install_theme' => 'Install Theme',
     'invalid_theme' => 'Configuration Error!',
     'incompatible_theme' => 'Incompatible with IdeaSpaceVR version!',
+    'add_new_space' => 'Add New Space',
 
 ];
