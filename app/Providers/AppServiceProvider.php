@@ -6,6 +6,8 @@ use Illuminate\Support\ServiceProvider;
 use App\Setting;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Schema;
+use DB;
+use Exception;
 
 class AppServiceProvider extends ServiceProvider {
 
@@ -29,7 +31,7 @@ class AppServiceProvider extends ServiceProvider {
 
             try {
                 DB::connection(config('database.default'))->table(DB::raw('DUAL'))->first([DB::raw(1)]);
-            } catch (\Exception $e) {
+            } catch (Exception $e) {
                 $db_connection = false;
             }
 
