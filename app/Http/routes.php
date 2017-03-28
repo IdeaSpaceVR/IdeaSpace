@@ -165,6 +165,8 @@ Route::group(['middleware' => 'web'], function () {
   Route::post('install', ['as' => 'server_requirements_submit', 'uses' => 'InstallationController@server_requirements_submit']);
   Route::get('install-db', ['as' => 'install_db', 'uses' => 'InstallationController@install_db']);
   Route::post('install-db', ['as' => 'install_db_submit', 'uses' => 'InstallationController@install_db_submit']);
+  Route::get('install-user-config', ['as' => 'install_user_config', 'uses' => 'InstallationController@install_user_config']);
+  Route::post('install-user-config', ['as' => 'install_user_config_submit', 'uses' => 'InstallationController@install_user_config_submit']);
 
 
   /**

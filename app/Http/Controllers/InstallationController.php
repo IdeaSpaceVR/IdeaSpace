@@ -11,6 +11,8 @@ use Validator;
 use Artisan;
 use Hash;
 use App\User;
+use DB;
+use Exception;
 
 class InstallationController extends Controller {
 
@@ -73,6 +75,14 @@ class InstallationController extends Controller {
             $errors[] = 'gd_imagick';
         }
 
+        if (!File::isWritable('storage')) {
+            $errors[] = 'storage_directory';
+        }
+
+        if (!File::isWritable('bootstrap/cache')) {
+            $errors[] = 'bootstrap_cache_directory';
+        }
+
         if (extension_loaded('gd')) {
           $gd_imagick = 'GD Library';
         } else if (extension_loaded('imagick')) {
@@ -114,32 +124,15 @@ class InstallationController extends Controller {
      */
     public function install_db() {
 
-        $db_config = config('database.connections.'.config('database.default'));
-
-        if ($db_config['host'] == '' ||
-            $db_config['database'] == '' ||
-            $db_config['username'] == '' ||
-            $db_config['password'] == '') {
-
-            $vars = [
-                'css' => array(asset('public/assets/install/css/db_config.css'))
-            ];
-
-            return view('install.db_config', $vars);
+        if ($this->installation_done()) {
+            return redirect('login');
         }
 
-        if (!Schema::hasTable('spaces') && !Schema::hasTable('themes')) {
+        $vars = [
+            'css' => array(asset('public/assets/install/css/db_config.css'))
+        ];
 
-            $vars = [
-                'js' => array(asset('public/assets/install/js/user_config.js'), 
-                    asset('public/jquery-pwstrength/pwstrength.js')),
-                'css' => array(asset('public/assets/install/css/user_config.css'))
-            ];
-
-            return view('install.user_config', $vars);
-        } 
-
-        return redirect('login');
+        return view('install.db_config', $vars);
     }
 
 
@@ -152,47 +145,81 @@ class InstallationController extends Controller {
      */
     public function install_db_submit(Request $request) {
 
-        $db_config = config('database.connections.'.config('database.default'));
+        $validation_rules = [
+            'db_name' => 'required',
+            'db_user_name' => 'required',
+            'db_user_password' => 'required',
+            'db_host' => 'required',
+            'db_table_prefix' => 'required'
+        ];
 
-        /* host variable is empty */
-        if ($db_config['host'] == '') {
+        $validation_messages = [
+            'db_name.required' => 'The database name field is required.',
+            'db_user_name.required' => 'The user name field is required.',
+            'db_user_password.required' => 'The password field is required.',
+            'db_host.required' => 'The database host field is required.',
+            'db_table_prefix.required' => 'The table prefix field is required.'
+        ];
 
-            $validation_rules = [
-                'db_name' => 'required',
-                'db_user_name' => 'required',
-                'db_user_password' => 'required',
-                'db_host' => 'required',
-                'db_table_prefix' => 'required'
-            ];
+        $validator = Validator::make($request->all(), $validation_rules, $validation_messages);
 
-            $validation_messages = [
-                'db_name.required' => 'The database name field is required.',
-                'db_user_name.required' => 'The user name field is required.',
-                'db_user_password.required' => 'The password field is required.',
-                'db_host.required' => 'The database host field is required.',
-                'db_table_prefix.required' => 'The table prefix field is required.'
-            ];
+        if ($validator->fails()) {
+            return redirect('install-db')->withErrors($validator)->withInput();
+        }
 
-            $validator = Validator::make($request->all(), $validation_rules, $validation_messages);
+        app('config')->write('database.connections.' . config('database.default') . '.host', trim($request->input('db_host')));
+        app('config')->write('database.connections.' . config('database.default') . '.database', trim($request->input('db_name')));
+        app('config')->write('database.connections.' . config('database.default') . '.username', trim($request->input('db_user_name')));
+        app('config')->write('database.connections.' . config('database.default') . '.password', trim($request->input('db_user_password')));
+        app('config')->write('database.connections.' . config('database.default') . '.prefix', trim($request->input('db_table_prefix')));
 
-            if ($validator->fails()) {
-                return redirect('install-db')->withErrors($validator)->withInput();
-            }
+        try {
+            DB::connection(config('database.default'))->table(DB::raw('DUAL'))->first([DB::raw(1)]);
+        } catch (Exception $e) {
+            return redirect('install-db')->withInput()->with('alert-error', 'Cannot connect to the database. Please verify your database settings and try again.');
+        }
 
-            /* write .env variables */
-           
-            /* generate app key and write it to the config file */ 
-            /* src/Illuminate/Foundation/Console/KeyGenerateCommand.php */
-            app('config')->write('app.key', 'base64:'.base64_encode(random_bytes(config('app.cipher') == 'AES-128-CBC' ? 16 : 32)));
+        /* generate app key and write it to the config file */ 
+        /* src/Illuminate/Foundation/Console/KeyGenerateCommand.php */
+        app('config')->write('app.key', 'base64:'.base64_encode(random_bytes(config('app.cipher') == 'AES-128-CBC' ? 16 : 32)));
+    
+        return redirect('install-user-config');
+    }
 
-            app('config')->write('database.connections.' . config('database.default') . '.host', trim($request->input('db_host')));
-            app('config')->write('database.connections.' . config('database.default') . '.database', trim($request->input('db_name')));
-            app('config')->write('database.connections.' . config('database.default') . '.username', trim($request->input('db_user_name')));
-            app('config')->write('database.connections.' . config('database.default') . '.password', trim($request->input('db_user_password')));
-            app('config')->write('database.connections.' . config('database.default') . '.prefix', trim($request->input('db_table_prefix')));
 
-            return redirect('install-db')->withInput()->with('alert-success', 'The database connection details have been saved.');
-        } 
+    /**
+     * Show the installation page.
+     *
+     * @return Response
+     */
+    public function install_user_config() {
+
+        if ($this->installation_done()) {
+            return redirect('login');
+        }
+
+        $vars = [
+            'js' => array(asset('public/assets/install/js/user_config.js'),
+                asset('public/jquery-pwstrength/pwstrength.js')),
+            'css' => array(asset('public/assets/install/css/user_config.css'))
+        ];
+
+        return view('install.user_config', $vars);
+    }
+
+
+    /**
+     * Installation submit.
+     *
+     * @param Request $request
+     *
+     * @return Response
+     */
+    public function install_user_config_submit(Request $request) {
+
+        if ($this->installation_done()) {
+            abort(404);
+        }
 
         $validation_rules = [
             'username' => 'required',
@@ -226,4 +253,25 @@ class InstallationController extends Controller {
      
         return redirect('login')->with('alert-success', 'IdeaSpaceVR has been successfully installed!');   
     }
+
+
+    /**
+     * Is installation done?
+     */
+    private function installation_done() {
+
+        try {
+            DB::connection(config('database.default'))->table(DB::raw('DUAL'))->first([DB::raw(1)]);
+        } catch (Exception $e) {
+            return false;
+        }
+
+        if (Schema::hasTable('settings')) {
+            return true;
+        }
+
+        return false;
+    }
+
+
 }

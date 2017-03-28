@@ -25,7 +25,15 @@ class AppServiceProvider extends ServiceProvider {
             $db_config['username'] != '' &&
             $db_config['password'] != '') {
 
-            if (Schema::hasTable('settings')) {
+            $db_connection = true;
+
+            try {
+                DB::connection(config('database.default'))->table(DB::raw('DUAL'))->first([DB::raw(1)]);
+            } catch (\Exception $e) {
+                $db_connection = false;
+            }
+
+            if ($db_connection == true && Schema::hasTable('settings')) {
                 try {
                     $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
                     $origin_trial_token = $setting_origin_trial_token->value;
