@@ -1,16 +1,29 @@
-## IdeaSpaceVR 
+![IdeaSpaceVR Logo](public/assets/layouts/app/images/isvr-logo-v2.png "IdeaSpaceVR - PHP Content management system (CMS) for the virtual reality web (WebVR)")
 
-![IdeaSpaceVR - CMS for WebVR](preview.png "IdeaSpaceVR - CMS for WebVR")
 
-We believe that everyone should be able to easily create and publish virtual reality web experiences with the focus on content creation and creativity. 
+## About IdeaSpaceVR 
 
-Software developers should have the possibility to create and share virtual reality web themes.
+### Content Management System
+Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (eg. MySQL, MariaDB).
 
-![IdeaSpaceVR - CMS for WebVR](preview2.png "IdeaSpaceVR - CMS for WebVR")
+### VR Themes
+Download and install new themes and create a virtual reality website. Or create your own theme with the Theme API. [Take a look at our theme directory](https://www.ideaspacevr.org/themes), there might not be many themes yet, but it is constantly growing.
 
-## VR Themes
+### Based on WebVR Standard
+IdeaSpaceVR is using WebVR for interactive VR experiences that is compatible with all modern web browsers on PC and mobile. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)!
 
-The latest release comes with 3 default themes: [Hello World](https://www.ideaspacevr.org/themes/hello-world-example-theme), [Web VR Photo Sphere Viewer](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-viewer-navigation-menu), [Photo Sphere Diver](https://www.ideaspacevr.org/themes/web-vr-photo-sphere-diver-panorama).
+### Mission
+We believe that everyone should be able to easily create and publish virtual reality web experiences with the focus on content creation and creativity. Software developers should have the possibility to create and share virtual reality web themes.
+
+
+![IdeaSpaceVR - Spaces](IdeaSpaceVR-spaces.jpg "IdeaSpaceVR - Spaces")
+
+![IdeaSpaceVR - Edit Space](IdeaSpaceVR-edit-space.jpg "IdeaSpaceVR - Edit Space")
+
+![IdeaSpaceVR - Assets](IdeaSpaceVR-assets.jpg "IdeaSpaceVR - Assets")
+
+![IdeaSpaceVR - Annotations](IdeaSpaceVR-annotations.jpg "IdeaSpaceVR - Annotations")
+
 
 ## Download Latest Release
 
@@ -20,19 +33,11 @@ https://www.ideaspacevr.org/download
 
 https://www.ideaspacevr.org/documentation
 
-The IdeaSpace Theme API is currently in development. That's why the developer documentation is currently... well, under development. ;-)
+The documentation is currently under development.
 
 ## Contributing
 
 https://www.ideaspacevr.org/documentation/master/contributions
-
-## Roadmap
-
-v1.0.0 release: Theme API will implement custom content types and fields. This will allow to develop 360 degree photo spheres with positioned annotations and links... and much more.
-
-## License
-
-The IdeaSpace CMS is open-sourced software licensed under the [GPL-2.0 license](https://opensource.org/licenses/GPL-2.0)
 
 ## Credits
 
@@ -41,4 +46,14 @@ IdeaSpace would not exist without these awesome projects:
 - https://github.com/aframevr/aframe
 - https://github.com/mrdoob/three.js
 - https://github.com/laravel/laravel
+
+## Security Vulnerabilities
+
+If you discover a security vulnerability, please do not hesitate to file an issue: https://github.com/IdeaSpaceVR/IdeaSpace/issues
+
+## License
+
+The IdeaSpaceVR CMS is open-sourced software licensed under the [GPL-2.0 license](https://opensource.org/licenses/GPL-2.0)
+
+
 
