@@ -93,6 +93,30 @@
                     </div>
 
                     <div class="form-group">
+                        <label class="col-sm-3 col-sm-offset-2 control-label">Assets Directory (./public/assets/user)</label>
+                        <div class="col-sm-4">
+                            {!! !in_array('user_assets_directory', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Assets directory is writable by web server</div>':'' !!}
+                            {!! in_array('user_assets_directory', $errors)?'<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Assets directory and sub-directories are not writable by web server. Please check your directory settings.</div>':'' !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-offset-2 control-label">Database Configuration (./config/database.php)</label>
+                        <div class="col-sm-4">
+                            {!! !in_array('config_database_file', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Database configuration file is writable by web server</div>':'' !!}
+                            {!! in_array('config_database_file', $errors)?'<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Database configuration file is not writable by web server. Please check your directory settings.</div>':'' !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-offset-2 control-label">Application Configuration (./config/app.php)</label>
+                        <div class="col-sm-4">
+                            {!! !in_array('config_app_file', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Application configuration file is writable by web server</div>':'' !!}
+                            {!! in_array('config_app_file', $errors)?'<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Application configuration file is not writable by web server. Please check your directory settings.</div>':'' !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
                         <label class="col-sm-3 col-sm-offset-2 control-label">GD or ImageMagick PHP Extension</label>
                         <div class="col-sm-4">
                             {!! !in_array('gd_imagick', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> ' . $gd_imagick . ' PHP Extension installed</div>':'' !!}

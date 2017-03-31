@@ -83,6 +83,18 @@ class InstallationController extends Controller {
             $errors[] = 'bootstrap_cache_directory';
         }
 
+        if (!File::isWritable('public/assets/user')) {
+            $errors[] = 'user_assets_directory';
+        }
+
+        if (!File::isWritable('config/database.php')) {
+            $errors[] = 'config_database_file';
+        }
+
+        if (!File::isWritable('config/app.php')) {
+            $errors[] = 'config_app_file';
+        }
+
         if (extension_loaded('gd')) {
           $gd_imagick = 'GD Library';
         } else if (extension_loaded('imagick')) {
