@@ -28,7 +28,7 @@ The documentation is currently under development.
 
 https://www.ideaspacevr.org/documentation/master/contributions
 
-### Screenshots
+## Screenshots
 
 ![IdeaSpaceVR - Spaces](IdeaSpaceVR-spaces.jpg "IdeaSpaceVR - Spaces")
 
