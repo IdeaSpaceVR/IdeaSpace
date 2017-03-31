@@ -1,5 +1,4 @@
-![IdeaSpaceVR Logo](public/assets/layouts/app/images/isvr-logo-v2.png "IdeaSpaceVR - PHP Content management system (CMS) for the virtual reality web (WebVR)")
-
+<p align="center"><img src="public/assets/layouts/app/images/isvr-logo-v2.png" width="100" alt="IdeaSpaceVR - PHP Content management system (CMS) for the virtual reality web (WebVR)"></p>
 
 ## About IdeaSpaceVR 
 
@@ -15,16 +14,6 @@ IdeaSpaceVR is using WebVR for interactive VR experiences that is compatible wit
 ### Mission
 We believe that everyone should be able to easily create and publish virtual reality web experiences with the focus on content creation and creativity. Software developers should have the possibility to create and share virtual reality web themes.
 
-
-![IdeaSpaceVR - Spaces](IdeaSpaceVR-spaces.jpg "IdeaSpaceVR - Spaces")
-
-![IdeaSpaceVR - Edit Space](IdeaSpaceVR-edit-space.jpg "IdeaSpaceVR - Edit Space")
-
-![IdeaSpaceVR - Assets](IdeaSpaceVR-assets.jpg "IdeaSpaceVR - Assets")
-
-![IdeaSpaceVR - Annotations](IdeaSpaceVR-annotations.jpg "IdeaSpaceVR - Annotations")
-
-
 ## Download Latest Release
 
 https://www.ideaspacevr.org/download
@@ -38,6 +27,16 @@ The documentation is currently under development.
 ## Contributing
 
 https://www.ideaspacevr.org/documentation/master/contributions
+
+### Screenshots
+
+![IdeaSpaceVR - Spaces](IdeaSpaceVR-spaces.jpg "IdeaSpaceVR - Spaces")
+
+![IdeaSpaceVR - Edit Space](IdeaSpaceVR-edit-space.jpg "IdeaSpaceVR - Edit Space")
+
+![IdeaSpaceVR - Assets](IdeaSpaceVR-assets.jpg "IdeaSpaceVR - Assets")
+
+![IdeaSpaceVR - Annotations](IdeaSpaceVR-annotations.jpg "IdeaSpaceVR - Annotations")
 
 ## Credits
 
