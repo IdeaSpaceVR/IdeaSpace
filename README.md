@@ -52,7 +52,7 @@ If you discover a security vulnerability, please do not hesitate to file an issu
 
 ## License
 
-The IdeaSpaceVR CMS is open-sourced software licensed under the [GPL-2.0 license](https://opensource.org/licenses/GPL-2.0)
+The IdeaSpaceVR CMS is open-sourced software licensed under the <a href="https://opensource.org/licenses/MIT" target="_blank">MIT license</a>.
 
 
 
