@@ -23,7 +23,7 @@
       <?php if ($i != 0) { ?>
       </div> <!-- end row //-->
       <?php } ?>
-    <div class="row">
+    <div class="row" style="padding-left:35px">
     <?php } ?>
         <div class="col-md-4 text-center">
             <div class="thumbnail">
