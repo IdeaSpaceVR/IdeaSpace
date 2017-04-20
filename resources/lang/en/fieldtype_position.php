@@ -4,7 +4,6 @@ return [
 
     'add_positions' => 'Add Positions',
     'edit_positions' => 'Edit Positions',
-    'edit_positions' => 'Edit Positions',
     'remove_all' => 'Remove All',
     'set_positions' => 'Set Positions',
     'close' => 'Close',
