@@ -36,7 +36,7 @@ class SpaceAddController extends Controller {
      */
     public function select_theme() {
 
-        $themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
+        $themes = Theme::where('status', Theme::STATUS_ACTIVE)->orderBy('updated_at', 'desc')->get();
 
         $themes_mod = array();
 
