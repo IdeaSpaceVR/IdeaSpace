@@ -40,8 +40,8 @@ class DashboardController extends Controller {
         if (Cache::has('dashboard-news-update-counter')) {
 
             Cache::increment('dashboard-news-update-counter');
-            /* number of requests before news a fetched again */
-            if (Cache::get('dashboard-news-update-counter') > 20) {
+            /* number of requests before news are fetched again */
+            if (Cache::get('dashboard-news-update-counter') > 3) {
                 /* time to update news */
                 $vars = [
                     'js' => array(asset('public/assets/admin/dashboard/js/dashboard-json-news.js'),
