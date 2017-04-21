@@ -103,7 +103,7 @@ class ThemesController extends Controller {
         } /* foreach */
 
 
-        $themes = Theme::all();
+        $themes = Theme::orderBy('updated_at', 'desc')->get();
         $themes_mod = array();
 
         foreach ($themes as $theme) {      
