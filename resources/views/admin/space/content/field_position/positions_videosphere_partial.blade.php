@@ -18,7 +18,8 @@
 
     <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
-    <a-videosphere load-videosphere visible="false"></a-videosphere>
+    <!-- rotate to center video //-->
+    <a-videosphere load-videosphere visible="false" rotation="0 -90 0"></a-videosphere>
 
     <a-entity
         position="0 1.6 -4"
