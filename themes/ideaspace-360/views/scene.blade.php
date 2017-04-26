@@ -97,7 +97,7 @@
             geometry="primitive: sphere; radius: 5000; segmentsWidth: 64; segmentsHeight: 64"
             material="shader: flat; side: double; color: #000000"
             scale="-1 1 1"
-            rotation="0 0 0" id="photosphere">
+            rotation="0 -90 0" id="photosphere">
             <a-animation
                 attribute="material.color"
                 begin="photosphere-fading"
