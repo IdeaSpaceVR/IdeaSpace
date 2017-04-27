@@ -320,17 +320,18 @@ jQuery(document).ready(function($) {
                     $('.upload-area').removeClass('visible');
                     $('.upload-area').hide();
 
+                    /* show insert link when opened from space edit content page */
+                    if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
+                        $('#videos .files .insert-link').show();
+                        $('#asset-details .insert-btn').show();
+                        $('#videos .files .list-item .insert').unbind('click');
+                        $('#videos .files .list-item .insert').click(window.insert_click_handler);
+                        $('#asset-details .insert-btn').unbind('click');
+                        $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
+                    }
+
                 }, 3000);
 
-                /* show insert link when opened from space edit content page */
-                if ($('.asset-library-nav').find('#videos-tab').hasClass('auto-opentab')) {
-                    $('#videos .files .insert-link').show();
-                    $('#asset-details .insert-btn').show();
-                    $('#videos .files .list-item .insert').unbind('click');
-                    $('#videos .files .list-item .insert').click(window.insert_click_handler);
-                    $('#asset-details .insert-btn').unbind('click');
-                    $('#asset-details .insert-btn').click(window.insert_btn_click_handler);
-                }
 
           } else if (data.status == 'error') {
 
