@@ -1,3 +1,15 @@
+## 1.0.1
+
+- Set x:0 y:-90 z:0 as default photo sphere rotation.
+- New default themes: VR View 360 Image, VR View 360 Video, VR View 360 Image Gallery, VR View 360 Video Gallery.
+- Changed license to MIT license.
+
+## 1.0.0
+
+- Field types.
+- Asset library.
+- Complete rewrite of the system.
+
 ## 0.3.2
 
 - Major improvement of default photo sphere viewer theme.
