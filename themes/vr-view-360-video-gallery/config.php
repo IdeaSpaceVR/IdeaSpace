@@ -52,8 +52,8 @@ return [
 
         'video-sphere' => [
           '#label' => 'Video Sphere',
-          '#description' => 'Upload a video sphere in equirectangular projection format. Width or height must not be bigger than 2048 pixels.',
-          '#help' => 'Video sphere in equirectangular projection format. Width or height must not be bigger than 2048 pixels.',
+          '#description' => 'Upload a video sphere in equirectangular projection format.',
+          '#help' => 'Video sphere in equirectangular projection format.',
           '#type' => 'videosphere',
           '#required' => true,
           '#file-extension' => ['mp4'],
