@@ -205,7 +205,7 @@ class FieldTypeTextarea {
             '#label' => 'string',
             '#description' => 'string',
             '#required' => 'boolean',
-            '#rows' => 'string',
+            '#rows' => 'number',
             '#maxlength' => 'number',
             '#contentformat' => 'string'];
 

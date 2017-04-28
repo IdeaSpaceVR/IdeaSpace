@@ -2,6 +2,7 @@
 
 - Set x:0 y:-90 z:0 as default photo sphere rotation.
 - New default themes: VR View 360 Image, VR View 360 Video, VR View 360 Image Gallery, VR View 360 Video Gallery.
+- Bug fix: after uploading video, videosphere or audio files, insert link was not shown.
 - Changed license to MIT license.
 
 ## 1.0.0
@@ -9,6 +10,7 @@
 - Field types.
 - Asset library.
 - Complete rewrite of the system.
+- field type textarea: #rows is of type number
 
 ## 0.3.2
 
