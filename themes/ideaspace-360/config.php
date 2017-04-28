@@ -4,8 +4,8 @@ return [
 
   '#theme-name' => 'IdeaSpace 360',
   '#theme-key' => 'ideaspace-360-photo-sphere-viewer',
-  '#theme-version' => '1.0',
-  '#ideaspace-version' => '>=1.0.0',
+  '#theme-version' => '1.1',
+  '#ideaspace-version' => '>=1.0.1',
   '#theme-description' => 'Photo sphere viewer with navigation menu in VR. Attach text annotations to your photo spheres.',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
