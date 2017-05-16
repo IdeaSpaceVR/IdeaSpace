@@ -23,7 +23,7 @@
 
                 <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
-                <a-sky load-photosphere="src: {{ $uri }}" visible="false"></a-sky>
+                <a-sky load-photosphere="src: {{ $uri }}" visible="false" rotation="0 -90 0"></a-sky>
 
                 <a-entity 
                     position="0 1.6 -4"
