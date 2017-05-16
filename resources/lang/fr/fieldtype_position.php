@@ -82,6 +82,5 @@ return [
     'placeholder_item_z_axis' => "Espace réservé de l'item z-axis",
     'center' => 'Centre (0, 0, 0)',
     'content_attached_hint' => 'La caméra bouge face à l’item (à 1 mètre de distance de l’item) lorsqu’un item est sélectionné. Réinitialisez la position de la caméra en cliquant sur le boutton de réinitialisation de la caméra.',
-    'z_axis_hint' => 'Il est recommandé de positionner l’espace réservé sur la photo sphère ou le vidéo sphère à z-axis: -3.',
 
 ];

@@ -40,7 +40,7 @@
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:20px">
-                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }} (<span id="z-axis-counter">-1</span>) <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.z_axis_hint') }}"></span></label>
+                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }} (<span id="z-axis-counter">-1</span>)</label>
 
                                     <div class="row" style="margin-top:5px">
                                         <div class="col-md-12 text-center">

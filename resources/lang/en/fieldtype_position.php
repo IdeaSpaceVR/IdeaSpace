@@ -82,6 +82,5 @@ return [
     'placeholder_item_z_axis' => 'Placeholder item z-axis',
     'center' => 'Center (0, 0, 0)',
     'content_attached_hint' => 'The camera is moved in front of the item (1 meter distance to item) when an item is selected. Reset the camera position by clicking on the camera navigation reset button.',
-    'z_axis_hint' => 'It is recommended to position placeholders on photo spheres or video spheres at z-axis: -3.',
 
 ];
