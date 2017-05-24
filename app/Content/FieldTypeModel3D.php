@@ -313,10 +313,18 @@ class FieldTypeModel3D {
         $meta_data = json_decode($field->meta_data, true);
 
         if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_SCALE, $meta_data)) {
-            $content_arr['#scale'] = $meta_data[Model3D::MODEL_SCALE];
+            //$content_arr['#scale'] = $meta_data[Model3D::MODEL_SCALE];
+            $scale = explode(' ', $meta_data[Model3D::MODEL_SCALE]);
+            $content_arr['#scale']['#x'] = $scale[0];
+            $content_arr['#scale']['#y'] = $scale[1];
+            $content_arr['#scale']['#z'] = $scale[2];
         }
         if (!is_null($meta_data) && array_key_exists(Model3D::MODEL_ROTATION, $meta_data)) {
-            $content_arr['#rotation'] = $meta_data[Model3D::MODEL_ROTATION];
+            //$content_arr['#rotation'] = $meta_data[Model3D::MODEL_ROTATION];
+            $rotation = explode(' ', $meta_data[Model3D::MODEL_ROTATION]);
+            $content_arr['#rotation']['#x'] = $rotation[0];
+            $content_arr['#rotation']['#y'] = $rotation[1];
+            $content_arr['#rotation']['#z'] = $rotation[2];
         }
 
         return $content_arr;
