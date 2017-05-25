@@ -139,7 +139,7 @@ class SpacesController extends Controller {
 
         $space->delete();
 
-        return redirect()->route('spaces_all')->with('alert-success', trans('spaces_controller.space_deleted'));
+        return redirect()->route('spaces_deleted')->with('alert-success', trans('spaces_controller.space_deleted'));
     }
 
 
