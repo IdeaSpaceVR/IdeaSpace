@@ -120,7 +120,8 @@ class AssetLibraryModelsController extends Controller {
                 $existingName = GenericFile::where('filename', $newName)->first();
             } while ($existingName !== null);
         } else {
-            $newName = strtolower($filename_orig);
+            //$newName = strtolower($filename_orig);
+            $newName = $filename_orig;
         }
 
         /* first file, make a new directory */
