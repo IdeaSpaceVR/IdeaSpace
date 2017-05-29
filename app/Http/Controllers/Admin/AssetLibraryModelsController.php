@@ -107,6 +107,11 @@ class AssetLibraryModelsController extends Controller {
                 'status' => 'success-ongoing'
             ]); 
         }
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TGA) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
   
 
         $filename_orig = $file->getClientOriginalName();
@@ -114,7 +119,8 @@ class AssetLibraryModelsController extends Controller {
         /* do not rename texture files, as these are referenced in model files */
         if (strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_PNG && 
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG &&
-            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF) {
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF &&
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TGA) {
             do {
                 $newName = str_random(60) . '.' . strtolower($file->getClientOriginalExtension());
                 $existingName = GenericFile::where('filename', $newName)->first();
@@ -332,7 +338,8 @@ class AssetLibraryModelsController extends Controller {
         /* check if file is texture file */
         } else if (strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_PNG || 
             strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_JPG ||
-            strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_GIF) {
+            strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_GIF ||
+            strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TGA) {
 
             $newFile = GenericFile::create([
                 'user_id' => $user->id,
