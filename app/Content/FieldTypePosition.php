@@ -273,7 +273,8 @@ class FieldTypePosition {
                 foreach ($fields as $f) {
                     /* avoid recursion */
                     if ($field->type != $f->type) {
-                        $temp_arr['#content'][] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
+                        //$temp_arr['#content'][] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
+                        $temp_arr['#content'][$f->key] = $this->contentType->fieldTypes[$f->type]->loadContent($f);
                     }
                 }
 
