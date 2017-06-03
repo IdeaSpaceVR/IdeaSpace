@@ -12,7 +12,7 @@
 
             <div class="col-sm-8 col-sm-offset-2">
             <h2>{{ $space->title }}</h2>
-            {!! space_embed_code(url($space->uri), '100%', '400px') !!}
+            {!! space_embed_code(url($space->uri), '100%', '500px') !!}
             </div>
 
         </div>
