@@ -319,7 +319,7 @@ jQuery(document).ready(function($) {
         allowedTypes: '*',
         maxFileSize: $('#models #max_filesize_bytes').val(),
         extraData: {},
-        extFilter: 'obj;mtl;dae;png;jpg;gif;ply',
+        extFilter: 'obj;mtl;dae;png;jpg;gif;tga;ply',
         onInit: function() {
             $('#models .upload').click(function(e) {
                 if (e.currentTarget === this && e.target.nodeName !== 'INPUT') {
