@@ -85,7 +85,7 @@ class FrontpageController extends Controller {
                 }
             
                 /* show space on full page */ 
-                $vars = $this->prepare_space_content($space, false);
+                $vars = $this->prepare_space_content($space, $this->contentType, false);
 
                 /* cut off .blade.php */
                 return view('theme::' . $vars['theme_view'], $vars);
