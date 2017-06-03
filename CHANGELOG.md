@@ -1,3 +1,14 @@
+## 1.0.2
+
+- Bug fix: featured space on front page for anonymous user caused error 
+- Updated IdeaSpace 360 theme: better looking annotations, improved desktop and mobile mode
+- Added new IdeaSpace 3D Model theme
+- Field type position: #content array uses now field keys
+- Field type color: default color is black
+- Allow *.tga textures for 3D models
+- Texture image files are not renamed anymore after uploading, because it can break texture file reference in *.mtl files (and others)
+- Stay on spaces deleted page after deleting a space
+
 ## 1.0.1
 
 - Set x:0 y:-90 z:0 as default photo sphere rotation.
