@@ -45,6 +45,9 @@ class ThemesController extends Controller {
       
         foreach ($directories as $directory) {
 
+            /* if system is windows */
+            $directory = str_replace('\\', '/', $directory);
+
             /* if theme is invalid, there is no creation nor update of theme, but it will be removed from DB */
             if ($this->theme_validation($directory) == true) {
 
@@ -58,7 +61,7 @@ class ThemesController extends Controller {
                     $contents = (require($directory . '/' . Theme::CONFIG_FILE));
 
                     $theme = Theme::create([
-                        'root_dir' => str_replace('\\', '/', $directory),
+                        'root_dir' => $directory,
                         'status' => Theme::STATUS_INACTIVE,
                         'user_id' => $user->id,
                         'config' => json_encode($contents)
