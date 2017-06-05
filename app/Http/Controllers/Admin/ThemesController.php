@@ -58,7 +58,7 @@ class ThemesController extends Controller {
                     $contents = (require($directory . '/' . Theme::CONFIG_FILE));
 
                     $theme = Theme::create([
-                        'root_dir' => $directory,
+                        'root_dir' => str_replace('\\', '/', $directory),
                         'status' => Theme::STATUS_INACTIVE,
                         'user_id' => $user->id,
                         'config' => json_encode($contents)
