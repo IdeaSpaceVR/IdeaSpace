@@ -157,7 +157,7 @@
                             <li @if (Route::currentRouteName() == 'space_add_select_theme' || Route::currentRouteName() == 'space_add') class="active" @endif><a href="{{ route('space_add_select_theme') }}"><i class="fa fa-btn fa-pencil"></i></a></li>
                         </ul>
                     </li>
-                    <li><a href="#"><i class="fa fa-btn fa-image"></i></a></li>
+                    <li><a href="{{ route('assets') }}"><i class="fa fa-btn fa-image"></i></a></li>
                     <li @if (Route::currentRouteName() == 'themes') class="active" @endif><a href="{{ route('themes') }}"><i class="fa fa-btn fa-paint-brush"></i></a></li>   
                     <li><a href="#" class="menu-has-submenu" data-toggle="collapse" data-target="#settings-sub-sm"><i class="fa fa-btn fa-cogs"></i><span class="caret"></span></a></li>
                         <ul class="nav collapse @if (Route::currentRouteName() == 'general_settings' || Route::currentRouteName() == 'space_settings') in @endif" id="settings-sub-sm">
