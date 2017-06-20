@@ -387,7 +387,8 @@ jQuery(document).ready(function($) {
                             /* workaround since model-loaded is emitted before model is shown in scene */
                             setTimeout(function() {
 
-                                var canvasData = scene.renderer.domElement.toDataURL('image/png');
+                                //var canvasData = scene.renderer.domElement.toDataURL('image/png');
+                                var canvasData = document.querySelector('a-scene').components.screenshot.getCanvas('perspective').toDataURL('image/png');
 
                                 $.ajax({
                                     url: window.ideaspace_site_path + '/admin/assets/model/save-image',
