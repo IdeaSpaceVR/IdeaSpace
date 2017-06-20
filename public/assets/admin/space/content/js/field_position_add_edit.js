@@ -93,7 +93,7 @@ jQuery(document).ready(function($) {
                     if (entity != null) {
                         content.sceneEl.removeChild(entity);
                     }
- 
+
                     entity = document.createElement('a-text');
                     entity.setAttribute('position', { x: value.position.x, y: value.position.y, z: value.position.z });
                     entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });

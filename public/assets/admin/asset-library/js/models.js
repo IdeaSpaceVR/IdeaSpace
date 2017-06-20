@@ -178,9 +178,9 @@ jQuery(document).ready(function($) {
             $('#asset-details #rotate-model').unbind('change');
             $('#asset-details #rotate-model').change(function() {
                 if (this.checked) {
-                    document.querySelector('#model').emit('start-rotation-y');
+                    document.querySelector('a-entity#model').emit('start-rotation-y');
                 } else {
-                    document.querySelector('#model').emit('stop-rotation-y');
+                    document.querySelector('a-entity#model').emit('stop-rotation-y');
                 }
             });
 
