@@ -18,10 +18,10 @@ trait AssetLibraryControllerTrait {
 
 
     private $mime_types = [
-        'image' => ['image/gif', 'image/jpeg', 'image/png'],
+        'image' => ['image/gif', 'image/jpeg', 'image/png', 'image/tga', 'image/x-tga', 'image/targa', 'image/x-targa'],
         'video' => ['video/mp4'],
         'audio' => ['audio/mpeg', 'audio/mp3', 'audio/x-wav', 'audio/wav'],
-        'model' => ['text/plain', 'model/vnd.collada+xml', 'application/octet-stream', 'application/xml', 'image/jpeg', 'image/png', 'image/gif'],
+        'model' => ['text/plain', 'model/vnd.collada+xml', 'application/octet-stream', 'application/xml', 'image/jpeg', 'image/png', 'image/gif', 'image/tga', 'image/x-tga', 'image/targa', 'image/x-targa', 'model/gltf.binary'],
         ];
 
 
@@ -204,36 +204,6 @@ trait AssetLibraryControllerTrait {
 
 
     /**
-     * Resize image with size according to nearest power of two.
-     *
-     * @param String $file_uri
-     * @param int $image_quality
-     *
-     * @return Array Width and height
-     */
-    /*private function resize_image_nearest_power_of_two($file_uri, $image_quality) {
-
-        $image = Image::make($file_uri);
-
-        if ($this->is_power_of_two($image->width())) {
-            $width = $image->width();
-        } else {
-            $width = $this->nearest_power_of_two($image->width());
-        }
-
-        $image->resize($width, null, function ($constraint) {
-            $constraint->aspectRatio();
-        });
-
-        $image->save($file_uri, $image_quality);
-        $height = $image->height();
-        $image->destroy();
-      
-        return ['width' => $width, 'height' => $height];
-    }*/
-
-
-    /**
      * Get nearest power of two value.
      *
      * @param int $value
@@ -411,103 +381,5 @@ trait AssetLibraryControllerTrait {
 
         return $models_result;
     }
-
-
-/*    private function get_all_models() {
-
-        $models = Model3D::orderBy('updated_at', 'desc')->get();
-        $models_result = [];
-        foreach ($models as $model) {
-            $genericFile = GenericFile::where('id', $model->file_id_0)->first();
-            $model_result = [];
-            $model_result['id'] = $model->id;
-
-            $file = pathinfo($genericFile->filename);
-
-            switch (strtolower($file['extension'])) {
-                case Model3D::FILE_EXTENSION_DAE:
-                    $model_result['is_dae'] = true;
-                    $model_result['uri'] = asset($genericFile->uri);
-                    break;
-                case Model3D::FILE_EXTENSION_OBJ:
-                    if (!is_null($model->file_id_1)) {
-                        $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
-                        $model_result['is_obj_mtl'] = true;
-                        $model_result['obj_uri'] = asset($genericFile->uri);
-                        $model_result['mtl_uri'] = asset($mtlFile->uri);
-                    } else {
-                        $model_result['is_obj'] = true;
-                        $model_result['obj_uri'] = asset($genericFile->uri);
-                    }
-                    break;
-                case Model3D::FILE_EXTENSION_MTL:
-                    if (!is_null($model->file_id_1)) {
-                        $mtlFile = GenericFile::where('id', $model->file_id_1)->first();
-                        $model_result['is_obj_mtl'] = true;
-                        $model_result['mtl_uri'] = asset($genericFile->uri);
-                        $model_result['obj_uri'] = asset($mtlFile->uri);
-                    } else {
-                        $model_result['is_mtl'] = true;
-                        $model_result['mtl_uri'] = asset($genericFile->uri);
-                    }
-                    break;
-                case Model3D::FILE_EXTENSION_PLY:
-                    $model_result['is_ply'] = true;
-                    $model_result['uri'] = asset($genericFile->uri);
-                    break;
-            }
-            $models_result[] = $model_result;
-        }
-
-        return $models_result;
-    }
-*/
-
-
-    /**
-     * Apply image settings.
-     *
-     * @param String $file_uri_orig
-     * @param String $file_uri_new
-     * @param Array $image_settings
-     * @return void
-     */
-    /*private function create_image($file_uri_orig, $file_uri_new, $image_settings) {
-
-        $quality = 90;
-        if (array_has($image_settings, 'quality')) {
-            $quality = $image_settings['quality'];
-        }
-
-        if (array_has($image_settings, 'width') && array_has($image_settings, 'height')) {
-
-            $file = Image::make($file_uri_orig)->resize($image_settings['width'], $image_settings['height']);
-            $file->save($file_uri_new, $quality);
-            $file->destroy();
-
-        } else if (array_has($image_settings, 'width')) {
-
-            $file = Image::make($file_uri_orig)->resize($image_settings['width'], null, function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $file->save($file_uri_new, $quality);
-            $file->destroy();
-
-        } else if (array_has($image_settings, 'height')) {
-
-            $file = Image::make($file_uri_orig)->resize(null, $image_settings['height'], function ($constraint) {
-                $constraint->aspectRatio();
-            });
-            $file->save($file_uri_new, $quality);
-            $file->destroy();
-
-        } else if (array_has($image_settings, 'quality')) {
-
-            $file = Image::make($file_uri_orig);
-            $file->save($file_uri_new, $quality);
-            $file->destroy();
-        }
-    }*/
-
 
 }
