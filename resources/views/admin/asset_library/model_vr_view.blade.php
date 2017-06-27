@@ -20,6 +20,10 @@
                     @include('admin.asset_library.model_obj_mtl', ['model_mtl' => $mtl_uri])
                 @elseif ($is_ply)
                     @include('admin.asset_library.model_ply', ['model_ply' => $uri])
+                @elseif ($is_gltf)
+                    @include('admin.asset_library.model_gltf', ['model_gltf' => $uri])
+                @elseif ($is_glb)
+                    @include('admin.asset_library.model_glb', ['model_glb' => $uri])
                 @endif
 
             </div>

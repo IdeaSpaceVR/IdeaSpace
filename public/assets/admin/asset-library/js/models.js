@@ -319,7 +319,7 @@ jQuery(document).ready(function($) {
         allowedTypes: '*',
         maxFileSize: $('#models #max_filesize_bytes').val(),
         extraData: {},
-        extFilter: 'obj;mtl;dae;png;jpg;gif;tga;ply',
+        extFilter: 'obj;mtl;dae;png;jpg;gif;tga;ply;gltf;glb',
         onInit: function() {
             $('#models .upload').click(function(e) {
                 if (e.currentTarget === this && e.target.nodeName !== 'INPUT') {
@@ -388,7 +388,9 @@ jQuery(document).ready(function($) {
                             setTimeout(function() {
 
                                 //var canvasData = scene.renderer.domElement.toDataURL('image/png');
-                                var canvasData = document.querySelector('a-scene').components.screenshot.getCanvas('perspective').toDataURL('image/png');
+                                var sc = document.querySelector('a-scene#preview-scene');
+                                sc.setAttribute('screenshot', { width: 300, height: 300 });
+                                var canvasData = sc.components.screenshot.getCanvas('perspective').toDataURL('image/png');
 
                                 $.ajax({
                                     url: window.ideaspace_site_path + '/admin/assets/model/save-image',

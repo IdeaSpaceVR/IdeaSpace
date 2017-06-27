@@ -480,6 +480,20 @@ class AssetLibraryModelsController extends Controller {
 
         switch (strtolower($file['extension'])) {
 
+            case Model3D::FILE_EXTENSION_GLB:
+
+                $vars = [
+                    'model_glb' => asset($genericFile->uri)
+                ];
+                return view('admin.asset_library.model_glb_preview', $vars);        
+
+            case Model3D::FILE_EXTENSION_GLTF:
+
+                $vars = [
+                    'model_gltf' => asset($genericFile->uri)
+                ];
+                return view('admin.asset_library.model_gltf_preview', $vars);        
+
             case Model3D::FILE_EXTENSION_DAE:
 
                 $vars = [
@@ -614,6 +628,8 @@ class AssetLibraryModelsController extends Controller {
 
         $vars = [];
         $vars['is_dae'] = false;
+        $vars['is_gltf'] = false;
+        $vars['is_glb'] = false;
         $vars['is_obj_mtl'] = false;
         $vars['is_obj'] = false;
         $vars['is_mtl'] = false;
@@ -624,6 +640,16 @@ class AssetLibraryModelsController extends Controller {
         $file = pathinfo($genericFile->filename);
 
         switch (strtolower($file['extension'])) {
+            case Model3D::FILE_EXTENSION_GLB:
+                $vars['is_glb'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_GLB;
+                break;
+            case Model3D::FILE_EXTENSION_GLTF:
+                $vars['is_gltf'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_GLTF;
+                break;
             case Model3D::FILE_EXTENSION_DAE:
                 $vars['is_dae'] = true;
                 $vars['uri'] = asset($genericFile->uri);
@@ -834,6 +860,8 @@ class AssetLibraryModelsController extends Controller {
         $genericFile = GenericFile::where('id', $model->file_id_0)->first();
 
         $vars = [];
+        $vars['is_gltf'] = false;
+        $vars['is_glb'] = false;
         $vars['is_dae'] = false;
         $vars['is_obj_mtl'] = false;
         $vars['is_obj'] = false;
@@ -845,6 +873,16 @@ class AssetLibraryModelsController extends Controller {
         $file = pathinfo($genericFile->filename);
 
         switch (strtolower($file['extension'])) {
+            case Model3D::FILE_EXTENSION_GLB:
+                $vars['is_glb'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_GLB;
+                break;
+            case Model3D::FILE_EXTENSION_GLTF:
+                $vars['is_gltf'] = true;
+                $vars['uri'] = asset($genericFile->uri);
+                $model_file_extension = Model3D::FILE_EXTENSION_GLTF;
+                break;
             case Model3D::FILE_EXTENSION_DAE:
                 $vars['is_dae'] = true;
                 $vars['uri'] = asset($genericFile->uri);
