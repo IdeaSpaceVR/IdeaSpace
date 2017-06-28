@@ -83,6 +83,12 @@ return [
     'scale_1_8' => '1.8',
     'scale_1_9' => '1.9',
     'scale_2_0' => '2.0',
+    'scale_3_0' => '3.0',
+    'scale_4_0' => '4.0',
+    'scale_5_0' => '5.0',
+    'scale_10_0' => '10.0',
+    'scale_15_0' => '15.0',
+    'scale_20_0' => '20.0',
     'no_models' => 'No models added yet.',
 
 ];

@@ -80,6 +80,12 @@
                     <option value="1.8 1.8 1.8" @if ($scale == '1.8 1.8 1.8') selected="selected" @endif>{{ trans('template_asset_library_models.scale_1_8') }}</option>
                     <option value="1.9 1.9 1.9" @if ($scale == '1.9 1.9 1.9') selected="selected" @endif>{{ trans('template_asset_library_models.scale_1_9') }}</option>
                     <option value="2.0 2.0 2.0" @if ($scale == '2.0 2.0 2.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_2_0') }}</option>
+                    <option value="3.0 3.0 3.0" @if ($scale == '3.0 3.0 3.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_3_0') }}</option>
+                    <option value="4.0 4.0 4.0" @if ($scale == '4.0 4.0 4.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_4_0') }}</option>
+                    <option value="5.0 5.0 5.0" @if ($scale == '5.0 5.0 5.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_5_0') }}</option>
+                    <option value="10.0 10.0 10.0" @if ($scale == '10.0 10.0 10.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_10_0') }}</option>
+                    <option value="15.0 15.0 15.0" @if ($scale == '15.0 15.0 15.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_15_0') }}</option>
+                    <option value="20.0 20.0 20.0" @if ($scale == '20.0 20.0 20.0') selected="selected" @endif>{{ trans('template_asset_library_models.scale_20_0') }}</option>
                 </select>
             </div>
 
