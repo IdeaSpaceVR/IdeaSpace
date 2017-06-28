@@ -11,7 +11,7 @@ class FieldTypeColor {
 
     private $template_add = 'admin.space.content.field_color_add';
     private $template_edit = 'admin.space.content.field_color_edit';
-
+    private $default_value = '#000000';
 
     /**
      * Create a new field instance.
@@ -35,6 +35,11 @@ class FieldTypeColor {
     public function prepare($space_id, $field_key, $field_properties, $all_fields) {
 
         $field = [];
+
+        if (!isset($field_properties['#default_value'])) {
+            $field_properties['#default_value'] = $this->default_value;
+        }
+
         $field = $field_properties;
         $field['#template'] = $this->template_add;
 
