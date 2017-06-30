@@ -8,6 +8,9 @@
 - Allow *.tga textures for 3D models
 - Texture image files are not renamed anymore after uploading, because it can break texture file reference in *.mtl files (and others)
 - Stay on spaces deleted page after deleting a space
+- Support glTF 3D models (embedded and binary, *.gltf and *.glb)
+- Added #default_value for field type color (theme config.php)
+- Updated to A-Frame v0.6.0
 
 ## 1.0.1
 
