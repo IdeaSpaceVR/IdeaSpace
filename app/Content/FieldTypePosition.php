@@ -42,6 +42,8 @@ class FieldTypePosition {
         $this->subjectTypeTemplates[ContentType::FIELD_TYPE_MODEL3D . '__obj_mtl'] = 'admin.space.content.field_position.positions_model3d_obj_mtl_partial';
         $this->subjectTypeTemplates[ContentType::FIELD_TYPE_MODEL3D . '__dae'] = 'admin.space.content.field_position.positions_model3d_dae_partial';
         $this->subjectTypeTemplates[ContentType::FIELD_TYPE_MODEL3D . '__ply'] = 'admin.space.content.field_position.positions_model3d_ply_partial';
+        $this->subjectTypeTemplates[ContentType::FIELD_TYPE_MODEL3D . '__gltf'] = 'admin.space.content.field_position.positions_model3d_gltf_partial';
+        $this->subjectTypeTemplates[ContentType::FIELD_TYPE_MODEL3D . '__glb'] = 'admin.space.content.field_position.positions_model3d_glb_partial';
     }
 
 

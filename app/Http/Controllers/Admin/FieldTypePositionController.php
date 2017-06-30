@@ -68,6 +68,54 @@ class FieldTypePositionController extends Controller {
 
             switch (strtolower($pathinfo['extension'])) {
 
+                case Model3D::FILE_EXTENSION_GLTF:            
+                    $template = $this->fieldTypePosition->subjectTypeTemplates[$subject_type . '__' . Model3D::FILE_EXTENSION_GLTF];
+                    $model_data = json_decode($model3d->data, true);
+                    $scale = '0 0 0';
+                    $rotation_x = '0';
+                    $rotation_y = '0';
+                    $rotation_z = '0';
+                    if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
+                        $scale = $model_data[Model3D::MODEL_SCALE];
+                        $rotation = explode(' ', $model_data[Model3D::MODEL_ROTATION]);
+                        $rotation_x = $rotation[0];
+                        $rotation_y = $rotation[1];
+                        $rotation_z = $rotation[2];
+                    }
+                    $vars = [
+                        'model_gltf' => asset($genericFile->uri),
+                        'scale' => $scale,
+                        'rotation_x' => $rotation_x,
+                        'rotation_y' => $rotation_y,
+                        'rotation_z' => $rotation_z
+                    ];
+                    return view($template, $vars);       
+                    break;
+
+                case Model3D::FILE_EXTENSION_GLB:            
+                    $template = $this->fieldTypePosition->subjectTypeTemplates[$subject_type . '__' . Model3D::FILE_EXTENSION_GLB];
+                    $model_data = json_decode($model3d->data, true);
+                    $scale = '0 0 0';
+                    $rotation_x = '0';
+                    $rotation_y = '0';
+                    $rotation_z = '0';
+                    if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
+                        $scale = $model_data[Model3D::MODEL_SCALE];
+                        $rotation = explode(' ', $model_data[Model3D::MODEL_ROTATION]);
+                        $rotation_x = $rotation[0];
+                        $rotation_y = $rotation[1];
+                        $rotation_z = $rotation[2];
+                    }
+                    $vars = [
+                        'model_glb' => asset($genericFile->uri),
+                        'scale' => $scale,
+                        'rotation_x' => $rotation_x,
+                        'rotation_y' => $rotation_y,
+                        'rotation_z' => $rotation_z
+                    ];
+                    return view($template, $vars);       
+                    break;
+
                 case Model3D::FILE_EXTENSION_DAE:            
                     $template = $this->fieldTypePosition->subjectTypeTemplates[$subject_type . '__' . Model3D::FILE_EXTENSION_DAE];
                     $model_data = json_decode($model3d->data, true);
