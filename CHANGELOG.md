@@ -1,16 +1,16 @@
-## 1.0.2
+## 1.1.0
 
 - Bug fix: featured space on front page for anonymous user caused error 
-- Updated IdeaSpace 360 theme: better looking annotations, improved desktop and mobile mode
+- Updated IdeaSpace 360 theme: better looking annotations, Gear VR / Daydream controller support
 - Added new IdeaSpace 3D Model theme
 - Field type position: #content array uses now field keys
 - Field type color: default color is black
 - Allow *.tga textures for 3D models
 - Texture image files are not renamed anymore after uploading, because it can break texture file reference in *.mtl files (and others)
 - Stay on spaces deleted page after deleting a space
-- Support glTF 3D models (embedded and binary, *.gltf and *.glb)
+- Support glTF 3D models (types: embedded and binary, *.gltf and *.glb)
 - Added #default_value for field type color (theme config.php)
-- Updated to A-Frame v0.6.0
+- Updated to A-Frame v0.6.1
 
 ## 1.0.1
 
