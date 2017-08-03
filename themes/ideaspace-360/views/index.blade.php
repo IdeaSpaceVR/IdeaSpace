@@ -28,6 +28,8 @@
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-thumb-component.js') }}"></script>
@@ -35,26 +37,11 @@
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-wrapper-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-text-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-title-listener.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-log-component.min.js') }}"></script>
 </head>
 <body>
 
-    <div class="outer" id="intro">
-        <div class="middle">
-            <div class="inner">
-                <div class="title">@yield('title')</div>
-                <div class="start">
-                    <button id="start-btn" href="#">Start</button>
-                </div>
-                <div class="instructions">
-                    <div class="instruction"><strong>Mobile VR:</strong><br> Press button to view menu. A photo sphere containing hotspots renders a cursor. Press button to activate a hotspot.</div>
-                    <div class="instruction"><strong>Desktop VR (seated):</strong><br> Press space on keyboard to view menu. Mouse click to select photo sphere. A photo sphere containing hotspots renders a cursor. Hover the cursor over a hotspot and click to activate a hotspot. </div>
-                </div>
-            </div>
-        </div>
-    </div>
-
 @yield('scene')
 
-    <script src="{{ url($theme_dir . '/js/main.js') }}"></script>
 </body>
 </html>

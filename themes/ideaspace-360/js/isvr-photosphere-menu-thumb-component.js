@@ -8,6 +8,8 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
 
     onClick: function(evt) {
 
+        var self = this;
+
         var position = this.el.getAttribute('position');
 
         /* prevent immediate selection of image after menu appears */
@@ -21,6 +23,9 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                 hotspots[i].setAttribute('visible', 'false');
             }
 
+            var camera = document.querySelector('#camera');
+            camera.setAttribute('rotation', { x:0, y:0, z:0 });
+
             var sphere = document.querySelector('#photosphere');
             sphere.setAttribute('material', 'src', '#img-photosphere-' + image_id);
             sphere.setAttribute('data-content-id', content_id);
@@ -28,7 +33,8 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
             var materialtextureloaded_listener = function() {
 
                 document.querySelector('#photosphere-menu').setAttribute('visible', false);
-                document.querySelector('#cursor').setAttribute('visible', false);
+
+                self.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
 
                 /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
                 var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
@@ -48,6 +54,8 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                     title.setAttribute('visible', true);
                     setTimeout(function() {
                         title.setAttribute('visible', false);
+                        /* workaround because of interference with menu */
+                        title.setAttribute('position', { x: 0, y:1.6, z:-10 });
                     }, 10000);
                 }
                 sphere.removeEventListener('materialtextureloaded', materialtextureloaded_listener);
