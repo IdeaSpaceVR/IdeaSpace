@@ -63,8 +63,10 @@ AFRAME.registerComponent('isvr-init-assets', {
 
                             // workaround because of interference with menu
                             document.querySelector('#intro-0').setAttribute('position', { x: 0, y: 1.6, z: -10 });
+                            document.querySelector('#no-hmd-intro').setAttribute('position', { x: 0, y: 1.6, z: -10 });
 
                             document.querySelector('#intro-0').setAttribute('visible', false);
+                            document.querySelector('#no-hmd-intro').setAttribute('visible', false);
 
                             var hotspots = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
                             for (var i = 0; i < hotspots.length; i++) {
@@ -75,7 +77,6 @@ AFRAME.registerComponent('isvr-init-assets', {
                                 hotspots[i].setAttribute('visible', 'true');
                             }
 
-                            //sphere.emit('photosphere-fading');
                             var title = document.querySelector('#photosphere-title-content-id-' + content_id);
                             if (title != null && title.getAttribute('data-shown') == 'false') {
                                 title.setAttribute('position', { x: 0, y: 1.6, z: -2.1 });

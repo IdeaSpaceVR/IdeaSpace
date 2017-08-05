@@ -24,6 +24,11 @@ AFRAME.registerComponent('isvr-scene', {
   
     init: function () {
 
+        if (!AFRAME.utils.device.checkHeadsetConnected()) {
+            document.querySelector('#no-hmd-intro').setAttribute('visible', true);
+            document.querySelector('#cursor').setAttribute('geometry', { radius: 0.04 });
+        }
+
         this.el.addEventListener('exit-vr', function() {
 
             location.reload();

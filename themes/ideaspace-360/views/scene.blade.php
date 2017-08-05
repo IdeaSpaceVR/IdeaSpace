@@ -28,9 +28,9 @@
         <a-entity laser-controls="hand: right" raycaster="far:5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
 
         <!-- debug log //-->
-        <a-entity position="-2 2 -2.3" rotation="0 30 0">
+        <!--a-entity position="-2 2 -2.3" rotation="0 30 0">
             <a-entity log geometry="primitive: plane" material="color:#000"></a-entity>
-        </a-entity>
+        </a-entity//-->
 
 
         @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0) 
@@ -108,6 +108,20 @@
             material="shader: flat; side: double; color: #FFFFFF"
             scale="-1 1 1"
             rotation="0 -90 0" id="photosphere">
+            <a-animation
+                attribute="material.color"
+                begin="photosphere-fade-out"
+                dur="500"
+                from="#FFFFFF"
+                to="#000000">
+            </a-animation>
+            <a-animation
+                attribute="material.color"
+                begin="photosphere-fade-in"
+                dur="500"
+                from="#000000"
+                to="#FFFFFF">
+            </a-animation>
         </a-entity>
 
         <a-light type="ambient" color="#FFFFFF"></a-light>
@@ -187,7 +201,7 @@
                             </a-circle>
                         </a-circle>
 
-                        <!-- border //-->
+                        <!-- hotspot text //-->
                         <a-entity
                             look-at="#camera"
                             data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}"
@@ -212,7 +226,8 @@
                                     </a-text>
                                 </a-plane>
                             </a-entity>
-                        </a-entity>
+                        </a-entity><!-- hotspot text //-->
+
                     </a-entity>
 
                 @endforeach
@@ -294,7 +309,31 @@
                     </a-text>
                 </a-entity>
             </a-entity>
-        </a-entity>
+        </a-entity><!-- intro-0 //-->
+
+        <a-entity
+            id="no-hmd-intro"
+            visible="false"
+            position="0 0.85 -2.1"
+            geometry="primitive: plane; width: 1.8; height: 0.46"
+            material="color: #FFFFFF; transparent: true; opacity: 0.5">
+            <a-entity
+                geometry="primitive: plane; width: 1.74; height: 0.4"
+                position="0 0 0.01"
+                material="color: #606060">
+                <a-entity 
+                    geometry="primitive: plane; width: 1.6; height: 0.35"
+                    position="0 0.01 0.02" 
+                    material="color: #606060">
+                    <a-text
+                        value="No headset connected. Click and drag to look around. Position cursor and click to select items. Press space bar on a PC or touch click on a mobile device to select photo spheres."
+                        color="#FFFFFF"
+                        anchor="center"
+                        width="1.6">
+                    </a-text>
+                </a-entity>
+            </a-entity>
+        </a-entity><!-- no-hmd-intro //-->
 
     </a-scene>
 @endsection

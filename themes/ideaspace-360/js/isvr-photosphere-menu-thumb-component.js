@@ -23,10 +23,11 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                 hotspots[i].setAttribute('visible', 'false');
             }
 
-            var camera = document.querySelector('#camera');
-            camera.setAttribute('rotation', { x:0, y:0, z:0 });
+            //var camera = document.querySelector('#camera');
+            //camera.setAttribute('rotation', { x:0, y:0, z:0 });
 
             var sphere = document.querySelector('#photosphere');
+            sphere.emit('photosphere-fade-out');
             sphere.setAttribute('material', 'src', '#img-photosphere-' + image_id);
             sphere.setAttribute('data-content-id', content_id);
 
@@ -58,6 +59,7 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                         title.setAttribute('position', { x: 0, y:1.6, z:-10 });
                     }, 10000);
                 }
+                sphere.emit('photosphere-fade-in');
                 sphere.removeEventListener('materialtextureloaded', materialtextureloaded_listener);
             };
             sphere.addEventListener('materialtextureloaded', materialtextureloaded_listener);
