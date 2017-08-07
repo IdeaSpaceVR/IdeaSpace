@@ -15,6 +15,7 @@
                 look-controls>
                 <a-entity
                     cursor="fuse: false;"
+                    raycaster="far:5001" /* needed for touch click events on #photosphere */
                     id="cursor"
                     position="0 0 -1.9"
                     geometry="primitive: circle; radius: 0.02;"

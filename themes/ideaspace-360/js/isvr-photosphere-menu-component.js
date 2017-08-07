@@ -4,8 +4,15 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
     play: function() {
 
         if (AFRAME.utils.device.checkHeadsetConnected()) {
+
             document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
+
+        } else if (!AFRAME.utils.device.checkHeadsetConnected() && AFRAME.utils.device.isMobile()) {
+
+            document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
+
         } else {
+
             window.onkeydown = (function(e) {
                 var code = e.keyCode ? e.keyCode : e.which;
                 /* space or enter keys */
@@ -13,8 +20,6 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
                     this.onClick();
                 }
             }).bind(this);
-
-            //document.querySelector('#photosphere').addEventListener('click', this.onMouseClick.bind(this));
         }
 
 
@@ -28,30 +33,6 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
         this.pivot.add(this.el.object3D);
 
     },
-
-    /*onMouseClick: function(evt) {
-
-        var hotspot_text = document.querySelectorAll('.hotspot-text');
-        for (var i = 0; i < hotspot_text.length; i++) {
-            hotspot_text[i].setAttribute('visible', false);
-        }            
-
-        var content_id = document.querySelector('#photosphere').getAttribute('data-content-id');
-        // set visible to true on hotspot wrapper, opacity is still 0 so they are invisible 
-        var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);
-        for (var i = 0; i < hotspot_wrapper.length; i++) {
-            hotspot_wrapper[i].setAttribute('visible', true);
-        }
-        var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
-        for (var i = 0; i < hotspots.length; i++) {
-            hotspots[i].setAttribute('visible', true);
-        }
-
-        var photosphere_title = document.querySelectorAll('.photosphere-title');
-        for (var i = 0; i < photosphere_title.length; i++) {
-            photosphere_title[i].setAttribute('visible', false);
-        }
-    },*/
 
     onClick: function(evt) {
 
