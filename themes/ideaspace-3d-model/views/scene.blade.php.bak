@@ -1,0 +1,135 @@
+@extends('theme::index')
+
+@section('title', $space_title)
+
+@section('scene')
+
+    <a-scene isvr-center>
+
+    @include('theme::assets')
+
+        <a-entity id="camera-wrapper" position="0 0 0"> 
+            <a-entity
+                id="camera" 
+                camera="fov: 80"
+                userHeight="1.6"
+                position="0 0 0"
+                orbit-controls="
+                    autoRotate: false;
+                    target: #model;
+                    distance: 0; 
+                    enableDamping: true;
+                    enablePan: false; 
+                    dampingFactor: 0.125;
+                    rotateSpeed: 0.25;
+                    minDistance: 1;
+                    maxDistance: 2000">
+                <a-entity
+                    cursor="fuse: false;"
+                    id="cursor"
+                    position="0 0 -2"
+                    geometry="primitive: circle; radius: 0.05;"
+                    material="color: #0080e5; shader: flat;"
+                    visible="false">
+                </a-entity>
+            </a-entity>
+        </a-entity>
+
+
+        <a-sky color="{{ (isset($content['model'][0]['scene-background-color'])?$content['model'][0]['scene-background-color']['#value']:'#000000') }}"></a-sky>
+
+
+        @if (isset($content['model']))
+
+            @php
+                $filetype = strtolower($content['model'][0]['model']['#model'][0]['#uri']['#filetype']);
+            @endphp
+
+            @if ($filetype == \App\Model3D::FILE_EXTENSION_DAE)
+
+                <a-entity 
+                    id="model" 
+                    vr-scale="{{ (isset($content['model'][0]['scale'])?$content['model'][0]['scale']['#value']:'1 1 1') }}" 
+                    position="0 0 -100" 
+                    rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}" 
+                    visible="true" 
+                    collada-model="#model-dae">
+                    <a-animation id="model-animation" attribute="position" begin="isvr-model-intro" to="0 0 0" dur="2000" easing="ease-out"></a-animation>
+                </a-entity>
+
+            @elseif ($filetype == \App\Model3D::FILE_EXTENSION_OBJ || $filetype == \App\Model3D::FILE_EXTENSION_MTL)
+
+                <a-entity 
+                    id="model" 
+                    vr-scale="{{ (isset($content['model'][0]['scale'])?$content['model'][0]['scale']['#value']:'1 1 1') }}" 
+                    position="0 0 -100" 
+                    rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}" 
+                    visible="true" 
+                    obj-model="obj: #model-obj; mtl: #model-mtl">
+                    <a-animation id="model-animation" attribute="position" begin="isvr-model-intro" to="0 0 0" dur="2000" easing="ease-out"></a-animation>
+                </a-entity>
+
+            @elseif ($filetype == \App\Model3D::FILE_EXTENSION_PLY)
+
+                <a-entity 
+                    id="model" 
+                    class="ply-model" 
+                    vr-scale="{{ (isset($content['model'][0]['scale'])?$content['model'][0]['scale']['#value']:'1 1 1') }}" 
+                    position="0 0 -100" 
+                    rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value']-90:'-90') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}" 
+                    visible="true" 
+                    ply-model="src: #plyModel">
+                    <a-animation id="model-animation" attribute="position" begin="isvr-model-intro" to="0 0 0" dur="2000" easing="ease-out"></a-animation>
+                </a-entity>        
+
+            @endif
+
+        @endif
+
+
+        @if (isset($content['model']['attach-annotations']))
+
+            @foreach ($content['model']['attach-annotations']['#positions'] as $annotation)
+
+                @php 
+                $rand = str_random();
+                @endphp
+
+                <a-sphere 
+                    class="hotspot-wrapper hotspot-wrapper-content-id-{{ $content['model']['attach-annotations']['#content-id'] }}" 
+                    material="color: #FFFFFF; side: double; shader: flat; opacity: 0" 
+                    radius="0.5" 
+                    visible="false" 
+                    position="{{ $annotation['#position']['#x'] }} {{ $annotation['#position']['#y'] }} {{ $annotation['#position']['#z'] }}" 
+                    rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}" 
+                    scale="1 1 1" 
+                    isvr-hotspot-wrapper-listener 
+                    data-content-id="{{ $content['model']['attach-annotations']['#content-id'] }}" 
+                    data-annotation-content-id="{{ $annotation['#content-id'] . $rand }}">
+                    <a-sphere 
+                        class="hotspot hotspot-content-id-{{ $content['model']['attach-annotations']['#content-id'] }}" 
+                        scale="1 1 1" 
+                        material="color: #0080e5; side: double; shader: flat; opacity: 0.5" 
+                        radius="0.1" 
+                        visible="false">
+                    </a-sphere>
+                </a-sphere>
+                <a-entity
+                    class="hotspot-annotation hotspot-annotation-content-id-{{ $annotation['#content-id'] . $rand }}"
+                    isvr-hotspot-text-listener
+                    data-content-id="{{ $content['model']['attach-annotations']['#content-id'] }}"
+                    position="0 1.6 2"
+                    rotation="0 180 0" 
+                    geometry="primitive: plane; width: auto; height: auto"
+                    material="color: #000; opacity: 0.5"
+                    visible="false" 
+                    text="color: #FFF; align: left; wrapCount: 30; width: 3; font: {{ asset('/public/aframe/fonts/Roboto-msdf.json') }}; value: {{ $text_note['#content'][0]['#value'] }}">
+                </a-entity>
+
+            @endforeach
+
+        @endif
+
+    </a-scene>
+
+@endsection
