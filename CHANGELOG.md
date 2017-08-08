@@ -1,4 +1,4 @@
-## 1.1.0
+## 1.0.2
 
 - Bug fix: featured space on front page for anonymous user caused error 
 - Updated IdeaSpace 360 theme: better looking annotations, Gear VR / Daydream controller support

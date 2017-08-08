@@ -216,6 +216,6 @@ return [
     'theme_howto_url' => 'https://forum.ideaspacevr.org',
     'contact_url' => 'https://www.ideaspacevr.org/contact',
 
-    'version' => '1.1.0',
+    'version' => '1.0.2',
 
 ];
