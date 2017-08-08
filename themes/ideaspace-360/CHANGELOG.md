@@ -1,4 +1,5 @@
 ## 1.2
 
-- Made photo sphere title and text annotations look better 
-- Gear VR / Daydream / Rift / Vive controller support
+- Select style and color for sphere titles and hotspot text annotations 
+- Support for Samsung Gear VR / Daydream / Oculus Rift / HTC Vive; controller required
+- Desktop and mobile / touch screen support
