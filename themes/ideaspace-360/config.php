@@ -5,7 +5,7 @@ return [
   '#theme-name' => 'IdeaSpace 360',
   '#theme-key' => 'ideaspace-360-photo-sphere-viewer',
   '#theme-version' => '1.2',
-  '#ideaspace-version' => '>=1.1.0',
+  '#ideaspace-version' => '>=1.0.2',
   '#theme-description' => 'Photo sphere viewer with info hotspots and navigation menu in VR. Attach text and image annotations to hotspots. Add sound to your photo spheres.',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
