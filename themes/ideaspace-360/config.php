@@ -80,6 +80,15 @@ return [
           '#required' => false,
         ],
 
+        'text-styling' => [
+          '#label' => 'Text Styling',
+          '#description' => 'Select a style',
+          '#help' => 'Select a display style for photo sphere titles and hotspot text annotations.',
+          '#type' => 'options-select',
+          '#options' => ['text-boxes' => 'Text boxes', 'floating-text' => 'Floating text'],
+          '#required' => true,
+        ],
+
         'text-color' => [
           '#label' => 'Title Text Color',
           '#description' => 'Select a text color.',

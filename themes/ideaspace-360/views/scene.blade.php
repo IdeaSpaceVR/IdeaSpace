@@ -131,32 +131,17 @@
         @foreach ($content['photo-spheres'] as $photosphere)
 
             @if (trim($photosphere['title']['#value']) != '')
-                <a-entity
-                    class="photosphere-title"
-                    id="photosphere-title-content-id-{{ $photosphere['title']['#content-id'] }}"
-                    isvr-photosphere-title-listener
-                    data-shown="false"
-                    visible="false"
-                    position="0 10 -2.1"
-                    geometry="primitive: plane; width: 1.8; height: 0.66"
-                    material="color: #FFFFFF; transparent: true; opacity: 0.5">
-                    <a-entity
-                        geometry="primitive: plane; width: 1.74; height: 0.6"
-                        position="0 0 0.01"
-                        material="color: {{ $photosphere['background-color']['#value'] }}">
-                        <a-entity 
-                            geometry="primitive: plane; width: 1.6; height: 0.4"
-                            position="0 0 0.02" 
-                            material="color: {{ $photosphere['background-color']['#value'] }}">
-                            <a-text
-                                value="{{ $photosphere['title']['#value'] }}"
-                                color="{{ $photosphere['text-color']['#value'] }}"
-                                anchor="center"
-                                width="1.6">
-                            </a-text>
-                        </a-entity>
-                    </a-entity>
-                </a-entity>
+
+                @if ($photosphere['text-styling']['#value'] == 'text-boxes') 
+
+                    @include('theme::partials.photosphere_title_box_partial')
+
+                @elseif ($photosphere['text-styling']['#value'] == 'floating-text') 
+
+                    @include('theme::partials.photosphere_floating_title_partial')
+
+                @endif
+
             @endif
 
 
@@ -203,31 +188,16 @@
                         </a-circle>
 
                         <!-- hotspot text //-->
-                        <a-entity
-                            look-at="#camera"
-                            data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}"
-                            data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
-                            isvr-hotspot-text-listener
-                            class="hotspot-text hotspot-text-content-id-{{ $annotation['#content-id'] . $rand }}"
-                            visible="false"
-                            position="0 1.6 2.2"
-                            rotation="0 0 0"
-                            geometry="primitive: plane; width: 1.8; height: 0.66"
-                            material="color: #FFFFFF; transparent: true; opacity: 0.5">
-                            <a-entity
-                                geometry="primitive: plane; width: 1.74; height: 0.6"
-                                position="0 0 0.01"
-                                material="color: {{ $annotation['#content']['background-color']['#value'] }}">
-                                <a-plane width="1.6" height="0.4" position="0 0 0.02" color="{{ $annotation['#content']['background-color']['#value'] }}">
-                                    <a-text
-                                        value="{{ $annotation['#content']['text']['#value'] }}"
-                                        color="{{ $annotation['#content']['text-color']['#value'] }}"
-                                        anchor="center"
-                                        width="1.6">
-                                    </a-text>
-                                </a-plane>
-                            </a-entity>
-                        </a-entity><!-- hotspot text //-->
+                        @if ($photosphere['text-styling']['#value'] == 'text-boxes')
+
+                            @include('theme::partials.hotspot_text_box_partial')
+
+                        @elseif ($photosphere['text-styling']['#value'] == 'floating-text')
+
+                            @include('theme::partials.hotspot_floating_text_partial')
+
+                        @endif
+                        <!-- hotspot text //-->
 
                     </a-entity>
 

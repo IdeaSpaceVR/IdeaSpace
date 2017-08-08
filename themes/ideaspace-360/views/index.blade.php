@@ -14,7 +14,7 @@
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
-    <meta http-equiv="origin-trial" data-feature="WebVR" data-expires="04/11/17" content="{{ $origin_trial_token }}">
+    <meta http-equiv="origin-trial" data-feature="WebVR" data-expires="2017-09-11" content="{{ $origin_trial_token }}">
 
     <meta property="og:site_name" content="@yield('title')" />
     @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0)
