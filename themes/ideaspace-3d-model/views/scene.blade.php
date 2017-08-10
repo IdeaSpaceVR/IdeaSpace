@@ -6,7 +6,7 @@
 
     <a-scene 
         isvr-model-center="{{ ((isset($content['model']) && isset($content['model'][0]['camera-offset']))?$content['model'][0]['camera-offset']['#value']:0) }}" 
-        isvr-vr-mode>
+        @if (isset($content['model'])) isvr-vr-mode="camera_distance_vr: {{ $content['model'][0]['camera-offset-vr']['#value'] }}" @endif>
 
         @include('theme::assets')
 
@@ -14,7 +14,7 @@
             <a-entity
                 id="camera" 
                 mouse-cursor
-                camera="fov: 80"
+                camera="fov: 80; userHeight: 1.6"
                 position="0 0 0"
                 orbit-controls="
                     autoRotate: false;
@@ -22,12 +22,13 @@
                     distance: 0; 
                     enableDamping: true;
                     enablePan: false; 
+                    enableZoom: false; 
                     dampingFactor: 0.125;
                     rotateSpeed: 0.25;
                     minDistance: 1;
                     maxDistance: 2000">
             <!-- loading indicator //-->
-            <a-plane 
+            <!--a-plane 
                 id="loading-indicator-wrapper"
                 color="#CCCCCC" 
                 visible="false" 
@@ -41,7 +42,7 @@
                     height="0.8" 
                     width="0">
                 </a-plane>
-            </a-plane>
+            </a-plane//-->
 
             </a-entity>
         </a-entity>
@@ -49,11 +50,31 @@
 
         @if (isset($content['model']))
 
-            <a-entity laser-controls="hand: right" line="color: red; opacity: 0.75"></a-entity>
+            <a-entity laser-controls="hand: left" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
+            <a-entity laser-controls="hand: right" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
 
-            <a-sky color="{{ (isset($content['model'][0]['scene-background-color'])?$content['model'][0]['scene-background-color']['#value']:'#000000') }}"></a-sky>
+            <?php 
+            if (isset($content['model'][0]['scene-background-color'])) {
+                $topColor = str_replace('#', '', $content['model'][0]['scene-background-color']['#value']);
+                $topColorX = hexdec(substr($topColor, 0, 2)); 
+                $topColorY = hexdec(substr($topColor, 2, 2)); 
+                $topColorZ = hexdec(substr($topColor, 4, 2)); 
+                $topColor = $topColorX . ' ' . $topColorY . ' ' . $topColorZ;
+            } else {
+                $topColor = '0 0 0';
+            } 
+            ?>
 
-            <a-entity isvr-floor-grid id="floor-grid" visible="false"></a-entity>
+            <a-gradient-sky material="shader: gradient; bottomColor: {{ $topColor }}; topColor: 0 0 0;"></a-gradient-sky>
+
+            <a-entity 
+                id="floor"
+                visible="false"
+                geometry="primitive: circle; radius: 100" 
+                material="src: url({{ '/' . $theme_dir . '/images/grid.png' }}); repeat: 100 100"  
+                rotation="-90 0 0"
+                position="0 0 0">
+            </a-entity>
 
 
             @php

@@ -26,6 +26,7 @@
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/gradientsky.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-extras/aframe-extras.loaders.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-orbit-controls-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
@@ -34,7 +35,6 @@
     <script src="{{ url($theme_dir . '/js/isvr-model-center.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-annotation.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/isvr-floor-grid.js') }}"></script>
 </head>
 <body>
 

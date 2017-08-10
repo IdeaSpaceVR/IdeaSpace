@@ -10,8 +10,8 @@ AFRAME.registerComponent('isvr-model-center', {
 
         document.querySelector('#model').addEventListener('model-loaded', function() {
 
-            var loading_indicator = document.querySelector('#loading-indicator-wrapper'); 
-            loading_indicator.setAttribute('visible', false);
+            //var loading_indicator = document.querySelector('#loading-indicator-wrapper'); 
+            //loading_indicator.setAttribute('visible', false);
 
             var camera = document.querySelector('a-entity[camera]'); 
             var model = document.querySelector('#model');
