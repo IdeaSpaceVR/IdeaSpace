@@ -32,6 +32,13 @@
 
         <a-light type="ambient" color="#FFFFFF"></a-light>
 
+        <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.48" radius-outer="0.5" rotation="-90 0 0" visible="false"></a-ring>
+
+        <!-- debug log //-->
+        <a-entity position="-2 1 4" rotation="0 30 0">
+            <a-entity log geometry="primitive: plane" material="color:#000"></a-entity>
+        </a-entity>
+
 
         @if (isset($content['model']))
 
@@ -56,6 +63,7 @@
 
             <a-entity 
                 id="floor"
+                isvr-teleportation
                 visible="false"
                 geometry="primitive: circle; radius: 100" 
                 material="src: url({{ '/' . $theme_dir . '/images/grid.png' }}); repeat: 100 100"  
