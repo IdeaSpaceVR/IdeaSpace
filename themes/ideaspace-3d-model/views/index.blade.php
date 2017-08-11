@@ -25,7 +25,7 @@
     <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-v0.6.1.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/gradientsky.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-extras/aframe-extras.loaders.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-orbit-controls-component.js') }}"></script>

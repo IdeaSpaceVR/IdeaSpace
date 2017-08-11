@@ -27,7 +27,7 @@
     <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-v0.6.1.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
