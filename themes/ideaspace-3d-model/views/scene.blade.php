@@ -27,25 +27,10 @@
                     rotateSpeed: 0.25;
                     minDistance: 1;
                     maxDistance: 2000">
-            <!-- loading indicator //-->
-            <!--a-plane 
-                id="loading-indicator-wrapper"
-                color="#CCCCCC" 
-                visible="false" 
-                position="0 0 -5" 
-                height="1" 
-                width="5">
-                <a-plane 
-                    id="loading-indicator"
-                    position="0 0 0.01" 
-                    color="#0080e5" 
-                    height="0.8" 
-                    width="0">
-                </a-plane>
-            </a-plane//-->
-
             </a-entity>
         </a-entity>
+
+        <a-light type="ambient" color="#FFFFFF"></a-light>
 
 
         @if (isset($content['model']))

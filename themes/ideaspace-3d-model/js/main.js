@@ -22,20 +22,41 @@ function handleDragEnd(event) {
 }
 
 
+if (AFRAME.utils.device.checkHeadsetConnected() == false) {
 
-//var loading_indicator = document.querySelector('#loading-indicator');
-var all_assets = document.querySelectorAll('.model-asset');
-var loaded_bytes = 0;
+    var all_assets_ready = [];
+    var all_assets = document.querySelectorAll('.model-asset');
 
-for (var i=0; i<all_assets.length; i++) {
+    for (var i=0; i<all_assets.length; i++) {
+        all_assets_ready[all_assets[i].id] = false;
+    }
 
-    all_assets[i].addEventListener('progress', function(xhr) {
+    for (var i=0; i<all_assets.length; i++) {
 
-        loaded_bytes = loaded_bytes + xhr.detail.loadedBytes;
-        //loading_indicator.setAttribute('width', (((loaded_bytes * 100) / xhr.detail.totalBytes) * 4.8) / 100);
-console.log(xhr.detail);
-//console.log((((loaded_bytes * 100) / xhr.detail.totalBytes) * 4.8) / 100);
-    });
+        all_assets[i].addEventListener('progress', function(xhr) {
+
+            if (xhr.detail.loadedBytes == xhr.detail.totalBytes) {
+                all_assets_ready[xhr.target.id] = true;
+            }
+
+        });
+    }
+
+    var interval = setInterval(function() {
+        var done = false;
+        for (var k in all_assets_ready) {
+            if (all_assets_ready[k] == true) {
+                done = true;
+            } else {
+                done = false;
+            }
+        }
+        if (done) {
+            clearInterval(interval); 
+            document.getElementById('loader').style.display = 'none';
+        }
+    }, 1000);
+
 }
 
 

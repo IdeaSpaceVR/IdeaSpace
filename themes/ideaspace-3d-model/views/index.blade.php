@@ -40,6 +40,8 @@
 
 @yield('scene')
 
+    <div id="loader"></div>
+
     <script src="{{ url($theme_dir . '/js/main.js') }}"></script>
 </body>
 </html>
