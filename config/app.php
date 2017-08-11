@@ -217,5 +217,6 @@ return [
     'contact_url' => 'https://www.ideaspacevr.org/contact',
 
     'version' => '1.0.2',
+    'aframe_lib' => 'aframe-v0.6.1.min.js',
 
 ];

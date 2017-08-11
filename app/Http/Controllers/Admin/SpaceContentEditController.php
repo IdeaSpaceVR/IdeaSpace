@@ -100,7 +100,7 @@ class SpaceContentEditController extends Controller {
         ];
 
         $form['js_header'] = [
-            asset('public/aframe/aframe-v0.6.0.min.js'),
+            asset('public/aframe/' . config('app.aframe_lib')),
             asset('public/aframe-extras/aframe-extras.loaders.min.js'),
             asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),

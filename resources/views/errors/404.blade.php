@@ -22,7 +22,7 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="" />
 
-    <script src="{{ asset('public/aframe/aframe.min.js') }}"></script>
+    <script src="{{ asset('public/aframe/' . config('app.aframe_lib')) }}"></script>
 </head>
 <body style="background-color:#000000">
 
