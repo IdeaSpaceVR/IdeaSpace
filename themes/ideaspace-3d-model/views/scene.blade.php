@@ -35,8 +35,10 @@
 
         @if (isset($content['model']))
 
-            <a-entity laser-controls="hand: left" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
-            <a-entity laser-controls="hand: right" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
+            <a-entity position="0 0 {{ $content['model'][0]['camera-offset-vr']['#value'] }}">
+                <a-entity laser-controls="hand: left" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
+                <a-entity laser-controls="hand: right" /*raycaster="far:5001"*/ line="color: #FFFFFF" class="laser-controls"></a-entity>
+            </a-entity>
 
             <?php 
             if (isset($content['model'][0]['scene-background-color'])) {
