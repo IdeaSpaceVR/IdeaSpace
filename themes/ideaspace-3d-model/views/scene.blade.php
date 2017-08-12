@@ -79,7 +79,7 @@
             <a-entity 
                 id="model-wrapper" 
                 data-vrscale="{{ (isset($content['model'][0]['vrscale'])?$content['model'][0]['vrscale']['#value']:'1 1 1') }}"
-                data-vrfloorlevel="{{ (isset($content['model'][0]['vrfloorlevel'])?$content['model'][0]['vrfloorlevel']['#value']:0) }}" 
+                data-vr-model-y-axis="{{ (isset($content['model'][0]['vr-model-y-axis'])?$content['model'][0]['vr-model-y-axis']['#value']:0) }}" 
                 rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}">
 
 

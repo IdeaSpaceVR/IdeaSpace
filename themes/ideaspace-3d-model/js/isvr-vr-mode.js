@@ -14,8 +14,9 @@ AFRAME.registerComponent('isvr-vr-mode', {
             var scale = document.querySelector('#model-wrapper').dataset.vrscale;
             document.querySelector('#model-wrapper').setAttribute('scale', AFRAME.utils.coordinates.parse(scale));
 
-            var floor_level = document.querySelector('#model-wrapper').dataset.vrfloorlevel;
-            document.querySelector('#model-wrapper').setAttribute('position', { x:0, y:floor_level, z:0 });
+            var model_y_axis = document.querySelector('#model-wrapper').getAttribute('data-vr-model-y-axis');
+console.log(model_y_axis);
+            document.querySelector('#model-wrapper').setAttribute('position', { x:0, y:model_y_axis, z:0 });
 
             self.camera_wrapper_pos = document.querySelector('#camera-wrapper').getAttribute('position');
             document.querySelector('#camera-wrapper').setAttribute('position', { x: 0, y: 0, z: self.data.camera_distance_vr });
