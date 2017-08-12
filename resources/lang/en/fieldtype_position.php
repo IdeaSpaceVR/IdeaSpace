@@ -79,7 +79,7 @@ return [
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
     'attach_content_type_hint' => 'In order to select an item, there must be some :content_type content. If not, add some :content_type content on the Edit Space page.',
-    'placeholder_item_z_axis' => 'Placeholder item z-axis',
+    'placeholder_item_z_axis' => 'Placeholder item depth position z-axis',
     'center' => 'Center (0, 0, 0)',
     'content_attached_hint' => 'The camera is moved in front of the item (1 meter distance to item) when an item is selected. Reset the camera position by clicking on the camera navigation reset button.',
 
