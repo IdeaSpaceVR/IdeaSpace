@@ -116,11 +116,13 @@ class AssetLibraryModelsController extends Controller {
 
         $filename_orig = $file->getClientOriginalName();
 
-        /* do not rename texture files, as these are referenced in model files */
+        /* do not rename *.obj, *.mtl and texture files, as these are referenced in model files */
         if (strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_PNG && 
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG &&
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF &&
-            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TGA) {
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TGA && 
+            strtolower($file->getClientOriginalExtension()) != Model3D::FILE_EXTENSION_OBJ &&
+            strtolower($file->getClientOriginalExtension()) != Model3D::FILE_EXTENSION_MTL) {
             do {
                 $newName = str_random(60) . '.' . strtolower($file->getClientOriginalExtension());
                 $existingName = GenericFile::where('filename', $newName)->first();
@@ -166,8 +168,9 @@ class AssetLibraryModelsController extends Controller {
             $genericFile = null;
 
             try {
-                /* get last uploaded file with same file name */
-                $genericFile = GenericFile::where('filename_orig', strtolower($f['filename'] . '.mtl'))->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
+                /* get last uploaded file for this user */
+                //$genericFile = GenericFile::where('filename_orig', strtolower($f['filename'] . '.mtl'))->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
+                $genericFile = GenericFile::where('filename_orig', 'like', '%.mtl')->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
             } catch (ModelNotFoundException $e) {
                 $newFile = GenericFile::create([
                     'user_id' => $user->id,
@@ -245,7 +248,8 @@ class AssetLibraryModelsController extends Controller {
                         'status' => 'success-ongoing'
                     ]);
                 }
-            }
+
+            } /* end if */
        
         /* check if there is an associated obj file for this mtl file */
         } else if (strtolower($file->getClientOriginalExtension()) == Model3D::FILE_EXTENSION_MTL) {
@@ -254,8 +258,9 @@ class AssetLibraryModelsController extends Controller {
             $genericFile = null;
 
             try {
-                /* get last uploaded file with file name */
-                $genericFile = GenericFile::where('filename_orig', strtolower($f['filename'] . '.obj'))->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
+                /* get last uploaded file for this user */
+                //$genericFile = GenericFile::where('filename_orig', strtolower($f['filename'] . '.obj'))->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
+                $genericFile = GenericFile::where('filename_orig', 'like', '%.obj')->where('user_id', $user->id)->orderBy('created_at', 'desc')->firstOrFail();
             } catch (ModelNotFoundException $e) {
                 $newFile = GenericFile::create([
                     'user_id' => $user->id,
