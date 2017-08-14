@@ -28,7 +28,6 @@
                 </div>
             </div><!-- upload //-->
             <p class="help-block">{{ trans('template_asset_library_models.supported_model_formats') }}</p>
-            <p class="help-block">{{ trans('template_asset_library_models.obj_mtl_model_info') }}</p>
 
         </div><!-- col-md-12 //-->
 
