@@ -17,7 +17,8 @@
 
     <a-sky color="#000000"></a-sky>
 
+    <!--a-entity id="model" class="ply-model" scale="{{ $scale }}" position="0 0 0" rotation="{{ ($rotation_x - 90) }} {{ $rotation_y }} {{ $rotation_z }}" ply-model="src: #plyModel"></a-entity//-->
     <!-- x:-90 y:0 z:0 is default rotation for ply models; ply-model class is needed for separating ply models from others //-->
-    <a-entity id="model" class="ply-model" scale="{{ $scale }}" position="0 0 0" rotation="{{ ($rotation_x - 90) }} {{ $rotation_y }} {{ $rotation_z }}" ply-model="src: #plyModel"></a-entity>
+    <a-entity id="model" class="ply-model" position="0 0 0" rotation="-90 0 0" ply-model="src: #plyModel"></a-entity>
 
 </a-scene>

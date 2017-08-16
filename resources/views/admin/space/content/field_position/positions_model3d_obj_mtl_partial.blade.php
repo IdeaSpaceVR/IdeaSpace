@@ -18,6 +18,7 @@
 
     <a-sky color="#000000"></a-sky>
 
-    <a-entity id="model" scale="{{ $scale }}" position="0 0 0" rotation="{{ $rotation_x }} {{ $rotation_y }} {{ $rotation_z }}" obj-model="obj: #model-obj; mtl: #model-mtl"></a-entity>
+    <!--a-entity id="model" scale="{{ $scale }}" position="0 0 0" rotation="{{ $rotation_x }} {{ $rotation_y }} {{ $rotation_z }}" obj-model="obj: #model-obj; mtl: #model-mtl"></a-entity//-->
+    <a-entity id="model" position="0 0 0" obj-model="obj: #model-obj; mtl: #model-mtl"></a-entity>
 
 </a-scene>

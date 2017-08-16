@@ -17,6 +17,7 @@
 
     <a-sky color="#000000"></a-sky>
 
-    <a-entity id="model" scale="{{ $scale }}" position="0 0 0" rotation="{{ $rotation_x }} {{ $rotation_y }} {{ $rotation_z }}" gltf-model="#model-glb"></a-entity>
+    <!--a-entity id="model" scale="{{ $scale }}" position="0 0 0" rotation="{{ $rotation_x }} {{ $rotation_y }} {{ $rotation_z }}" gltf-model="#model-glb"></a-entity//-->
+    <a-entity id="model" position="0 0 0" gltf-model="#model-glb"></a-entity>
 
 </a-scene>
