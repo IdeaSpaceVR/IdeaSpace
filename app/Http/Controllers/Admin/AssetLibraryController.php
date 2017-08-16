@@ -33,7 +33,7 @@ class AssetLibraryController extends Controller {
 
         $vars = [
             'js_header' => [
-                asset('public/aframe/' . config('app.aframe_lib')),
+                asset('public/aframe/' . config('app.aframe_lib_for_assets')),
                 asset('public/aframe-extras/aframe-extras.loaders.min.js'),
                 asset('public/assets/admin/asset-library/js/load-image-aframe-comp.js'),
                 asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),
