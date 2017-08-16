@@ -103,24 +103,24 @@ jQuery(document).ready(function($) {
             /* update model rotation */
             $('#asset-details #rotation-x').unbind('change');
             $('#asset-details #rotation-x').change(function() {
-                var rotation = document.querySelector('#model').getAttribute('rotation');
-                if ($(document.querySelector('#model')).hasClass('ply-model')) {
-                    document.querySelector('#model').setAttribute('rotation', ($(this).val() - 90) + ' ' + rotation.y + ' ' + rotation.z);
+                var rotation = document.querySelector('a-entity#model').getAttribute('rotation');
+                if ($(document.querySelector('a-entity#model')).hasClass('ply-model')) {
+                    document.querySelector('a-entity#model').setAttribute('rotation', ($(this).val() - 90) + ' ' + rotation.y + ' ' + rotation.z);
                 } else {
-                    document.querySelector('#model').setAttribute('rotation', $(this).val() + ' ' + rotation.y + ' ' + rotation.z);
+                    document.querySelector('a-entity#model').setAttribute('rotation', $(this).val() + ' ' + rotation.y + ' ' + rotation.z);
                 }
                 $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
             });
             $('#asset-details #rotation-y').unbind('change');
             $('#asset-details #rotation-y').change(function() {
-                var rotation = document.querySelector('#model').getAttribute('rotation');
-                document.querySelector('#model').setAttribute('rotation', rotation.x + ' ' + $(this).val() + rotation.z);
+                var rotation = document.querySelector('a-entity#model').getAttribute('rotation');
+                document.querySelector('a-entity#model').setAttribute('rotation', rotation.x + ' ' + $(this).val() + rotation.z);
                 $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
             });
             $('#asset-details #rotation-z').unbind('change');
             $('#asset-details #rotation-z').change(function() {
-                var rotation = document.querySelector('#model').getAttribute('rotation');
-                document.querySelector('#model').setAttribute('rotation', rotation.x + ' ' + rotation.y + ' ' + $(this).val());
+                var rotation = document.querySelector('a-entity#model').getAttribute('rotation');
+                document.querySelector('a-entity#model').setAttribute('rotation', rotation.x + ' ' + rotation.y + ' ' + $(this).val());
                 $('#asset-details .save-btn').html('<span class="glyphicon glyphicon-ok" aria-hidden="true"></span> '+localization_strings['save']);
             });
 
