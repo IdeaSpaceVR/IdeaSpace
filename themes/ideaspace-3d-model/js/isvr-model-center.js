@@ -28,7 +28,13 @@ AFRAME.registerComponent('isvr-model-center', {
             var distance = Math.abs(objectSize / Math.sin(fov / 2)); 
 
             camera.setAttribute('orbit-controls', 'enabled', false);
-            camera.setAttribute('position', { x: 0, y: 0, z: distance - offset });
+
+            if (offset > 0) {
+                camera.setAttribute('position', { x: 0, y: 0, z: offset });
+            } else {
+                camera.setAttribute('position', { x: 0, y: 0, z: distance });
+            }
+            //camera.setAttribute('position', { x: 0, y: 0, z: distance - offset });
 
             var camera_wrapper = document.querySelector('#camera-wrapper');
             camera_wrapper.setAttribute('position', { x: 0, y: size.y/2, z: 0 });
