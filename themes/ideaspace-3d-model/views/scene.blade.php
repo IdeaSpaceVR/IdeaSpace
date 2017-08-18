@@ -12,35 +12,34 @@
 
         @include('theme::assets')
 
-        <a-entity id="camera-wrapper" position="0 0 0"> 
-            <a-entity
-                id="camera" 
-                mouse-cursor
-                camera="fov: 80; userHeight: 1.6"
-                position="0 0 0"
-                orbit-controls="
-                    autoRotate: false;
-                    target: #model;
-                    distance: 0; 
-                    enableDamping: true;
-                    enablePan: false; 
-                    enableZoom: false; 
-                    dampingFactor: 0.125;
-                    rotateSpeed: 0.25;
-                    minDistance: 1;
-                    maxDistance: 2000">
-            </a-entity>
-        </a-entity>
-
-        <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.48" radius-outer="0.5" rotation="-90 0 0" visible="false"></a-ring>
-
-        <!-- debug log //-->
-        <!--a-entity position="-2 1 4" rotation="0 30 0">
-            <a-entity log geometry="primitive: plane" material="color:#000"></a-entity>
-        </a-entity//-->
-
-
         @if (isset($content['model']))
+
+            <a-entity id="camera-wrapper" position="0 0 0"> 
+                <a-entity
+                    id="camera" 
+                    mouse-cursor
+                    camera="fov: 80; userHeight: 1.6"
+                    position="0 0 0"
+                    orbit-controls="
+                        autoRotate: false;
+                        target: #model;
+                        distance: 0; 
+                        enableDamping: true;
+                        enablePan: false; 
+                        enableZoom: false; 
+                        dampingFactor: 0.125;
+                        rotateSpeed: 0.25;
+                        minDistance: 1;
+                        maxDistance: 2000">
+                </a-entity>
+            </a-entity>
+
+            <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.48" radius-outer="0.5" rotation="-90 0 0" visible="false"></a-ring>
+
+            <!-- debug log //-->
+            <!--a-entity position="-2 1 4" rotation="0 30 0">
+                <a-entity log geometry="primitive: plane" material="color:#000"></a-entity>
+            </a-entity//-->
 
             <a-entity id="laser-controls" position="0 0 {{ $content['model'][0]['camera-offset-vr']['#value'] }}">
                 <a-entity laser-controls="hand: left" line="color: #FFFFFF" class="laser-controls"></a-entity>

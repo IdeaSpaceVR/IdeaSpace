@@ -3,7 +3,10 @@ var scene = document.querySelector('a-scene');
 if (scene.hasLoaded) {
     run();
 } else {
-    scene.addEventListener('loaded', run);
+    var cam = document.querySelector('#camera');
+    if (cam) {
+        scene.addEventListener('loaded', run);
+    }
 }
 
 function run() {
