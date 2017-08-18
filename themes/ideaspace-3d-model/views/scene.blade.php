@@ -32,8 +32,6 @@
             </a-entity>
         </a-entity>
 
-        <a-light type="ambient" color="#FFFFFF"></a-light>
-
         <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.48" radius-outer="0.5" rotation="-90 0 0" visible="false"></a-ring>
 
         <!-- debug log //-->
