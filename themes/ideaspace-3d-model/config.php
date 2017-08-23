@@ -11,7 +11,7 @@ return [
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
   '#theme-keywords' => 'model, 3d model, mobile',
-  '#theme-compatibility' => 'Google Cardboard, no headset',
+  '#theme-compatibility' => 'Gear VR, Daydream, HTC Vive, Oculus Rift, no headset',
   '#theme-view' => 'scene',
 
   '#content-types' => [
