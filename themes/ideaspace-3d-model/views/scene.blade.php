@@ -65,7 +65,7 @@
                 isvr-teleportation="camera_distance_vr: {{ $content['model'][0]['camera-offset-vr']['#value'] }}"
                 visible="false"
                 geometry="primitive: circle; radius: 100" 
-                material="src: url({{ $theme_dir . '/images/grid.png' }}); repeat: 100 100"  
+                material="src: url({{ url($theme_dir . '/images/grid.png') }}); repeat: 100 100"  
                 rotation="-90 0 0"
                 position="0 0 0">
             </a-entity>
