@@ -10,7 +10,7 @@ return [
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
-  '#theme-keywords' => 'photo sphere, gaze input navigation, mobile, 360, photography',
+  '#theme-keywords' => 'photo sphere, 360, photography',
   '#theme-compatibility' => 'Google Cardboard, Daydream, Oculus, Samsung Gear VR, no headset',
   '#theme-view' => 'scene',
 
