@@ -143,13 +143,8 @@
 
             @if (isset($content['model'][0]['attach-annotations']))
 
-                @if ($filetype == \App\Model3D::FILE_EXTENSION_PLY)
-                <a-entity 
-                    rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value'] - 90:'-90') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}">
-                @else
                 <a-entity 
                     rotation="{{ (isset($content['model'][0]['rotation-x'])?$content['model'][0]['rotation-x']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-y'])?$content['model'][0]['rotation-y']['#value']:'0') }} {{ (isset($content['model'][0]['rotation-z'])?$content['model'][0]['rotation-z']['#value']:'0') }}">
-                @endif
 
                 @foreach ($content['model'][0]['attach-annotations']['#positions'] as $annotation)
 
