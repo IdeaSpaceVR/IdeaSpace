@@ -72,7 +72,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                             for (var i = 0; i < hotspots.length; i++) {
                                 hotspots[i].setAttribute('visible', true);
                             }
-                            var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
+                            hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
                             for (var i = 0; i < hotspots.length; i++) {
                                 hotspots[i].setAttribute('visible', 'true');
                             }
