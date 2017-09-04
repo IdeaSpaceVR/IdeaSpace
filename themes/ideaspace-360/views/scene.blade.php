@@ -235,14 +235,14 @@
                     position="0 -0.2 0.03" 
                     color="#000000" 
                     radius-inner="0.108" 
-                    radius-outer="0.125" 
+                    radius-outer="0.145" 
                     id="photosphere-loading-background">
                 </a-ring>
                 <a-ring 
                     position="0 -0.2 0.04" 
                     color="#0080e5" 
                     radius-inner="0.105" 
-                    radius-outer="0.125" 
+                    radius-outer="0.145" 
                     theta-length="120" 
                     id="photosphere-loading">
                     <a-animation
