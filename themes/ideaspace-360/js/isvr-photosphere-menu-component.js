@@ -101,7 +101,7 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
             }*/
             var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
             for (var i = 0; i < hotspots.length; i++) {
-                hotspots[i].setAttribute('visible', 'true');
+                hotspots[i].setAttribute('visible', true);
                 //hotspots[i].emit('hotspot-intro-' + content_id);
             }
 

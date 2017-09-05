@@ -74,7 +74,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                             }
                             hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
                             for (var i = 0; i < hotspots.length; i++) {
-                                hotspots[i].setAttribute('visible', 'true');
+                                hotspots[i].setAttribute('visible', true);
                             }
 
                             var title = document.querySelector('#photosphere-title-content-id-' + content_id);
