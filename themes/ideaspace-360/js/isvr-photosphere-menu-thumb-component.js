@@ -23,8 +23,9 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                 hotspots[i].setAttribute('visible', false);
             }
 
-            //var camera = document.querySelector('#camera');
-            //camera.setAttribute('rotation', { x:0, y:0, z:0 });
+            /* reset camera rotation in order to let people see the photo sphere title, if set */
+            var camera = document.querySelector('#camera');
+            camera.setAttribute('rotation', { x:0, y:0, z:0 });
 
             var sphere = document.querySelector('#photosphere');
             sphere.emit('photosphere-fade-out');
