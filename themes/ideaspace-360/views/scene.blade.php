@@ -14,7 +14,7 @@
                 camera="far: 10000; fov: 80; near: 0.1; userHeight: 1.6"
                 look-controls>
                 <a-entity
-                    cursor="fuse: false;"
+                    cursor="fuse: false; rayOrigin: mouse"
                     raycaster="far:5001" /* needed for touch click events on #photosphere */
                     id="cursor"
                     position="0 0 -1.9"

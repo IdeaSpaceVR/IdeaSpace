@@ -3,7 +3,7 @@ AFRAME.registerSystem('isvr-scene-helper', {
     showCursor: function () {
 
         /* only show cursor if no controller is connected */
-        if (!document.querySelector('a-scene').is('controllerconnected')) {
+        if (!document.querySelector('a-scene').is('controllerconnected') && AFRAME.utils.device.checkHeadsetConnected()) {
             document.querySelector('#cursor').components.cursor.play();
             document.querySelector('#cursor').setAttribute('visible', true);
         }
@@ -13,7 +13,7 @@ AFRAME.registerSystem('isvr-scene-helper', {
 
         document.querySelector('#cursor').setAttribute('visible', false);
       
-        if (document.querySelector('a-scene').is('controllerconnected')) {
+        if (document.querySelector('a-scene').is('controllerconnected') && AFRAME.utils.device.checkHeadsetConnected()) {
             document.querySelector('#cursor').components.cursor.pause();
         }
     },
