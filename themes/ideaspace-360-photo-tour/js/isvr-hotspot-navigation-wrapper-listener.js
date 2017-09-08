@@ -20,7 +20,7 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
 
             var title = document.querySelector('#photosphere-title-content-id-' + target_content_id);
             if (title != null) {
-                title.setAttribute('position', { x: 1.05, y: 0, z: 0.4 });
+                title.setAttribute('position', { x: 1.05, y: 0.1, z: 0.4 });
                 title.setAttribute('visible', true);
             }
 
