@@ -10,15 +10,15 @@ return [
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
-  '#theme-keywords' => 'photo sphere, 360, photography, tour',
+  '#theme-keywords' => 'photo sphere, 360, photography, tour, virtual tour',
   '#theme-compatibility' => 'Daydream, Oculus Rift, Gear VR, HTC Vive, no headset',
   '#theme-view' => 'scene',
 
   '#content-types' => [
 
     'annotations' => [
-      '#label' => 'Hotspot Annotation',
-      '#description' => 'Manage your hotspot annotations.',
+      '#label' => 'Information Hotspot',
+      '#description' => 'Manage your information hotspots.',
       '#max-values' => 'infinite',
       '#fields' => [
 
@@ -34,7 +34,7 @@ return [
         ],
 
         'text-color' => [
-          '#label' => 'Text Color',
+          '#label' => 'Text Color for Annotation Text Boxes',
           '#description' => 'Select a text color.',
           '#help' => 'Select a text color.',
           '#type' => 'color',
@@ -43,7 +43,7 @@ return [
         ],
 
         'background-color' => [
-          '#label' => 'Annotation Background and Hotspot Color',
+          '#label' => 'Background Color for Annotation Text Boxes as well as Hotspot Color',
           '#description' => 'Select a background color.',
           '#help' => 'Select a background color.',
           '#type' => 'color',
@@ -63,7 +63,7 @@ return [
         'title' => [
           '#label' => 'Photo Sphere Title',
           '#description' => 'Enter a title.',
-          '#help' => 'Enter a title for this photo sphere (optional). The title is shown after the photo sphere has been loaded.',
+          '#help' => 'Enter a title for this photo sphere (optional). The title will be shown at navigation hotspots.',
           '#type' => 'textfield',
           '#maxlength' => 44,
           '#contentformat' => 'text',
@@ -89,24 +89,24 @@ return [
         ],
 
         'text-color' => [
-          '#label' => 'Title Text Color',
-          '#description' => 'Select a text color.',
-          '#help' => 'Select a text color.',
+          '#label' => 'Photo Sphere Title Text Color',
+          '#description' => 'Select a text color for the photo sphere title. Titles are shown at navigation hotspots.',
+          '#help' => 'Select a text color for the photo sphere title. Titles are shown at navigation hotspots.',
           '#type' => 'color',
           '#required' => false,
           '#default_value' => '#FFFFFF',
         ],
 
         'background-color' => [
-          '#label' => 'Title Background Color',
-          '#description' => 'Select a background color.',
-          '#help' => 'Select a background color.',
+          '#label' => 'Photo Sphere Title Background Color',
+          '#description' => 'Select a background color for the photo sphere title. Titles are shown at navigation hotspots.',
+          '#help' => 'Select a background color for the photo sphere title. Titles are shown at navigation hotspots.',
           '#type' => 'color',
           '#required' => false,
         ],
 
         'hotspot-annotations' => [
-          '#label' => 'Text Annotations',
+          '#label' => 'Photo Sphere Information Hotspots',
           '#description' => 'Attach hotspots with text annotations to your photo sphere.',
           '#help' => 'Attach hotspots with text annotations to your photo sphere.',
           '#type' => 'position',
@@ -117,7 +117,7 @@ return [
         ],
 
         'photosphere-references' => [
-          '#label' => 'Photo Sphere to Photo Sphere Navigation',
+          '#label' => 'Photo Sphere to Photo Sphere Navigation Hotspots',
           '#description' => 'Attach navigation hotspots to your photo sphere.',
           '#help' => 'Attach navigation hotspots to your photo sphere.',
           '#type' => 'position',
