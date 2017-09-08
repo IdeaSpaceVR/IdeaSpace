@@ -15,7 +15,7 @@
                 look-controls>
                 <a-entity
                     cursor="fuse: false; rayOrigin: mouse"
-                    raycaster="far:5001" /* needed for touch click events on #photosphere */
+                    raycaster="far:5001" 
                     id="cursor"
                     position="0 0 -1.9"
                     geometry="primitive: circle; radius: 0.02;"
@@ -27,11 +27,6 @@
 
         <a-entity laser-controls="hand: left" raycaster="far:5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
         <a-entity laser-controls="hand: right" raycaster="far:5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
-
-        <!-- debug log //-->
-        <!--a-entity position="-2 2 -2.3" rotation="0 30 0">
-            <a-entity log geometry="primitive: plane" material="color:#000"></a-entity>
-        </a-entity//-->
 
 
         @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0) 
@@ -181,10 +176,11 @@
                                 visible="false">
                                 <a-circle 
                                     color="{{ $annotation['#content']['background-color']['#value'] }}" 
+                                    material="transparent: false; opacity: 0.6"
                                     radius="0.2" 
                                     position="0 0 0.01"> 
                                     <a-ring
-                                        color="#FFFFFF"
+                                        color="#FFFFFF" 
                                         position="0 0 0.02"
                                         radius-inner="0.05"
                                         radius-outer="0.13">
@@ -196,6 +192,11 @@
                                             repeat="indefinite"
                                             easing="linear">
                                         </a-animation>
+                                        <a-circle 
+                                            color="{{ $annotation['#content']['background-color']['#value'] }}" 
+                                            radius="0.05" 
+                                            position="0 0 0.03"> 
+                                        </a-circle>
                                     </a-ring>
                                 </a-circle>
                             </a-circle>

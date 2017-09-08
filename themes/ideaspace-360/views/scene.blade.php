@@ -168,6 +168,7 @@
                             look-at="#camera">
                             <a-circle 
                                 color="{{ $annotation['#content']['background-color']['#value'] }}" 
+                                material="transparent: false; opacity: 0.6"
                                 radius="0.2" 
                                 position="0 0 0.01"> 
                                 <a-ring
@@ -183,6 +184,11 @@
                                         repeat="indefinite"
                                         easing="linear">
                                     </a-animation>
+                                    <a-circle
+                                        color="{{ $annotation['#content']['background-color']['#value'] }}"
+                                        radius="0.05"
+                                        position="0 0 0.03">
+                                    </a-circle>
                                 </a-ring>
                             </a-circle>
                         </a-circle>
