@@ -30,13 +30,11 @@
     <script src="{{ url($theme_dir . '/js/aframe-extras/aframe-extras.loaders.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-orbit-controls-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/aframe-mouse-cursor-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-vr-mode.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-model-center.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-annotation.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-teleportation.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/aframe-log-component.min.js') }}"></script>
 </head>
 <body>
 

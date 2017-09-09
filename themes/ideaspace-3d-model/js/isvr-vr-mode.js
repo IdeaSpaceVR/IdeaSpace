@@ -9,6 +9,9 @@ AFRAME.registerComponent('isvr-vr-mode', {
         var self = this;
         this.el.addEventListener('enter-vr', function() {
 
+            /* in order to avoid trouble with teleporation in vr */
+            document.querySelector('#camera').removeAttribute('cursor', 'rayOrigin');
+
             document.querySelector('#floor').setAttribute('visible', true);
 
             var scale = document.querySelector('#model-wrapper').dataset.vrscale;
@@ -23,18 +26,14 @@ AFRAME.registerComponent('isvr-vr-mode', {
             self.camera_wrapper_pos = camera_wrapper.getAttribute('position');
             camera_wrapper.setAttribute('position', { x: 0, y: 0, z: self.data.camera_distance_vr });
 
+            var scene = document.querySelector('a-scene');
+            scene.addState('vr-mode');
+ 
         });
 
         this.el.addEventListener('exit-vr', function() {
 
-            //document.querySelector('#floor').setAttribute('visible', false);
-
-            //document.querySelector('#model-wrapper').setAttribute('scale', { x: 1, y: 1, z: 1 });
-
-            //document.querySelector('#model-wrapper').setAttribute('position', { x: 0, y: 0, z: 0 });
-
-            /* restore orig value */ 
-            //document.querySelector('#camera-wrapper').setAttribute('position', { x: 0, y: self.camera_wrapper_pos.y, z: self.camera_wrapper_pos.z });
+            scene.removeState('vr-mode');
 
             location.reload();
 
