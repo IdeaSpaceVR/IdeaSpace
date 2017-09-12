@@ -149,15 +149,15 @@ jQuery(document).ready(function($) {
         var camera = document.querySelector('#camera'); 
         var camera_wrapper = document.querySelector('#camera-wrapper'); 
 
-        camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
-        camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
-        camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
-        camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
+        /* do not reset camera position */
+        //camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
+        //camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
+        //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
+        //camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
 
         $('#positions #z-axis-counter').text('-1');
 
         if ($(this).val() == '') {
-            //document.querySelector('#reticle').setAttribute('visible', false);
             document.querySelector('#reticle-text').setAttribute('visible', false);
             document.querySelector('#reticle-text').setAttribute('value', '');
             document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
@@ -168,7 +168,6 @@ jQuery(document).ready(function($) {
         } else {
             if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
                 document.querySelector('#reticle-text').setAttribute('value', '[' + $('#positions #content-selector option[value="' + $(this).val() + '"]').text() + ']');
-                //document.querySelector('#reticle').setAttribute('visible', true);
                 document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
                 document.querySelector('#reticle-text').setAttribute('visible', true);
                 $('#positions #btn-attach').prop('disabled', false);
@@ -298,7 +297,6 @@ jQuery(document).ready(function($) {
 
     var positions_reset_content_selector = function() {
 
-        //document.querySelector('#reticle').setAttribute('visible', false);
         document.querySelector('#reticle-text').setAttribute('visible', false);
         document.querySelector('#reticle-text').setAttribute('value', '');
         $('#positions #btn-attach').prop('disabled', true);
@@ -315,15 +313,12 @@ jQuery(document).ready(function($) {
 
         if ($(this).val() == '') {
             /* reset camera position and rotation */
-            //camera_wrapper.setAttribute('position', {x: 0, y:0, z:4});
             camera_wrapper.setAttribute('position', {x: 0, y:0, z:0});
             camera_wrapper.setAttribute('rotation', {x: 0, y:0, z:0});
             camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
-            //camera.setAttribute('position', {x: 0, y: 0, z: 0});            
             camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', true);
-            //$('#positions #content-scale').prop('disabled', true);
 
             $('#positions #reticle-position-x').text('-');
             $('#positions #reticle-position-y').text('-');
@@ -333,7 +328,6 @@ jQuery(document).ready(function($) {
             $('#positions #reticle-rotation-y').text('-');
             $('#positions #reticle-rotation-z').text('-');
 
-            //$('#positions #content-scale option[value="1.0"]').prop('selected', true); 
         } else {
             /* put camera in front of content */
             var json = jQuery.parseJSON($(this).val());
@@ -344,7 +338,6 @@ jQuery(document).ready(function($) {
             camera.setAttribute('rotation', {x: 0, y:0, z:0});
             window.positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', false);
-            //$('#positions #content-scale').prop('disabled', false);
 
             $('#positions #reticle-position-x').text(parseFloat(json.position.x).toFixed(2));
             $('#positions #reticle-position-y').text(parseFloat(json.position.y).toFixed(2));
@@ -353,8 +346,6 @@ jQuery(document).ready(function($) {
             $('#positions #reticle-rotation-x').text(parseFloat(json.rotation.x).toFixed(2));
             $('#positions #reticle-rotation-y').text(parseFloat(json.rotation.y).toFixed(2));
             $('#positions #reticle-rotation-z').text(parseFloat(json.rotation.z).toFixed(2));
-
-            //$('#positions #content-scale option[value="' + json.scale.x + '"]').prop('selected', true); 
         }
 
         $(this).blur();
