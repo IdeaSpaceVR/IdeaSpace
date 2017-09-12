@@ -68,70 +68,61 @@
                                 data-content-id="{{ $photosphere_reference['#content-id'] }}" 
                                 isvr-hotspot-navigation-wrapper-listener
                                 material="transparent: false; opacity: 0"
-                                position="0 1.50 -2.1"   
+                                position="0 1.6 -2.1"   
                                 radius="0.4" 
-                                scale="1 1 1" 
+                                scale="0.7 0.7 0.7" 
                                 visible="false">
-                                <a-entity rotation="-65 0 0">
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-3-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
-                                        visible="false" 
-                                        position="-0.035 0.24 0.03" 
-                                        rotation="0 0 -45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-3-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
-                                        visible="false" 
-                                        position="0.035 0.24 0.031" 
-                                        rotation="0 0 45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-2-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}" 
-                                        visible="false" 
-                                        position="-0.035 0.14 0.03" 
-                                        rotation="0 0 -45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-2-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}" 
-                                        visible="false" 
-                                        position="0.035 0.14 0.031" 
-                                        rotation="0 0 45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-1-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
-                                        visible="false" 
-                                        material="transparent: true; opacity: 1.0" 
-                                        position="-0.035 0.04 0.03" 
-                                        rotation="0 0 -45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-                                    <a-plane 
-                                        class="hotspot-navigation-arrow hotspot-navigation-arrow-1-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
-                                        visible="false" 
-                                        material="transparent: true; opacity: 1.0" 
-                                        position="0.035 0.04 0.031" 
-                                        rotation="0 0 45" 
-                                        width="0.05" 
-                                        height="0.15"
-                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}">
-                                    </a-plane>
-                                </a-entity>
+                                <a-ring
+                                    color="{{ $photosphere['navigation-hotspot-color']['#value'] }}"
+                                    position="0 0 0"
+                                    radius-inner="0.11"
+                                    radius-outer="0.13">
+                                    <a-circle
+                                        color="{{ $photosphere['navigation-hotspot-color']['#value'] }}"
+                                        position="0 0 0.01"
+                                        radius="0.09">
+                                        <a-animation
+                                            attribute="geometry.radius"
+                                            to="0.08"
+                                            dur="1500"
+                                            direction="alternate"
+                                            repeat="indefinite"
+                                            easing="linear">
+                                        </a-animation>
+                                        <a-plane 
+                                            class="hotspot-navigation-arrow hotspot-navigation-arrow-3-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
+                                            visible="true" 
+                                            position="-0.011 0 0.03" 
+                                            rotation="0 0 -45" 
+                                            color="{{ $photosphere['navigation-hotspot-arrow-color']['#value'] }}"
+                                            width="0.03" 
+                                            height="0.06">
+                                        </a-plane>
+                                        <a-circle
+                                            color="{{ $photosphere['navigation-hotspot-arrow-color']['#value'] }}"
+                                            position="-0.032 -0.021 0.03"
+                                            rotation="0 0 -225"
+                                            theta-length="180"
+                                            radius="0.015">
+                                        </a-circle>
+                                        <a-plane 
+                                            class="hotspot-navigation-arrow hotspot-navigation-arrow-3-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
+                                            visible="true" 
+                                            position="0.011 0 0.031" 
+                                            rotation="0 0 45" 
+                                            color="{{ $photosphere['navigation-hotspot-arrow-color']['#value'] }}"
+                                            width="0.03" 
+                                            height="0.06">
+                                        </a-plane>
+                                        <a-circle
+                                            color="{{ $photosphere['navigation-hotspot-arrow-color']['#value'] }}"
+                                            position="0.032 -0.021 0.03"
+                                            rotation="0 0 -135"
+                                            theta-length="180"
+                                            radius="0.015">
+                                        </a-circle>
+                                    </a-circle>
+                                </a-ring>
 
                                 @if (trim($photosphere_reference['#content']['title']['#value']) != '')
 
@@ -172,33 +163,32 @@
                                 material="transparent: false; opacity: 0"
                                 position="0 1.6 -2.1" 
                                 radius="0.4" 
-                                scale="0.5 0.5 0.5" 
+                                scale="0.7 0.7 0.7" 
                                 visible="false">
-                                <a-circle 
-                                    color="{{ $annotation['#content']['background-color']['#value'] }}" 
-                                    material="transparent: false; opacity: 0.6"
-                                    radius="0.2" 
-                                    position="0 0 0.01"> 
-                                    <a-ring
-                                        color="#FFFFFF" 
-                                        position="0 0 0.02"
-                                        radius-inner="0.05"
-                                        radius-outer="0.13">
+                                <a-ring
+                                    color="{{ $annotation['#content']['hotspot-color']['#value'] }}" 
+                                    position="0 0 0"
+                                    radius-inner="0.11"
+                                    radius-outer="0.13">
+                                    <a-circle 
+                                        color="{{ $annotation['#content']['hotspot-color']['#value'] }}" 
+                                        radius="0.09" 
+                                        position="0 0 0.01"> 
                                         <a-animation
-                                            attribute="geometry.radiusOuter"
-                                            to="0.15"
-                                            dur="1300"
+                                            attribute="geometry.radius"
+                                            to="0.08"
+                                            dur="1500"
                                             direction="alternate"
                                             repeat="indefinite"
                                             easing="linear">
                                         </a-animation>
                                         <a-circle 
-                                            color="{{ $annotation['#content']['background-color']['#value'] }}" 
-                                            radius="0.05" 
-                                            position="0 0 0.03"> 
+                                            color="#FFF" 
+                                            radius="0.02" 
+                                            position="0 0 0.02"> 
                                         </a-circle>
-                                    </a-ring>
-                                </a-circle>
+                                    </a-circle>
+                                </a-ring>
                             </a-circle>
 
                             <!-- hotspot text //-->

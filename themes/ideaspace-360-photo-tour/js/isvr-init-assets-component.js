@@ -85,7 +85,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                             hotspots[i].setAttribute('visible', true);
                         }
 
-                        var n = 1;
+                        /*var n = 1;
                         clearInterval(window.interval);
                         window.interval = setInterval(function() {
                             var hotspot_nav_arrow_1 = document.querySelectorAll('.hotspot-navigation-arrow-' + n + '-content-id-' + content_id);
@@ -101,7 +101,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                                     hotspot_nav_arrows[i].setAttribute('visible', false);
                                 }
                             }
-                        }, 1200);
+                        }, 1200);*/
 
                         sphere.removeEventListener('materialtextureloaded', photosphere_texture_loaded_listener);
                     });

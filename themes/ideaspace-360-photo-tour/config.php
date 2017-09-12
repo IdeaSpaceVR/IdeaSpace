@@ -43,11 +43,21 @@ return [
         ],
 
         'background-color' => [
-          '#label' => 'Background Color for Annotation Text Boxes as well as Hotspot Color',
+          '#label' => 'Background Color for Annotation Text Boxes',
           '#description' => 'Select a background color.',
           '#help' => 'Select a background color.',
           '#type' => 'color',
           '#required' => false,
+          '#default_value' => '#000000',
+        ],
+
+        'hotspot-color' => [
+          '#label' => 'Hotspot Color',
+          '#description' => 'Select a hotspot color.',
+          '#help' => 'Select a hotspot color.',
+          '#type' => 'color',
+          '#required' => false,
+          '#default_value' => '#FFFFFF',
         ],
 
       ], /* fields */
@@ -134,6 +144,15 @@ return [
           '#type' => 'color',
           '#required' => false,
           '#default_value' => '#FFFFFF',
+        ],
+
+        'navigation-hotspot-arrow-color' => [
+          '#label' => 'Navigation Hotspot Arrow Color',
+          '#description' => 'Select a color for the arrow of a navigation hotspot.',
+          '#help' => 'Select a color for the arrow of a navigation hotspot.',
+          '#type' => 'color',
+          '#required' => false,
+          '#default_value' => '#000000',
         ],
 
       ], /* fields */

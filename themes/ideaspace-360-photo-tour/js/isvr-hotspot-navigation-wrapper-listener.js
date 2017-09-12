@@ -20,7 +20,7 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
 
             var title = document.querySelector('#photosphere-title-content-id-' + target_content_id);
             if (title != null) {
-                title.setAttribute('position', { x: 1.05, y: 0.1, z: 0.4 });
+                title.setAttribute('position', { x: 1.05, y: 0, z: 0.4 });
                 title.setAttribute('visible', true);
             }
 
@@ -84,7 +84,7 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
                 hotspots[i].setAttribute('visible', true);
             }
 
-            var n = 1;
+            /*var n = 1;
             clearInterval(window.interval);
             window.interval = setInterval(function() {
                 var hotspot_nav_arrow_1 = document.querySelectorAll('.hotspot-navigation-arrow-' + n + '-content-id-' + content_id);
@@ -100,7 +100,7 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
                         hotspot_nav_arrows[i].setAttribute('visible', false);
                     }
                 }
-            }, 1200);
+            }, 1200);*/
 
             sphere.setAttribute('material', 'src', '#img-photosphere-' + content_id);
             sphere.emit('photosphere-fade-in');
