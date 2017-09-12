@@ -501,7 +501,8 @@ jQuery(document).ready(function($) {
         /* clean up */
         $('#positions #content-attached option').not(':first').remove();
 
-        var json = jQuery.parseJSON($('.form-control-add-positions .positions-info').val());
+        var json = jQuery.parseJSON($(this).parent().parent().find('.positions-info').val());
+
         $.each(json, function(index, value) {
             var content = document.querySelector('#reticle-text');
             /* clean up */
