@@ -1,3 +1,10 @@
+## 1.0.3
+
+- Bug fix IdeaSpace 3D Model theme: ply model hotspot annotations do not need rotation
+- IdeaSpace 360 theme: better support for mouse on desktop / touch on mobile, better looking hotspots 
+- IdeaSpace 3D Model theme: better support for mouse on desktop / touch on mobile, better looking hotspots
+- Added new theme: IdeaSpace 360 Photo Tour
+
 ## 1.0.2
 
 - Bug fix: featured space on front page for anonymous user caused error 
