@@ -4,6 +4,7 @@
 - IdeaSpace 360 theme: better support for mouse on desktop / touch on mobile, better looking hotspots 
 - IdeaSpace 3D Model theme: better support for mouse on desktop / touch on mobile, better looking hotspots
 - Added new theme: IdeaSpace 360 Photo Tour
+- Annoyance fix: do not reset camera position when selecting placeholder in field type position
 
 ## 1.0.2
 
