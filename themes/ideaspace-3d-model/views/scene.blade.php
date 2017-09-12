@@ -153,34 +153,32 @@
                         radius="0.1" 
                         material="transparent: true; opacity: 0" 
                         isvr-hotspot="{{ $annotation['#content-id'] . $rand }}">
-                        <a-circle
+                        <a-ring
+                            color="{{ $annotation['#content']['hotspot-color']['#value'] }}"
                             class="hotspot" 
-                            material="transparent: true; opacity: 0.6" 
                             visible="false" 
-                            color="{{ $annotation['#content']['background-color']['#value'] }}" 
                             look-at="#camera"
-                            radius="0.1">
-                            <a-ring 
-                                color="#FFFFFF" 
-                                position="0 0 0.01" 
-                                radius-inner="0.04" 
-                                radius-outer="0.08">
-                                <a-animation 
-                                    class="hotspot-animation" 
-                                    attribute="geometry.radiusOuter" 
-                                    to="0.06" 
-                                    dur="1300" 
-                                    direction="alternate" 
-                                    repeat="indefinite" 
+                            radius-inner="0.08"
+                            radius-outer="0.1">
+                            <a-circle
+                                color="{{ $annotation['#content']['hotspot-color']['#value'] }}"
+                                radius="0.06"
+                                position="0 0 0.01">
+                                <a-animation
+                                    attribute="geometry.radius"
+                                    to="0.05"
+                                    dur="1500"
+                                    direction="alternate"
+                                    repeat="indefinite"
                                     easing="linear">
                                 </a-animation>
                                 <a-circle
-                                    color="{{ $annotation['#content']['background-color']['#value'] }}"
-                                    radius="0.04"
+                                    color="#FFF"
+                                    radius="0.02"
                                     position="0 0 0.02">
                                 </a-circle>
-                            </a-ring>
-                        </a-circle>
+                            </a-circle>
+                        </a-ring>                        
                     </a-sphere>
 
                     <a-entity 

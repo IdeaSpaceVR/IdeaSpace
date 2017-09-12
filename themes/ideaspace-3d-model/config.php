@@ -34,7 +34,7 @@ return [
         ],
 
         'text-color' => [
-          '#label' => 'Text Color',
+          '#label' => 'Text Color for Annotation Text Boxes',
           '#description' => 'Select a text color.',
           '#help' => 'Select a text color.',
           '#type' => 'color',
@@ -43,11 +43,21 @@ return [
         ],
 
         'background-color' => [
-          '#label' => 'Annotation Background and Hotspot Color',
+          '#label' => 'Background Color for Annotation Text Boxes',
           '#description' => 'Select a background color.',
           '#help' => 'Select a background color.',
           '#type' => 'color',
           '#required' => false,
+          '#default_value' => '#000000',
+        ],
+
+        'hotspot-color' => [
+          '#label' => 'Hotspot Color',
+          '#description' => 'Select a hotspot color.',
+          '#help' => 'Select a hotspot color.',
+          '#type' => 'color',
+          '#required' => false,
+          '#default_value' => '#FFFFFF',
         ],
 
       ], /* fields */
