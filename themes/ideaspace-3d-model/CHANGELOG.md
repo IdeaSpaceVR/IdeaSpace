@@ -1,3 +1,9 @@
+## 1.1
+
+- Deprecated aframe-mouse-cursor-component
+- New info hotspots and possibility to set color for hotspots
+- Bug fix: ply model hotspots do not need rotation
+
 ## 1.0
 
 - Initial version
