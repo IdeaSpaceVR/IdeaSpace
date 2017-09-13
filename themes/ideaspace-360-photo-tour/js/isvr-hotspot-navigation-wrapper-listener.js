@@ -18,10 +18,12 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
 
             var target_content_id = this.getAttribute('data-content-id');
 
-            var title = document.querySelector('#photosphere-title-content-id-' + target_content_id);
-            if (title != null) {
-                title.setAttribute('position', { x: 1.05, y: 0, z: 0.4 });
-                title.setAttribute('visible', true);
+            var titles = document.querySelectorAll('.photosphere-title-target-content-id-' + target_content_id + '-content-id-' + content_id);
+            for (var i = 0; i < titles.length; i++) {
+                if (titles[i] != null) {
+                    titles[i].setAttribute('position', { x: 1.05, y: 0, z: 0.4 });
+                    titles[i].setAttribute('visible', true);
+                }
             }
 
         });
@@ -40,10 +42,12 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
 
             var target_content_id = this.getAttribute('data-content-id');
 
-            var title = document.querySelector('#photosphere-title-content-id-' + target_content_id);
-            if (title != null) {
-                title.setAttribute('position', { x: 0, y: 10, z: -2.1 });
-                title.setAttribute('visible', false);
+            var titles = document.querySelectorAll('.photosphere-title-target-content-id-' + target_content_id + '-content-id-' + content_id);
+            for (var i = 0; i < titles.length; i++) {
+                if (titles[i] != null) {
+                    titles[i].setAttribute('position', { x: 0, y: 10, z: -2.1 });
+                    titles[i].setAttribute('visible', false);
+                }
             }
         });
 

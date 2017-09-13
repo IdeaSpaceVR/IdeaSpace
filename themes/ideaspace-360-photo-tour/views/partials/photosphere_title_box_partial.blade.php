@@ -1,8 +1,6 @@
 <a-entity
-    class="photosphere-title"
-    id="photosphere-title-content-id-{{ $photosphere_reference['#content']['title']['#content-id'] }}"
+    class="photosphere-title photosphere-title-target-content-id-{{ $photosphere_reference['#content']['title']['#content-id'] }}-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}"
     isvr-photosphere-title-listener
-    data-shown="false"
     visible="false"
     position="0 10 -2.1"
     geometry="primitive: plane; width: 1.8; height: 0.36"
