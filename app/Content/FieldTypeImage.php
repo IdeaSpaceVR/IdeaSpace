@@ -200,9 +200,10 @@ class FieldTypeImage {
                     $field->save();
 
                     /* delete generated images for this field, because file changed */
-                    $genericImage = GenericImage::where('id', $old_data)->first();
-                    $genericFile = GenericFile::where('id', $genericImage->file_id)->first();
-                    $pathinfo = pathinfo($genericFile->uri);
+                    //$genericImage = GenericImage::where('id', $old_data)->first();
+                    //$genericFile = GenericFile::where('id', $genericImage->file_id)->first();
+                    //$pathinfo = pathinfo($genericFile->uri);
+
                     $meta_data = json_decode($field->meta_data, true);
                     if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                         foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {            
@@ -216,9 +217,10 @@ class FieldTypeImage {
             } else {
 
                 /* delete generated images for this field */
-                $genericImage = GenericImage::where('id', $field->data)->first();
-                $genericFile = GenericFile::where('id', $genericImage->file_id)->first();
-                $pathinfo = pathinfo($genericFile->uri);
+                //$genericImage = GenericImage::where('id', $field->data)->first();
+                //$genericFile = GenericFile::where('id', $genericImage->file_id)->first();
+                //$pathinfo = pathinfo($genericFile->uri);
+
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                     foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {            

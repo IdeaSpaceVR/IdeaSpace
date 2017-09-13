@@ -196,9 +196,10 @@ class FieldTypePhotosphere {
                 $field->save();
 
                 /* delete generated images for this field, because file changed */
-                $photosphere = Photosphere::where('id', $old_data)->first();
-                $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
-                $pathinfo = pathinfo($genericFile->uri);
+                //$photosphere = Photosphere::where('id', $old_data)->first();
+                //$genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+                //$pathinfo = pathinfo($genericFile->uri);
+
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                     foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
@@ -211,9 +212,10 @@ class FieldTypePhotosphere {
             } else {
 
                 /* delete generated images for this field */
-                $photosphere = Photosphere::where('id', $field->data)->first();
-                $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
-                $pathinfo = pathinfo($genericFile->uri);
+                //$photosphere = Photosphere::where('id', $field->data)->first();
+                //$genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+                //$pathinfo = pathinfo($genericFile->uri);
+
                 $meta_data = json_decode($field->meta_data, true);
                 if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
                     foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
