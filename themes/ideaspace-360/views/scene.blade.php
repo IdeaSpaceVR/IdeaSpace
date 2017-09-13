@@ -303,7 +303,7 @@
                     position="0 0.01 0.02" 
                     material="color: #606060">
                     <a-text
-                        value="No headset connected. Click and drag to look around. Position cursor and click to select items. Press space bar on a PC or touch click on a mobile device to select photo spheres."
+                        value="No headset connected. Click and drag to look around and click to select items. Press space bar on a PC or touch click on a mobile device to view photo sphere menu."
                         color="#FFFFFF"
                         anchor="center"
                         width="1.6">
