@@ -88,23 +88,9 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
                 hotspots[i].setAttribute('visible', true);
             }
 
-            /*var n = 1;
-            clearInterval(window.interval);
-            window.interval = setInterval(function() {
-                var hotspot_nav_arrow_1 = document.querySelectorAll('.hotspot-navigation-arrow-' + n + '-content-id-' + content_id);
-                for (var i = 0; i < hotspot_nav_arrow_1.length; i++) {
-                    hotspot_nav_arrow_1[i].setAttribute('visible', true);
-                }
-                if (n < 4) {
-                    n++;
-                } else {
-                    n = 1;
-                    var hotspot_nav_arrows = document.querySelectorAll('.hotspot-navigation-arrow');
-                    for (var i = 0; i < hotspot_nav_arrows.length; i++) {
-                        hotspot_nav_arrows[i].setAttribute('visible', false);
-                    }
-                }
-            }, 1200);*/
+            //var camera = document.querySelector('#camera');
+            //camera.setAttribute('rotation', { x: 0, y: this.getAttribute('data-camera-rotation'), z: 0 });
+            //camera.setAttribute('rotation', { x: 0, y: 0, z: 0 });
 
             sphere.setAttribute('material', 'src', '#img-photosphere-' + content_id);
             sphere.emit('photosphere-fade-in');

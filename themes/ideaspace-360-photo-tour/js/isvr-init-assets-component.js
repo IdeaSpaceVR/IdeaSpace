@@ -42,6 +42,10 @@ AFRAME.registerComponent('isvr-init-assets', {
                 sphere.setAttribute('material', 'src', '#' + id);
                 sphere.setAttribute('data-content-id', content_id);
 
+                //var camera = document.querySelector('#camera');
+                //camera.setAttribute('rotation', { x: 0, y: this.data.camera_rotation, z: 0 }); 
+                //camera.setAttribute('rotation', { x: 0, y: 0, z: 0 }); 
+
                 var photosphere_texture_loaded_listener = function() {
 
                     document.querySelector('#photosphere-loading').setAttribute('visible', false);
