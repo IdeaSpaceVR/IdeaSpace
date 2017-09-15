@@ -63,6 +63,11 @@ AFRAME.registerComponent('isvr-hotspot-navigation-wrapper-listener', {
                 hotspots[i].setAttribute('visible', false);
             }
 
+            var hotspot_text = document.querySelectorAll('.hotspot-text');
+            for (var i = 0; i < hotspot_text.length; i++) {
+                hotspot_text[i].setAttribute('visible', false);
+            }
+
             hotspots = document.querySelectorAll('.hotspot-navigation');
             for (var i = 0; i < hotspots.length; i++) {
                 hotspots[i].setAttribute('visible', false);

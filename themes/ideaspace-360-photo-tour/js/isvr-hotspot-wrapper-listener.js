@@ -31,10 +31,10 @@ AFRAME.registerComponent('isvr-hotspot-wrapper-listener', {
 
                 var content_id = document.querySelector('#photosphere').getAttribute('data-content-id');
 
-                var navigation_hotspots = document.querySelectorAll('.hotspot-navigation-content-id-' + content_id);
+                /*var navigation_hotspots = document.querySelectorAll('.hotspot-navigation-content-id-' + content_id);
                 for (var i = 0; i < navigation_hotspots.length; i++) {
                     navigation_hotspots[i].setAttribute('visible', false);
-                }
+                }*/
 
                 var hotspots = document.querySelectorAll('.hotspot-content-id-' + content_id);
                 for (var i = 0; i < hotspots.length; i++) {
