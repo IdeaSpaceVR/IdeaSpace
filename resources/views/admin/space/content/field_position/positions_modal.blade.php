@@ -186,7 +186,7 @@
 
             </div>
             <div class="modal-footer">
-                <a role="button" class="btn btn-default insert-btn" data-dismiss="modal" style="display:none"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> {{ trans('fieldtype_position.insert') }}</a>
+                <a role="button" class="btn btn-success insert-btn" data-dismiss="modal" style="display:none"><span class="glyphicon glyphicon-arrow-down" aria-hidden="true"></span> {{ trans('fieldtype_position.insert') }}</a>
                 <button type="button" class="btn btn-default" data-dismiss="modal">{{ trans('fieldtype_position.close') }}</button>
             </div>
         </div>
