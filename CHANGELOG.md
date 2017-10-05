@@ -1,3 +1,11 @@
+## 1.0.4
+
+- small visual and text changes to general user interface
+- IdeaSpace 360 theme: controller responsiveness improved on navigation and info hotspots
+- IdeaSpace 360 theme: uses now A-Frame v0.7.0
+- IdeaSpace 360 Photo Tour theme: controller responsiveness improved on navigation and info hotspots
+- IdeaSpace 360 Photo Tour theme: uses now A-Frame v0.7.0
+
 ## 1.0.3
 
 - Bug fix IdeaSpace 3D Model theme: ply model hotspot annotations do not need rotation
