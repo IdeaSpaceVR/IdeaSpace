@@ -1,11 +1,10 @@
 <a-entity
-    look-at="#camera"
     data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}"
     data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
     isvr-hotspot-text-listener
     class="hotspot-text hotspot-text-content-id-{{ $annotation['#content-id'] . $rand }}"
     visible="false"
-    position="0 1.6 2.2"
+    position="0 1.6 -2.2"
     rotation="0 0 0"
     geometry="primitive: plane; width: 1.8; height: 0.66"
     material="transparent: true; opacity: 0">
@@ -23,6 +22,12 @@
                 anchor="center"
                 width="1.6">
             </a-text>
+            <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+            <a-entity
+                material="opacity: 0"
+                geometry="primitive: plane; width: 1.6; height: 0.4"
+                position="0 0 0.04">
+            </a-entity>
         </a-entity>
     </a-entity>
 </a-entity>

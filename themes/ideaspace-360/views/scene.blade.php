@@ -15,7 +15,7 @@
                 look-controls>
                 <a-entity
                     cursor="fuse: false; rayOrigin: mouse"
-                    raycaster="far:5001" /* needed for touch click events on #photosphere */
+                    raycaster="far:5001" 
                     id="cursor"
                     position="0 0 -1.9"
                     geometry="primitive: circle; radius: 0.02;"
@@ -152,20 +152,18 @@
                     $rand = str_random();
                     @endphp
 
-                    <!-- workaround: rotation - 180, otherwise annotations are positioned wrong //-->
                     <a-entity 
-                        rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] - 180 }} {{ $annotation['#rotation']['#z'] }}">
+                        rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}">
                         <a-circle 
                             class="hotspot hotspot-content-id-{{ $photosphere['attach-annotations']['#content-id'] }}" 
                             data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}" 
                             data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
                             isvr-hotspot-wrapper-listener
                             material="transparent: false; opacity: 0"
-                            position="0 1.6 2.1" 
+                            position="0 1.6 -2.1" 
                             radius="0.4" 
                             scale="0.5 0.5 0.5" 
-                            visible="false"
-                            look-at="#camera">
+                            visible="false">
                             <a-circle 
                                 color="{{ $annotation['#content']['background-color']['#value'] }}" 
                                 material="transparent: false; opacity: 0.6"
@@ -176,6 +174,12 @@
                                     position="0 0 0.02"
                                     radius-inner="0.05"
                                     radius-outer="0.13">
+                                    <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+                                    <a-circle
+                                        material="opacity: 0"
+                                        position="0 0 0.04"
+                                        radius="0.4">
+                                    </a-circle>
                                     <a-animation
                                         attribute="geometry.radiusOuter"
                                         to="0.15"
@@ -284,6 +288,13 @@
                         anchor="center"
                         width="1.6">
                     </a-text>
+                    <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+                    <a-plane
+                        material="opacity: 0"
+                        width="1.6"
+                        height="0.9"
+                        position="0 0 0.09">
+                    </a-plane>
                 </a-entity>
             </a-entity>
         </a-entity><!-- intro-0 //-->
@@ -303,7 +314,7 @@
                     position="0 0.01 0.02" 
                     material="color: #606060">
                     <a-text
-                        value="No headset connected. Click and drag to look around and click to select items. Press space bar on a PC or touch click on a mobile device to view photo sphere menu."
+                        value="No VR headset connected. Click and drag to look around and click to select items. Press space bar on a PC or touch click on a mobile device to view photo sphere menu."
                         color="#FFFFFF"
                         anchor="center"
                         width="1.6">

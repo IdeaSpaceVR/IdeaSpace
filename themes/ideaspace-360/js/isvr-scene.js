@@ -29,6 +29,16 @@ AFRAME.registerComponent('isvr-scene', {
             document.querySelector('#cursor').setAttribute('geometry', { radius: 0.04 });
         }
 
+        this.el.addEventListener('enter-vr', function() {
+
+            document.querySelector('#camera').setAttribute('camera', {
+                far: 10000,
+                fov: 80,
+                near: 0.1,
+                userHeight: 0 /* workaround needed for a-frame 0.7.0 */
+            });
+        });
+
         this.el.addEventListener('exit-vr', function() {
 
             location.reload();
