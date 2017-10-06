@@ -1,5 +1,4 @@
 <a-entity
-    look-at="#camera"
     data-content-id="{{ $photosphere['hotspot-annotations']['#content-id'] }}"
     data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
     isvr-hotspot-text-listener
@@ -23,6 +22,12 @@
                 anchor="center"
                 width="1.6">
             </a-text>
+            <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+            <a-entity
+                material="opacity: 0"
+                geometry="primitive: plane; width: 1.6; height: 0.4"
+                position="0 0 0.04">
+            </a-entity>
         </a-entity>
     </a-entity>
 </a-entity>

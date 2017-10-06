@@ -81,6 +81,12 @@
                                         color="{{ $photosphere['navigation-hotspot-color']['#value'] }}"
                                         position="0 0 0.01"
                                         radius="0.09">
+                                        <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+                                        <a-circle
+                                            material="opacity: 0"
+                                            position="0 0 0.04"
+                                            radius="0.4">
+                                        </a-circle>
                                         <a-animation
                                             attribute="geometry.radius"
                                             to="0.08"
@@ -174,6 +180,12 @@
                                         color="{{ $annotation['#content']['hotspot-color']['#value'] }}" 
                                         radius="0.09" 
                                         position="0 0 0.01"> 
+                                        <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+                                        <a-circle
+                                            material="opacity: 0"
+                                            position="0 0 0.04"
+                                            radius="0.4">
+                                        </a-circle>
                                         <a-animation
                                             attribute="geometry.radius"
                                             to="0.08"
@@ -282,6 +294,13 @@
                         anchor="center"
                         width="1.6">
                     </a-text>
+                    <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
+                    <a-plane
+                        material="opacity: 0"
+                        width="1.6"
+                        height="0.90"
+                        position="0 0 0.09">
+                    </a-plane>
                 </a-entity>
             </a-entity>
         </a-entity><!-- intro-0 //-->
@@ -301,7 +320,7 @@
                     position="0 0.01 0.02" 
                     material="color: #606060">
                     <a-text
-                        value="No headset connected. Click and drag to look around and click to select items."
+                        value="No VR headset connected. Click and drag to look around and click to select items."
                         color="#FFFFFF"
                         anchor="center"
                         width="1.6">
