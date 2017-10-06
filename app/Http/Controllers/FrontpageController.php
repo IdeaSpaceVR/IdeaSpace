@@ -55,7 +55,7 @@ class FrontpageController extends Controller {
             $title_setting = Setting::where('key', 'site-title')->first();
 
             /* if there are suddenly no published spaces anymore, change setting and show default front page */
-            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->orderBy('updated_at', 'desc')->simplePaginate(5);
+            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->orderBy('updated_at', 'desc')->simplePaginate(1);
 
             if (count($spaces) === 0) {
                 if ($setting->value != 'latest-spaces') {
