@@ -1,3 +1,8 @@
+## 1.4
+
+- Controller responsiveness improved on navigation and info hotspots
+- Version bump to A-Frame v0.7.0
+
 ## 1.3
 
 - Better desktop and mobile support, without head-mounted display
