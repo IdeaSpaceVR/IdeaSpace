@@ -63,7 +63,7 @@
                         </div>
                         @if (isset($memory_limit))
                         <div class="col-md-6">
-                            <p style="@if (substr($memory_limit, 0, -1) < 128) color:#a94442; @endif font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_limit_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_limit') }} {{ $memory_limit }}</span> @if (substr($memory_limit, 0, -1) < 128) <i class="fa fa-exclamation-triangle" aria-hidden="true" style="margin-left:4px"></i> @endif </p>
+                            <p style="@if (substr($memory_limit, 0, -1) < 256) color:#a94442; @endif font-size:16px"><span style="cursor:pointer" data-toggle="tooltip" data-placement="top" title="" data-original-title="{{ trans('template_dashboard.memory_limit_help') }}"><i class="fa fa-btn fa-cog" aria-hidden="true"></i> {{ trans('template_dashboard.memory_limit') }} {{ $memory_limit }}</span> @if (substr($memory_limit, 0, -1) < 256) <i class="fa fa-exclamation-triangle" aria-hidden="true" style="margin-left:4px"></i> @endif </p>
                         </div>
                         @endif
                     </div>
