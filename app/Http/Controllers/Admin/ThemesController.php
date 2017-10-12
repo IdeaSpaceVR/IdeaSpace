@@ -131,7 +131,7 @@ class ThemesController extends Controller {
             $theme_mod['theme-author-email'] = $config['#theme-author-email'];          
             $theme_mod['theme-homepage'] = $config['#theme-homepage'];          
             $theme_mod['theme-keywords'] = $config['#theme-keywords'];          
-            $theme_mod['theme-compatibility'] = explode(',', $config['#theme-compatibility']);          
+            //$theme_mod['theme-compatibility'] = explode(',', $config['#theme-compatibility']);          
             $theme_mod['theme-view'] = $config['#theme-view'];          
 
             $theme_mod['status'] = $theme->status;          
@@ -216,7 +216,7 @@ class ThemesController extends Controller {
                     array_has($config, '#theme-author-email') && strlen($config['#theme-author-email']) > 0 &&
                     array_has($config, '#theme-homepage') && strlen($config['#theme-homepage']) > 0 &&
                     array_has($config, '#theme-keywords') && strlen($config['#theme-keywords']) > 0 &&
-                    array_has($config, '#theme-compatibility') && strlen($config['#theme-compatibility']) > 0 &&
+                    /*array_has($config, '#theme-compatibility') && strlen($config['#theme-compatibility']) > 0 &&*/
                     array_has($config, '#theme-view') && strlen($config['#theme-view']) > 0 &&
                     array_has($config, '#content-types')) {
 
