@@ -1,3 +1,7 @@
+## 1.2
+
+- user height and positional controllers height fix
+
 ## 1.1
 
 - Controller responsiveness improved on navigation and info hotspots
