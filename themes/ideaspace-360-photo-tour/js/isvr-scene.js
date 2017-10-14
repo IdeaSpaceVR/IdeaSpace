@@ -31,12 +31,15 @@ AFRAME.registerComponent('isvr-scene', {
 
         this.el.addEventListener('enter-vr', function() {
 
-            document.querySelector('#camera').setAttribute('camera', {
-                far: 10000,
-                fov: 80,
-                near: 0.1,
-                userHeight: 0 /* workaround needed for a-frame 0.7.0 */
-            });
+            /* workaround for non-positional tracking devices and a-frame 0.7.0 */
+            if (!AFRAME.utils.device.checkHasPositionalTracking()) {
+                document.querySelector('#camera').setAttribute('camera', {
+                    far: 10000,
+                    fov: 80,
+                    near: 0.1,
+                    userHeight: 0
+                });
+            }
         });
 
         this.el.addEventListener('exit-vr', function() {
