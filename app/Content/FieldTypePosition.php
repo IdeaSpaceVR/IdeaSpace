@@ -140,7 +140,7 @@ class FieldTypePosition {
 
             $validation_rules_messages['rules'] = array_add($validation_rules_messages['rules'], $field_key, 'required');
 
-            /* array_dot is flattens the array because $field_key . '.required' creates new array */
+            /* array_dot flattens the array because $field_key . '.required' creates new array */
             $validation_rules_messages['messages'] = array_dot(array_add(
                 $validation_rules_messages['messages'],
                 $field_key . '.required',
