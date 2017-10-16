@@ -31,7 +31,7 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                        <th style="width:3%"><input id="" type="checkbox" name="" value=""></th>
+                        <th style="width:3%"><!--input id="" type="checkbox" name="" value=""//--></th>
                         <th>{{ trans('template_spaces.title') }}</th>
                         <th style="width:30%">{{ trans('template_spaces.theme') }}</th>
                         <th style="width:10%">{{ trans('template_spaces.author') }}</th>
@@ -46,7 +46,7 @@
                 @endif 
                 @foreach ($spaces as $space)
                     <tr>
-                        <td><input id="" type="checkbox" name="space[]" value=""></td>
+                        <td><!--input id="" type="checkbox" name="space[]" value=""//--></td>
                         <td class="space-title">
                             <!--div><a style="font-weight:bold;word-wrap:break-word;" href="#" class="title">{{ $space->title }}</a></div//-->
                             <div class="title" style="font-weight:bold;word-wrap:break-word;">{{ $space->title }}</div>
