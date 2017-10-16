@@ -5,6 +5,7 @@
 - IdeaSpace 360 theme: uses now A-Frame v0.7.0
 - IdeaSpace 360 Photo Tour theme: controller responsiveness improved on navigation and info hotspots
 - IdeaSpace 360 Photo Tour theme: uses now A-Frame v0.7.0
+- Removed #theme-compatibility from theme config.php files
 - Front page, latest spaces: show only one space at a time, due to performance implications of WebVR
 - Bug fixes for IdeaSpace 360 and IdeaSpace 360 photo tour themes, see respective CHANGELOGS
 
