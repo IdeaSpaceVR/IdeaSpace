@@ -1,6 +1,6 @@
 ## 1.0.4
 
-- small visual and text changes to general user interface
+- Small visual and text changes to general user interface
 - IdeaSpace 360 theme: controller responsiveness improved on navigation and info hotspots
 - IdeaSpace 360 theme: uses now A-Frame v0.7.0
 - IdeaSpace 360 Photo Tour theme: controller responsiveness improved on navigation and info hotspots
