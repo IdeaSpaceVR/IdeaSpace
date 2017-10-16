@@ -98,5 +98,7 @@ ul li.active>a {
   border-color: #0080e5;
 }
 
-
+.vertical-align {
+  margin-top: 100px;
+}
 
