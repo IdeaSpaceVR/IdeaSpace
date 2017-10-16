@@ -11,7 +11,6 @@ return [
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
   '#theme-keywords' => 'photo sphere, 360, photography, tour, virtual tour',
-  '#theme-compatibility' => 'Daydream, Oculus Rift, Gear VR, HTC Vive, no headset',
   '#theme-view' => 'scene',
 
   '#content-types' => [

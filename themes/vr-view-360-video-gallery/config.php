@@ -11,7 +11,6 @@ return [
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
   '#theme-keywords' => 'video sphere, gaze input navigation, mobile, 360, gallery',
-  '#theme-compatibility' => 'Google Cardboard, Daydream, Oculus, Samsung Gear VR, no headset',
   '#theme-view' => 'scene',
 
   '#content-types' => [
