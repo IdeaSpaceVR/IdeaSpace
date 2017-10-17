@@ -33,7 +33,7 @@ return [
         'navigation-hotspots' => [
           '#label' => 'Photo Sphere Navigation Hotspot',
           '#description' => 'Add navigation hotspots moving from one photo sphere to the next.',
-          '#help' => '',
+          '#help' => 'Add navigation hotspots moving from one photo sphere to the next.',
           '#type' => 'position',
           '#maxnumber' => 10, 
           '#required' => false,

@@ -24,7 +24,7 @@ return [
         'text' => [
           '#label' => 'Text',
           '#description' => 'Enter some text.',
-          '#help' => '',
+          '#help' => 'Enter some text.',
           '#type' => 'textarea',
           '#maxlength' => 150, 
           '#rows' => 5, 
