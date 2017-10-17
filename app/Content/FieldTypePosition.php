@@ -228,7 +228,7 @@ class FieldTypePosition {
 
         $mandatoryKeys = [
             '#label' => 'string',
-            '#description' => 'string',
+            '#help' => 'string',
             '#required' => 'boolean',
             '#content-type-reference' => 'string',
             /* '#field-reference' => 'string', is optional */

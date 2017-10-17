@@ -177,7 +177,7 @@ class FieldTypeOptionsSelect {
 
         $mandatoryKeys = [
             '#label' => 'string',
-            '#description' => 'string',
+            '#help' => 'string',
             '#options' => 'array',
             '#required' => 'boolean'];
       

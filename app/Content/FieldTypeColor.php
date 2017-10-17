@@ -157,7 +157,7 @@ class FieldTypeColor {
 
         $mandatoryKeys = [
             '#label' => 'string',
-            '#description' => 'string',
+            '#help' => 'string',
             '#required' => 'boolean'];
 
         return $this->validateFieldType($mandatoryKeys, $field);
