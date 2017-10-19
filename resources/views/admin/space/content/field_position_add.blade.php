@@ -1,4 +1,3 @@
-
 <div id="{{ $field_id }}" class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
     <div>
         <label class="control-label large">{{ $form['#label'] }}</label>
@@ -8,13 +7,13 @@
         <input type="hidden" value="{{ old($field_id) }}" name="{{ $field_id }}" class="positions-info">
         <input type="hidden" value="{{ json_encode($form['#contents']) }}" class="content-selector">
 
-        <div class="positions-add">
+        <div class="positions-add" @if (old($field_id) != '') style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg add-positions-btn add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">
                 <span class="glyphicon glyphicon-plus" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} 
             </button>
         </div>
 
-        <div class="positions-edit" style="display:none">
+        <div class="positions-edit" @if (old($field_id) == '') style="display:none" @endif>
             <div class="positions-placeholder" style="margin-bottom:10px"><i class="fa fa-crosshairs" aria-hidden="true" style="font-size:60px"></i></div>
             <button type="button" class="btn btn-primary add-edit-positions-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-subject-field-type="{{ $form['#field-type'] }}" data-subject-field-name="{{ $form['#field-name'] }}">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} 
