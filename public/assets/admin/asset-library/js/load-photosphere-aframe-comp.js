@@ -18,12 +18,21 @@ AFRAME.registerComponent('load-photosphere', {
                 var assets = document.querySelector('a-assets');
                 assets.appendChild(image_elem);
 
-                document.querySelector('#image-loading').setAttribute('visible', false);
-                document.querySelector('#image-loading-anim').stop();
+                if (document.querySelector('#image-loading') !== null && document.querySelector('#image-loading-anim') !== null) {
+                    document.querySelector('#image-loading').setAttribute('visible', false);
+                    document.querySelector('#image-loading-anim').stop();
+                }
 
                 el.setAttribute('src', '#img');
-                document.querySelector('#scene-floor-grid').setAttribute('visible', false);
-                document.querySelector('#default-sky').setAttribute('visible', false);
+
+                if (document.querySelector('#scene-floor-grid') !== null) { 
+                    document.querySelector('#scene-floor-grid').setAttribute('visible', false);
+                }
+
+                if (document.querySelector('#default-sky') !== null) {
+                    document.querySelector('#default-sky').setAttribute('visible', false);
+                }
+
                 el.setAttribute('visible', true);
             }
         }(this.el));
