@@ -15,6 +15,8 @@ return [
     'file_size' => 'Dateigröße:',
     'dimensions' => 'Abmessungen:',
     'edit_image' => 'Bilddetails editieren',
+    'edit_image_btn' => 'Bild ändern',
+    'remove_image_btn' => 'Bild entfernen',
     'close' => 'Schließen',
     'save' => 'Speichern',
     'saved' => 'Gespeichert',

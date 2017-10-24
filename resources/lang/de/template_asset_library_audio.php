@@ -16,6 +16,8 @@ return [
     'dimensions' => 'Abmessungen:',
     'duration' => 'Länge:',
     'edit_audio' => 'Audiodetails editieren',
+    'edit_audio_btn' => 'Audiodatei ändern',
+    'remove_audio_btn' => 'Audiodatei entfernen',
     'close' => 'Schließen',
     'save' => 'Speichern',
     'saved' => 'Gespeichert',

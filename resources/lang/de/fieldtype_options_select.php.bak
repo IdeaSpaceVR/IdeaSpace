@@ -1,0 +1,7 @@
+<?php
+
+return [
+
+    'select_option' => 'Wähle eine Option aus',
+
+];

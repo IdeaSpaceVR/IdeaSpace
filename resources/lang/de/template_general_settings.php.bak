@@ -1,0 +1,19 @@
+<?php
+
+return [
+
+    'general_settings' => 'Allgemeine Einstellungen',
+    'site_title' => 'Seitentitel',
+    'enter_site_title' => 'Seitentitel eingeben',
+    'save_changes' => 'Änderungen Speichern',
+    'language' => 'Sprache',
+    'german' => 'Deutsch',
+    'french' => 'Französisch',
+    'english' => 'Englisch',
+    'chinese_china' => 'Chinesisch China',
+    'enter_origin_trial_token' => 'Geben sie einen origin trial token an',
+    'origin_trial_token' => 'Origin Trial Token für Chrome',
+    'origin_trial_help' => 'Indem sie einen origin trial token in den meta-tags ihrer WebVR Seite angeben, machen sie Ihre VR Inhalte zugänglicher für Nutzer, da diese in ihrem Google Chrome Browser nicht mehr manuelle Einstellungen vornehmen müssen um ihren VR-Content zu sehen. Zusätzlich wird HTTPS benötigt.',
+    'origin_trial_help_more_information' => 'Get more information.',
+
+];

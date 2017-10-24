@@ -15,6 +15,8 @@ return [
     'dimensions' => 'Abmessungen:',
     'duration' => 'Laufzeit:',
     'edit_video' => 'Videodetails editieren',
+    'edit_video_btn' => 'Video editieren',
+    'remove_video_btn' => 'Video entfernen',
     'close' => 'Schließen',
     'save' => 'Speichern',
     'saved' => 'Gespeichert',
