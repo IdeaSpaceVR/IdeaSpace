@@ -27,5 +27,6 @@ return [
     'draft' => 'Entwurf',
     'move_to_trash' => 'In den Papierkorb verschieben',
     'update' => 'Aktualisieren',
+    'back' => 'Zurück zur Spaces-Übersicht',
 
 ];

@@ -7,5 +7,6 @@ return [
     'title' => 'Titel',
     'edit' => 'Bearbeiten',
     'delete' => 'Löschen',
+    'max' => 'max.',
 
 ];
