@@ -13,6 +13,7 @@ use App\Content\FieldTypeImage;
 use App\Content\FieldTypePhotosphere;
 use App\Content\FieldTypeModel3D;
 use App\Content\FieldTypePosition;
+use App\Content\FieldTypeRotation;
 use App\Content;
 use App\Field;
 use Log;
@@ -31,6 +32,7 @@ class ContentType {
     const FIELD_TYPE_MODEL3D = 'model3d';
     const FIELD_TYPE_POSITION = 'position';
     const FIELD_TYPE_OPTIONS_SELECT = 'options-select';
+    const FIELD_TYPE_ROTATION = 'rotation';
 
     public $fieldTypes;
 
@@ -55,6 +57,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_TEXTAREA] = new FieldTypeTextarea();
         $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition($this);
         $this->fieldTypes[ContentType::FIELD_TYPE_OPTIONS_SELECT] = new FieldTypeOptionsSelect();
+        $this->fieldTypes[ContentType::FIELD_TYPE_ROTATION] = new FieldTypeRotation();
     }
 
 

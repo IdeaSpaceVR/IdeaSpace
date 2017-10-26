@@ -1,3 +1,9 @@
+## 1.1.0
+
+- Introduced rotation field type 
+- Corrected mandatory theme config fields
+- Updated themes to reflect mandatory field type changes
+
 ## 1.0.4
 
 - Small visual and text changes to general user interface

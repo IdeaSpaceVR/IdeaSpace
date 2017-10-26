@@ -124,6 +124,7 @@ class SpaceContentAddController extends Controller {
             asset('public/medium-editor/js/medium-editor.min.js'),
             asset('public/assets/admin/space/content/js/content_add_edit_delete.js'),
             asset('public/jquery-file-uploader/dmuploader.js'),
+            asset('public/aframe-orbit-controls-component/aframe-orbit-controls-component.min.js'),
             asset('public/assets/admin/asset-library/js/assets.js'),
         ];
 

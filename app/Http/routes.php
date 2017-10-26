@@ -68,6 +68,7 @@ Route::group(['middleware' => 'web'], function () {
 
   /* space content field type specific routes */
   Route::get('admin/space/{space_id}/edit/{contenttype}/positions/subject/{subject_type}/{subject_id?}', ['as' => 'fieldtype_position', 'uses' => 'Admin\FieldTypePositionController@positions_subject']); 
+  Route::get('admin/space/{space_id}/edit/{contenttype}/rotation/subject/{subject_type}/{subject_id?}', ['as' => 'fieldtype_rotation', 'uses' => 'Admin\FieldTypeRotationController@rotation_subject']); 
 
 
   Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);
