@@ -23,7 +23,6 @@ return [
     'author' => 'Author:',
     'space_status' => 'Status:',
     'updated' => 'Updated on:',
-    'published' => 'Published',
     'draft' => 'Draft',
     'move_to_trash' => 'Move to Trash',
     'update' => 'Update',

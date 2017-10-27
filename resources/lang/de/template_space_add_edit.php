@@ -23,7 +23,6 @@ return [
     'author' => 'Autor:',
     'space_status' => 'Status:',
     'updated' => 'Aktualisiert am:',
-    'published' => 'Veröffentlicht',
     'draft' => 'Entwurf',
     'move_to_trash' => 'In den Papierkorb verschieben',
     'update' => 'Aktualisieren',
