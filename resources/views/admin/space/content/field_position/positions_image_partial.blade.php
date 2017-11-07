@@ -1,3 +1,8 @@
+@extends('admin.space.content.field_position.positions_modal')
+
+@section('isvr_content_title', $isvr_content_title)
+
+@section('scene-content')
 <!-- a-frame //-->
 <a-scene reset-camera embedded style="width:100%">
 
@@ -36,3 +41,4 @@
 
 </a-scene>
 <!-- a-frame //-->
+@endsection

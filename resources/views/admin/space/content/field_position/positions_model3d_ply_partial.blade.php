@@ -1,3 +1,6 @@
+@extends('admin.space.content.field_position.positions_modal')
+
+@section('scene-content')
 <!-- a-frame //-->
 <a-scene reset-camera embedded style="width:100%">
 
@@ -22,3 +25,5 @@
     <a-entity id="model" class="ply-model" position="0 0 0" rotation="-90 0 0" ply-model="src: #plyModel"></a-entity>
 
 </a-scene>
+<!-- a-frame //-->
+@endsection

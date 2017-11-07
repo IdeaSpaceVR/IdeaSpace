@@ -3,18 +3,14 @@
         <div class="modal-content">
             <div class="modal-header">
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} {{ trans('fieldtype_position.items') }} @if ($isvr_content_title != '') {{ trans('fieldtype_position.on') }} {{ $isvr_content_title }} @endif</h2>
+                <h2 class="modal-title">{{ trans('fieldtype_position.attach') }} &amp; {{ trans('fieldtype_position.detach') }} {{ trans('fieldtype_position.items') }} {{ trans('fieldtype_position.on') }}</h2>
             </div>
             <div class="modal-body">
 
                 <div class="row">
                     <div class="col-md-8 content-target">
 
-                        @if ($form['#field-type'] == '' && $form['#field-name'] == '')
-
-                            @include('admin.space.content.field_position.positions_blank_partial')
-
-                        @endif
+                    @yield('scene-content')
 
                     </div><!-- col-md-8 //-->
 
@@ -25,7 +21,7 @@
                             <div class="panel-body">
 
                                 <div class="form-group" style="margin-bottom:0px;margin-top:0px">
-                                    <label for="content-selector">{{ trans('fieldtype_position.available_items') }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.attach_content_type_hint', ['content_type' => $form['#content-label']]) }}"></span></label>
+                                    <label for="content-selector" id="content-selector-label">{{ trans('fieldtype_position.available_items') }} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.attach_content_type_hint') }}"></span></label>
 
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
@@ -95,7 +91,7 @@
                             <div class="panel-body">
 
                                 <div class="form-group" style="margin-bottom:0;margin-top:0">
-                                    <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} {{ $form['#maxnumber'] }}) <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.content_attached_hint') }}"></span></label>
+                                    <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} <span id="maxnumber-total">0</span>) <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.content_attached_hint') }}"></span></label>
 
                                     <div class="row">
                                         <div class="col-md-12">
@@ -109,7 +105,7 @@
                                     <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
                                             <div class="form-inline">
-                                                <select class="form-control" id="content-attached" autocomplete="off" data-maxnumber="{{ $form['#maxnumber'] }}" data-maxnumber-counter="0" style="min-width:150px;margin-bottom:20px">
+                                                <select class="form-control" id="content-attached" autocomplete="off" data-maxnumber="0" data-maxnumber-counter="0" style="min-width:150px;margin-bottom:20px">
                                                     <option value="">{{ trans('fieldtype_position.select') }}</option>
                                                 </select>
                                                 <button class="btn btn-primary" type="button" id="btn-detach" disabled="disabled" style="margin-bottom:20px">{{ trans('fieldtype_position.detach') }}</button>

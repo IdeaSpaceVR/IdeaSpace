@@ -78,7 +78,7 @@ return [
     'set_position_rotation_camera' => 'Set position and rotation of camera. Items are attached to camera at a z-value of -1.',
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
-    'attach_content_type_hint' => 'If there are no items to select, create some ":content_type" content first (go back to Edit Space page).',
+    'attach_content_type_hint' => 'If there are no items to select, create some content of the following type first (go back to Edit Space page):',
     'placeholder_item_z_axis' => 'Placeholder item depth position z-axis',
     'center' => 'Center (0, 0, 0)',
     'content_attached_hint' => 'When an item is selected, the camera is moved in front of the item (1 meter distance). Reset the camera position by clicking on the camera navigation center button.',

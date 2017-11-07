@@ -21,7 +21,7 @@ class FieldTypePosition {
 
     private $template_add = 'admin.space.content.field_position_add';
     private $template_edit = 'admin.space.content.field_position_edit';
-    private $template_modal = 'admin.space.content.field_position.positions_modal';
+    private $template_modal = 'admin.space.content.field_position.positions_target';
     private $template_add_edit_script = 'public/assets/admin/space/content/js/field_position_add_edit.js';
 
 
@@ -70,12 +70,14 @@ class FieldTypePosition {
             $subject = $all_fields[$field['#field-reference']];
             
             $field['#field-type'] = $subject['#type'];
+            $field['#field-label'] = $subject['#label'];
             $field['#field-name'] = $field['#field-reference'];
 
         } else {
 
             /* blank room */
             $field['#field-type'] = '';
+            $field['#field-label'] = '';
             $field['#field-name'] = '';
         }
 
@@ -87,6 +89,8 @@ class FieldTypePosition {
         $field['#content-label'] = $contenttype['#label'];
 
         $field['#contents'] = Content::where('space_id', $space_id)->where('key', $field['#content-type-reference'])->get();
+
+        $field['#contenttype-reference-label'] = $contenttype['#label'];
 
         return $field;
     }
