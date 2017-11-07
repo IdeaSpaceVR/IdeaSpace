@@ -252,7 +252,7 @@ class FieldTypeRotation {
 
         if (!is_null($data_arr) && sizeof($data_arr) > 0) {
         
-            $content_arr['#rotation']['#value'] = ['#x' => $data_arr['rotation']['x'], '#y' => $data_arr['rotation']['y'], '#z' => $data_arr['rotation']['z']];
+            $content_arr['#rotation']['#value'] = ['#x' => $data_arr['x'], '#y' => $data_arr['y'], '#z' => $data_arr['z']];
         }
 
         return $content_arr;
