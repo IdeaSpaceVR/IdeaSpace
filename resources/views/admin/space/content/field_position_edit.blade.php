@@ -1,5 +1,4 @@
-
-<div id="{{ $field_id }}" class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
+<div id="{{ str_random(10) }}" class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
     <div>
         <label class="control-label large">{{ $form['#label'] }}</label>
     </div>

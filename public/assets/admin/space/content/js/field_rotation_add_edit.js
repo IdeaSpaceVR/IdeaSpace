@@ -124,7 +124,7 @@ jQuery(document).ready(function($) {
             open_fieldtype_rotation_ref.find('.rotation-edit').show();
         }
 
-//$(this).attr('href', '#' + window.open_fieldtype_positions_ref.parent().attr('id'));
+        location.hash = '#' + open_fieldtype_rotation_ref.parent().attr('id');
     };
 
 

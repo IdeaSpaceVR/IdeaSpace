@@ -544,7 +544,7 @@ jQuery(document).ready(function($) {
             open_fieldtype_positions_ref.find('.positions-edit').show();
         }
 
-        $(this).attr('href', '#' + open_fieldtype_positions_ref.parent().attr('id'));
+        location.hash = '#' + open_fieldtype_positions_ref.parent().attr('id');
     };
 
 

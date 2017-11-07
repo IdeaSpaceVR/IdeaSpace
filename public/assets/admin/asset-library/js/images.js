@@ -132,7 +132,7 @@ jQuery(document).ready(function($) {
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
-        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+        location.hash = '#' + window.open_asset_library_ref.parent().attr('id');
 
         $('#assets').modal('hide');
     };
@@ -150,7 +150,7 @@ jQuery(document).ready(function($) {
         window.open_asset_library_ref.find('.image-add').hide();
         window.open_asset_library_ref.find('.image-edit').show();
 
-        $(this).attr('href', '#' + window.open_asset_library_ref.parent().attr('id'));
+        location.hash = '#' + window.open_asset_library_ref.parent().attr('id');
 
         $('#asset-details').modal('hide');
         $('#assets').modal('hide');
