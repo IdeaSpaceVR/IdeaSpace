@@ -7,7 +7,7 @@ return [
     'set_rotation_for' => 'Set Rotation for',
     'change_rotation_for' => 'Change Rotation for',
     'remove_rotation' => 'Remove Rotation',
-    'insert' => 'Insert',
+    'save' => 'Save',
     'validation_required' => 'The :label field is required.',
     'click_and_drag_to_set_rotation' => 'Click and drag to set the rotation.',
     'scale' => 'Scale',
