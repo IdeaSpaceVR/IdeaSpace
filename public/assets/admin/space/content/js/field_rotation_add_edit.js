@@ -1,10 +1,12 @@
 jQuery(document).ready(function($) {
 
+    var open_fieldtype_rotation_ref = null;
+
     /* click on rotation button */
     var rotation_add_edit_click_handler = function(e) {
 
         /* needed for insert operation */
-        window.open_fieldtype_rotation_ref = $(this).parent().parent();
+        open_fieldtype_rotation_ref = $(this).parent().parent();
 
         var space_id = $(e.target).attr('data-space-id');
         var contenttype_name = $(e.target).attr('data-contenttype-name');
@@ -32,14 +34,14 @@ jQuery(document).ready(function($) {
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
 
-                if (window.open_fieldtype_rotation_ref.find('.rotation-info').val() != '') {
+                if (open_fieldtype_rotation_ref.find('.rotation-info').val() != '') {
 
                     if (subject_type == 'videosphere' || subject_type == 'photosphere') {
 
                         /* photosphere: set camera rotation */
                         /* videosphere: set camera rotation */
                         var rotation_subject = document.querySelector('#rotation-camera');
-                        rotation_subject.setAttribute('rotation', jQuery.parseJSON(window.open_fieldtype_rotation_ref.find('.rotation-info').val()));
+                        rotation_subject.setAttribute('rotation', jQuery.parseJSON(open_fieldtype_rotation_ref.find('.rotation-info').val()));
 
                     } else if (subject_type == 'model3d' || subject_type == 'image' || subject_type == 'video') {
 
@@ -48,7 +50,7 @@ jQuery(document).ready(function($) {
 
                         /* does component exist */
                         if (rotation_subject.getAttribute('orbit-controls') !== null) {
-                            rotation_subject.setAttribute('orbit-controls', 'rotateTo', jQuery.parseJSON(window.open_fieldtype_rotation_ref.find('.rotation-info').val()));
+                            rotation_subject.setAttribute('orbit-controls', 'rotateTo', jQuery.parseJSON(open_fieldtype_rotation_ref.find('.rotation-info').val()));
                         }
 
                     }
@@ -75,9 +77,20 @@ jQuery(document).ready(function($) {
                     }
                 }
                 $('#rotation-target').unbind('change');
-                $('#rotation-target').on('change', '.scale', rotation_scale_handler);
+                $('#rotation-target .scale').change(rotation_scale_handler);
+
+
+                $('#rotation-target .insert-btn').unbind('click');
+                $('#rotation-target .insert-btn').click(rotation_insert_click_handler);
     
             });
+
+        
+            /* remove children after closing, otherwise there can be conflicts when loading a-frame assets via loading component */  
+            $('#rotation-target .modal').on('hidden.bs.modal', function() {
+                $('#rotation-target').empty();
+            });
+
 
             $('#rotation').modal('show');
 
@@ -90,7 +103,7 @@ jQuery(document).ready(function($) {
 
     var rotation_insert_click_handler = function() {
 
-        var field_type = window.open_fieldtype_rotation_ref.find('.add-edit-rotation-btn').attr('data-subject-field-type');
+        var field_type = open_fieldtype_rotation_ref.find('.add-edit-rotation-btn').attr('data-subject-field-type');
 
         if (field_type == 'videosphere' || field_type == 'photosphere') {
 
@@ -104,16 +117,15 @@ jQuery(document).ready(function($) {
             var info = JSON.stringify(document.querySelector('#rotation-camera').getAttribute('position'));
         }
 
-        window.open_fieldtype_rotation_ref.find('.rotation-info').val(info);
+        open_fieldtype_rotation_ref.find('.rotation-info').val(info);
 
-        if (window.open_fieldtype_rotation_ref.find('.rotation-add').css('display') != 'none') {
-            window.open_fieldtype_rotation_ref.find('.rotation-add').hide();
-            window.open_fieldtype_rotation_ref.find('.rotation-edit').show();
+        if (open_fieldtype_rotation_ref.find('.rotation-add').css('display') != 'none') {
+            open_fieldtype_rotation_ref.find('.rotation-add').hide();
+            open_fieldtype_rotation_ref.find('.rotation-edit').show();
         }
 
 //$(this).attr('href', '#' + window.open_fieldtype_positions_ref.parent().attr('id'));
     };
-    $('#rotation-target').on('click', '.insert-btn', rotation_insert_click_handler);
 
 
     var rotation_remove_click_handler = function(e) {
@@ -122,10 +134,8 @@ jQuery(document).ready(function($) {
         $(this).parent().parent().find('.rotation-add').show();
         $(this).parent().parent().find('.rotation-edit').hide();
     };
-    window.rotation_remove_click_handler = rotation_remove_click_handler;
-    $('.form-control-add-rotation .rotation-edit .remove-rotation-btn').click(window.rotation_remove_click_handler);          
-
-    
+    $('.form-control-add-rotation .rotation-edit .remove-rotation-btn').click(rotation_remove_click_handler);          
+ 
 });
 
 
