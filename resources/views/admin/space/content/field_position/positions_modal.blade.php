@@ -94,15 +94,6 @@
                                     <label for="content-attached">{{ trans('fieldtype_position.attached_items') }} (<span id="maxnumber">0</span> {{ trans('fieldtype_position.out_of') }} <span id="maxnumber-total">0</span>) <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('fieldtype_position.content_attached_hint') }}"></span></label>
 
                                     <div class="row">
-                                        <div class="col-md-12">
-                                            <div class="well well-sm">
-                                                <span style="font-weight:bold">{{ trans('fieldtype_position.position') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-position-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-position-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-position-z">-</span><br>
-                                                <span style="font-weight:bold">{{ trans('fieldtype_position.rotation') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-rotation-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-rotation-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-rotation-z">-</span>
-                                            </div>
-                                        </div>
-                                    </div>
-                            
-                                    <div class="row">
                                         <div class="col-md-8 col-md-offset-2 text-center">
                                             <div class="form-inline">
                                                 <select class="form-control" id="content-attached" autocomplete="off" data-maxnumber="0" data-maxnumber-counter="0" style="min-width:150px;margin-bottom:20px">
@@ -112,6 +103,16 @@
                                             </div>
                                         </div>
                                     </div>
+
+                                    <div class="row">
+                                        <div class="col-md-12">
+                                            <div class="well well-sm">
+                                                <span style="font-weight:bold">{{ trans('fieldtype_position.position') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-position-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-position-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-position-z">-</span><br>
+                                                <span style="font-weight:bold">{{ trans('fieldtype_position.rotation') }}</span> {{ trans('fieldtype_position.x') }} <span id="reticle-rotation-x">-</span> | {{ trans('fieldtype_position.y') }} <span id="reticle-rotation-y">-</span> | {{ trans('fieldtype_position.z') }} <span id="reticle-rotation-z">-</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                            
                                 </div>
 
                                 <!--div class="form-group" style="margin-bottom:0">
