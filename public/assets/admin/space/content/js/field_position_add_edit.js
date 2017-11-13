@@ -158,13 +158,13 @@ jQuery(document).ready(function($) {
                     entity.setAttribute('value', '[' + $('#positions #content-selector option[value="' + value.content_id + '"]').text() + ']');
                     entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
                     entity.setAttribute('align', 'center');
-                    entity.setAttribute('width', '3');
+                    entity.setAttribute('width', '6');
                     entity.setAttribute('data-id', value.id);
 
                     var entity_dot = document.createElement('a-circle');
-                    entity_dot.setAttribute('position', {x:0, y:-0.07, z:0});
+                    entity_dot.setAttribute('position', {x:0, y:-0.14, z:0});
                     entity_dot.setAttribute('color', 'red');
-                    entity_dot.setAttribute('radius', 0.01);
+                    entity_dot.setAttribute('radius', 0.02);
                     entity.appendChild(entity_dot);
 
                     scene.appendChild(entity);                  
@@ -219,12 +219,12 @@ jQuery(document).ready(function($) {
         //camera.setAttribute('position', {x: 0, y: 1.6, z: 0});            
         //camera.setAttribute('rotation', {x: 0, y: 0, z: 0});            
 
-        $('#positions #z-axis-counter').text('-1');
+        $('#positions #z-axis-counter').text('-2');
 
         if ($(this).val() == '') {
             document.querySelector('#reticle-text').setAttribute('visible', false);
             document.querySelector('#reticle-text').setAttribute('value', '');
-            document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
+            document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -2});
             $('#positions #btn-attach').prop('disabled', true);
             $('#positions #z-axis-minus').prop('disabled', true);
             $('#positions #z-axis-reset').prop('disabled', true);
@@ -232,7 +232,7 @@ jQuery(document).ready(function($) {
         } else {
             if (parseInt($('#positions #content-attached').attr('data-maxnumber-counter')) < parseInt($('#positions #content-attached').attr('data-maxnumber'))) {
                 document.querySelector('#reticle-text').setAttribute('value', '[' + $('#positions #content-selector option[value="' + $(this).val() + '"]').text() + ']');
-                document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -1});
+                document.querySelector('#reticle-text').setAttribute('position', {x: 0, y: 0, z: -2});
                 document.querySelector('#reticle-text').setAttribute('visible', true);
                 $('#positions #btn-attach').prop('disabled', false);
                 $('#positions #z-axis-minus').prop('disabled', false);
@@ -249,9 +249,9 @@ jQuery(document).ready(function($) {
 
         var entity = document.createElement('a-text');
         var entity_dot = document.createElement('a-circle');
-        entity_dot.setAttribute('position', {x:0, y:-0.07, z:0});
+        entity_dot.setAttribute('position', {x:0, y:-0.14, z:0});
         entity_dot.setAttribute('color', 'red');
-        entity_dot.setAttribute('radius', 0.01);
+        entity_dot.setAttribute('radius', 0.02);
 
         var content = document.querySelector('#reticle-text');
 
@@ -273,7 +273,7 @@ jQuery(document).ready(function($) {
         entity.setAttribute('value', '[' + $('#positions #content-selector option:selected').text() + ']'); 
         entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
         entity.setAttribute('align', 'center');
-        entity.setAttribute('width', '3');
+        entity.setAttribute('width', '6');
         entity.setAttribute('data-id', id);
         entity.appendChild(entity_dot);
 
@@ -345,7 +345,7 @@ jQuery(document).ready(function($) {
         document.querySelector('#reticle-text').setAttribute('value', '');
         $('#positions #btn-attach').prop('disabled', true);
         $('#positions #content-selector').find('option:eq(0)').prop('selected', true);
-        $('#positions #z-axis-counter').text('-1');
+        $('#positions #z-axis-counter').text('-2');
     };
 
     
@@ -377,7 +377,7 @@ jQuery(document).ready(function($) {
             camera_wrapper.setAttribute('position', {x: parseFloat(json.position.x), y: parseFloat(json.position.y), z: parseFloat(json.position.z)});
             camera_wrapper.setAttribute('rotation', {x: parseFloat(json.rotation.x), y: parseFloat(json.rotation.y), z: parseFloat(json.rotation.z)});
             /* it is not possible to add this one meter to the z position of the camera wrapper directly; why? */
-            camera.setAttribute('position', {x: 0, y:0, z:1});
+            camera.setAttribute('position', {x: 0, y:0, z:2});
             camera.setAttribute('rotation', {x: 0, y:0, z:0});
             positions_reset_content_selector();
             $('#positions #btn-detach').prop('disabled', false);
@@ -578,7 +578,7 @@ jQuery(document).ready(function($) {
 
         var content = document.querySelector('#reticle-text');
         var pos = content.getAttribute('position');
-        if (pos.z < -1) {
+        if (pos.z < -2) {
             content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z+1 }); 
             $('#positions #z-axis-counter').text(pos.z+1);
         }
@@ -588,8 +588,8 @@ jQuery(document).ready(function($) {
     var positions_z_axis_reset_handler = function() {
  
         var content = document.querySelector('#reticle-text');
-        content.setAttribute('position', { x: 0, y: 0, z: -1 }); 
-        $('#positions #z-axis-counter').text('-1');
+        content.setAttribute('position', { x: 0, y: 0, z: -2 }); 
+        $('#positions #z-axis-counter').text('-2');
         
     };
 

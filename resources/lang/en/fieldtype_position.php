@@ -75,7 +75,7 @@ return [
     'scale_9_0' => '9.0',
     'scale_9_5' => '9.5',
     'scale_10_0' => '10.0',
-    'set_position_rotation_camera' => 'Set position and rotation of camera. Items are attached to camera at a z-value of -1.',
+    'set_position_rotation_camera' => 'Set position and rotation of camera. Items are attached to camera at a z-value of -2.',
     'insert' => 'Insert',
     'validation_required' => 'The :label field is required.',
     'attach_content_type_hint' => 'If there are no items to select, create some content of the following type first (go back to Edit Space page):',

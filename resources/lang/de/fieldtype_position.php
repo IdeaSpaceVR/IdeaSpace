@@ -75,7 +75,7 @@ return [
     'scale_9_0' => '9.0',
     'scale_9_5' => '9.5',
     'scale_10_0' => '10.0',
-    'set_position_rotation_camera' => 'Kameraposition und -rotation einstellen. Elemente sind an die Kamera angehängt bei einem z-Wert von -1.',
+    'set_position_rotation_camera' => 'Kameraposition und -rotation einstellen. Elemente sind an die Kamera angehängt bei einem z-Wert von -2.',
     'insert' => 'Einfügen',
     'validation_required' => 'Das Feld :label wird benötigt.',
     'attach_content_type_hint' => 'Wenn es keine Elemente auszuwählen gibt, erstelle zuerst einige Inhalte vom Typ (geh zurück zur Bearbeitungsseite für Spaces):',

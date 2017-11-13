@@ -36,7 +36,7 @@
                                 </div>
 
                                 <div class="form-group" style="margin-bottom:20px">
-                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }} (<span id="z-axis-counter">-1</span>)</label>
+                                    <label>{{ trans('fieldtype_position.placeholder_item_z_axis') }} (<span id="z-axis-counter">-2</span>)</label>
 
                                     <div class="row" style="margin-top:5px">
                                         <div class="col-md-12 text-center">
