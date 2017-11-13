@@ -3,6 +3,7 @@
 - Introduced rotation field type 
 - Corrected mandatory theme config fields
 - Updated themes to reflect mandatory field type changes
+- Updated IdeaSpace 360 Photo Tour theme in order to support precise positioning of info hotspots
 
 ## 1.0.4
 
