@@ -70,6 +70,9 @@ class SpacesController extends Controller {
         foreach ($spaces as $space) {
             $user = User::where('id', $space->user_id)->first();
             $space['author'] = ucfirst($user->name); //$space->user_id;
+            $theme = Theme::where('id', $space->theme_id)->first();
+            $config = json_decode($theme->config, true);
+            $space['theme_name'] = $config['#theme-name'];
         }
         
         $number_spaces_all = Space::count();
@@ -99,6 +102,9 @@ class SpacesController extends Controller {
         foreach ($spaces as $space) {
             $user = User::where('id', $space->user_id)->first();
             $space['author'] = ucfirst($user->name); //$space->user_id;
+            $theme = Theme::where('id', $space->theme_id)->first();
+            $config = json_decode($theme->config, true);
+            $space['theme_name'] = $config['#theme-name'];
         }
         
         $number_spaces_all = Space::count();
