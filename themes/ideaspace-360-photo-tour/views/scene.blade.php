@@ -160,14 +160,14 @@
                         @endphp
 
                         <a-entity 
-                            rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}">
+                            rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}" 
+                            position="{{ $annotation['#position']['#x'] }} {{ $annotation['#position']['#y'] }} {{ $annotation['#position']['#z'] }}">
                             <a-circle 
                                 class="hotspot hotspot-content-id-{{ $photosphere['hotspot-annotations']['#content-id'] }}" 
                                 data-content-id="{{ $photosphere['hotspot-annotations']['#content-id'] }}" 
                                 data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
                                 isvr-hotspot-wrapper-listener
                                 material="transparent: false; opacity: 0"
-                                position="0 1.6 -2.1" 
                                 radius="0.4" 
                                 scale="0.7 0.7 0.7" 
                                 visible="false">
