@@ -4,7 +4,7 @@
     isvr-hotspot-text-listener
     class="hotspot-text hotspot-text-content-id-{{ $annotation['#content-id'] . $rand }}"
     visible="false"
-    position="0 0 0"
+    position="0 {{ (-$annotation['#position']['#y']+1.6) }} -0.1"
     rotation="0 0 0"
     geometry="primitive: plane; width: 1.8; height: 0.66"
     material="color: #FFFFFF; transparent: true; opacity: 0.5">
