@@ -303,6 +303,12 @@ jQuery(document).ready(function($) {
         $('#positions #z-axis-reset').prop('disabled', true);
         $('#positions #z-axis-plus').prop('disabled', true);
 
+        $('#positions .insert-btn').removeClass('btn-success').addClass('btn-default');
+
+        setTimeout(function() {
+            $('#positions .insert-btn').removeClass('btn-default').addClass('btn-success');
+        }, 1000);
+
         $('#positions .insert-btn').show();
 
     };
@@ -323,6 +329,12 @@ jQuery(document).ready(function($) {
             maxnumber_counter--;
             $('#positions #maxnumber').text(maxnumber_counter);
             $('#positions #content-attached').attr('data-maxnumber-counter', maxnumber_counter);
+
+            $('#positions .insert-btn').removeClass('btn-success').addClass('btn-default');
+
+            setTimeout(function() {
+                $('#positions .insert-btn').removeClass('btn-default').addClass('btn-success');
+            }, 1000);
 
             if (maxnumber_counter < 1) {
                 $('#positions .insert-btn').hide();
