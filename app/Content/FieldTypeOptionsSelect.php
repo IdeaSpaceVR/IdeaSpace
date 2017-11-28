@@ -46,6 +46,10 @@ class FieldTypeOptionsSelect {
             $field['#options'] = array(FieldTypeOptionsSelect::OPTIONS_SELECT_DEFAULT => trans('fieldtype_options_select.select_option')) + $field['#options']; 
         }
 
+        if (!isset($field_properties['#default_value'])) {
+            $field['#default_value'] = null;
+        }
+
         return $field;
     }
 
