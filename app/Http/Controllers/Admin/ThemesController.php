@@ -278,6 +278,30 @@ class ThemesController extends Controller {
         return true;
     }
 
+  
+    /**
+     * Get list of themes.
+     */
+    public function themes_all_json() {
+
+        $theme_keys = '';
+        $themes = Theme::get();
+        foreach ($themes as $theme) {
+            $config = json_decode($theme->config, true);
+            $temp = explode('-', $config['#theme-key']);
+            $key = '';
+            foreach ($temp as $t) {
+                $key .= substr($t, 0, 1); 
+            }
+            $theme_keys = $theme_keys . $key . $config['#theme-version'] . '-';
+        }
+
+        if ($theme_keys != '') {
+            return response()->json(['themes' => substr($theme_keys, 0, -1)]);
+        } else {
+            return response()->json(['themes' => '']);
+        }
+    }
 
 }
 

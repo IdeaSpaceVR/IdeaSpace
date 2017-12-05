@@ -81,6 +81,7 @@ Route::group(['middleware' => 'web'], function () {
    */  
   Route::get('admin/themes', ['as' => 'themes', 'uses' => 'Admin\ThemesController@index']);
   Route::post('admin/themes', ['as' => 'themes', 'uses' => 'Admin\ThemesController@submit']);
+  Route::get('admin/themes/all', ['as' => 'themes_all_json', 'uses' => 'Admin\ThemesController@themes_all_json']);
 
 
   /**
