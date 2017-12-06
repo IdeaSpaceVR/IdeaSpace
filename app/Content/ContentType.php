@@ -14,6 +14,7 @@ use App\Content\FieldTypePhotosphere;
 use App\Content\FieldTypeModel3D;
 use App\Content\FieldTypePosition;
 use App\Content\FieldTypeRotation;
+use App\Content\FieldTypeSpaceReference;
 use App\Content;
 use App\Field;
 use Log;
@@ -33,6 +34,7 @@ class ContentType {
     const FIELD_TYPE_POSITION = 'position';
     const FIELD_TYPE_OPTIONS_SELECT = 'options-select';
     const FIELD_TYPE_ROTATION = 'rotation';
+    const FIELD_TYPE_SPACE_REFERENCE = 'space-reference';
 
     public $fieldTypes;
 
@@ -58,6 +60,7 @@ class ContentType {
         $this->fieldTypes[ContentType::FIELD_TYPE_POSITION] = new FieldTypePosition($this);
         $this->fieldTypes[ContentType::FIELD_TYPE_OPTIONS_SELECT] = new FieldTypeOptionsSelect();
         $this->fieldTypes[ContentType::FIELD_TYPE_ROTATION] = new FieldTypeRotation();
+        $this->fieldTypes[ContentType::FIELD_TYPE_SPACE_REFERENCE] = new FieldTypeSpaceReference();
     }
 
 
