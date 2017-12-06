@@ -253,18 +253,23 @@ class FieldTypeVideosphere {
 
         $content_arr = [];
 
-        $videosphere = Videosphere::where('id', $field->data)->first();
-        $genericFile = GenericFile::where('id', $videosphere->file_id)->first();
+        try {
+            $videosphere = Videosphere::where('id', $field->data)->firstOrFail();
+            $genericFile = GenericFile::where('id', $videosphere->file_id)->first();
 
-        $content_arr['#id'] = $field->id;
-        $content_arr['#content-id'] = $field->content_id;
-        $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $videosphere->caption;
-        $content_arr['#description'] = $videosphere->description;
-        $content_arr['#width'] = $videosphere->width;
-        $content_arr['#height'] = $videosphere->height;
-        $content_arr['#duration'] = $videosphere->duration;
-        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+            $content_arr['#id'] = $field->id;
+            $content_arr['#content-id'] = $field->content_id;
+            $content_arr['#type'] = $field->type;
+            $content_arr['#caption'] = $videosphere->caption;
+            $content_arr['#description'] = $videosphere->description;
+            $content_arr['#width'] = $videosphere->width;
+            $content_arr['#height'] = $videosphere->height;
+            $content_arr['#duration'] = $videosphere->duration;
+            $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        } catch (ModelNotFoundException $e) {
+            /* if file has been deleted from assets */
+        }
 
         return $content_arr;
     }

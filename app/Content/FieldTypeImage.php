@@ -339,27 +339,32 @@ class FieldTypeImage {
 
         $content_arr = [];
 
-        $image = GenericImage::where('id', $field->data)->first();
-        $genericFile = GenericFile::where('id', $image->file_id)->first();
-        $pathinfo = pathinfo($genericFile->uri);
+        try {
+            $image = GenericImage::where('id', $field->data)->firstOrFail();
+            $genericFile = GenericFile::where('id', $image->file_id)->first();
+            $pathinfo = pathinfo($genericFile->uri);
 
-        $meta_data = json_decode($field->meta_data, true);
+            $meta_data = json_decode($field->meta_data, true);
 
-        if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
-            foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+            if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
+                foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
 
-                $content_arr[$image_info]['#uri']['#value'] = asset(GenericImage::IMAGE_STORAGE_PATH . $image_info_value);
+                    $content_arr[$image_info]['#uri']['#value'] = asset(GenericImage::IMAGE_STORAGE_PATH . $image_info_value);
+                }
             }
-        }
 
-        $content_arr['#id'] = $field->id;
-        $content_arr['#content-id'] = $field->content_id;
-        $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $image->caption;
-        $content_arr['#description'] = $image->description;
-        $content_arr['#width'] = $image->width;
-        $content_arr['#height'] = $image->height;
-        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+            $content_arr['#id'] = $field->id;
+            $content_arr['#content-id'] = $field->content_id;
+            $content_arr['#type'] = $field->type;
+            $content_arr['#caption'] = $image->caption;
+            $content_arr['#description'] = $image->description;
+            $content_arr['#width'] = $image->width;
+            $content_arr['#height'] = $image->height;
+            $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        } catch (ModelNotFoundException $e) {
+            /* if image has been deleted from assets */
+        }
 
         return $content_arr;
     }

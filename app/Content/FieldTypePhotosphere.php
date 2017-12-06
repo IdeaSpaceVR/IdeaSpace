@@ -334,28 +334,33 @@ class FieldTypePhotosphere {
 
         $content_arr = [];
 
-        $photosphere = Photosphere::where('id', $field->data)->first();
-        $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
-        $pathinfo = pathinfo($genericFile->uri);
+        try {
+            $photosphere = Photosphere::where('id', $field->data)->firstOrFail();
+            $genericFile = GenericFile::where('id', $photosphere->file_id)->first();
+            $pathinfo = pathinfo($genericFile->uri);
 
-        $meta_data = json_decode($field->meta_data, true);
+            $meta_data = json_decode($field->meta_data, true);
 
-        if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
-            
-            foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
+            if (!is_null($meta_data) && array_key_exists(Theme::THEME_GENERATED_IMAGES, $meta_data)) {
+                
+                foreach ($meta_data[Theme::THEME_GENERATED_IMAGES] as $image_info => $image_info_value) {
 
-                $content_arr[$image_info]['#uri']['#value'] = asset(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
+                    $content_arr[$image_info]['#uri']['#value'] = asset(Photosphere::PHOTOSPHERE_STORAGE_PATH . $image_info_value);
+                }
             }
-        }
 
-        $content_arr['#id'] = $field->id;
-        $content_arr['#content-id'] = $field->content_id;
-        $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $photosphere->caption;
-        $content_arr['#description'] = $photosphere->description;
-        $content_arr['#width'] = $photosphere->width;
-        $content_arr['#height'] = $photosphere->height;
-        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+            $content_arr['#id'] = $field->id;
+            $content_arr['#content-id'] = $field->content_id;
+            $content_arr['#type'] = $field->type;
+            $content_arr['#caption'] = $photosphere->caption;
+            $content_arr['#description'] = $photosphere->description;
+            $content_arr['#width'] = $photosphere->width;
+            $content_arr['#height'] = $photosphere->height;
+            $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        } catch (ModelNotFoundException $e) {
+            /* if image has been deleted from assets */
+        }
 
         return $content_arr;
     }

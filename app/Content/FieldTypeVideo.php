@@ -252,18 +252,23 @@ class FieldTypeVideo {
 
         $content_arr = [];
 
-        $video = Video::where('id', $field->data)->first();
-        $genericFile = GenericFile::where('id', $video->file_id)->first();
+        try {
+            $video = Video::where('id', $field->data)->firstOrFail();
+            $genericFile = GenericFile::where('id', $video->file_id)->first();
 
-        $content_arr['#id'] = $field->id;
-        $content_arr['#content-id'] = $field->content_id;
-        $content_arr['#type'] = $field->type;
-        $content_arr['#caption'] = $video->caption;
-        $content_arr['#description'] = $video->description;
-        $content_arr['#width'] = $video->width;
-        $content_arr['#height'] = $video->height;
-        $content_arr['#duration'] = $video->duration;
-        $content_arr['#uri']['#value'] = asset($genericFile->uri);
+            $content_arr['#id'] = $field->id;
+            $content_arr['#content-id'] = $field->content_id;
+            $content_arr['#type'] = $field->type;
+            $content_arr['#caption'] = $video->caption;
+            $content_arr['#description'] = $video->description;
+            $content_arr['#width'] = $video->width;
+            $content_arr['#height'] = $video->height;
+            $content_arr['#duration'] = $video->duration;
+            $content_arr['#uri']['#value'] = asset($genericFile->uri);
+
+        } catch (ModelNotFoundException $e) {
+            /* if file has been deleted from assets */
+        }
 
         return $content_arr;
     }

@@ -280,7 +280,12 @@ class FieldTypeModel3D {
 
         $content_arr = [];
 
-        $model = Model3D::where('id', $field->data)->first();
+        try {
+            $model = Model3D::where('id', $field->data)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            /* if file has been deleted from assets */
+            return $content_arr;
+        }
 
         $genericFile_0 = GenericFile::where('id', $model->file_id_0)->first();
         $pathinfo_0 = pathinfo($genericFile_0->uri);        
