@@ -6,6 +6,7 @@ use App\Field;
 use App\Space;
 use App\Theme;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Auth;
 
 class FieldTypeSpaceReference {
 
@@ -38,14 +39,16 @@ class FieldTypeSpaceReference {
      */
     public function prepare($space_id, $field_key, $field_properties, $all_fields) {
 
+        $user = Auth::user(); 
+
         $field = [];
         $field = $field_properties;
         $field['#template'] = $this->template_add;
 
         if ($field['#published'] == true) {
-            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->get();
+            $spaces = Space::where('status', Space::STATUS_PUBLISHED)->where('user_id', $user->id)->get();
         } else {
-            $spaces = Space::where('status', Space::STATUS_DRAFT)->get();
+            $spaces = Space::where('user_id', $user->id)->get();
         }
 
         $field['#options'] = [];
