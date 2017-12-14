@@ -1,9 +1,11 @@
 ## 1.1.0
 
 - Introduced rotation field type 
+- Introduced space reference field type 
 - Corrected mandatory theme config fields
 - Updated themes to reflect mandatory field type changes
 - Updated IdeaSpace 360 Photo Tour theme in order to support precise positioning of info hotspots
+- Added a REST endpoint to request space content by specifying the content id
 
 ## 1.0.4
 

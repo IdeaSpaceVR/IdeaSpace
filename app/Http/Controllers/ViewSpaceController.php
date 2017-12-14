@@ -179,6 +179,41 @@ class ViewSpaceController extends Controller {
 
 
     /**
+     * JSON endpoint for retrieving field data per content id (preview).
+     *
+     * @param Request $request The request.
+     * @param string $uri The space URI identifier.
+     * @param string $content_id 
+     *
+     * @return Response
+     */
+    public function preview_content_id_json(Request $request, $uri, $content_id) {
+
+        if (Auth::check()) {
+
+            $user = Auth::user();
+
+            try {
+                $space = Space::where('uri', $uri)->where('user_id', $user->id)->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                return response()->json(['message' => 'Record not found'], 404);
+            }
+
+            try {
+                $content = Content::where('space_id', $space->id)->where('id', $content_id)->firstOrFail();
+            } catch (ModelNotFoundException $e) {
+                return response()->json(['message' => 'Record not found'], 404);
+            }
+  
+            $response[$content->key][] = $this->contentType->loadContentJson($content->id);     
+
+            return response()->json($response);
+        }
+        abort(404);
+    }
+
+
+    /**
      * JSON endpoint for retrieving field data as specified in the theme's config file.
      *
      * @param Request $request The request.
@@ -196,6 +231,35 @@ class ViewSpaceController extends Controller {
         }
 
         $response = $this->prepare_space_content_json($request, $space, $this->contentType, $contenttype_key);
+
+        return response()->json($response);
+    }
+
+
+    /**
+     * JSON endpoint for retrieving field data per content id. 
+     *
+     * @param Request $request The request.
+     * @param string $uri The space URI identifier.
+     * @param string $content_id
+     *
+     * @return Response
+     */
+    public function content_id_json(Request $request, $uri, $content_id) {
+
+        try {
+            $space = Space::where('uri', $uri)->where('status', Space::STATUS_PUBLISHED)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        try {
+            $content = Content::where('space_id', $space->id)->where('id', $content_id)->firstOrFail();
+        } catch (ModelNotFoundException $e) {
+            return response()->json(['message' => 'Record not found'], 404);
+        }
+
+        $response[$content->key][] = $this->contentType->loadContentJson($content->id);     
 
         return response()->json($response);
     }

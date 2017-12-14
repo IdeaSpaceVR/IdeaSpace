@@ -177,6 +177,7 @@ Route::group(['middleware' => 'web'], function () {
    * Not auth middleware protected.
    */
   Route::get('{space_uri}/preview/content/{contenttype_key}', ['as' => 'preview_content_json', 'uses' => 'ViewSpaceController@preview_content_json']);
+  Route::get('{space_uri}/preview/content-id/{content_id}', ['as' => 'preview_content_id_json', 'uses' => 'ViewSpaceController@preview_content_id_json']);
   Route::get('{space_uri}/preview', ['as' => 'preview_space', 'uses' => 'ViewSpaceController@preview_space']);
   Route::get('{space_uri}/{content_uri}/preview', ['as' => 'view_space_content', 'uses' => 'ViewSpaceController@preview_space_content']);
 
@@ -189,6 +190,7 @@ Route::group(['middleware' => 'web'], function () {
  * Not auth middleware protected.
  */
 Route::get('{space_uri}/content/{contenttype_key}', ['as' => 'content_json', 'uses' => 'ViewSpaceController@content_json']);
+Route::get('{space_uri}/content-id/{content_id}', ['as' => 'content_id_json', 'uses' => 'ViewSpaceController@content_id_json']);
 Route::get('{space_uri}', ['as' => 'view_space', 'uses' => 'ViewSpaceController@view_space']);
 Route::get('{space_uri}/{content_uri}', ['as' => 'view_space_content', 'uses' => 'ViewSpaceController@view_space_content']);
 
