@@ -36,8 +36,8 @@
             <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.48" radius-outer="0.5" rotation="-90 0 0" visible="false"></a-ring>
 
             <a-entity id="laser-controls" position="0 0 {{ $content['model'][0]['camera-offset-vr']['#value'] }}">
-                <a-entity laser-controls="hand: left" line="color: #FFFFFF" class="laser-controls"></a-entity>
-                <a-entity laser-controls="hand: right" line="color: #FFFFFF" class="laser-controls"></a-entity>
+                <a-entity raycaster="near: 0.5" laser-controls="hand: left" line="color: #FFFFFF" class="laser-controls"></a-entity>
+                <a-entity raycaster="near: 0.5" laser-controls="hand: right" line="color: #FFFFFF" class="laser-controls"></a-entity>
             </a-entity>
 
             <?php 
