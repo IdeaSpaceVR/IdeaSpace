@@ -25,8 +25,8 @@
             </a-entity>
         </a-entity>
 
-        <a-entity laser-controls="hand: left" raycaster="far:5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
-        <a-entity laser-controls="hand: right" raycaster="far:5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
+        <a-entity laser-controls="hand: left" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
+        <a-entity laser-controls="hand: right" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
 
         <!-- debug log //-->
         <!--a-entity position="-2 2 -2.3" rotation="0 30 0">
@@ -289,12 +289,11 @@
                         width="1.6">
                     </a-text>
                     <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
-                    <a-plane
+                    <a-entity
                         material="opacity: 0"
-                        width="1.6"
-                        height="0.9"
+                        geometry="primitive: plane; width: 1.5; height: 0.7"
                         position="0 0 0.09">
-                    </a-plane>
+                    </a-entity>
                 </a-entity>
             </a-entity>
         </a-entity><!-- intro-0 //-->
