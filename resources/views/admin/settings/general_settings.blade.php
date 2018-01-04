@@ -42,6 +42,24 @@
         </div>
         <div class="col-md-4">
             <input type="text" class="form-control" id="origin-trial-token" name="origin-trial-token" value="{{ $origin_trial_token }}" placeholder="{{ trans('template_general_settings.enter_origin_trial_token') }}">
+        </div> <!-- end col-md //-->
+    </div> <!-- end row //-->
+
+    <div class="row" style="margin-top:20px;padding-left:35px">
+        <div class="col-md-2">
+            <label for="site-title" class="control-label">{{ trans('template_general_settings.origin_trial_token_data_feature') }}</label>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="origin-trial-token-data-feature" name="origin-trial-token-data-feature" value="{{ $origin_trial_token_data_feature }}" placeholder="{{ trans('template_general_settings.enter_origin_trial_token_data_feature') }}">
+        </div> <!-- end col-md //-->
+    </div> <!-- end row //-->
+
+    <div class="row" style="margin-top:20px;padding-left:35px">
+        <div class="col-md-2">
+            <label for="site-title" class="control-label">{{ trans('template_general_settings.origin_trial_token_data_expires') }}</label>
+        </div>
+        <div class="col-md-4">
+            <input type="text" class="form-control" id="origin-trial-token-data-expires" name="origin-trial-token-data-expires" value="{{ $origin_trial_token_data_expires }}" placeholder="{{ trans('template_general_settings.enter_origin_trial_token_data_expires') }}">
             <span class="help-block">{{ trans('template_general_settings.origin_trial_help') }} <a href="https://github.com/jpchase/OriginTrials/blob/gh-pages/developer-guide.md" target="_blank">{{ trans('template_general_settings.origin_trial_help_more_information') }}</a></span>
         </div> <!-- end col-md //-->
     </div> <!-- end row //-->

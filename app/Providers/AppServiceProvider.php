@@ -19,6 +19,8 @@ class AppServiceProvider extends ServiceProvider {
     public function boot() {
 
         $origin_trial_token = '';
+        $origin_trial_token_data_feature = '';
+        $origin_trial_token_data_expires = '';
 
         $db_config = config('database.connections.'.config('database.default'));
 
@@ -41,15 +43,29 @@ class AppServiceProvider extends ServiceProvider {
                     $origin_trial_token = $setting_origin_trial_token->value;
                 } catch (ModelNotFoundException $e) {
                 }
+                try {
+                    $setting_origin_trial_token_data_feature = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_FEATURE)->firstOrFail();
+                    $origin_trial_token_data_feature = $setting_origin_trial_token_data_feature->value;
+                } catch (ModelNotFoundException $e) {
+                }
+                try {
+                    $setting_origin_trial_token_data_expires = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_EXPIRES)->firstOrFail();
+                    $origin_trial_token_data_expires = $setting_origin_trial_token_data_expires->value;
+                } catch (ModelNotFoundException $e) {
+                }
             }
         }
 
-        view()->composer('layouts.app', function($view) use ($origin_trial_token) {
+        view()->composer('layouts.app', function($view) use ($origin_trial_token, $origin_trial_token_data_feature, $origin_trial_token_data_expires) {
             $view->with('origin_trial_token', $origin_trial_token);
+            $view->with('origin_trial_token_data_feature', $origin_trial_token_data_feature);
+            $view->with('origin_trial_token_data_expires', $origin_trial_token_data_expires);
         }); 
 
-        view()->composer('layouts.frontpage_app', function($view) use ($origin_trial_token) {
+        view()->composer('layouts.frontpage_app', function($view) use ($origin_trial_token, $origin_trial_token_data_feature, $origin_trial_token_data_expires) {
             $view->with('origin_trial_token', $origin_trial_token);
+            $view->with('origin_trial_token_data_feature', $origin_trial_token_data_feature);
+            $view->with('origin_trial_token_data_expires', $origin_trial_token_data_expires);
         }); 
     }
 
