@@ -6,7 +6,7 @@
 - Updated themes to reflect mandatory field type changes
 - Updated IdeaSpace 360 Photo Tour theme in order to support precise positioning of info hotspots
 - Added a REST endpoint to request space content by specifying the content id
-- Settings: added fields for Origin Trial Token for Chrome to enable WebVR
+- Settings: added fields to settings page for Origin Trial Token for Chrome to enable WebVR
 
 ## 1.0.4
 
