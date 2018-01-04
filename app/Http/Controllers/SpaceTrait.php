@@ -35,9 +35,21 @@ trait SpaceTrait {
 
       
         $origin_trial_token = '';
+        $origin_trial_token_data_feature = '';
+        $origin_trial_token_data_expires = '';
         try {
             $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
             $origin_trial_token = $setting_origin_trial_token->value;
+        } catch (ModelNotFoundException $e) {
+        }
+        try {
+            $setting_origin_trial_token_data_feature = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_FEATURE)->firstOrFail();
+            $origin_trial_token_data_feature = $setting_origin_trial_token_data_feature->value;
+        } catch (ModelNotFoundException $e) {
+        }
+        try {
+            $setting_origin_trial_token_data_expires = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_EXPIRES)->firstOrFail();
+            $origin_trial_token_data_expires = $setting_origin_trial_token_data_expires->value;
         } catch (ModelNotFoundException $e) {
         }
 
@@ -46,6 +58,8 @@ trait SpaceTrait {
             'space_url' => url($space->uri) . (($preview==false)?'':'/preview'),
             'space_title' => $space->title,
             'origin_trial_token' => $origin_trial_token,
+            'origin_trial_token_data_feature' => $origin_trial_token_data_feature,
+            'origin_trial_token_data_expires' => $origin_trial_token_data_expires,
             'theme_dir' => $theme->root_dir,
             'theme_view' => $config['#theme-view'],
             'content' => []
@@ -86,9 +100,21 @@ trait SpaceTrait {
 
       
         $origin_trial_token = '';
+        $origin_trial_token_data_feature = '';
+        $origin_trial_token_data_expires = '';
         try {
             $setting_origin_trial_token = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN)->firstOrFail();
             $origin_trial_token = $setting_origin_trial_token->value;
+        } catch (ModelNotFoundException $e) {
+        }
+        try {
+            $setting_origin_trial_token_data_feature = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_FEATURE)->firstOrFail();
+            $origin_trial_token_data_feature = $setting_origin_trial_token_data_feature->value;
+        } catch (ModelNotFoundException $e) {
+        }
+        try {
+            $setting_origin_trial_token_data_expires = Setting::where('key', \App\Http\Controllers\Admin\Settings\GeneralSettingsController::ORIGIN_TRIAL_TOKEN_DATA_EXPIRES)->firstOrFail();
+            $origin_trial_token_data_expires = $setting_origin_trial_token_data_expires->value;
         } catch (ModelNotFoundException $e) {
         }
 
@@ -97,6 +123,8 @@ trait SpaceTrait {
             'space_url' => url($space->uri) . (($preview==false)?'':'/preview'),
             'space_title' => $space->title,
             'origin_trial_token' => $origin_trial_token,
+            'origin_trial_token_data_feature' => $origin_trial_token_data_feature,
+            'origin_trial_token_data_expires' => $origin_trial_token_data_expires,
             'theme_dir' => $theme->root_dir,
             'content_type_view' => $config['#content-types'][$content_key]['#content-type-view'],
             'content' => []
