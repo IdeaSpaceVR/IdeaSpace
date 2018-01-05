@@ -3,6 +3,7 @@
 - Deprecated aframe-mouse-cursor-component
 - New info hotspots and possibility to set color for hotspots
 - Bug fix: ply model hotspots do not need rotation
+- print additional Chrome origin trial infos
 
 ## 1.0
 

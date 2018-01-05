@@ -4,8 +4,8 @@ return [
 
   '#theme-name' => 'VR View 360 Image Gallery',
   '#theme-key' => 'vr-view-360-image-gallery',
-  '#theme-version' => '1.0',
-  '#ideaspace-version' => '>=1.0.1',
+  '#theme-version' => '1.1',
+  '#ideaspace-version' => '>=1.1.0',
   '#theme-description' => 'Photo sphere gallery page. Based on the "VR View for the Web" by Google.',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',

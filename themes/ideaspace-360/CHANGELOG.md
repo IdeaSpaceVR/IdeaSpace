@@ -2,6 +2,7 @@
 
 - user height and positional controllers height fix
 - photo sphere menu bug fix: clicking on thumbnail of current photo sphere made scene black
+- prints additional Chrome origin trial token infos in meta tag
 
 ## 1.4
 
