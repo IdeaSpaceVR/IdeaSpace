@@ -29,7 +29,9 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('/', 'FrontpageController@index'); 
 
   /* handles login, lost password */
-  Route::auth();
+	if (config('app.disable_login') === false) {
+  		Route::auth();
+	}
 
   /**
    * Auth middleware protected
