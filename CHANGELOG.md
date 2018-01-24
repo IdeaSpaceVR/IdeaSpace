@@ -7,6 +7,7 @@
 - Updated IdeaSpace 360 Photo Tour theme in order to support precise positioning of info hotspots
 - Added a REST endpoint to request space content by specifying the content id
 - Settings: added fields to settings page for Origin Trial Token for Chrome to enable WebVR
+- Added config/app.php parameter to disable user authentication
 
 ## 1.0.4
 
