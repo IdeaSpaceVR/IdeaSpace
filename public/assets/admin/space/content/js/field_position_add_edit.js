@@ -153,7 +153,8 @@ jQuery(document).ready(function($) {
 
                     entity = document.createElement('a-text');
                     entity.setAttribute('position', { x: value.position.x, y: value.position.y, z: value.position.z });
-                    entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });
+                    //entity.setAttribute('rotation', { x: 0, y: value.rotation.y, z: 0 });
+                    entity.setAttribute('rotation', { x: value.rotation.x, y: value.rotation.y, z: 0 });
                     entity.setAttribute('scale', { x: value.scale.x, y: value.scale.y, z: value.scale.z });
                     entity.setAttribute('value', '[' + $('#positions #content-selector option[value="' + value.content_id + '"]').text() + ']');
                     entity.setAttribute('font', window.ideaspace_site_path + '/public/aframe/fonts/Roboto-msdf.json');
@@ -266,6 +267,7 @@ jQuery(document).ready(function($) {
         content.object3D.matrixWorld.decompose(new THREE.Vector3(), quaternion, new THREE.Vector3());
 
         var rotation_radians = new THREE.Euler().setFromQuaternion(quaternion, 'YXZ');
+				var rotation_x = THREE.Math.radToDeg(rotation_radians.x);
         var rotation_y = THREE.Math.radToDeg(rotation_radians.y);
 
         entity.setAttribute('position', { x: position.x, y: position.y, z: position.z }); 
@@ -282,7 +284,7 @@ jQuery(document).ready(function($) {
         entity.setAttribute('visible', true); 
 
         $('#positions #content-attached').append($('<option>', {
-            value: '{ "id": "' + id + '", "content_id": "' + $('#positions #content-selector option:selected').val() + '", "position": {"x": "' + position.x + '", "y": "' + position.y + '", "z": "' + position.z + '"}, "rotation": {"x": "0", "y": "' + rotation_y + '", "z": "0"}, "scale": { "x": "1.0", "y": "1.0", "z": "1.0" } }',
+            value: '{ "id": "' + id + '", "content_id": "' + $('#positions #content-selector option:selected').val() + '", "position": {"x": "' + position.x + '", "y": "' + position.y + '", "z": "' + position.z + '"}, "rotation": {"x": "' + rotation_x + '", "y": "' + rotation_y + '", "z": "0"}, "scale": { "x": "1.0", "y": "1.0", "z": "1.0" } }',
             text: $('#positions #content-selector option:selected').text()
         }));
 
