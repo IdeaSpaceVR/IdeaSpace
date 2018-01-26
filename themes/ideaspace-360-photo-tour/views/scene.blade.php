@@ -62,13 +62,14 @@
                     @foreach ($photosphere['photosphere-references']['#positions'] as $photosphere_reference)
 
                         <a-entity 
-                            rotation="{{ $photosphere_reference['#rotation']['#x'] }} {{ $photosphere_reference['#rotation']['#y'] }} {{ $photosphere_reference['#rotation']['#z'] }}">
+                            rotation="{{ $photosphere_reference['#rotation']['#x'] }} {{ $photosphere_reference['#rotation']['#y'] }} {{ $photosphere_reference['#rotation']['#z'] }}"
+														position="{{ $photosphere_reference['#position']['#x'] }} {{ $photosphere_reference['#position']['#y'] }} {{ $photosphere_reference['#position']['#z'] }}">
                             <a-circle  
                                 class="hotspot-navigation hotspot-navigation-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}" 
                                 data-content-id="{{ $photosphere_reference['#content-id'] }}" 
                                 isvr-hotspot-navigation-wrapper-listener
                                 material="transparent: false; opacity: 0"
-                                position="0 1.6 -2.1"   
+                                /*position="0 1.6 -2.1"*/   
                                 radius="0.4" 
                                 scale="0.7 0.7 0.7" 
                                 visible="false">
