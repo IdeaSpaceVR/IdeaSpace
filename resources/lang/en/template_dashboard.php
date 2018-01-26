@@ -9,7 +9,7 @@ return [
     'site_title' => 'Give your site a title',
     'add_new_space' => 'Create your first space',
     'get_themes' => 'Get themes for your spaces',
-    'contact' => 'Contact us',
+    'forum' => 'Ask a question',
     'links_to_get_you_started' => 'Some links to get you started:',
     'spaces' => 'Space|Spaces',
     'upload_max_filesize' => 'Max. upload file size:',

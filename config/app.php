@@ -214,7 +214,7 @@ return [
 
     'theme_directory_url' => 'https://www.ideaspacevr.org/themes',
     'theme_howto_url' => 'https://forum.ideaspacevr.org',
-    'contact_url' => 'https://www.ideaspacevr.org/contact',
+    'forum_url' => 'https://forum.ideaspacevr.org',
     'disable_login' => false,
 
     'version' => '1.1.0',
