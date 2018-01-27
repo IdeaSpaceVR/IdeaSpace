@@ -7,7 +7,7 @@
 <div class="container-fluid">
     <div class="row">
         <div class="col-sm-12">
-            <div class="row" style="margin-top:20px">
+            <div class="row" style="margin-top:80px">
                 <div class="col-md-12 text-center">
                     <h1 style="font-size:72px;font-weight:300;margin-bottom:20px">IdeaSpaceVR</h1>
                     <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);margin-bottom:20px">Create beautiful virtual reality web experiences</p>

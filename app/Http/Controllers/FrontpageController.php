@@ -58,15 +58,15 @@ class FrontpageController extends Controller {
             $spaces = Space::where('status', Space::STATUS_PUBLISHED)->orderBy('updated_at', 'desc')->simplePaginate(1);
 
             if (count($spaces) === 0) {
-                if ($setting->value != 'latest-spaces') {
-                    $setting->value = 'latest-spaces';
+                if ($setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
+                    $setting->value = Setting::FRONTPAGE_DISPLAY_BLANK_PAGE;
                     $setting->save();
                 }
                 return view('frontpage.welcome_frontpage', ['title' => $title_setting->value]);
             }
 
 
-            if ($setting->value != 'latest-spaces') {
+            if ($setting->value != Setting::FRONTPAGE_DISPLAY_LATEST_SPACES && $setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
 
                 /* show one space on front page */
 
@@ -90,7 +90,7 @@ class FrontpageController extends Controller {
                 /* cut off .blade.php */
                 return view('theme::' . $vars['theme_view'], $vars);
 
-            } else {
+            } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_LATEST_SPACES) {
 
                 /* show latest spaces on front page */
 
@@ -99,7 +99,11 @@ class FrontpageController extends Controller {
                     'spaces' => $spaces,
                     'title' => $title_setting->value
                 ]);
-            }
+
+            } else {
+
+								return view('frontpage.welcome_frontpage', ['title' => $title_setting->value]);
+						}
         }
     }
 }

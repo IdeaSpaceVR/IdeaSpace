@@ -38,19 +38,22 @@ class SpaceSettingsController extends Controller
         $space_id_selected = null;
         $one_space_checked = false;
         $latest_spaces_checked = false;
+        $blank_page_checked = false;
 
-        /* if there are no published spaces, set it to latest spaces */
+        /* if there are no published spaces, set it to blank page */
         if (count($spaces) === 0) {
-            $setting->value = 'latest-spaces';
+            $setting->value = Setting::FRONTPAGE_DISPLAY_BLANK_PAGE;
             $setting->save();
         }
 
 
-        if ($setting->value != 'latest-spaces') {
+        if ($setting->value != Setting::FRONTPAGE_DISPLAY_LATEST_SPACES && $setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
             $space_id_selected = $setting->value;
             $one_space_checked = true;
-        } else {
+        } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_LATEST_SPACES) {
             $latest_spaces_checked = true;
+        } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
+        		$blank_page_checked = true;
         }
 
         foreach ($spaces as $space) {
@@ -61,6 +64,7 @@ class SpaceSettingsController extends Controller
             'space_id_selected' => $space_id_selected,
             'latest_spaces_checked' => $latest_spaces_checked,
             'one_space_checked' => $one_space_checked,
+            'blank_page_checked' => $blank_page_checked,
             'spaces' => $arr,
             'js' => array(asset('public/assets/admin/settings/js/space_settings.js')),
             'css' => array(asset('public/assets/admin/settings/css/space_settings.css'))
@@ -83,19 +87,19 @@ class SpaceSettingsController extends Controller
 
         $setting = Setting::where('key', 'front-page-display')->first();
 
-        if ($front_page_display_val == 'one-space' && $request->has('space')) {
+        if ($front_page_display_val == Setting::FRONTPAGE_DISPLAY_ONE_SPACE && $request->has('space')) {
 
             $space_id = $request->input('space');
             $setting->value = $space_id;
             $setting->save();             
 
-            return redirect('admin/settings/space')->withInput()->with('alert-success', 'Settings saved.');
+            return redirect('admin/settings/space')->withInput()->with('alert-success', trans('template_space_settings.settings_saved'));
         } 
 
         $setting->value = $front_page_display_val;
         $setting->save();
 
-        return redirect('admin/settings/space')->withInput()->with('alert-success', 'Settings saved.');
+        return redirect('admin/settings/space')->withInput()->with('alert-success', trans('template_space_settings.settings_saved'));
     }
 
 }

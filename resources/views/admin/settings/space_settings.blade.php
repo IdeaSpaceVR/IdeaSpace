@@ -55,6 +55,16 @@
                 {!! Form::select('space', $spaces, $space_id_selected, $arr) !!}
                 </div>
             </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="radio">
+                        <label>
+                        {!! Form::radio('front-page-display', 'blank-page', $blank_page_checked) !!}
+                        {{ trans('template_space_settings.blank_page') }}
+                        </label>
+                    </div>
+                </div>
+            </div>
         </div> <!-- end col-md-10 //-->
     </div> <!-- end row //-->
 
