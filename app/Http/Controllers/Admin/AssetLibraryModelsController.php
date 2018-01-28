@@ -112,6 +112,16 @@ class AssetLibraryModelsController extends Controller {
                 'status' => 'success-ongoing'
             ]); 
         }
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TIF) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
+        if ($queue_length == 1 && strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TIFF) {
+            return response()->json([
+                'status' => 'success-ongoing'
+            ]); 
+        }
   
 
         $filename_orig = $file->getClientOriginalName();
@@ -121,6 +131,8 @@ class AssetLibraryModelsController extends Controller {
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_JPG &&
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_GIF &&
             strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TGA && 
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TIF && 
+            strtolower($file->getClientOriginalExtension()) != Texture::FILE_EXTENSION_TIFF && 
             strtolower($file->getClientOriginalExtension()) != Model3D::FILE_EXTENSION_OBJ &&
             strtolower($file->getClientOriginalExtension()) != Model3D::FILE_EXTENSION_MTL) {
             do {
@@ -344,6 +356,8 @@ class AssetLibraryModelsController extends Controller {
         } else if (strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_PNG || 
             strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_JPG ||
             strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_GIF ||
+            strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TIF ||
+            strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TIFF ||
             strtolower($file->getClientOriginalExtension()) == Texture::FILE_EXTENSION_TGA) {
 
             $newFile = GenericFile::create([

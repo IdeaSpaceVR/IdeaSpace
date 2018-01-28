@@ -11,6 +11,8 @@ class Texture extends Model
     CONST FILE_EXTENSION_JPG = 'jpg';
     CONST FILE_EXTENSION_GIF = 'gif';
     CONST FILE_EXTENSION_TGA = 'tga';
+    CONST FILE_EXTENSION_TIF = 'tif';
+    CONST FILE_EXTENSION_TIFF = 'tiff';
 
     /**
      * The table associated with the model.
