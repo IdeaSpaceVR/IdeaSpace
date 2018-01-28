@@ -8,6 +8,7 @@
 - Added a REST endpoint to request space content by specifying the content id
 - Settings: added fields to settings page for Origin Trial Token for Chrome to enable WebVR
 - Added config/app.php parameter to disable user authentication
+- Support tif / tiff texture files (3D models)
 
 ## 1.0.4
 
