@@ -63,8 +63,10 @@ class GeneralSettingsController extends Controller {
         } catch (ModelNotFoundException $e) {
         }
 
-        /* gets FALLBACK_LOCALE in .env if necessary */
-        $site_localization = App::getLocale();
+
+				App::setLocale(session('locale'));
+
+				$site_localization = session('locale');
 
         $localization_options = [
             'en' => trans('template_general_settings.english'),
@@ -72,6 +74,7 @@ class GeneralSettingsController extends Controller {
             'de' => trans('template_general_settings.german'),
             'fr' => trans('template_general_settings.french'),
         ];
+
 
         $vars = [
             'site_title' => $setting_site_title->value,
@@ -104,7 +107,10 @@ class GeneralSettingsController extends Controller {
 
 
         $site_localization = $request->input('site-localization');
-        App::setLocale($site_localization);
+
+				app('config')->write('app.locale', $site_localization);
+
+				session(['locale' => $site_localization]);
 
 
         try {
