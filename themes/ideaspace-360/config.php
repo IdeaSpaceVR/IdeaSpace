@@ -64,6 +64,7 @@ return [
           '#description' => 'Upload a photo sphere image.',
           '#help' => 'Photo sphere image in equirectangular projection format.',
           '#type' => 'photosphere',
+					'#content-preview-image' => true,
           '#required' => true,
           '#file-extension' => ['jpg', 'png'],
         ],
