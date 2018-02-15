@@ -11,6 +11,8 @@
 - Support tif / tiff texture files (3D models)
 - Updated IdeaSpace 3D Model theme to better support Oculus Rift touch controllers
 - Bug fix: language switch in Settings works now
+- Upgraded to A-Frame 0.7.1
+- Support for glTF 2.0 models added
 
 ## 1.0.4
 
