@@ -40,4 +40,25 @@ body {
   100% { transform: rotate(360deg); }
 }
 
+.cover {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+.annotation-text-texture {
+    font-family: Arial;
+    width: 512px;
+    height: 170px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    overflow: hidden;
+}
 

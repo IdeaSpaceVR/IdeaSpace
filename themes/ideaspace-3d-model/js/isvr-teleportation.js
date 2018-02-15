@@ -2,11 +2,9 @@ AFRAME.registerComponent('isvr-teleportation', {
 
   dependencies: ['raycaster'],
 
-  schema: {
-        camera_distance_vr: {type: 'number', default: 1.0}
-  },
+  schema: {},
 
-  play: function() {
+  init: function() {
 
     var self = this;
 
@@ -21,9 +19,10 @@ AFRAME.registerComponent('isvr-teleportation', {
 
             teleportPosition = event.detail.intersection.point;
 
-            teleportIndicator.setAttribute('position', { x: event.detail.intersection.point.x, y: 0.01, z: event.detail.intersection.point.z });
+            teleportIndicator.setAttribute('position', { x: event.detail.intersection.point.x, y: event.detail.intersection.point.y + 0.01, z: event.detail.intersection.point.z });
 
             teleportIndicator.setAttribute('visible', true);
+
         }
 
     });
@@ -33,6 +32,7 @@ AFRAME.registerComponent('isvr-teleportation', {
         if (scene.is('vr-mode')) {
 
             teleportIndicator.setAttribute('visible', false);
+
         }
 
     });
@@ -41,8 +41,9 @@ AFRAME.registerComponent('isvr-teleportation', {
 
         if (scene.is('vr-mode')) {
 
-            var camera_pos = document.querySelector('a-entity[camera]').getAttribute('position');
-            document.querySelector('a-entity[camera]').setAttribute('position', { x: teleportPosition.x, y: camera_pos.y, z: teleportPosition.z - self.data.camera_distance_vr });
+            var camera_pos = document.querySelector('#camera-wrapper').getAttribute('position');
+            document.querySelector('#camera-wrapper').setAttribute('position', { x: teleportPosition.x, y: teleportPosition.y + camera_pos.y, z: teleportPosition.z });
+
         }
 
     });

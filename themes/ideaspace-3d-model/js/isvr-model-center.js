@@ -30,14 +30,16 @@ AFRAME.registerComponent('isvr-model-center', {
 
                 camera.setAttribute('orbit-controls', 'enabled', false);
 
-                if (offset > 0) {
-                    camera.setAttribute('position', { x: 0, y: 0, z: offset });
-                } else {
-                    camera.setAttribute('position', { x: 0, y: 0, z: distance });
-                }
 
-                var camera_wrapper = document.querySelector('#camera-wrapper');
-                camera_wrapper.setAttribute('position', { x: 0, y: size.y/2, z: 0 });
+								if (offset > 0) {
+							 		camera.setAttribute('position', { x: 0, y: 0, z: offset });
+						 		} else {
+							 		camera.setAttribute('position', { x: 0, y: 0, z: distance });
+						 		}
+
+						 		var camera_wrapper = document.querySelector('#camera-wrapper');
+						 		camera_wrapper.setAttribute('position', { x: 0, y: size.y/2, z: 0 });
+
 
                 document.querySelector('#model-animation').addEventListener('animationend', function() {
 

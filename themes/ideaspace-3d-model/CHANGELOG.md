@@ -1,3 +1,9 @@
+## 1.2
+
+- Bug fix: Oculus Rift touch controllers work now in VR
+- Allow formatted text in hotspot annotations
+
+
 ## 1.1
 
 - Deprecated aframe-mouse-cursor-component

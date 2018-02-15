@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace 3D Model',
   '#theme-key' => 'ideaspace-3d-model',
-  '#theme-version' => '1.1',
+  '#theme-version' => '1.2',
   '#ideaspace-version' => '>=1.1.0',
   '#theme-description' => '3D model viewer with info hotspots. Attach text annotations to hotspots.',
   '#theme-author-name' => 'IdeaSpaceVR',
@@ -26,9 +26,9 @@ return [
           '#description' => 'Enter some text.',
           '#help' => 'Enter some text.',
           '#type' => 'textarea',
-          '#maxlength' => 150, 
+          '#maxlength' => 700, 
           '#rows' => 10, 
-          '#contentformat' => 'text', 
+          '#contentformat' => 'html/text', 
           '#required' => true,
         ],
 
@@ -70,7 +70,7 @@ return [
       '#fields' => [
 
         'model' => [
-          '#label' => '3D Model',
+          '#label' => 'Model',
           '#description' => 'Upload a 3D model.',
           '#help' => 'Upload a 3D model.',
           '#type' => 'model3d',
@@ -362,7 +362,7 @@ return [
         ],
 
         'rotation-x' => [
-          '#label' => 'X-Axis Rotation',
+          '#label' => 'Model X-Axis Rotation',
           '#description' => 'Select a rotation value.',
           '#help' => 'The x-axis rotation value is applied for desktop, mobile and in VR.',
           '#type' => 'options-select',
@@ -409,7 +409,7 @@ return [
         ],
 
         'rotation-y' => [
-          '#label' => 'Y-Axis Rotation',
+          '#label' => 'Model Y-Axis Rotation',
           '#description' => 'Select a rotation value.',
           '#help' => 'The y-axis rotation value is applied for desktop, mobile and in VR.',
           '#type' => 'options-select',
@@ -456,7 +456,7 @@ return [
         ],
 
         'rotation-z' => [
-          '#label' => 'Z-Axis Rotation',
+          '#label' => 'Model Z-Axis Rotation',
           '#description' => 'Select a rotation value.',
           '#help' => 'The z-axis rotation value is applied for desktop, mobile and in VR.',
           '#type' => 'options-select',

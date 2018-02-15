@@ -42,7 +42,7 @@
 /************************************************************************/
 /******/ ([
 /* 0 */
-/***/ function(module, exports) {
+/***/ (function(module, exports) {
 
 	/* global AFRAME THREE */
 
@@ -129,7 +129,7 @@
 	    },
 	    rotateTo: {
 	      type: 'vec3',
-	      default: '0 0 0'
+	      default: {x: 0, y: 0, z: 0}
 	    },
 	    rotateToSpeed: {
 	      type: 'number',
@@ -156,9 +156,12 @@
 	  init: function () {
 	    this.sceneEl = this.el.sceneEl;
 	    this.object = this.el.object3D;
-	    this.target = this.sceneEl.querySelector(this.data.target).object3D.position.clone();
+	    this.target = this.sceneEl.querySelector(this.data.target).object3D.position;
+
+	    console.log('enabled: ', this.data.enabled);
 
 	    // Find the look-controls component on this camera, or create if it doesn't exist.
+	    this.isRunning = false;
 	    this.lookControls = null;
 
 	    if (this.data.autoVRLookCam) {
@@ -238,7 +241,7 @@
 	   * Generally modifies the entity based on the data.
 	   */
 	  update: function (oldData) {
-	    // console.log('component update');
+	    console.log('component update');
 
 	    if (this.data.rotateTo) {
 	      var rotateToVec3 = new THREE.Vector3(this.data.rotateTo.x, this.data.rotateTo.y, this.data.rotateTo.z);
@@ -248,9 +251,6 @@
 	        this.rotateTo(this.desiredPosition);
 	      }
 	    }
-
-      /* IdeaSpaceVR */
-      this.target = this.sceneEl.querySelector(this.data.target).object3D.position.clone();
 
 	    this.dolly.position.copy(this.object.position);
 	    this.updateView(true);
@@ -262,6 +262,7 @@
 	   */
 	  remove: function () {
 	    // console.log("component remove");
+	    this.isRunning = false;
 	    this.removeEventListeners();
 	    this.el.sceneEl.removeEventListener('enter-vr', this.onEnterVR, false);
 	    this.el.sceneEl.removeEventListener('exit-vr', this.onExitVR, false);
@@ -271,7 +272,7 @@
 	   * Called on each scene tick.
 	   */
 	  tick: function (t) {
-	    var render = this.data.enabled ? this.updateView() : false;
+	    var render = this.data.enabled && this.isRunning ? this.updateView() : false;
 	    if (render === true && this.data.logPosition === true) {
 	      console.log(this.el.object3D.position);
 	    }
@@ -312,7 +313,7 @@
 	   */
 	  pause: function () {
 	    // console.log("component pause");
-	    this.data.enabled = false;
+	    this.isRunning  = false;
 	    this.removeEventListeners();
 	  },
 
@@ -322,7 +323,7 @@
 	   */
 	  play: function () {
 	    // console.log("component play");
-	    this.data.enabled = true;
+	    this.isRunning = true;
 
 	    var camera, cameraType;
 	    this.object.traverse(function (child) {
@@ -338,7 +339,7 @@
 	    this.camera = camera;
 	    this.cameraType = cameraType;
 
-	    this.sceneEl.addEventListener('render-target-loaded', this.onRenderTargetLoaded, false);
+	    this.sceneEl.addEventListener('renderstart', this.onRenderTargetLoaded, false);
 
 	    if (this.lookControls) this.lookControls.pause();
 	    if (this.canvasEl) this.addEventListeners();
@@ -349,7 +350,7 @@
 	   * Then set canvasEl and add event listeners
 	   */
 	  onRenderTargetLoaded: function () {
-	    this.sceneEl.removeEventListener('render-target-loaded', this.onRenderTargetLoaded, false);
+	    this.sceneEl.removeEventListener('renderstart', this.onRenderTargetLoaded, false);
 	    this.canvasEl = this.sceneEl.canvas;
 	    this.addEventListeners();
 	  },
@@ -392,18 +393,21 @@
 	   * Remove event listeners
 	   */
 	  removeEventListeners: function () {
-	    this.canvasEl.removeEventListener('contextmenu', this.onContextMenu, false);
-	    this.canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
-	    this.canvasEl.removeEventListener('mousewheel', this.onMouseWheel, false);
-	    this.canvasEl.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false); // firefox
 
-	    this.canvasEl.removeEventListener('touchstart', this.onTouchStart, false);
-	    this.canvasEl.removeEventListener('touchend', this.onTouchEnd, false);
-	    this.canvasEl.removeEventListener('touchmove', this.onTouchMove, false);
+	    if(this.canvasEl){
+	        this.canvasEl.removeEventListener('contextmenu', this.onContextMenu, false);
+	        this.canvasEl.removeEventListener('mousedown', this.onMouseDown, false);
+	        this.canvasEl.removeEventListener('mousewheel', this.onMouseWheel, false);
+	        this.canvasEl.removeEventListener('MozMousePixelScroll', this.onMouseWheel, false); // firefox
 
-	    this.canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
-	    this.canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
-	    this.canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
+	        this.canvasEl.removeEventListener('touchstart', this.onTouchStart, false);
+	        this.canvasEl.removeEventListener('touchend', this.onTouchEnd, false);
+	        this.canvasEl.removeEventListener('touchmove', this.onTouchMove, false);
+
+	        this.canvasEl.removeEventListener('mousemove', this.onMouseMove, false);
+	        this.canvasEl.removeEventListener('mouseup', this.onMouseUp, false);
+	        this.canvasEl.removeEventListener('mouseout', this.onMouseUp, false);
+	    }
 
 	    window.removeEventListener('keydown', this.onKeyDown, false);
 	  },
@@ -427,7 +431,7 @@
 	  onMouseDown: function (event) {
 	    // console.log('onMouseDown');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    if (event.button === this.mouseButtons.ORBIT && (event.shiftKey || event.ctrlKey)) {
 	      if (this.data.enablePan === false) return;
@@ -461,7 +465,7 @@
 	  onMouseMove: function (event) {
 	    // console.log('onMouseMove');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    event.preventDefault();
 
@@ -480,7 +484,7 @@
 	  onMouseUp: function (event) {
 	    // console.log('onMouseUp');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    if (this.state === this.STATE.ROTATE_TO) return;
 
@@ -505,7 +509,8 @@
 	  onMouseWheel: function (event) {
 	    // console.log('onMouseWheel');
 
-	    if (this.data.enabled === false || this.data.enableZoom === false || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)) return;
+	    if (!this.data.enabled || !this.isRunning || this.data.enableZoom === false || (this.state !== this.STATE.NONE && this.state !== this.STATE.ROTATE)) return;
+
 	    event.preventDefault();
 	    event.stopPropagation();
 	    this.handleMouseWheel(event);
@@ -518,7 +523,7 @@
 	  onTouchStart: function (event) {
 	    // console.log('onTouchStart');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    switch (event.touches.length) {
 	      case 1: // one-fingered touch: rotate
@@ -548,7 +553,7 @@
 	  onTouchMove: function (event) {
 	    // console.log('onTouchMove');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    event.preventDefault();
 	    event.stopPropagation();
@@ -580,7 +585,7 @@
 	  onTouchEnd: function (event) {
 	    // console.log('onTouchEnd');
 
-	    if (this.data.enabled === false) return;
+	    if (!this.data.enabled || !this.isRunning) return;
 
 	    this.handleTouchEnd(event);
 
@@ -596,7 +601,7 @@
 	  onKeyDown: function (event) {
 	    // console.log('onKeyDown');
 
-	    if (this.data.enabled === false || this.data.enableKeys === false || this.data.enablePan === false) return;
+	    if (!this.data.enabled || !this.isRunning || this.data.enableKeys === false || this.data.enablePan === false) return;
 
 	    this.handleKeyDown(event);
 	  },
@@ -1024,5 +1029,5 @@
 	});
 
 
-/***/ }
+/***/ })
 /******/ ]);
