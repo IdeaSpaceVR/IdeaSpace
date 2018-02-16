@@ -36,7 +36,6 @@
     <script src="{{ url($theme_dir . '/js/isvr-hotspot.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-annotation.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-teleportation.js') }}"></script>
-<script src="{{ url($theme_dir . '/js/aframe-log-component.min.js') }}"></script>
 </head>
 <body>
 

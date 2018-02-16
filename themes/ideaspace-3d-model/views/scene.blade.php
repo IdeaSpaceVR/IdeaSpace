@@ -183,13 +183,6 @@
 																		width="0.77" 
 																		height="0.2" 
 																		position="0 0 0.02">
-                                <!--a-plane width="0.77" height="0.2" position="0 0 0.02" color="{{ $annotation['#content']['background-color']['#value'] }}">
-                                    <a-text 
-                                        value="{{ (isset($annotation['#content'])?$annotation['#content']['text']['#value']:'') }}" 
-                                        color="{{ $annotation['#content']['text-color']['#value'] }}" 
-                                        anchor="center" 
-                                        width="0.77">
-                                    </a-text//-->
                                 </a-plane>
                             </a-entity>
                         </a-entity>
