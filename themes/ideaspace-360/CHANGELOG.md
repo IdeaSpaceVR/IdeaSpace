@@ -1,3 +1,8 @@
+## 1.6
+
+- Deprecated #theme-compatibility config parameter
+- Fixed 6-DOF controller support
+
 ## 1.5
 
 - user height and positional controllers height fix
