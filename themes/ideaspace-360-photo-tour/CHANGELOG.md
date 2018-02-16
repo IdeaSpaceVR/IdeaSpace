@@ -1,3 +1,8 @@
+## 1.3
+
+- vertical position for navigation and info hotspots
+- fix 6-DOF controller support
+
 ## 1.2
 
 - user height and positional controllers height fix
