@@ -27,7 +27,7 @@
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
             </div><!-- upload //-->
-            <p class="help-block">{{ trans('template_asset_library_models.supported_model_formats') }}</p>
+            <div class="alert alert-info" role="alert">{{ trans('template_asset_library_models.supported_model_formats') }}</div>
 
         </div><!-- col-md-12 //-->
 
