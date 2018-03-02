@@ -223,7 +223,6 @@
                 <a-entity 
                     geometry="primitive: plane; width: 1.6; height: 0.4"
                     position="0 0.2 0.02" 
-                    /*material="color: #606060"*/
 										material="shader: html; target: #space-title-texture; transparent: false; ratio: width">
                 </a-entity>
                 <a-ring 
