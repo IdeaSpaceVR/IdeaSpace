@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace 360 Photo Tour',
   '#theme-key' => 'ideaspace-360-photo-tour',
-  '#theme-version' => '1.3',
+  '#theme-version' => '1.4',
   '#ideaspace-version' => '>=1.1.0',
   '#theme-description' => 'Create and publish a 360 photo sphere tour with info hotspots. Attach text annotations to hotspots.',
   '#theme-author-name' => 'IdeaSpaceVR',
@@ -87,15 +87,6 @@ return [
 					'#content-preview-image' => true,
           '#required' => true,
           '#file-extension' => ['jpg', 'png'],
-        ],
-
-        'text-styling' => [
-          '#label' => 'Text Styling',
-          '#description' => 'Select a style',
-          '#help' => 'Select a display style for photo sphere titles and hotspot text annotations.',
-          '#type' => 'options-select',
-          '#options' => ['text-boxes' => 'Text boxes', 'floating-text' => 'Floating text'],
-          '#required' => true,
         ],
 
         'text-color' => [

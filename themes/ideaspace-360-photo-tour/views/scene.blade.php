@@ -69,9 +69,8 @@
                                 data-content-id="{{ $photosphere_reference['#content-id'] }}" 
                                 isvr-hotspot-navigation-wrapper-listener
                                 material="transparent: false; opacity: 0"
-                                /*position="0 1.6 -2.1"*/   
                                 radius="0.4" 
-                                scale="0.7 0.7 0.7" 
+                                scale="0.4 0.4 0.4" 
                                 visible="false">
                                 <a-ring
                                     color="{{ $photosphere['navigation-hotspot-color']['#value'] }}"
@@ -133,15 +132,7 @@
 
                                 @if (trim($photosphere_reference['#content']['title']['#value']) != '')
 
-                                    @if ($photosphere_reference['#content']['text-styling']['#value'] == 'text-boxes') 
-
-                                        @include('theme::partials.photosphere_title_box_partial')
-
-                                    @elseif ($photosphere_reference['#content']['text-styling']['#value'] == 'floating-text') 
-
-                                        @include('theme::partials.photosphere_floating_title_partial')
-
-                                    @endif
+                                		@include('theme::partials.photosphere_title_box_partial')
 
                                 @endif
 
@@ -205,15 +196,7 @@
                             </a-circle>
 
                             <!-- hotspot text //-->
-                            @if ($photosphere['text-styling']['#value'] == 'text-boxes')
-
-                                @include('theme::partials.hotspot_text_box_partial')
-
-                            @elseif ($photosphere['text-styling']['#value'] == 'floating-text')
-
-                                @include('theme::partials.hotspot_floating_text_partial')
-
-                            @endif
+                            @include('theme::partials.hotspot_text_box_partial')
                             <!-- hotspot text //-->
 
                         </a-entity>
@@ -240,13 +223,8 @@
                 <a-entity 
                     geometry="primitive: plane; width: 1.6; height: 0.4"
                     position="0 0.2 0.02" 
-                    material="color: #606060">
-                    <a-text
-                        value="{{ $space_title }}"
-                        color="#FFFFFF"
-                        anchor="center"
-                        width="1.6">
-                    </a-text>
+                    /*material="color: #606060"*/
+										material="shader: html; target: #space-title-texture; transparent: false; ratio: width">
                 </a-entity>
                 <a-ring 
                     position="0 -0.2 0.03" 
@@ -330,4 +308,40 @@
         </a-entity><!-- no-hmd-intro //-->
 
     </a-scene>
+
+
+		<div class="cover">
+    </div>
+
+
+    <div id="space-title-texture" style="color:#FFFFFF;background-color:#606060">
+    {!! $space_title !!}
+    </div>
+
+
+    @if (isset($content['annotations']))
+
+        @foreach ($content['annotations'] as $annotation)
+        		<div id="annotation-text-texture-content-id-{{ $annotation['text']['#content-id'] }}" class="annotation-text-texture" style="background-color:{{ $annotation['background-color']['#value'] }}; color:{{ $annotation['text-color']['#value'] }}">
+        		{!! nl2br($annotation['text']['#value']) !!}
+        		</div>
+        @endforeach
+
+    @endif
+
+
+		@if (isset($content['photo-spheres']))
+        @foreach ($content['photo-spheres'] as $photosphere)
+            @if (trim($photosphere['title']['#value']) != '')
+                <div id="photosphere-title-texture-content-id-{{ $photosphere['photo-sphere']['#content-id'] }}" class="photosphere-title-texture" style="background-color:{{ $photosphere['background-color']['#value'] }}; color:{{ $photosphere['text-color']['#value'] }}">
+                {!! $photosphere['title']['#value'] !!}
+                </div>
+            @endif
+        @endforeach
+    @endif
+
+
 @endsection
+
+
+

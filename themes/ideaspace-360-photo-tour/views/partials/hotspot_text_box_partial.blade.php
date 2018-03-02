@@ -16,13 +16,7 @@
             width="1.6" 
             height="0.4" 
             position="0 0 0.02" 
-            color="{{ $annotation['#content']['background-color']['#value'] }}">
-            <a-text
-                value="{{ $annotation['#content']['text']['#value'] }}"
-                color="{{ $annotation['#content']['text-color']['#value'] }}"
-                anchor="center"
-                width="1.6">
-            </a-text>
+						material="shader: html; target: #annotation-text-texture-content-id-{{ $annotation['#content-id'] }}; transparent: false; ratio: width">
             <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
             <a-entity
                 material="opacity: 0"

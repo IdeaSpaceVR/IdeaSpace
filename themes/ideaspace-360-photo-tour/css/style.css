@@ -1,0 +1,52 @@
+.cover {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+.photosphere-title-texture {
+    font-family: Arial;
+    font-size: 28px;
+    width: 512px;
+    height: 35px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.annotation-text-texture {
+    font-family: Arial;
+    font-size: 28px;
+    width: 512px;
+    height: 170px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    overflow: hidden;
+}
+
+.hotspot-text-texture p {
+    line-height: 0;
+}
+
+#space-title-texture {
+    font-family: Arial;
+    font-size: 28px;
+    width: 512px;
+    height: 100px;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -2;
+    overflow: hidden;
+}
+
+
