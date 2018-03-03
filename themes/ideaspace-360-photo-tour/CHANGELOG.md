@@ -1,6 +1,5 @@
 ## 1.4
 
-- added text formatting for annotation text
 - special characters (umlauts, etc.) in text boxes are now supported and shown
 
 ## 1.3
