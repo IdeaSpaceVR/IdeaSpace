@@ -14,13 +14,7 @@
         <a-entity
             geometry="primitive: plane; width: 1.6; height: 0.4"
             position="0 0 0.02"
-            material="color: {{ $photosphere['background-color']['#value'] }}">
-            <a-text
-                value="{{ $photosphere['title']['#value'] }}"
-                color="{{ $photosphere['text-color']['#value'] }}"
-                anchor="center"
-                width="1.6">
-            </a-text>
+						material="shader: html; target: #photosphere-title-texture-content-id-{{ $photosphere['title']['#content-id'] }}; transparent: false; ratio: width">
             <!-- capture mouseover / mouseout events; enables smooth cursor animation //-->
             <a-entity
                 material="opacity: 0"

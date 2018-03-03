@@ -36,6 +36,7 @@
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-wrapper-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-text-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-title-listener.js') }}"></script>
+		<script src="{{ url($theme_dir . '/js/aframe-html-shader-component/aframe-html-shader.min.js') }}"></script>
 </head>
 <body>
 
