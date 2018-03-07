@@ -8,10 +8,24 @@
 
     {!! Form::open(array('route' => ['content_delete', $space_id, $contenttype_name, $content_id], 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
+		@if (isset($referenced_content))
+				<?php $field_ids = ''; ?>
+				@foreach ($referenced_content as $ref_content)
+				<?php $field_ids = $field_ids . $ref_content['field_id'] . ','; ?>	
+				@endforeach
+				<?php $field_ids = substr($field_ids, 0, -1); ?>
+		<input type="hidden" name="referenced_field_ids" value="{{ $field_ids }}">
+		@endif
+
     <div class="row">
 
         <!-- mainbar //-->
         <div class="col-md-9" style="padding-left:35px">
+						@if (isset($referenced_content))
+								@foreach ($referenced_content as $ref_content)
+								<div class="alert alert-info" role="alert">{!! trans('template_content_delete.referenced_content_message', ['title' => $title, 'other_type' => $ref_content['content_type_other'], 'title_other' => $ref_content['content_title_other']]) !!}</div>
+								@endforeach
+						@endif
             <h3>{{ trans('template_content_delete.are_you_sure') }} <em>{{ $title }}</em> ?</h3>
             <div>{{ trans('template_content_delete.action_cannot_be_undone') }}</div>
             <div class="form-group text-center">

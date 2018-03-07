@@ -23,6 +23,8 @@ class SpaceContentEditController extends Controller {
 
     private $contentType;
 
+		private $referenceableFieldTypes; 
+
 
     /**
      * Create a new controller instance.
@@ -36,6 +38,10 @@ class SpaceContentEditController extends Controller {
         $this->middleware('auth');
         $this->middleware('register.theme.eventlistener');
         $this->contentType = $ct;
+        $this->referenceableFieldTypes = [
+        		'position',
+        		'space_reference'
+    		];
     }
 
 
@@ -251,6 +257,60 @@ class SpaceContentEditController extends Controller {
         $vars['content_id'] = $content_id;
         $vars['label'] = $config['#content-types'][$contenttype]['#label'];
 
+	
+				/* content deletion protection */
+
+				/* are there space_reference or position field types used in this theme? */
+										
+				$content_types = $config['#content-types'];
+
+				foreach ($content_types as $content_type => $content_type_value) {
+
+						foreach ($content_type_value['#fields'] as $field => $field_value) {
+
+								if (isset($field_value['#type']) && in_array($field_value['#type'], $this->referenceableFieldTypes)) {	
+
+            				$contents = Content::where('space_id', $space->id)->where('key', $content_type)->get();
+
+										foreach ($contents as $content) {
+
+												try {
+														$fields = Field::where('content_id', $content->id)->where('type', $field_value['#type'])->get();
+										
+														foreach ($fields as $field) {
+
+																if (isset($field->data) && $field->data != '') {
+
+																		/* get data into array and search for content id from $content_id (content id to be deleted) */
+																		$field_data = json_decode($field->data, true);
+
+																		foreach ($field_data as $fd) {
+
+																				/* is there a reference entry for the current - to be deleted - content id? */
+																				if (array_key_exists('content_id', $fd) && $fd['content_id'] == $content_id) {
+
+																						/* show message to user that this content is referenced */
+																						$vars['referenced_content'][] = [
+																								'content_type_other' => $config['#content-types'][$content_type]['#label'], 
+																								'content_title_other' => $content->title,
+																								'field_id' => $field->id
+																						];
+																				} /* if */
+																		} /* foreach */
+																} /* if */
+														} /* foreach */
+	
+												} catch (ModelNotFoundException $e) {
+														/* ignore */
+												}
+
+										} /* foreach */
+								}
+						}
+				}
+
+
+
         $vars['css'] = [
             asset('public/medium-editor/css/medium-editor.min.css'),
             asset('public/medium-editor/css/themes/bootstrap.min.css'),
@@ -303,6 +363,40 @@ class SpaceContentEditController extends Controller {
 
             abort(404);
         }
+
+
+				/* delete reference entry, rewrite rest of data */
+				if ($request->has('referenced_field_ids')) {
+
+						$field_ids = $request->input('referenced_field_ids');
+						$field_ids = explode(',', $field_ids);
+
+						foreach ($field_ids as $field_id) {
+
+								try {
+            				$field = Field::where('id', $field_id)->firstOrFail();
+										$data = json_decode($field->data, true);
+										$data_copy = json_decode($field->data, true);
+										for ($i = 0; $i < sizeof($data); $i++) {
+												if ($data[$i]['content_id'] == $content_id) {
+														unset($data_copy[$i]);
+												}
+										}
+
+										if (empty($data_copy)) {
+												$field->data = '';
+										} else {
+												$field->data = json_encode($data_copy);
+										}
+										$field->save();
+
+								} catch (ModelNotFoundException $e) {
+										/* ignore */
+								}
+
+						} /* foreach */
+				}
+
 
         return redirect('admin/space/' . $space_id . '/edit')->with('alert-success', trans('space_content_edit_controller.deleted', ['label' => $title]));
     }

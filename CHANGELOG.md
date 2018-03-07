@@ -1,3 +1,10 @@
+## 1.1.1
+
+- If content is referenced within a space, and if the referenced content is deleted, a warning is shown. If user decides to delete the content the reference is deleted as well (preventing internal server error in a space). 
+- Theme: IdeaSpace 360: hotspots, all text characters are now working
+- Theme: IdeaSpace 360 Photo Tour: hotspots, all text characters are now working
+
+
 ## 1.1.0
 
 - Introduced rotation field type 
