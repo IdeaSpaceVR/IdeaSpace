@@ -3,7 +3,7 @@
 /**
  * Generates and saves images based on settings.
  *
- * @param Image $image
+ * @param String $uri
  * @param Array $image_settings
  * @param int $field_id
  */
