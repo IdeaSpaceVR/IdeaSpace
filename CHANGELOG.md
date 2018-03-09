@@ -4,6 +4,7 @@
 - Theme: IdeaSpace 360: hotspots, all text characters are now working
 - Theme: IdeaSpace 360 Photo Tour: hotspots, all text characters are now working
 - Use Tinymce for rich text editor (field types: textinput and textarea); Medium editor deprecated
+- Added support for animated GIF images 
 
 
 ## 1.1.0

@@ -23,7 +23,11 @@
 
                 <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
+								@if ($file_type == 'image/gif')
+								<a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}" shader="gif"></a-image>
+								@else
                 <a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}"></a-image>
+								@endif
 
                 <a-entity 
                     position="0 1.6 -4"

@@ -9,6 +9,7 @@ use App\GenericFile;
 use App\GenericImage;
 use App\Setting;
 use Auth;
+use Image;
 use File;
 use Log;
 
@@ -68,6 +69,13 @@ class AssetLibraryImagesController extends Controller {
             return response()->json(['status' => 'error', 'message' => trans('asset_library_images_controller.wrong_file_type')]);
         }
 
+
+				$is_gif_image = false;
+				if ($file->getMimeType() == 'image/gif') {
+						$is_gif_image = true;
+				}
+
+
         do {
             $newName = str_random(60) . '.' . strtolower($file->getClientOriginalExtension());
             $existingName = GenericFile::where('filename', $newName)->first();
@@ -82,8 +90,14 @@ class AssetLibraryImagesController extends Controller {
         }
 
 
-        /* image width and height must be power of two; resize image if needed; keep aspect ratio */
-        $width_height_arr = $this->create_image($uri, $uri);
+				/* ignore gif images because most of the time they are animated and resizing the image destroys the animation */
+				if ($is_gif_image) {
+						$image = Image::make($uri);
+						$width_height_arr = ['width' => $image->width(), 'height' => $image->height()];
+				} else {
+        		/* image width and height must be power of two; resize image if needed; keep aspect ratio */
+        		$width_height_arr = $this->create_image($uri, $uri);
+				}
 
 
         $user = Auth::user();
