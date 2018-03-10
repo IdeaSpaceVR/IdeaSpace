@@ -342,7 +342,7 @@ class FieldTypeImage {
         try {
             $image = GenericImage::where('id', $field->data)->firstOrFail();
             $genericFile = GenericFile::where('id', $image->file_id)->first();
-            $pathinfo = pathinfo($genericFile->uri);
+            //$pathinfo = pathinfo($genericFile->uri);
 
             $meta_data = json_decode($field->meta_data, true);
 
@@ -356,6 +356,7 @@ class FieldTypeImage {
             $content_arr['#id'] = $field->id;
             $content_arr['#content-id'] = $field->content_id;
             $content_arr['#type'] = $field->type;
+            $content_arr['#mime-type'] = $genericFile->filemime;
             $content_arr['#caption'] = $image->caption;
             $content_arr['#description'] = $image->description;
             $content_arr['#width'] = $image->width;
