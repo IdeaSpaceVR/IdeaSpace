@@ -29,7 +29,7 @@
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe-v0.7.0.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-scene.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/isvr-assets.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-navigation-wrapper-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-wrapper-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-text-listener.js') }}"></script>

@@ -1,24 +1,19 @@
-AFRAME.registerComponent('isvr-init-assets', {
+var isvr_assets = {
 
-    schema: {
-        url: {
-            default: ''
-        }
-    },
-
-    init: function() {
+    init: function (u) {
 
         this.all_assets_ready = {};
 
+				this.url = u;
+
+				this.sceneEl = document.querySelector('a-scene');
+
         this.xmlhttp = new XMLHttpRequest();
         this.xmlhttp.onreadystatechange = this.responseHandler.bind(this);
-        this.xmlhttp.open('GET', this.data.url, true);
+        this.xmlhttp.open('GET', this.url, true);
         this.xmlhttp.send();
 
         var interval = setInterval((function() {
-
-            /* this = component */
-            var that = this;
 
             var done = false;
             for (var k in this.all_assets_ready) {
@@ -55,10 +50,10 @@ AFRAME.registerComponent('isvr-init-assets', {
                     document.querySelector('#photosphere-start-btn').setAttribute('visible', true);
 
                     var intro_mouseenter = function() {
-                        that.el.sceneEl.systems['isvr-scene-helper'].showCursor();
+                        this.sceneEl.systems['isvr-scene-helper'].showCursor();
                     };
                     var intro_mouseleave = function() {
-                        that.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
+                        this.sceneEl.systems['isvr-scene-helper'].hideCursor();
                     };
                     document.querySelector('#intro-0').addEventListener('mouseenter', intro_mouseenter);
                     document.querySelector('#intro-0').addEventListener('mouseleave', intro_mouseleave);
@@ -67,7 +62,7 @@ AFRAME.registerComponent('isvr-init-assets', {
 
                         document.querySelector('#intro-0').removeEventListener('mouseenter', intro_mouseenter);
                         document.querySelector('#intro-0').removeEventListener('mouseleave', intro_mouseleave);
-                        that.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
+                        this.sceneEl.systems['isvr-scene-helper'].hideCursor();
 
                         // workaround because of interference with menu
                         document.querySelector('#intro-0').setAttribute('position', { x: 0, y: 1.6, z: -10 });
@@ -119,7 +114,7 @@ AFRAME.registerComponent('isvr-init-assets', {
 
     },
 
-    responseHandler: function() {
+    responseHandler: function () {
 
         var self = this;
 
@@ -154,6 +149,6 @@ AFRAME.registerComponent('isvr-init-assets', {
 
     }
 
-});
+};
 
 

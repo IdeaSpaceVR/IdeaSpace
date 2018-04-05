@@ -1,6 +1,7 @@
 ## 1.4
 
 - special characters (umlauts, etc.) in text boxes are now supported and shown
+- bug fix: image loading timeout when DOM not ready
 
 ## 1.3
 

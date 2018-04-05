@@ -2,7 +2,7 @@
 
 - If content is referenced within a space, and if the referenced content is deleted, a warning is shown. If user decides to delete the content the reference is deleted as well (preventing internal server error in a space). 
 - Theme: IdeaSpace 360: hotspots, all text characters are now working
-- Theme: IdeaSpace 360 Photo Tour: hotspots, all text characters are now working
+- Theme: IdeaSpace 360 Photo Tour: hotspots, all text characters are now working; bug fix: image loading timeout if DOM not ready
 - Use Tinymce for rich text editor (field types: textinput and textarea); Medium editor deprecated
 - Added support for animated GIF images 
 

@@ -32,7 +32,6 @@
         @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0) 
 
             <a-entity
-                isvr-init-assets="url: {{ $space_url }}/content/photo-spheres"
                 geometry="primitive: sphere; radius: 5000; segmentsWidth: 64; segmentsHeight: 64"
                 material="shader: flat; side: double; color: #FFFFFF"
                 scale="-1 1 1"
@@ -338,6 +337,14 @@
             @endif
         @endforeach
     @endif
+
+
+		<script>
+		(function() {
+				/* DOM is loaded */
+				isvr_assets.init('{{ $space_url }}/content/photo-spheres');
+		})();
+		</script>
 
 
 @endsection
