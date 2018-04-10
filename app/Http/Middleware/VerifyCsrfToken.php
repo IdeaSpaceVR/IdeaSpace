@@ -13,6 +13,8 @@ class VerifyCsrfToken extends BaseVerifier
      */
     protected $except = [
         'install-db',
-        'install-user-config' 
+        'install-user-config', 
+        '*/preview', 
+        '*/preview/*' 
     ];
 }
