@@ -21,8 +21,10 @@ foreach ($contentlist as $key => $value) {
                 <thead>
                     <tr>
                         <th style="width:5%"></th>
+												@if (isset($value['content'][0]) && isset($value['content'][0]['preview_image_uri']))	
                         <th style="width:5%"></th>
-                        <th style="width:70%">{{ trans('template_contentlist.title') }}</th>
+												@endif
+                        <th @if (isset($value['content'][0]) && isset($value['content'][0]['preview_image_uri'])) style="width:70%" @else style="width:75%" @endif>{{ trans('template_contentlist.title') }}</th>
                         <th style="width:20%">{{ trans('template_contentlist.date') }}</th>
                     </tr>
                 </thead>
@@ -36,11 +38,11 @@ foreach ($contentlist as $key => $value) {
                           <input type="hidden" name="id" class="id" value="{{ $content['id'] }}">
                           <input type="hidden" name="weight" class="weight" value="{{ $content['weight'] }}">
                         </td>
-                        <td class="field-preview-image">
 												@if (isset($content['preview_image_uri']))
-												<img src="{{ $content['preview_image_uri'] }}" width="40">
-												@endif
+                        <td class="field-preview-image">
+													<img src="{{ $content['preview_image_uri'] }}" width="40">
 												</td>
+												@endif
                         <td class="field-title">
                             <div style="font-weight:bold;word-wrap:break-word;" class="title">{{ $content['title'] }}</div>
                             <div>
