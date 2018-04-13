@@ -10,6 +10,11 @@ use Auth;
 use Validator;
 use App\Space;
 use App\Content;
+use App\Content\ContentType;
+use App\Field;
+use App\GenericImage;
+use App\GenericFile;
+use App\Photosphere;
 use Route;
 use App\Http\Controllers\Admin\SpaceControllerTrait;
 use Log;
@@ -53,6 +58,19 @@ class SpaceEditController extends Controller {
             abort(404);
         }
 
+				/* find #content-preview-image */
+				$preview_field_key ='';
+				$config = json_decode($theme->config, true);
+				foreach ($config['#content-types'] as $content_type) {
+						foreach ($content_type['#fields'] as $field => $field_value) {
+								if (array_key_exists('#content-preview-image', $field_value)) {
+										if ($field_value['#type'] == ContentType::FIELD_TYPE_IMAGE || $field_value['#type'] == ContentType::FIELD_TYPE_PHOTOSPHERE) {
+												$preview_field_key = $field;
+										}
+								}
+						}
+				}
+
 
         $vars = $this->process_theme($theme);
 
@@ -67,6 +85,31 @@ class SpaceEditController extends Controller {
 
             if (!$content->isEmpty()) {
                 foreach ($content->toArray() as $content_key => $content_value) {
+
+										if ($preview_field_key != '') {
+
+												try {
+														$preview_field = Field::where('content_id', $content_value['id'])->where('key', $preview_field_key)->where('data', '<>', '')->firstOrFail();
+
+														if ($preview_field->type == ContentType::FIELD_TYPE_PHOTOSPHERE) {
+
+																$preview_field_photosphere = Photosphere::where('id', $preview_field->data)->firstOrFail();
+																$preview_img_file = GenericFile::where('id', $preview_field_photosphere->file_id)->firstOrFail();
+
+																$content_value['preview_image_uri'] = asset(substr($preview_img_file->uri, 0, strrpos($preview_img_file->uri, '.')) . GenericFile::THUMBNAIL_FILE_SUFFIX . substr($preview_img_file->uri, strrpos($preview_img_file->uri, '.')));
+
+														} else if ($preview_field->type == ContentType::FIELD_TYPE_IMAGE) {
+
+																$preview_field_image = GenericImage::where('id', $preview_field->data)->firstOrFail();
+																$preview_img_file = GenericFile::where('id', $preview_field_image->file_id)->firstOrFail();
+
+																$content_value['preview_image_uri'] = asset(substr($preview_img_file->uri, 0, strrpos($preview_img_file->uri, '.')) . GenericFile::THUMBNAIL_FILE_SUFFIX . substr($preview_img_file->uri, strrpos($preview_img_file->uri, '.')));
+														} 
+												} catch (ModelNotFoundException $e) {
+														/* do nothing */
+												}
+										}
+										//\Log::debug($content_value);
                     $content_vars[$contenttype_key]['content'][$content_key] = $content_value;
                 }
             }

@@ -5,6 +5,7 @@
 - Theme: IdeaSpace 360 Photo Tour: hotspots, all text characters are now working; bug fix: image loading timeout if DOM not ready
 - Use Tinymce for rich text editor (field types: textinput and textarea); Medium editor deprecated
 - Added support for animated GIF images 
+- Configurable preview thumbnail images for content list
 
 
 ## 1.1.0
