@@ -26,3 +26,12 @@ a.anchor {
   top: -60px;
   visibility: hidden;
 }
+
+/*.zoom {
+  transition: transform .2s; 
+}
+
+.zoom:hover {
+  transform: scale(4); 
+}*/
+
