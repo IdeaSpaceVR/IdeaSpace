@@ -6,6 +6,7 @@
 - Use Tinymce for rich text editor (field types: textinput and textarea); Medium editor deprecated
 - Added support for animated GIF images 
 - Configurable preview thumbnail images for content list
+- Dynamically configure GD or Imagick image driver depending on PHP configuration
 
 
 ## 1.1.0

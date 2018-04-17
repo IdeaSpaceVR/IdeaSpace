@@ -95,10 +95,22 @@ class InstallationController extends Controller {
             $errors[] = 'config_app_file';
         }
 
+        if (!File::isWritable('config/image.php')) {
+            $errors[] = 'config_image_file';
+        }
+
+				/* default value */
+        $gd_imagick_code = 'gd';
+
         if (extension_loaded('gd')) {
+
           $gd_imagick = 'GD Library';
+          $gd_imagick_code = 'gd';
+
         } else if (extension_loaded('imagick')) {
+
           $gd_imagick = 'ImageMagick';
+          $gd_imagick_code = 'imagick';
         }
 
         //\Log::debug(PHP_VERSION_ID);
@@ -109,6 +121,7 @@ class InstallationController extends Controller {
             'css' => array(asset('public/assets/install/css/server_requirements.css')),
             'phpversion' => $phpversion,
             'gd_imagick' => $gd_imagick,
+            'gd_imagick_code' => $gd_imagick_code,
             'errors' => $errors
         ];
 
@@ -124,6 +137,11 @@ class InstallationController extends Controller {
      * @return Response
      */
     public function server_requirements_submit(Request $request) {
+
+				/* if not (which must not happen), the default value from config/image.php is used implicitly */
+				if ($request->has('gd_imagick_code')) {
+        		app('config')->write('image.driver', $request->input('gd_imagick_code'));
+				}
 
         return redirect('install-db');
     }

@@ -13,6 +13,8 @@
 
     {!! Form::open(array('route' => 'server_requirements', 'method' => 'POST', 'autocomplete' => 'false', 'class' => 'form-horizontal')) !!}
 
+		<input type="hidden" name="gd_imagick_code" value="{{ $gd_imagick_code }}">
+
     <div class="row">
 
         <div class="col-md-8 col-md-offset-2">
@@ -113,6 +115,14 @@
                         <div class="col-sm-4">
                             {!! !in_array('config_app_file', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Application configuration file is writable by web server</div>':'' !!}
                             {!! in_array('config_app_file', $errors)?'<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Application configuration file is not writable by web server. Please check your directory settings.</div>':'' !!}
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="col-sm-3 col-sm-offset-2 control-label">Image Configuration (./config/image.php)</label>
+                        <div class="col-sm-4">
+                            {!! !in_array('config_image_file', $errors)?'<div class="alert alert-success" role="alert"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> Image configuration file is writable by web server</div>':'' !!}
+                            {!! in_array('config_image_file', $errors)?'<div class="alert alert-danger" role="alert"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> Image configuration file is not writable by web server. Please check your directory settings.</div>':'' !!}
                         </div>
                     </div>
 
