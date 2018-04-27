@@ -8,14 +8,14 @@
 
     @include('theme::assets')
 
-        <a-entity position="0 0 0">
+        <a-entity id="camera-wrapper" position="0 1.6 0">
             <a-entity
                 id="camera" 
-                camera="far: 10000; fov: 80; near: 0.1; userHeight: 1.6"
+                camera="far: 10000; fov: 80; near: 0.1"
                 look-controls>
                 <a-entity
                     cursor="fuse: false; rayOrigin: mouse"
-                    raycaster="far:5001" 
+                    raycaster="near: 0.1" 
                     id="cursor"
                     position="0 0 -1.9"
                     geometry="primitive: circle; radius: 0.02;"
@@ -25,8 +25,8 @@
             </a-entity>
         </a-entity>
 
-        <a-entity laser-controls="hand: left" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
-        <a-entity laser-controls="hand: right" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
+        <a-entity laser-controls="hand: left" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls" visible="false"></a-entity>
+        <a-entity laser-controls="hand: right" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls" visible="false"></a-entity>
 
 
         @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0) 

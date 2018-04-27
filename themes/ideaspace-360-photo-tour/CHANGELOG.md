@@ -1,3 +1,9 @@
+## 1.5
+
+- A-Frame v0.8.2 update
+- Only show controller models after entering VR mode (hidden in Desktop 2D mode)
+- Laser pointer lines are now truncated on element intersection
+
 ## 1.4
 
 - special characters (umlauts, etc.) in text boxes are now supported and shown
