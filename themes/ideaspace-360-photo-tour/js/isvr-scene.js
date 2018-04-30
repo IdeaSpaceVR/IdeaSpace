@@ -1,22 +1,11 @@
 AFRAME.registerSystem('isvr-scene-helper', {
 
     showCursor: function () {
-
-        /* only show cursor if no controller is connected */
-        if (!document.querySelector('a-scene').is('controllerconnected') && AFRAME.utils.device.checkHeadsetConnected()) {
-            document.querySelector('#cursor').components.cursor.play();
-            document.querySelector('#cursor').setAttribute('visible', true);
-        } 
+				/* nothing to do */
     },
 
     hideCursor: function () {
-
-        document.querySelector('#cursor').setAttribute('visible', false);
-     
-				/* allow navigation in desktop mode as well */ 
-        if (document.querySelector('a-scene').is('entered-vr') && document.querySelector('a-scene').is('controllerconnected') && AFRAME.utils.device.checkHeadsetConnected()) {
-            document.querySelector('#cursor').components.cursor.pause();
-        }
+				/* nothing to do */
     },
 
 });
