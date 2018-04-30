@@ -1,3 +1,8 @@
+## 1.7
+
+- Hide controller models if HMD is connected but site is used in desktop mode
+- Updated to A-Frame 0.8.2
+
 ## 1.6
 
 - Deprecated #theme-compatibility config parameter

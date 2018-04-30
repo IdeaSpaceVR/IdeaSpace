@@ -1,5 +1,5 @@
 <a-entity
-    class="photosphere-title"
+    class="collidable photosphere-title"
     id="photosphere-title-content-id-{{ $photosphere['title']['#content-id'] }}"
     isvr-photosphere-title-listener
     data-shown="false"

@@ -2,7 +2,7 @@
     data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}"
     data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
     isvr-hotspot-text-listener
-    class="hotspot-text hotspot-text-content-id-{{ $annotation['#content-id'] . $rand }}"
+    class="collidable hotspot-text hotspot-text-content-id-{{ $annotation['#content-id'] . $rand }}"
     visible="false"
     position="0 1.6 -2.1"
     rotation="0 0 0"

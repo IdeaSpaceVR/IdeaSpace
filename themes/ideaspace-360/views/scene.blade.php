@@ -8,14 +8,14 @@
 
     @include('theme::assets')
 
-        <a-entity position="0 0 0">
+        <a-entity id="camera-wrapper" position="0 1.6 0">
             <a-entity
                 id="camera" 
-                camera="far: 10000; fov: 80; near: 0.1; userHeight: 1.6"
+                camera="far: 10000; fov: 80; near: 0.1"
                 look-controls>
                 <a-entity
                     cursor="fuse: false; rayOrigin: mouse"
-                    raycaster="far:5001" 
+                    raycaster="objects: .collidable; far:5001" 
                     id="cursor"
                     position="0 0 -1.9"
                     geometry="primitive: circle; radius: 0.02;"
@@ -25,13 +25,13 @@
             </a-entity>
         </a-entity>
 
-        <a-entity laser-controls="hand: left" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
-        <a-entity laser-controls="hand: right" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls"></a-entity>
+        <a-entity laser-controls="hand: left" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls" visible="false"></a-entity>
+        <a-entity laser-controls="hand: right" raycaster="near: 0.5; far: 5001" line="color: #FFFFFF" class="laser-controls" visible="false"></a-entity>
 
 
         @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0) 
 
-        <a-entity data-current-page="1" isvr-photosphere-menu id="photosphere-menu" visible="false">
+        <a-entity class="collidable" data-current-page="1" isvr-photosphere-menu id="photosphere-menu" visible="false">
             @if (count($content['photo-spheres']) > 3)
             <a-entity isvr-photosphere-menu-navigation id="menu-arrow-up" position="0 1.5 0" visible="false" geometry="primitive: plane; width: 1; height: 0.5" material="transparent: true; opacity: 0">
                 <a-plane position="-0.07 0 0" rotation="0 0 -45" width="0.10" height="0.3" color="#0080e5"></a-plane>
@@ -99,6 +99,7 @@
 
 
         <a-entity
+						class="collidable"
             isvr-init-assets="url:{{ $space_url }}/content/photo-spheres?per-page=3&page=1"
             geometry="primitive: sphere; radius: 5000; segmentsWidth: 64; segmentsHeight: 64"
             material="shader: flat; side: double; color: #FFFFFF"
@@ -201,6 +202,7 @@
 
         <a-entity
             id="intro-0"
+            class="collidable"
             visible="true"
             position="0 1.6 -2.1"
             geometry="primitive: plane; width: 1.8; height: 1"

@@ -27,7 +27,8 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
         this.zaxis = new THREE.Vector3(0, 0, 1);
 
         this.pivot = new THREE.Object3D();
-        this.el.object3D.position.set(0, document.querySelector('#camera').object3D.getWorldPosition().y, -4);
+        //this.el.object3D.position.set(0, document.querySelector('#camera').object3D.getWorldPosition().y, -4);
+        this.el.object3D.position.set(0, 1.6, -4);
 
         this.el.sceneEl.object3D.add(this.pivot);
         this.pivot.add(this.el.object3D);
