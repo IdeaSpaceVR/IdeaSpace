@@ -40,6 +40,7 @@ AFRAME.registerComponent('isvr-hotspot-wrapper-listener', {
 
                 this.setAttribute('visible', false);
 
+								document.querySelector('.hotspot-text-content-id-' + this.getAttribute('data-text-content-id')).setAttribute('position', {x:0, y:1.6, z:-2.1});
                 document.querySelector('.hotspot-text-content-id-' + this.getAttribute('data-text-content-id')).setAttribute('visible', true);
             }
         });

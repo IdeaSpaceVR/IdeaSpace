@@ -143,7 +143,7 @@
                     <a-entity 
                         rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}">
                         <a-circle 
-                            class="hotspot hotspot-content-id-{{ $photosphere['attach-annotations']['#content-id'] }}" 
+                            class="collidable hotspot hotspot-content-id-{{ $photosphere['attach-annotations']['#content-id'] }}" 
                             data-content-id="{{ $photosphere['attach-annotations']['#content-id'] }}" 
                             data-text-content-id="{{ $annotation['#content-id'] . $rand }}"
                             isvr-hotspot-wrapper-listener

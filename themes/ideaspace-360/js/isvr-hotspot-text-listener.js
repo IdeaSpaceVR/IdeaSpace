@@ -8,6 +8,7 @@ AFRAME.registerComponent('isvr-hotspot-text-listener', {
                 document.querySelector('#photosphere-menu').getAttribute('visible') == false) {        
 
                 this.setAttribute('visible', false);
+ 								this.setAttribute('position', {x:0, y:10, z:-2.1});
 
                 var hotspot_text = document.querySelectorAll('.hotspot-text');
                 for (var i = 0; i < hotspot_text.length; i++) {
