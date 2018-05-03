@@ -4,7 +4,8 @@ return [
 
     'add_photosphere' => 'Add Photo Sphere',
     'dragndrop_photospheres' => 'Drag &amp; Drop Photo Sphere(s) Here',
-    'nearest_power_of_two' => 'Photo spheres are automatically resized to the nearest power of two for width and height.',
+    'nearest_power_of_two' => 'Resize photo spheres to the nearest power of two for width and height.',
+    'nearest_power_of_two_hint' => 'Deselect checkbox in order to keep original photo sphere width and height (2:1 image aspect ratio recommended).',
     'edit' => 'Edit',
     'insert' => 'Insert',
     'caption' => 'Caption',

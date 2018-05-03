@@ -113,10 +113,11 @@ trait AssetLibraryControllerTrait {
      * @param string $new_image_uri The preview image uri.
      * @param int $image_quality
      * @param int $width Optional. The width value of the preview image. It will be scaled to keep the aspect ratio.
+     * @param Boolean $keep_original_dimension Optional. If true, original image dimensions are kept.
      *
      * @return Array Width and height
      */
-    private function create_image($image_uri, $new_image_uri, $image_quality = null, $width = null) {
+    private function create_image($image_uri, $new_image_uri, $image_quality = null, $width = null, $keep_original_dimension = false) {
 
         $image = Image::make($image_uri);
 
@@ -125,6 +126,13 @@ trait AssetLibraryControllerTrait {
         }
 
         $height = $image->height();
+
+
+				if ($keep_original_dimension) {
+
+						$image->destroy();
+            return ['width' => $width, 'height' => $height];
+				}
 
 
         if ($this->is_power_of_two($width) && $this->is_power_of_two($height)) {

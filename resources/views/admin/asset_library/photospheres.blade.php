@@ -27,7 +27,13 @@
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
             </div><!-- upload //-->
-            <div class="alert alert-info" role="alert">{{ trans('template_asset_library_photospheres.nearest_power_of_two') }}</div>
+						<div class="alert alert-info" role="alert">
+								<div class="checkbox">
+										<label>
+												<input id="resize-photosphere" class="active" type="checkbox" checked="checked"> {!! trans('template_asset_library_photospheres.nearest_power_of_two') !!} <span class="glyphicon glyphicon-question-sign" aria-hidden="true" style="cursor:pointer;font-size:18px" data-toggle="tooltip" data-placement="right" title="{{ trans('template_asset_library_photospheres.nearest_power_of_two_hint') }}"></span> 
+										</label>
+								</div>
+						</div>
 
         </div><!-- col-md-12 //-->
 

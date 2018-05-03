@@ -7,7 +7,7 @@
 - Added support for animated GIF images 
 - Configurable preview thumbnail images for content list
 - Dynamically configure GD or Imagick image driver depending on PHP configuration
-
+- Upload photo spheres: added checkbox to decide if original image dimension should be kept 
 
 ## 1.1.0
 

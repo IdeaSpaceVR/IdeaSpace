@@ -57,6 +57,8 @@ class AssetLibraryPhotospheresController extends Controller {
      */
     public function add_photospheres(Request $request) {
 
+				//Log::debug($request);
+
         if (!$request->hasFile('file')) {
             abort(404);
         }
@@ -83,7 +85,13 @@ class AssetLibraryPhotospheresController extends Controller {
 
 
         /* image width and height must be power of two; resize image if needed; keep aspect ratio */
-        $width_height_arr = $this->create_image($uri, $uri);
+        if ($request->has('resize_photosphere') && $request->input('resize_photosphere') == 'true') {
+						/* resize, do not keep original dimension */
+        		$width_height_arr = $this->create_image($uri, $uri, null, null, false);
+				} else {
+						/* keep original dimension */
+        		$width_height_arr = $this->create_image($uri, $uri, null, null, true);
+				}
 
 
         $user = Auth::user();

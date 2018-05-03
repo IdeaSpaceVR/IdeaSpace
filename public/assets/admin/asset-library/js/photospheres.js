@@ -242,7 +242,12 @@ jQuery(document).ready(function($) {
         dataType: 'json',
         allowedTypes: 'image/*',
         maxFileSize: $('#photospheres #max_filesize_bytes').val(),
-        extraData: {},
+        extraData: function() {
+					var data = {};
+					var val = $('#resize-photosphere').is(':checked');
+					data.resize_photosphere = val;
+					return data;
+				},
         extFilter: 'jpg;jpeg;png;gif',
         onInit: function() {
             $('#photospheres .upload').click(function(e) {

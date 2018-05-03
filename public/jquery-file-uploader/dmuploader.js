@@ -238,8 +238,17 @@ widget.queueRunning = false;
       return;
     }
 
+		// Call extraData
+		var d;
+		if(typeof(widget.settings.extraData) === "function"){
+			d = widget.settings.extraData();
+		}else{
+			d = widget.settings.extraData;
+		}
+
     // Append extra Form Data
-    $.each(widget.settings.extraData, function(exKey, exVal){
+    //$.each(widget.settings.extraData, function(exKey, exVal){
+    $.each(d, function(exKey, exVal){
       fd.append(exKey, exVal);
     });
 
