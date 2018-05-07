@@ -21,10 +21,8 @@ foreach ($contentlist as $key => $value) {
                 <thead>
                     <tr>
                         <th style="width:5%"></th>
-												@if (isset($value['content'][0]) && isset($value['content'][0]['preview_image_uri']))	
                         <th style="width:5%"></th>
-												@endif
-                        <th @if (isset($value['content'][0]) && isset($value['content'][0]['preview_image_uri'])) style="width:70%" @else style="width:75%" @endif>{{ trans('template_contentlist.title') }}</th>
+                        <th style="width:70%">{{ trans('template_contentlist.title') }}</th>
                         <th style="width:20%">{{ trans('template_contentlist.date') }}</th>
                     </tr>
                 </thead>
@@ -34,13 +32,17 @@ foreach ($contentlist as $key => $value) {
                     ?>
                     <tr>
                         <td class="field-drag">
-                          <i class="fa fa-arrows" aria-hidden="true"></i>
-                          <input type="hidden" name="id" class="id" value="{{ $content['id'] }}">
-                          <input type="hidden" name="weight" class="weight" value="{{ $content['weight'] }}">
+                         		<i class="fa fa-arrows" aria-hidden="true"></i>
+                          	<input type="hidden" name="id" class="id" value="{{ $content['id'] }}">
+                          	<input type="hidden" name="weight" class="weight" value="{{ $content['weight'] }}">
                         </td>
 												@if (isset($content['preview_image_uri']))
                         <td class="field-preview-image">
-													<img src="{{ $content['preview_image_uri'] }}" width="40">
+														<img src="{{ $content['preview_image_uri'] }}" width="40">
+												</td>
+												@else
+                        <td class="field-preview-image">
+														<div style="width:40px; height:40px; border: 1px solid #999999; background-color:#cccccc"></div>	
 												</td>
 												@endif
                         <td class="field-title">
