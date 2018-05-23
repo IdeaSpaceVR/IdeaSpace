@@ -35,7 +35,7 @@
 
             <div class="form-group {{ $errors->has('isvr_content_title')?'has-error':'' }}" @if ($has_contenttype_uri) style="margin-bottom:15px" @endif>
                 {!! Form::text('isvr_content_title', $form['isvr_content_title'], array('class'=>'form-control input-lg', 'placeholder'=> trans('template_content_edit.content_title_placeholder'), 'maxlength' => '250')) !!}
-                <span class="info-block">{{ trans('template_content_edit.content_title_info') }}</span>
+                <span class="info-block">{{ trans('template_content_edit.content_title_info') }} <span class="label label-danger">{{ trans('template_fields.required') }}</span></span>
                 {!! $errors->has('isvr_content_title')?$errors->first('isvr_content_title', '<span class="help-block">:message</span>'):'' !!}
             </div>
 
