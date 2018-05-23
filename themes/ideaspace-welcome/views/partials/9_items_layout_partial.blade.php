@@ -44,6 +44,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter]['space-link-external']['#value']) && trim($content['space-links'][$start_counter]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -85,6 +90,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 1]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 1]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -126,6 +136,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 2]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 2]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -167,6 +182,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 3]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 3]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -208,6 +228,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 4]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 4]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -249,6 +274,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 5]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 5]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -293,6 +323,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter]['space-link-external']['#value']) && trim($content['space-links'][$start_counter]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -334,6 +369,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 1]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 1]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -375,6 +415,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 2]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 2]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -416,6 +461,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 3]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 3]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -457,6 +507,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 4]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 4]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -498,6 +553,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 5]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 5]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -539,6 +599,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 6]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 6]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -583,6 +648,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter]['space-link-external']['#value']) && trim($content['space-links'][$start_counter]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -624,6 +694,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 1]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 1]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -665,6 +740,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 2]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 2]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -706,6 +786,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 3]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 3]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -747,6 +832,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 4]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 4]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -788,6 +878,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 5]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 5]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -829,6 +924,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 6]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 6]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -870,6 +970,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 7]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 7]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 7]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 7]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 7]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -914,6 +1019,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter]['space-link-external']['#value']) && trim($content['space-links'][$start_counter]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -955,6 +1065,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 1]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 1]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 1]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -996,6 +1111,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter = 2]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 2]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 2]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 2]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1037,6 +1157,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 3]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 3]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 3]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1078,6 +1203,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 4]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 4]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 4]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1119,6 +1249,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 5]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 5]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 5]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1160,6 +1295,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 6]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 6]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 6]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1201,6 +1341,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 7]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 7]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 7]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 7]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 7]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">
@@ -1242,6 +1387,11 @@ $position_z = 0; /* 0.09 */
             </a-entity>
             <a-entity
                 class="collidable wrapper"
+								@if (isset($content['space-links'][$start_counter + 8]['space-link-reference']['#space-uri']))
+                		link="href: {{ $content['space-links'][$start_counter + 8]['space-link-reference']['#space-uri'] }}; visualAspectEnabled: false"
+								@elseif (isset($content['space-links'][$start_counter + 8]['space-link-external']['#value']) && trim($content['space-links'][$start_counter + 8]['space-link-external']['#value']) != '')
+                		link="href: {{ $content['space-links'][$start_counter + 8]['space-link-external']['#value'] }}; visualAspectEnabled: false"
+								@endif
                 material="opacity: 0"
                 geometry="primitive: plane; width: 1.05; height: 0.55"
                 position="0 0 0.0003">

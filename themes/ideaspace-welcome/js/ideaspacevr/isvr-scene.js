@@ -14,12 +14,6 @@ AFRAME.registerComponent('isvr-scene', {
   
     init: function () {
 
-        //if (!AFRAME.utils.device.checkHeadsetConnected()) {
-            //document.querySelector('#no-hmd-intro').setAttribute('visible', true);
-            //document.querySelector('#cursor').setAttribute('geometry', { radius: 0.04 });
-        //}
-
-
         this.el.addEventListener('enter-vr', function() {
 
 						if (AFRAME.utils.device.checkHeadsetConnected()) {
@@ -60,17 +54,6 @@ AFRAME.registerComponent('isvr-scene', {
 
         });
 
-        /*var laser_controls = document.querySelectorAll('.laser-controls');
-
-        for (var i = 0; i < laser_controls.length; i++) {
-
-            laser_controls[i].addEventListener('controllerconnected', function (evt) {
-                document.querySelector('a-scene').addState('controllerconnected');
-                document.querySelector('a-scene').setAttribute('data-controllertype', evt.detail.name);
-                document.querySelector('#cursor').setAttribute('visible', false);
-            });
-
-        }*/
 
 				/* trigger custom events */
 				var soundClick = document.querySelector('#sound-click');
@@ -108,6 +91,7 @@ AFRAME.registerComponent('isvr-scene', {
 										}        
 								}
 						});
+
 				}
     }
 
