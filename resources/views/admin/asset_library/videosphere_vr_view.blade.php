@@ -9,22 +9,18 @@
         <div class="col-md-8">
 
             <!-- a-frame //-->
-            <a-scene reset-camera embedded style="width:100%">
+            <a-scene embedded style="width:100%">
 
                 <a-assets>
-                    <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
-                    <video id="videosphere" src="{{ $uri }}">
+                    <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading" crossorigin="anonymous">
+                    <video id="videosphere" src="{{ $uri }}" autoplay loop="true" crossorigin="anonymous"></video>
                 </a-assets>
-
-                <a-entity>
-                    <a-camera></a-camera>
-                </a-entity>
 
                 <a-sky id="default-sky" color="#000000"></a-sky>
 
                 <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
 
-                <a-videosphere load-videosphere visible="false"></a-videosphere>
+                <a-videosphere load-videosphere visible="false" material="side: back"></a-videosphere>
 
                 <a-entity 
                     position="0 1.6 -4"

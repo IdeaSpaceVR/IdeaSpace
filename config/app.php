@@ -26,7 +26,7 @@ return [
     |
     */
 
-    'debug' => true,
+    'debug' => false,
 
     /*
     |--------------------------------------------------------------------------
@@ -217,8 +217,8 @@ return [
     'disable_login' => false,
 
     'version' => '1.1.1',
-    'aframe_lib' => 'aframe-v0.7.1.min.js',
+    'aframe_lib' => 'aframe-v0.8.2.min.js',
     /* modified a-frame lib, in order to allow capture key events for WASD navigation within a bootstrap modal dialog (without using iframes) */
-    'aframe_lib_for_assets' => 'aframe-asset-library-v0.7.1.min.js',
+    'aframe_lib_for_assets' => 'aframe-asset-library-v0.8.2.min.js',
 
 ];
