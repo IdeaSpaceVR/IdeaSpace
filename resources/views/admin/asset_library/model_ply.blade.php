@@ -5,7 +5,7 @@
         <a-asset-item id="plyModel" src="{{ $model_ply }}"></a-asset-item>
     </a-assets>
 
-    <a-entity id="camera" position="0 0 4">
+    <a-entity id="camera" position="0 1.6 4">
         <a-camera></a-camera>
     </a-entity>
 
