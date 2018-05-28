@@ -33,6 +33,9 @@
     <script src="{{ url($theme_dir . '/js/aframe-rounded-component/aframe-rounded-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-animation/aframe-animation-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-environment-component/environment-component.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/a-painter-loader-component/a-painter-loader-component.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/a-painter-loader-component/ground.js') }}"></script>
+
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-menu-block-nav.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-menu-block-nav-back.js') }}"></script>

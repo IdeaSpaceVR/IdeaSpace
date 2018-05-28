@@ -82,6 +82,7 @@ return [
 							'environment-arches' => 'Environment with arches',
 							'environment-tron' => 'Tron',
 							'background-color' => 'Background Color',
+							'a-painter' => 'A-Painter',
 					],
           '#default_value' => 'none',
         ],
@@ -116,6 +117,16 @@ return [
           '#help' => 'Select a background color.',
           '#type' => 'color',
 					'#default_value' => '#000000',
+          '#required' => false,
+        ],
+
+        'a-painter-painting-url' => [
+          '#label' => 'A-Painter Painting URL',
+          '#description' => 'Enter the URL of your painting.',
+          '#help' => 'Enter the URL of your painting. Example: https://ucarecdn.com/bacf6186-96b1-404c-9751-e955ece04919/',
+          '#type' => 'textfield',
+          '#contentformat' => 'text',
+          '#maxlength' => 1024,
           '#required' => false,
         ],
 

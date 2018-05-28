@@ -53,6 +53,21 @@ $menu_block_nav_active_color = (isset($content['general-settings'][0]['navigatio
 						@elseif ($content['general-settings'][0]['environment']['#value'] == 'background-color')
 
 								<a-sky color="{{ $content['general-settings'][0]['background-color']['#value'] }}"></a-sky>
+
+						@elseif ($content['general-settings'][0]['environment']['#value'] == 'a-painter')
+
+								<a-sky color="{{ $content['general-settings'][0]['background-color']['#value'] }}"></a-sky>
+
+								@if (isset($content['general-settings'][0]['a-painter-painting-url']['#value']) && trim($content['general-settings'][0]['a-painter-painting-url']['#value']) != '')
+										<a-entity position="0 0 0" a-painter-loader="src: {{ $content['general-settings'][0]['a-painter-painting-url']['#value'] }}"></a-entity>
+								@endif
+
+								<!-- Environment -->
+         				<a-entity ground="src: {{ url($theme_dir . '/assets/models/ground.json') }}"></a-entity>
+         				<a-entity light="type: point; color: #f4f4f4; intensity: 0.2; distance: 0" position="8 10 18"></a-entity>
+         				<a-entity light="type: point; color: #f4f4f4; intensity: 0.6; distance: 0" position="-8 10 -18"></a-entity>
+         				<a-entity light="type: ambient; color: #f4f4f4; intensity: 0.4;" position="-8 10 -18"></a-entity>
+
 						@endif
 
 				@endif
