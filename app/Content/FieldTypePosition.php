@@ -76,9 +76,9 @@ class FieldTypePosition {
         } else {
 
             /* blank room */
-            $field['#field-type'] = '';
+            $field['#field-type'] = 'none';
             $field['#field-label'] = '';
-            $field['#field-name'] = '';
+            $field['#field-name'] = 'none';
         }
 
         $space = Space::where('id', $space_id)->first();
