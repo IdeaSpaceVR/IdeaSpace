@@ -59,7 +59,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="clearfix">
-                        <button type="button" class="btn btn-default" id="space-save-draft">{{ trans('template_space_add_edit.save_draft') }}</button>
+                        <button type="button" class="btn btn-default" id="space-save-draft"><span class="glyphicon glyphicon-save" aria-hidden="true"></span>&nbsp;&nbsp;{{ trans('template_space_add_edit.save_draft') }}</button>
                     </div>
                     <div style="margin-top:10px">
                         <div>{{ trans('template_space_add_edit.status') }} <strong>{{ ucwords($space->status) }}</strong>&nbsp;&nbsp;<a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">{{ trans('template_space_add_edit.edit') }}</a></div>
@@ -79,7 +79,7 @@
                         </div>
                     </div>
                     <div class="clearfix" style="margin-top:10px;position:relative;">
-                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-publish">{{ trans('template_space_add_edit.publish') }}</button>
+                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-publish"><span class="glyphicon glyphicon-globe" aria-hidden="true"></span>&nbsp;&nbsp;{{ trans('template_space_add_edit.publish') }}</button>
                     </div>
                 </div>
             </div>

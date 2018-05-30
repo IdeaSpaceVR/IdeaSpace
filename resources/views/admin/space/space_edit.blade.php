@@ -74,7 +74,7 @@
                 </div>
                 <div class="panel-body">
                     <div class="clearfix">
-                        <a href="{{ url($space->uri . '/preview') }}" target="_blank" role="button" class="btn btn-default pull-right" id="space-preview"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span> {{ trans('template_space_add_edit.preview') }}</a>
+                        <a href="{{ url($space->uri . '/preview') }}" target="_blank" role="button" class="btn btn-primary pull-right" id="space-preview"><span class="glyphicon glyphicon-eye-open" aria-hidden="true"></span>&nbsp;&nbsp;{{ trans('template_space_add_edit.preview') }}</a>
                     </div>
                     <div style="margin-top:10px">
                         <div>{{ trans('template_space_add_edit.space_status') }} <strong>{{ ucwords($space->status) }}</strong>&nbsp;&nbsp;<a href="#" style="text-decoration:underline;" data-toggle="collapse" data-target="#space-status">{{ trans('template_space_add_edit.edit') }}</a></div>
@@ -96,7 +96,7 @@
                     </div>
                     <div class="clearfix" style="margin-top:10px;position:relative;">
                         <a href="{{ route('space_trash', ['id' => $space->id]) }}" id="space-move-trash" style="color:#c9302c;position:absolute;bottom:5px;left:0;">{{ trans('template_space_add_edit.move_to_trash') }}</a>
-                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-update"><span class="glyphicon glyphicon-save" aria-hidden="true"></span> {{ trans('template_space_add_edit.update') }}</button>
+                        <button type="button" class="btn btn-success pull-right" style="margin-top:10px" id="space-save-update"><span class="glyphicon glyphicon-save" aria-hidden="true"></span>&nbsp;&nbsp;{{ trans('template_space_add_edit.update') }}&nbsp;</button>
                     </div>
                 </div>
             </div>
