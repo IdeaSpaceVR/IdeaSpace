@@ -8,6 +8,7 @@ return [
     'space_title_placeholder' => 'Enter title here',
     'space_uri_placeholder' => 'Enter path here',
     'publish' => 'Publish',
+    'preview' => 'Preview',
     'save_draft' => 'Save Draft',
     'status' => 'Status:',
     'edit' => 'Edit',
