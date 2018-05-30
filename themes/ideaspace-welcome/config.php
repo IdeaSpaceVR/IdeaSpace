@@ -82,7 +82,6 @@ return [
 							'environment-arches' => 'Environment with arches',
 							'environment-tron' => 'Tron',
 							'background-color' => 'Background Color',
-							'a-painter' => 'A-Painter',
 					],
           '#default_value' => 'none',
         ],
@@ -121,9 +120,9 @@ return [
         ],
 
 				 'attach-a-painter-paintings' => [
-          '#label' => 'Attach A-Painter Paintings',
-          '#description' => 'Attach A-Painter Paintings.',
-          '#help' => 'Attach A-Painter Paintings.',
+          '#label' => 'Add A-Painter Paintings',
+          '#description' => 'Add A-Painter Paintings.',
+          '#help' => 'Add A-Painter Paintings.',
           '#type' => 'position',
           '#maxnumber' => 30,
           '#required' => false,
