@@ -24,7 +24,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ \Request::url() }}" />
 
-		@php embed_fonts(); @endphp
+		@php 
+		if (function_exists('embed_fonts')) {
+		embed_fonts(); 
+		}
+		@endphp
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe/aframe-v0.8.2.min.js') }}"></script>
