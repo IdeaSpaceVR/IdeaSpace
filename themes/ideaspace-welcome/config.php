@@ -119,80 +119,20 @@ return [
           '#required' => false,
         ],
 
-				 'attach-a-painter-paintings' => [
-          '#label' => 'Add A-Painter Paintings',
-          '#description' => 'Add A-Painter Paintings.',
-          '#help' => 'Add A-Painter Paintings.',
-          '#type' => 'position',
-          '#maxnumber' => 30,
-          '#required' => false,
-          '#content-type-reference' => 'a-painter-paintings',
-          '#field-reference' => 'none',
-        ],
-
-      ],
-
-    ],
-
-
-    'a-painter-paintings' => [
-      '#label' => 'Mozilla\'s A-Painter Paintings',
-      '#description' => 'Manage your paintings created with A-Painter: <a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>',
-      '#max-values' => 30,
-      '#fields' => [
-
         'a-painter-painting-url' => [
           '#label' => 'A-Painter Painting URL',
           '#description' => 'Enter the URL of your painting.',
-          '#help' => 'Enter the URL of your painting. Example: https://ucarecdn.com/fc9cdc1a-846c-4214-b42f-c986c9ca4309/',
+          '#help' => 'Make a painting in A-Painter (<a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>) and enter the URL of your saved painting. Example: https://ucarecdn.com/01a74273-1736-470f-91c5-db7a703071de/',
           '#type' => 'textfield',
           '#contentformat' => 'text',
           '#maxlength' => 1024,
           '#required' => false,
         ],
 
-				 'scale' => [
-          '#label' => 'Scale Painting',
-          '#description' => 'Select a scale value.',
-          '#help' => 'Select a scale value.',
-          '#type' => 'options-select',
-          '#options' => [
-              '0.10 0.10 0.10' => '0.10',
-              '0.20 0.20 0.20' => '0.20',
-              '0.30 0.30 0.30' => '0.30',
-              '0.40 0.40 0.40' => '0.40',
-              '0.50 0.50 0.50' => '0.50',
-              '0.60 0.60 0.60' => '0.60',
-              '0.70 0.70 0.70' => '0.70',
-              '0.80 0.80 0.80' => '0.80',
-              '0.90 0.90 0.90' => '0.90',
-              '1.00 1.00 1.00' => '1.00',
-              '1.10 1.10 1.10' => '1.10',
-              '1.20 1.20 1.20' => '1.20',
-              '1.30 1.30 1.30' => '1.30',
-              '1.40 1.40 1.40' => '1.40',
-              '1.50 1.50 1.50' => '1.50',
-              '1.60 1.60 1.60' => '1.60',
-              '1.70 1.70 1.70' => '1.70',
-              '1.80 1.80 1.80' => '1.80',
-              '1.90 1.90 1.90' => '1.90',
-              '2.00 2.00 2.00' => '2.00',
-              '3.00 3.00 3.00' => '3.00',
-              '4.00 4.00 4.00' => '4.00',
-              '5.00 5.00 5.00' => '5.00',
-              '6.00 6.00 6.00' => '6.00',
-              '7.00 7.00 7.00' => '7.00',
-              '8.00 8.00 8.00' => '8.00',
-              '9.00 9.00 9.00' => '9.00',
-              '10.00 10.00 10.00' => '10.00',
-          ],
-          '#required' => false,
-        ],
-
       ],
 
     ],
-			
+
 
     'space-links' => [
       '#label' => 'Space Links',

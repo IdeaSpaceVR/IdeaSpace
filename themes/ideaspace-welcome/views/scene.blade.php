@@ -56,11 +56,9 @@ $menu_block_nav_active_color = (isset($content['general-settings'][0]['navigatio
 
 						@endif
 
-
-						@if (isset($content['general-settings'][0]['attach-a-painter-paintings']))
-								@foreach ($content['general-settings'][0]['attach-a-painter-paintings']['#positions'] as $painting)
-										<a-entity position="{{ $painting['#position']['#x'] }} {{ $painting['#position']['#y'] }} {{ $painting['#position']['#z'] }}" rotation="{{ $painting['#rotation']['#x'] }} {{ $painting['#rotation']['#y'] }} {{ $painting['#rotation']['#z'] }}" @if (isset($painting['#content']['scale'])) scale="{{ $painting['#content']['scale']['#value'] }}" @else scale="1 1 1" @endif a-painter-loader="src: {{ trim($painting['#content']['a-painter-painting-url']['#value']) }}"></a-entity>
-								@endforeach
+	
+						@if (isset($content['general-settings'][0]['a-painter-painting-url']['#value']))
+								<a-entity position="0 0 0" a-painter-loader="src: {{ trim($content['general-settings'][0]['a-painter-painting-url']['#value']) }}"></a-entity>
 						@endif
 
 
