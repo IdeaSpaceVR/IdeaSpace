@@ -122,11 +122,21 @@ return [
         'a-painter-painting-url' => [
           '#label' => 'A-Painter Painting URL',
           '#description' => 'Enter the URL of your painting.',
-          '#help' => 'Make a painting in A-Painter (<a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>) and enter the URL of your saved painting. Example: https://ucarecdn.com/01a74273-1736-470f-91c5-db7a703071de/',
+          '#help' => 'Make a painting in A-Painter (<a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>) and enter the URL of your saved painting. Example: https://ucarecdn.com/1349e661-2fc2-4e35-baba-95daf48c4283/',
           '#type' => 'textfield',
           '#contentformat' => 'text',
           '#maxlength' => 1024,
           '#required' => false,
+        ],
+
+				'antialiasing' => [
+          '#label' => 'Antialiasing',
+          '#description' => 'Set antialiasing.',
+          '#help' => 'Mobile VR headsets may need to have antialiasing set to off (for performance reasons).',
+          '#type' => 'options-select',
+          '#options' => ['off' => 'Off', 'on' => 'On'],
+          '#required' => true,
+          '#default_value' => 'off',
         ],
 
       ],

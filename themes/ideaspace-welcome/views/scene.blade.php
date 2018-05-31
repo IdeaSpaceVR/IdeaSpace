@@ -11,7 +11,7 @@ $menu_block_nav_inactive_color = (isset($content['general-settings'][0]['navigat
 $menu_block_nav_active_color = (isset($content['general-settings'][0]['navigation-active-color'])?$content['general-settings'][0]['navigation-active-color']['#value']:"#0080E5");
 @endphp
 
-		<a-scene isvr-scene>
+		<a-scene isvr-scene @if (isset($content['general-settings'][0]) && $content['general-settings'][0]['antialiasing']['#value'] == 'on') antialias="true" @endif>
 
 				<a-assets>
 						@if (isset($content['space-links']))
