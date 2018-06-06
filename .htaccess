@@ -1,6 +1,6 @@
 DirectoryIndex index.php
 
-<FilesMatch "artisan|composer.phar|composer.json|composer.lock|package.json|web.config|.env|gulpfile.js">
+<FilesMatch "artisan|composer.phar|composer.json|composer.lock|package.json|web.config|.env|gulpfile.js|laravel.log">
     Order Allow,Deny
     Deny from all
 </FilesMatch>
