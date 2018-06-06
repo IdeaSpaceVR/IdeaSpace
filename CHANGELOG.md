@@ -7,6 +7,7 @@
 - Added support for animated GIF images 
 - Configurable preview thumbnail images for content list
 - Dynamically configure GD or Imagick image driver depending on PHP configuration
+- Removed settings option for showing latest spaces on front page
 - Upload photo spheres: added checkbox to decide if original image dimension should be kept 
 - Upgraded to A-Frame 0.8.2
 - New theme added: Welcome theme

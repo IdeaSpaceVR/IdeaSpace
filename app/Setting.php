@@ -8,7 +8,6 @@ class Setting extends Model
 {
 
 		const FRONTPAGE_DISPLAY_BLANK_PAGE = 'blank-page';
-		const FRONTPAGE_DISPLAY_LATEST_SPACES = 'latest-spaces';
 		const FRONTPAGE_DISPLAY_ONE_SPACE = 'one-space';
 
     /**

@@ -66,7 +66,7 @@ class FrontpageController extends Controller {
             }
 
 
-            if ($setting->value != Setting::FRONTPAGE_DISPLAY_LATEST_SPACES && $setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
+            if ($setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
 
                 /* show one space on front page */
 
@@ -89,16 +89,6 @@ class FrontpageController extends Controller {
 
                 /* cut off .blade.php */
                 return view('theme::' . $vars['theme_view'], $vars);
-
-            } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_LATEST_SPACES) {
-
-                /* show latest spaces on front page */
-
-                return view('frontpage.latest_spaces_frontpage', [
-                    'css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
-                    'spaces' => $spaces,
-                    'title' => $title_setting->value
-                ]);
 
             } else {
 

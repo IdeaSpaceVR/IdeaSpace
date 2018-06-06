@@ -28,16 +28,6 @@
                 <div class="col-md-12">
                     <div class="radio">
                         <label>
-                        {!! Form::radio('front-page-display', 'latest-spaces', $latest_spaces_checked) !!}
-                        {{ trans('template_space_settings.your_latest_spaces') }}
-                        </label>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-12">
-                    <div class="radio">
-                        <label>
                         {!! Form::radio('front-page-display', 'one-space', $one_space_checked) !!}
                         {{ trans('template_space_settings.one_space_select_below') }}
                         </label>
@@ -48,9 +38,6 @@
                 <div class="col-md-4">
                 <?php 
                 $arr = ['class' => 'form-control'];
-                if ($latest_spaces_checked == true) {
-                    $arr['disabled'] = true;
-                }
                 ?>
                 {!! Form::select('space', $spaces, $space_id_selected, $arr) !!}
                 </div>

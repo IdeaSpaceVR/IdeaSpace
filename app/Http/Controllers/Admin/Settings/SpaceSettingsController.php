@@ -37,7 +37,6 @@ class SpaceSettingsController extends Controller
         $arr = array();
         $space_id_selected = null;
         $one_space_checked = false;
-        $latest_spaces_checked = false;
         $blank_page_checked = false;
 
         /* if there are no published spaces, set it to blank page */
@@ -47,11 +46,9 @@ class SpaceSettingsController extends Controller
         }
 
 
-        if ($setting->value != Setting::FRONTPAGE_DISPLAY_LATEST_SPACES && $setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
+        if ($setting->value != Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
             $space_id_selected = $setting->value;
             $one_space_checked = true;
-        } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_LATEST_SPACES) {
-            $latest_spaces_checked = true;
         } else if ($setting->value == Setting::FRONTPAGE_DISPLAY_BLANK_PAGE) {
         		$blank_page_checked = true;
         }
@@ -62,7 +59,6 @@ class SpaceSettingsController extends Controller
 
         $vars = [
             'space_id_selected' => $space_id_selected,
-            'latest_spaces_checked' => $latest_spaces_checked,
             'one_space_checked' => $one_space_checked,
             'blank_page_checked' => $blank_page_checked,
             'spaces' => $arr,
