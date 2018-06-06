@@ -38,6 +38,8 @@ https://www.ideaspacevr.org/documentation/master/contributions
 
 ![IdeaSpaceVR - Annotations](IdeaSpaceVR-annotations.jpg "IdeaSpaceVR - Annotations")
 
+![IdeaSpaceVR - Welcome Theme](IdeaSpaceVR-welcome.jpg "IdeaSpaceVR - Welcome Theme")
+
 ## Credits
 
 IdeaSpace would not exist without these awesome projects:
