@@ -6,7 +6,7 @@ return [
   '#theme-key' => 'ideaspace-welcome',
   '#theme-version' => '1.0',
   '#ideaspace-version' => '>=1.1.1',
-  '#theme-description' => 'A theme to create an entrance environment with links to other spaces.',
+  '#theme-description' => 'A configurable navigation menu environment theme in order to link to other virtual reality websites.',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
