@@ -36,7 +36,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -82,7 +82,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 1]['space-link-image']))
                     class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -128,7 +128,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 2]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -174,7 +174,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 3]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -220,7 +220,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 4]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -266,7 +266,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 5]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -315,7 +315,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -361,7 +361,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 1]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -407,7 +407,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 2]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -453,7 +453,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 3]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -499,7 +499,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 4]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -545,7 +545,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 5]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -591,7 +591,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 6]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -640,7 +640,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -686,7 +686,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 1]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -732,7 +732,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 2]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -778,7 +778,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 3]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -824,7 +824,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 4]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -870,7 +870,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 5]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -916,7 +916,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 6]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -962,7 +962,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 7]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1011,7 +1011,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1057,7 +1057,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 1]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1103,7 +1103,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 2]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1149,7 +1149,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 3]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1195,7 +1195,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 4]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1241,7 +1241,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 5]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1287,7 +1287,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 6]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1333,7 +1333,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 7]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif
@@ -1379,7 +1379,7 @@ $position_z = 0; /* 0.09 */
                 position="0 0 0.0002"
 								@if (isset($content['space-links'][$start_counter + 8]['space-link-image']))
                 		class="title"
-                    visible="false"
+                    visible="true"
                     animation__titlein="property: position; dur: 500; to: 0 0 0.07; easing: easeOutElastic; startEvents:isvr_titlein"
                     animation__titleout="property: position; dur: 500; from: 0 0 0.07; to: 0 0 0.0002; easing: easeOutElastic; startEvents:isvr_titleout"
                 @endif

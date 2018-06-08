@@ -55,6 +55,9 @@ AFRAME.registerComponent('isvr-scene', {
         });
 
 
+				/* workaround: it we don't wait, the first menu item mouseenter event is triggered and it causes wrong animation behaviour for that menu item */
+				setTimeout(function() {
+
 				/* trigger custom events */
 				var soundClick = document.querySelector('#sound-click');
 				var collidables = document.querySelectorAll('.collidable');
@@ -64,13 +67,13 @@ AFRAME.registerComponent('isvr-scene', {
 
 								e.target.emit('isvr_mouseenter');
 
-								for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
+								/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
 										if (e.target.parentNode.childNodes[i].className == "title") {
 												e.target.parentNode.childNodes[i].emit('isvr_titlein');
-												e.target.parentNode.childNodes[i].setAttribute('visible', true);
+												//e.target.parentNode.childNodes[i].setAttribute('visible', true);
 												break;
 										}        
-								}
+								}*/
 
 								if (e.target.classList.contains('wrapper')) {
 										soundClick.components.sound.stopSound();
@@ -83,16 +86,19 @@ AFRAME.registerComponent('isvr-scene', {
 
 								e.target.emit('isvr_mouseleave');
 
-								for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
+								/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
 										if (e.target.parentNode.childNodes[i].className == "title") {
-												e.target.parentNode.childNodes[i].emit('isvr_titleout');
-												e.target.parentNode.childNodes[i].setAttribute('visible', false);
+												//e.target.parentNode.childNodes[i].emit('isvr_titleout');
+												//e.target.parentNode.childNodes[i].setAttribute('visible', true);
 												break;
 										}        
-								}
+								}*/
 						});
 
 				}
+
+				}, 2000);
+
     }
 
 });
