@@ -216,7 +216,7 @@ return [
     'forum_url' => 'https://forum.ideaspacevr.org',
     'disable_login' => false,
 
-    'version' => '1.1.1',
+    'version' => '1.1.2',
     'aframe_lib' => 'aframe-v0.8.2.min.js',
     /* modified a-frame lib, in order to allow capture key events for WASD navigation within a bootstrap modal dialog (without using iframes) */
     'aframe_lib_for_assets' => 'aframe-asset-library-v0.8.2.min.js',
