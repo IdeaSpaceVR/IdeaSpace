@@ -58,44 +58,50 @@ AFRAME.registerComponent('isvr-scene', {
 				/* workaround: it we don't wait, the first menu item mouseenter event is triggered and it causes wrong animation behaviour for that menu item */
 				setTimeout(function() {
 
-				/* trigger custom events */
-				var soundClick = document.querySelector('#sound-click');
-				var collidables = document.querySelectorAll('.collidable');
-				for (var j = 0; j < collidables.length; j++) {
+						/* trigger custom events */
+						var soundClick = document.querySelector('#sound-click');
+						var collidables = document.querySelectorAll('.collidable');
+						for (var j = 0; j < collidables.length; j++) {
 
-						collidables[j].addEventListener('mouseenter', function(e) {
+								collidables[j].addEventListener('mouseenter', function(e) {
 
-								e.target.emit('isvr_mouseenter');
+										e.target.emit('isvr_mouseenter');
 
-								/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
-										if (e.target.parentNode.childNodes[i].className == "title") {
-												e.target.parentNode.childNodes[i].emit('isvr_titlein');
-												//e.target.parentNode.childNodes[i].setAttribute('visible', true);
-												break;
-										}        
-								}*/
+										/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
+												if (e.target.parentNode.childNodes[i].className == "title") {
+														e.target.parentNode.childNodes[i].emit('isvr_titlein');
+														//e.target.parentNode.childNodes[i].setAttribute('visible', true);
+														break;
+												}        
+										}*/
 
-								if (e.target.classList.contains('wrapper')) {
-										soundClick.components.sound.stopSound();
-										soundClick.components.sound.playSound();
-								}
+										if (e.target.classList.contains('wrapper')) {
+												soundClick.components.sound.stopSound();
+												soundClick.components.sound.playSound();
+										}
 
-						});
+								});
 
-						collidables[j].addEventListener('mouseleave', function(e) {
+								collidables[j].addEventListener('mouseleave', function(e) {
 
-								e.target.emit('isvr_mouseleave');
+										e.target.emit('isvr_mouseleave');
 
-								/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
-										if (e.target.parentNode.childNodes[i].className == "title") {
-												//e.target.parentNode.childNodes[i].emit('isvr_titleout');
-												//e.target.parentNode.childNodes[i].setAttribute('visible', true);
-												break;
-										}        
-								}*/
-						});
+										/*for (var i = 0; i < e.target.parentNode.childNodes.length; i++) {
+												if (e.target.parentNode.childNodes[i].className == "title") {
+														//e.target.parentNode.childNodes[i].emit('isvr_titleout');
+														//e.target.parentNode.childNodes[i].setAttribute('visible', true);
+														break;
+												}        
+										}*/
+								});
 
-				}
+						}
+
+						/* workaround: in case google fonts have not been loaded yet, update material html shader */
+						var titles = document.querySelectorAll('.title');
+						for (var k = 0; k < titles.length; k++) {
+								titles[k].components.material.shader.__render();
+						}
 
 				}, 2000);
 

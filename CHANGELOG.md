@@ -1,3 +1,7 @@
+## 1.1.2
+
+- IdeaSpace Welcome theme bug fix: if Google Fonts are used and they need longer to load, the material HTML shader must be updated
+
 ## 1.1.1
 
 - If content is referenced within a space, and if the referenced content is deleted, a warning is shown. If user decides to delete the content the reference is deleted as well (preventing internal server error in a space). 

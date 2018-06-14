@@ -26,7 +26,7 @@
 
 		@php 
 		if (function_exists('embed_fonts')) {
-		embed_fonts(); 
+			embed_fonts(); 
 		}
 		@endphp
 
