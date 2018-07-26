@@ -50,7 +50,7 @@ AFRAME.registerComponent('isvr-scene', {
 
         this.el.addEventListener('exit-vr', function() {
 
-            location.reload();
+            //location.reload();
 
         });
 
@@ -98,6 +98,9 @@ AFRAME.registerComponent('isvr-scene', {
 						}
 
 						/* workaround: in case google fonts have not been loaded yet, update material html shader */
+						var top_title = document.querySelector('#top-title');
+						top_title.components.material.shader.__render();
+
 						var titles = document.querySelectorAll('.title');
 						for (var k = 0; k < titles.length; k++) {
 								titles[k].components.material.shader.__render();
