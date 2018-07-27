@@ -4,7 +4,7 @@
 
 @section('scene')
 
-    <a-scene 
+    <a-scene vr-mode 
 				isvr-model-center="{{ ((isset($content['model']) && isset($content['model'][0]['camera-offset']))?$content['model'][0]['camera-offset']['#value']:0) }}"
         @if (isset($content['model'])) 
             isvr-vr-mode="camera_distance_vr: {{ $content['model'][0]['camera-offset-vr']['#value'] }}" 
@@ -12,12 +12,17 @@
 
         @include('theme::assets')
 
+
+<a-entity position="0 1.6 -4">
+    <a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen"></a-entity>
+</a-entity>
+
+
         @if (isset($content['model']))
 
 						<a-circle 
 								id="floor" 
 								visible="false" 
-								isvr-teleportation 
 								src="url({{ url($theme_dir . '/images/grid.png') }})" 
 								repeat="100 100" 
 								radius="100" 
@@ -25,7 +30,6 @@
 								rotation="-90 0 0">
 						</a-circle>
 
-            <a-ring id="teleport-indicator" color="#FFFFFF" radius-inner="0.18" radius-outer="0.2" rotation="-90 0 0" visible="false"></a-ring>
 
 
             <?php 
@@ -124,41 +128,6 @@
                     $rand = str_random();
                     @endphp
 
-                    <a-sphere 
-                        position="{{ $annotation['#position']['#x'] }} {{ $annotation['#position']['#y'] }} {{ $annotation['#position']['#z'] }}" 
-                        rotation="{{ $annotation['#rotation']['#x'] }} {{ $annotation['#rotation']['#y'] }} {{ $annotation['#rotation']['#z'] }}" 
-                        scale="{{ (isset($content['model'][0]['hotspot-scale'])?$content['model'][0]['hotspot-scale']['#value']:'1 1 1') }}"
-                        radius="0.1" 
-                        material="transparent: true; opacity: 0" 
-                        isvr-hotspot="{{ $annotation['#content-id'] . $rand }}">
-                        <a-ring
-                            color="{{ $annotation['#content']['hotspot-color']['#value'] }}"
-                            class="hotspot" 
-                            visible="false" 
-                            look-at="#camera"
-                            radius-inner="0.08"
-                            radius-outer="0.1">
-                            <a-circle
-                                color="{{ $annotation['#content']['hotspot-color']['#value'] }}"
-                                radius="0.06"
-                                position="0 0 0.01">
-                                <a-animation
-                                    attribute="geometry.radius"
-                                    to="0.05"
-                                    dur="1500"
-                                    direction="alternate"
-                                    repeat="indefinite"
-                                    easing="linear">
-                                </a-animation>
-                                <a-circle
-                                    color="#FFF"
-                                    radius="0.02"
-                                    position="0 0 0.02">
-                                </a-circle>
-                            </a-circle>
-                        </a-ring>                        
-                    </a-sphere>
-
                     <a-entity 
                         look-at="#camera"
                         scale="{{ (isset($content['model'][0]['hotspot-scale'])?$content['model'][0]['hotspot-scale']['#value']:'1 1 1') }}"
@@ -202,7 +171,7 @@
 						<a-entity id="camera-wrapper">
       					<a-entity 
 										id="camera" 
-										camera="fov: 80; userHeight: 1.6" 
+										camera
 										look-controls
                     cursor="rayOrigin: mouse"
                     orbit-controls="
@@ -211,14 +180,28 @@
                         distance: 0;
                         enableDamping: true;
                         enablePan: false;
-                        enableZoom: false;
+                        enableZoom: true;
                         dampingFactor: 0.125;
                         rotateSpeed: 0.25;
                         minDistance: 1;
                   			maxDistance: 2000">
 								</a-entity>
-								<a-entity laser-controls="hand: left" raycaster="near: 0.5" line="color: #FFFFFF" class="laser-controls"></a-entity>
-        				<a-entity laser-controls="hand: right" raycaster="near: 0.5" line="color: #FFFFFF" class="laser-controls"></a-entity>
+								<!-- Primary hand. -->
+        				<a-entity id="primaryHand" mixin="hand"
+          					oculus-touch-controls="hand: right"
+          					vive-controls="hand: right"
+          					windows-motion-controls="hand: right"
+          					daydream-controls="right" 
+          					gearvr-controls="right">
+        				</a-entity>
+								<!-- Secondary hand. -->
+								<a-entity id="secondaryHand" mixin="hand"
+									oculus-touch-controls="hand: left"
+									vive-controls="hand: left"
+									windows-motion-controls="hand: left"
+									daydream-controls="left" 
+									gearvr-controls="left">
+								</a-entity>
 						</a-entity>
 
         @endif

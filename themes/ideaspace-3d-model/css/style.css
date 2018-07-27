@@ -20,12 +20,12 @@ body {
   left: 50%;
   top: 50%;
   z-index: 1;
-  width: 50px;
-  height: 50px;
+  width: 30px;
+  height: 30px;
   margin: -25px 0 0 -25px;
-  border: 16px solid #f3f3f3;
+  border: 10px solid #f3f3f3;
   border-radius: 50%;
-  border-top: 16px solid #0080e5;
+  border-top: 10px solid #0080e5;
   -webkit-animation: spin 2s linear infinite;
   animation: spin 2s linear infinite;
 }

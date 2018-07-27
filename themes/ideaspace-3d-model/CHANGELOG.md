@@ -1,3 +1,10 @@
+## 1.3
+
+- Use A-Frame teleportation controls
+- Enable teleportation on models
+- Always show annotations
+- Bug fix: allow linking to scene from VR
+
 ## 1.2
 
 - Bug fix: Oculus Rift touch controllers work now in VR

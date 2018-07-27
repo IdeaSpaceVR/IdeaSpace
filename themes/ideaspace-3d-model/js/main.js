@@ -14,6 +14,10 @@ function run() {
     // ORBIT CAMERA DRAG START / END EVENT LISTENERS
     document.querySelector('#camera').addEventListener('start-drag-orbit-controls', handleDragStart );
     document.querySelector('#camera').addEventListener('end-drag-orbit-controls', handleDragEnd );
+
+		if (scene.is('vr-mode')) {
+				scene.emit('enter-vr');				
+		}	
 }
 
 function handleDragStart(event) {

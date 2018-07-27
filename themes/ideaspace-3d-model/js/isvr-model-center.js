@@ -45,9 +45,9 @@ AFRAME.registerComponent('isvr-model-center', {
 
                     camera.setAttribute('orbit-controls', 'enabled', true);
 
-                    var hotspots = document.querySelectorAll('.hotspot');
-                    for (var i = 0; i < hotspots.length; i++) {
-                        hotspots[i].setAttribute('visible', true);
+                    var annotations = document.querySelectorAll('.annotation');
+                    for (var i = 0; i < annotations.length; i++) {
+                        annotations[i].setAttribute('visible', true);
                     }
                 });
 

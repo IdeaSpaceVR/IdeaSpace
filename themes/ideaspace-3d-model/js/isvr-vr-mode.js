@@ -7,7 +7,10 @@ AFRAME.registerComponent('isvr-vr-mode', {
     init: function() {
 
         var self = this;
+
         this.el.addEventListener('enter-vr', function() {
+
+AFRAME.log('ENTER VR triggered 111');
 
             /* in order to avoid trouble with teleporation in vr */
             document.querySelector('#camera').removeAttribute('cursor', 'rayOrigin');
@@ -28,18 +31,11 @@ AFRAME.registerComponent('isvr-vr-mode', {
             /* store original position for exit-vr event */
             self.camera_wrapper_pos = camera_wrapper.getAttribute('position');
 						camera_wrapper.setAttribute('position', { x: 0, y: 0, z: self.data.camera_distance_vr });
-
-            var scene = document.querySelector('a-scene');
-            scene.addState('vr-mode');
- 
         });
 
         this.el.addEventListener('exit-vr', function() {
 
-            scene.removeState('vr-mode');
-
             location.reload();
-
         });
 
     },

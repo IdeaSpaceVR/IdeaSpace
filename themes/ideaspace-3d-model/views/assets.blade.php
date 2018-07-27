@@ -1,5 +1,7 @@
 <a-assets>
 
+		<a-mixin id="hand" teleport-controls="type: parabolic; collisionEntities: #floor, #model; cameraRig: #camera-wrapper; teleportOrigin: #camera; startEvents: trackpaddown, triggerdown; endEvents: trackpadup, triggerup; landingMaxAngle: 360; hitCylinderColor: #99ff99; curveHitColor: #99ff99; curveMissColor: #ff0000; hitCylinderHeight: 0.05; checkCollisionChildren: false; hitEntityAlignNormal: false; maxLength: 10"></a-mixin>
+
     @if (isset($content['model']))
 
         @php
