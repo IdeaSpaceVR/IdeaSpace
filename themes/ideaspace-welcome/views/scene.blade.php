@@ -106,6 +106,7 @@ $menu_block_nav_active_color = (isset($content['general-settings'][0]['navigatio
 						</a-entity>
 						@elseif (isset($content['general-settings'][0]['space-title']))
 						<a-entity
+								id="top-title"
 								geometry="primitive: plane; width: 4; height: 0.5"
 								position="0 1.4 0"
 								material="shader: html; target: #space-title-texture; transparent: true; ratio: width">
