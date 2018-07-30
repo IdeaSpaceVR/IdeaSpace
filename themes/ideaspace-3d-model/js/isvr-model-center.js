@@ -53,8 +53,21 @@ AFRAME.registerComponent('isvr-model-center', {
 
                 model.setAttribute('visible', true);
 
-                this.emit('isvr-model-intro');
-                
+								/* do not trigger animation if already in VR mode */
+								if (scene.is('vr-mode')) {
+
+									document.querySelector('#camera-wrapper').setAttribute('position', { x: 0, y: 0, z: 0 });
+									model.setAttribute('position', { x: 0, y: 0, z: 0 });
+									var annotations = document.querySelectorAll('.annotation');
+									for (var i = 0; i < annotations.length; i++) {
+											annotations[i].setAttribute('visible', true);
+									}
+
+								} else {
+
+                	this.emit('isvr-model-intro');
+								}
+
             });
 
         }
