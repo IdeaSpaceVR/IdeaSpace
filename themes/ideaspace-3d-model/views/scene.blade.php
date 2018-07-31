@@ -13,11 +13,6 @@
         @include('theme::assets')
 
 
-<a-entity position="0 1.6 -4">
-    <a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen"></a-entity>
-</a-entity>
-
-
         @if (isset($content['model']))
 
 						<a-circle 
@@ -185,22 +180,6 @@
                         rotateSpeed: 0.25;
                         minDistance: 1;
                   			maxDistance: 2000">
-								</a-entity>
-								<!-- Primary hand. -->
-        				<a-entity id="primaryHand" mixin="hand"
-          					oculus-touch-controls="hand: right"
-          					vive-controls="hand: right"
-          					windows-motion-controls="hand: right"
-          					daydream-controls="right" 
-          					gearvr-controls="right">
-        				</a-entity>
-								<!-- Secondary hand. -->
-								<a-entity id="secondaryHand" mixin="hand"
-									oculus-touch-controls="hand: left"
-									vive-controls="hand: left"
-									windows-motion-controls="hand: left"
-									daydream-controls="left" 
-									gearvr-controls="left">
 								</a-entity>
 						</a-entity>
 

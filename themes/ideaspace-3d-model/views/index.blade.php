@@ -34,13 +34,6 @@
     <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-vr-mode.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-model-center.js') }}"></script>
-
-<script src="{{ url($theme_dir . '/js/kframe/aframe-log-component.min.js') }}"></script>
-<script>
-window.addEventListener('vrdisplayactivate', function() {
-AFRAME.log('VR Display Activate');
-});
-</script>
 </head>
 <body>
 

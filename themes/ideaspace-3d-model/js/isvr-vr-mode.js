@@ -10,8 +10,6 @@ AFRAME.registerComponent('isvr-vr-mode', {
 
         this.el.addEventListener('enter-vr', function() {
 
-AFRAME.log('ENTER VR triggered 111');
-
             /* in order to avoid trouble with teleporation in vr */
             document.querySelector('#camera').removeAttribute('cursor', 'rayOrigin');
 
@@ -31,6 +29,27 @@ AFRAME.log('ENTER VR triggered 111');
             /* store original position for exit-vr event */
             self.camera_wrapper_pos = camera_wrapper.getAttribute('position');
 						camera_wrapper.setAttribute('position', { x: 0, y: 0, z: self.data.camera_distance_vr });
+
+
+						var primaryHand = document.createElement('a-entity');
+            primaryHand.setAttribute('id', 'primaryHand');
+            primaryHand.setAttribute('mixin', 'hand');
+            primaryHand.setAttribute('oculus-touch-controls', {hand: 'right'});
+            primaryHand.setAttribute('vive-controls', {hand: 'right'});
+            primaryHand.setAttribute('windows-motion-controls', {hand: 'right'});
+            primaryHand.setAttribute('daydream-controls', 'right');
+            primaryHand.setAttribute('gearvr-controls', 'right');
+            camera_wrapper.appendChild(primaryHand);
+
+						var secondaryHand = document.createElement('a-entity');
+            secondaryHand.setAttribute('id', 'secondaryHand');
+            secondaryHand.setAttribute('mixin', 'hand');
+            secondaryHand.setAttribute('oculus-touch-controls', {hand: 'left'});
+            secondaryHand.setAttribute('vive-controls', {hand: 'left'});
+            secondaryHand.setAttribute('windows-motion-controls', {hand: 'left'});
+            secondaryHand.setAttribute('daydream-controls', 'left');
+            secondaryHand.setAttribute('gearvr-controls', 'left');
+            camera_wrapper.appendChild(secondaryHand);
         });
 
         this.el.addEventListener('exit-vr', function() {
