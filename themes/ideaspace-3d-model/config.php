@@ -50,15 +50,6 @@ return [
           '#default_value' => '#000000',
         ],
 
-        'hotspot-color' => [
-          '#label' => 'Hotspot Color',
-          '#description' => 'Select a hotspot color.',
-          '#help' => 'Select a hotspot color.',
-          '#type' => 'color',
-          '#required' => false,
-          '#default_value' => '#FFFFFF',
-        ],
-
       ], /* fields */
 
     ], /* annotations */
@@ -511,9 +502,9 @@ return [
         ],
 
         'attach-annotations' => [
-          '#label' => 'Hotspots',
-          '#description' => 'Attach hotspots with text and image annotations to your 3D model.',
-          '#help' => 'Attach hotspots with text and image annotations to your 3D model.',
+          '#label' => 'Info Boxes',
+          '#description' => 'Attach info boxes to your 3D model.',
+          '#help' => 'Attach info boxes to your 3D model.',
           '#type' => 'position',
           '#maxnumber' => 20, 
           '#required' => false,
@@ -522,7 +513,7 @@ return [
         ],
 
         'hotspot-scale' => [
-          '#label' => 'Hotspot Scale',
+          '#label' => 'Info Box Scale',
           '#description' => 'Select a value.',
           '#help' => 'This value is applied for desktop, mobile and in VR.',
           '#type' => 'options-select',
