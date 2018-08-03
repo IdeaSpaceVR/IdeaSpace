@@ -1,6 +1,6 @@
 ## 1.1.3
 
-- IdeaSpace 3D model theme improvements: new teleportation allows to teleport onto 3D models; link to scene from witin VR
+- IdeaSpace 3D model theme improvements: new teleportation allows to teleport onto 3D models; link to scene from within VR
 
 ## 1.1.2
 
