@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace 360 Photo Tour',
   '#theme-key' => 'ideaspace-360-photo-tour',
-  '#theme-version' => '1.4',
+  '#theme-version' => '1.5',
   '#ideaspace-version' => '>=1.1.0',
   '#theme-description' => 'Create and publish a 360 photo sphere tour with info hotspots. Attach text annotations to hotspots.',
   '#theme-author-name' => 'IdeaSpaceVR',
@@ -66,7 +66,7 @@ return [
     'photo-spheres' => [
       '#label' => 'Photo Sphere',
       '#description' => 'Manage your photo spheres.',
-      '#max-values' => 'infinite',
+      '#max-values' => 4,
       '#fields' => [
 
         'title' => [

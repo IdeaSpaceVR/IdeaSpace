@@ -55,10 +55,13 @@
             <a-light type="ambient" color="#FFFFFF"></a-light>
 
 
-            @foreach ($content['photo-spheres'] as $photosphere)
+            @for ($i = 0; $i < 4; $i++)
+								@php
+								$photosphere = $content['photo-spheres'][$i];
+								@endphp
 
                 @if (isset($photosphere['photosphere-references']))
-                    @foreach ($photosphere['photosphere-references']['#positions'] as $photosphere_reference)
+                    @foreach ($photosphere['photosphere-references']['#positions'] as $photosphere_reference) 
 
                         <a-entity 
                             rotation="{{ $photosphere_reference['#rotation']['#x'] }} {{ $photosphere_reference['#rotation']['#y'] }} {{ $photosphere_reference['#rotation']['#z'] }}"
@@ -204,7 +207,7 @@
 
                 @endif
 
-            @endforeach
+            @endfor
 
         @endif
 
