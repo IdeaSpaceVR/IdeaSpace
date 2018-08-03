@@ -1,3 +1,7 @@
+## 1.1.3
+
+- IdeaSpace 3D model theme improvements: new teleportation allows to teleport onto 3D models; link to scene from witin VR
+
 ## 1.1.2
 
 - IdeaSpace Welcome theme bug fix: if Google Fonts are used and they need longer to load, the material HTML shader must be updated
