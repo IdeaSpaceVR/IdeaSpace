@@ -66,7 +66,7 @@ return [
     'photo-spheres' => [
       '#label' => 'Photo Sphere',
       '#description' => 'Manage your photo spheres.',
-      '#max-values' => 4,
+      '#max-values' => 3,
       '#fields' => [
 
         'title' => [

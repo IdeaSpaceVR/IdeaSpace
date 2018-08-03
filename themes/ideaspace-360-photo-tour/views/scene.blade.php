@@ -55,7 +55,7 @@
             <a-light type="ambient" color="#FFFFFF"></a-light>
 
 
-            @for ($i = 0; $i < 4; $i++)
+            @for ($i = 0; $i < 3; $i++)
 								@php
 								$photosphere = $content['photo-spheres'][$i];
 								@endphp
