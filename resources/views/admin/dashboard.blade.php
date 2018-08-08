@@ -42,7 +42,7 @@
     </div>
 
     <div class="row" style="padding-left:35px;margin-bottom:10px">
-        <div class="col-md-4">
+        <div class="col-md-5">
             <div class="panel panel-default">
                 <div class="panel-body at-a-glance">
                     <p class="lead">{{ trans('template_dashboard.at_a_glance') }}</p>
@@ -70,7 +70,7 @@
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
+        <div class="col-md-5">
             <div class="panel panel-default" @if (!isset($cached_news)) style="display:none" @endif>
                 <div class="panel-body news">
                     <p class="lead">{{ trans('template_dashboard.ideaspacevr_news') }}</p>
