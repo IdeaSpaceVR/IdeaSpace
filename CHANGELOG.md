@@ -1,3 +1,8 @@
+# 1.1.4
+
+- Small layout changes on the dashboard
+- IdeaSpace 360 Photo Tour: removed number of photo sphere limitation; added logo
+
 ## 1.1.3
 
 - IdeaSpace 3D model theme improvements: new teleportation allows to teleport onto 3D models; link to scene from within VR
