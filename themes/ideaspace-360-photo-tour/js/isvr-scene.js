@@ -64,6 +64,20 @@ AFRAME.registerComponent('isvr-scene', {
 
         }
 
+				var div = document.createElement('div');
+				div.setAttribute('style', 'position:absolute;top:20px;right:20px;width:49px;font-size:8px;font-family:Arial,Helvetica,sans-serif;color:#FFF');
+				var a = document.createElement('a');
+				a.setAttribute('href', 'https://www.ideaspacevr.org');
+				a.setAttribute('target', '_blank');
+				var img = document.createElement('img');
+				img.setAttribute('style', 'width:49px;');
+				img.src = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAEsAAABLCAMAAAAPkIrYAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAAZQTFRF////AJn/2EMNoAAAADhJREFUeNrs1jENAAAIBLHHv2mCBQJbT0DnS90VFovFYrFYKysTi8VisVisN8ubsFgsFou1rwUYAFK9FX2i/ebnAAAAAElFTkSuQmCC';
+				a.appendChild(img);
+				div.appendChild(a);
+				var txt = document.createTextNode('powered by IdeaSpaceVR');
+				div.appendChild(txt);
+  			document.body.appendChild(div); 
+
     }
 
 });
