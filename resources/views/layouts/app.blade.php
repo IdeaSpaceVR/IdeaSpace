@@ -9,9 +9,9 @@
 
     <link rel="shortcut icon" type="image/png" href="{{ url('favicon.ico') }}"/>
 
-    <meta name="abstract" content="IdeaSpaceVR is a content management system for the virtual reality web" />
-    <meta name="description" content="IdeaSpaceVR is a content management system for the virtual reality web" />
-    <meta name="keywords" content="web vr webvr virtual reality" />
+    <meta name="abstract" content="IdeaSpaceVR - create interactive 3D and VR web experiences for desktop, mobile & VR devices" />
+    <meta name="description" content="IdeaSpaceVR - create interactive 3D and VR web experiences for desktop, mobile & VR devices" />
+    <meta name="keywords" content="web vr 3D interactive webvr virtual reality" />
     <meta name="robots" content="follow, index" />
 
     <meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2017-11-15" content="{{ $origin_trial_token }}">
@@ -19,7 +19,7 @@
     <meta property="og:site_name" content="@yield('title')" />
     <meta property="og:image:secure_url" content="" />
     <meta property="og:image" content="" />
-    <meta property="og:description" content="IdeaSpaceVR is a content management system for the virtual reality web" />
+    <meta property="og:description" content="IdeaSpaceVR - create interactive 3D and VR web experiences for desktop, mobile & VR devices" />
     <meta property="og:title" content="@yield('title')" />
     <meta property="og:type" content="website" />
     <meta property="og:url" content="" />

@@ -10,7 +10,7 @@
             <div class="row" style="margin-top:80px">
                 <div class="col-md-12 text-center">
                     <h1 style="font-size:72px;font-weight:300;margin-bottom:20px">IdeaSpaceVR</h1>
-                    <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);margin-bottom:20px">Create beautiful 3D and virtual reality web experiences<br>for desktop PCs, mobile devices & VR headsets</p>
+                    <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);margin-bottom:20px">Create interactive 3D and VR web experiences<br>for desktop, mobile & VR devices</p>
                     <p style="font-size:21px;font-weight:300;line-height:34px;color:rgb(82, 82, 82);"><a style="text-decoration:underline;color:#0080e5;" href="https://www.ideaspacevr.org">www.ideaspacevr.org</a></p>
                 </div>
             </div>
