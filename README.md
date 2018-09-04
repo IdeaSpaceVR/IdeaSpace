@@ -7,13 +7,13 @@
 
 
 ### Content Management System
-Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (eg. MySQL, MariaDB).
+Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (MySQL or MariaDB). 
 
-### VR Themes
-Download and install new themes and create a virtual reality website. Or create your own theme with the Theme API. [Take a look at our theme directory](https://www.ideaspacevr.org/themes), there might not be many themes yet, but it is constantly growing.
+### Themes
+Download and install themes and create a 3D/VR website. Or create your own theme with the Theme API [Take a look at our theme directory](https://www.ideaspacevr.org/themes). A theme can be anything - a 360 photo tour, a 3D artist portfolio, an interactive video or a blog in VR. 
 
-### Based on WebVR Standard
-IdeaSpaceVR is using WebVR for interactive VR experiences that is compatible with all modern web browsers on PC and mobile. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)!
+### Based on WebVR API
+IdeaSpaceVR is using WebVR for interactive 3D and VR experiences that is compatible with all modern web browsers on desktop, mobile and VR headsets. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)! 
 
 ## Download Latest Release
 
