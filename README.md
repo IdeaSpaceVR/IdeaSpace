@@ -12,7 +12,7 @@ Download and install new themes and create a virtual reality website. Or create 
 IdeaSpaceVR is using WebVR for interactive VR experiences that is compatible with all modern web browsers on PC and mobile. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)!
 
 ### Mission
-<em>"We believe that everyone should be able to easily create and publish virtual reality web experiences with the focus on content creation and creativity. Software developers should have the possibility to create and share virtual reality web themes."</em>
+<em>"We believe that everyone should be able to easily create and publish interactive 3D and VR web experiences with the focus on content creation and creativity. Software developers should have the possibility to bundle their creations as themes and share them."</em>
 
 ## Download Latest Release
 
