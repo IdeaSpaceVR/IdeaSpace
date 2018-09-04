@@ -23,11 +23,9 @@ https://www.ideaspacevr.org/download
 
 https://www.ideaspacevr.org/documentation
 
-The documentation is currently under development.
-
 ## Contributing
 
-https://www.ideaspacevr.org/documentation/master/contributions
+https://www.ideaspacevr.org/documentation/1.1/contributions
 
 ## Screenshots
 
