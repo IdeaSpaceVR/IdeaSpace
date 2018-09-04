@@ -2,6 +2,10 @@
 
 ## About IdeaSpaceVR 
 
+### Mission
+<em>"We believe that everyone should be able to easily create and publish interactive 3D and VR web experiences with the focus on content creation and creativity. Software developers should have the possibility to bundle their creations as themes and share them."</em>
+
+
 ### Content Management System
 Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (eg. MySQL, MariaDB).
 
@@ -10,9 +14,6 @@ Download and install new themes and create a virtual reality website. Or create 
 
 ### Based on WebVR Standard
 IdeaSpaceVR is using WebVR for interactive VR experiences that is compatible with all modern web browsers on PC and mobile. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)!
-
-### Mission
-<em>"We believe that everyone should be able to easily create and publish interactive 3D and VR web experiences with the focus on content creation and creativity. Software developers should have the possibility to bundle their creations as themes and share them."</em>
 
 ## Download Latest Release
 
