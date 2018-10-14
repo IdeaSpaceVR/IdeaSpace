@@ -32,8 +32,9 @@
       <img src="{{ asset('public/assets/error/images/tunnel.png') }}" id="tunnel">
     </a-assets>
 
-    <a-entity id="tunnelcam" position="0 0 0" camera="far: 10000; fov: 80; near: 0.5;" look-controls="enabled: true">
-      <a-animation id="anim0" attribute="position" from="0 0 0" to="0 0 -2000" ease="linear" begin="start" dur="3000"></a-animation>
+		<a-entity position="0 0 0">
+      <a-entity camera look-controls id="tunnelcam" animation="property: position; easing: linear; dur: 2000; to: 0 0 -2000; autoplay: true">
+      </a-entity>
     </a-entity>
 
     <a-sky color="#000"></a-sky>
@@ -46,33 +47,13 @@
   </a-scene>
 
   <script>
-  document.querySelector('#tunnelcam').emit('start');
-
-  document.querySelector('#anim0').addEventListener('animationend', function() {
-    document.querySelector('#tunnelgeom').setAttribute('visible', false);
-    document.querySelector('#back').setAttribute('visible', true);
-  });
-
-  var restart = function(evt) {
-    document.querySelector('#back').setAttribute('visible', false);
-    document.querySelector('#tunnelgeom').setAttribute('visible', true);
-    document.querySelector('#tunnelcam').setAttribute('position', '0 0 0');
-    document.querySelector('#tunnelcam').emit('start');
-  }
-
-  var restart_touchevt = function(evt) {
-    restart();
-  }
-
-  var restart_keyevt = function(evt) {
-    /* space */
-    if (evt.keyCode == '32') {
-      restart();
-    }
-  }
-
-  window.addEventListener('touchstart', restart_touchevt);
-  window.addEventListener('keyup', restart_keyevt);
+  (function() {
+    /* DOM is loaded */
+    document.querySelector('#tunnelcam').addEventListener('animationcomplete', function() {
+      document.querySelector('#tunnelgeom').setAttribute('visible', false);
+      document.querySelector('#back').setAttribute('visible', true);
+    });
+  })();
   </script>
 
 </body>
