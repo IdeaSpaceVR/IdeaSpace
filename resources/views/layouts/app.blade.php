@@ -14,7 +14,7 @@
     <meta name="keywords" content="web vr 3D interactive webvr virtual reality" />
     <meta name="robots" content="follow, index" />
 
-    <meta http-equiv="origin-trial" data-feature="WebVR (For Chrome M62+)" data-expires="2017-11-15" content="{{ $origin_trial_token }}">
+    <meta http-equiv="origin-trial" data-feature="{{ $origin_trial_token_data_feature }}" data-expires="{{ $origin_trial_token_data_expires }}" content="{{ $origin_trial_token }}">
 
     <meta property="og:site_name" content="@yield('title')" />
     <meta property="og:image:secure_url" content="" />
