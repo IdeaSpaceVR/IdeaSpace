@@ -78,9 +78,9 @@ return [
     'set_position_rotation_camera' => 'Kameraposition und -rotation einstellen. Elemente sind an die Kamera angehängt bei einem z-Wert von -2.',
     'insert' => 'Einfügen',
     'validation_required' => 'Das Feld :label wird benötigt.',
-    'attach_content_type_hint' => 'Wenn es keine Elemente auszuwählen gibt, erstelle zuerst einige Inhalte vom Typ (geh zurück zur Bearbeitungsseite für Spaces):',
+    'attach_content_type_hint' => 'Wenn es keine Elemente auszuwählen gibt, erstelle zuerst einige Inhalte des folgenden Typs (gehen sie dafür zurück zur Bearbeitungsseite für Spaces):',
     'placeholder_item_z_axis' => 'Platzhalterelement Tiefenposition entlang der Z-Achse',
     'center' => 'Mittelpunkt (0, 0, 0)',
-    'content_attached_hint' => 'Wenn ein Element ausgewählt wird, bewegt sich die Kamera vor dieses (in 1 Meter Abstand). Die Kameraposition kann zurückgesetzt werden indem man auf den Kameranavigationsbutton Mittelpunkt klickt.',
+    'content_attached_hint' => 'Wenn ein Element ausgewählt wird, bewegt sich die Kamera vor dieses (in 1 Meter Abstand). Die Kameraposition kann zurückgesetzt werden indem man auf den Kameranavigationsbutton in die Mitte klickt.',
 
 ];
