@@ -8,6 +8,7 @@ return [
     'username' => 'Username',
     'enter_username' => 'Enter a username',
     'new_password' => 'New Password',
+    'enter_password' => 'Enter a password',
     'save_changes' => 'Save Changes',
 
 ];
