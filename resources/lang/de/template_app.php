@@ -14,6 +14,7 @@ return [
     'general' => 'Allgemein',
     'space' => 'Space',
     'logout' => 'Ausloggen',
+		'edit_profile' => 'Profil Bearbeiten',
     'toggle_navigation' => 'Navigation Umschalten',
     'version' => 'Version',
 
