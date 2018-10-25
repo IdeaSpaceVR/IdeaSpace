@@ -14,6 +14,7 @@ return [
     'general' => 'General',
     'space' => 'Space',
     'logout' => 'Logout',
+    'edit_profile' => 'Edit Profile',
     'toggle_navigation' => 'Toggle Navigation',
     'version' => 'Version',
 
