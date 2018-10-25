@@ -21,7 +21,7 @@
     <div class="row" style="margin-top:20px;padding-left:35px">
 
         <div class="col-md-2">
-            <label for="front-page-display" class="control-label">{{ trans('template_space_settings.frontpage_displays') }}</label>
+            <label for="front-page-display" class="control-label" style="margin-top:7px">{{ trans('template_space_settings.frontpage_displays') }}</label>
         </div>
         <div class="col-md-10">
             <div class="row">
