@@ -10,8 +10,7 @@ return [
     'enter_username' => 'Benutzername eingeben',
 		'username_required' => 'Benutzername ist ein Pflichtfeld.',
     'new_password' => 'Neues Passwort',
-		'enter_password' => 'Passwort eingeben',
-		'password_required' => 'Passwort ist ein Pflichtfeld.',
+		'enter_password' => 'Neues Passwort eingeben (optional)',
     'save_changes' => '&Auml;nderungen Speichern',
-
+		'save_success_message' => 'Die &Auml;nderungen wurden gespeichert.',
 ];

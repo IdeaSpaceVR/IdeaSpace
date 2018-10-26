@@ -39,6 +39,9 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin', ['as' => 'dashboard', 'uses' => 'Admin\DashboardController@index']);
   Route::post('admin/dashboard/news', ['as' => 'dashboard_news', 'uses' => 'Admin\DashboardController@submit_dashboard_news']);
 
+  Route::get('admin/user/{user_id}/edit', ['as' => 'edit_user_profile', 'uses' => 'Admin\UserProfileController@edit']);
+  Route::post('admin/user/{user_id}/save', ['as' => 'save_user_profile', 'uses' => 'Admin\UserProfileController@save']);
+
   Route::get('admin/space/add/select-theme', ['as' => 'space_add_select_theme', 'uses' => 'Admin\SpaceAddController@select_theme']);
   Route::post('admin/space/add/select-theme', ['as' => 'space_add_select_theme_submit', 'uses' => 'Admin\SpaceAddController@select_theme_submit']);
 
