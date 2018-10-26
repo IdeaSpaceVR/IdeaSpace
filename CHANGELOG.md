@@ -1,3 +1,10 @@
+# 1.1.5
+
+- Added support for PostgreSQL databases
+- Added page to edit user profile
+- Added german translation files by Senuros (https://github.com/Senuros)
+- Update to A-Frame 0.8.2
+
 # 1.1.4
 
 - Small layout changes on the dashboard
