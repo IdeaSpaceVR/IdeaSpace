@@ -40,11 +40,11 @@
                     </div>
                 </div>
 
-                <div class="form-group {{ $errors->has('username')?'has-error':'' }}">
-                    <label for="username" class="col-sm-2 col-sm-offset-2 control-label">Username</label>
+                <div class="form-group {{ $errors->has('email')?'has-error':'' }}">
+                    <label for="email" class="col-sm-2 col-sm-offset-2 control-label">Your E-mail</label>
                     <div class="col-sm-4">
-                        {!! Form::text('username', '', array('class'=>'form-control', 'placeholder'=>'Enter a username')) !!}
-                        {!! $errors->has('username')?$errors->first('username', '<span class="help-block">:message</span>'):'' !!}
+                        {!! Form::text('email', '', array('class'=>'form-control', 'placeholder'=>'Enter your e-mail')) !!}
+                        {!! $errors->has('email')?$errors->first('email', '<span class="help-block">:message</span>'):'' !!}
                     </div>
                 </div>
 
@@ -57,11 +57,11 @@
                     </div>
                 </div>
 
-                <div class="form-group {{ $errors->has('email')?'has-error':'' }}">
-                    <label for="email" class="col-sm-2 col-sm-offset-2 control-label">Your E-mail</label>
+                <div class="form-group {{ $errors->has('username')?'has-error':'' }}">
+                    <label for="username" class="col-sm-2 col-sm-offset-2 control-label">Username</label>
                     <div class="col-sm-4">
-                        {!! Form::text('email', '', array('class'=>'form-control', 'placeholder'=>'Enter your e-mail')) !!}
-                        {!! $errors->has('email')?$errors->first('email', '<span class="help-block">:message</span>'):'' !!}
+                        {!! Form::text('username', '', array('class'=>'form-control', 'placeholder'=>'Enter a username')) !!}
+                        {!! $errors->has('username')?$errors->first('username', '<span class="help-block">:message</span>'):'' !!}
                     </div>
                 </div>
 
