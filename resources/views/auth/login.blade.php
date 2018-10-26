@@ -62,8 +62,9 @@
                                 <button type="submit" class="btn btn-primary">
                                     <i class="fa fa-btn fa-sign-in"></i>{{ trans('template_login.login') }}
                                 </button>
-
+																@if (config('app.disable_forgot_password') == false)
                                 <a class="btn btn-link" href="{{ url('/password/reset') }}">{{ trans('template_login.forgot_your_password') }}</a>
+																@endif
                             </div>
                         </div>
                     </form>

@@ -215,6 +215,7 @@ return [
     'theme_howto_url' => 'https://forum.ideaspacevr.org',
     'forum_url' => 'https://forum.ideaspacevr.org',
     'disable_login' => false,
+    'disable_forgot_password' => true,
 
     'version' => '1.1.5',
     'aframe_lib' => 'aframe-v0.8.2.min.js',

@@ -29,4 +29,13 @@ class PasswordController extends Controller
     {
         $this->middleware('guest');
     }
+
+		public function getEmail()
+    {
+				if (config('app.disable_forgot_password') == false) {	
+        		return $this->showLinkRequestForm();
+				} else {
+						abort(404);
+				}
+    }
 }
