@@ -3,8 +3,8 @@
 - Added support for PostgreSQL databases
 - Added page to edit user profile
 - Added german translation files by Senuros (https://github.com/Senuros)
-- Update to A-Frame 0.8.2
-- Added setting: show lost password link on login form 
+- Updated to A-Frame 0.8.2
+- Added setting in conf/app.php: enable / disable lost password functionality 
 
 # 1.1.4
 
