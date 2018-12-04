@@ -99,10 +99,13 @@ jQuery(document).ready(function($) {
             $('#positions .insert-btn').unbind('click');
             $('#positions .insert-btn').click(positions_insert_btn_click_handler);
 
+            $('#positions #z-axis-minus').unbind('click'); 
             $('#positions #z-axis-minus').on('click', positions_z_axis_minus_handler); 
 
+            $('#positions #z-axis-reset').unbind('click'); 
             $('#positions #z-axis-reset').on('click', positions_z_axis_reset_handler); 
 
+            $('#positions #z-axis-plus').unbind('click'); 
             $('#positions #z-axis-plus').on('click', positions_z_axis_plus_handler); 
 
 
@@ -592,9 +595,9 @@ jQuery(document).ready(function($) {
 
         var content = document.querySelector('#reticle-text');
         var pos = content.getAttribute('position');
-        if (pos.z < -2) {
-            content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z+1 }); 
-            $('#positions #z-axis-counter').text(pos.z+1);
+        if (pos.z < -0.5) {
+            content.setAttribute('position', { x: pos.x, y: pos.y, z: (pos.z + 0.5) }); 
+            $('#positions #z-axis-counter').text(content.getAttribute('position').z);
         }
     };
 
@@ -612,8 +615,8 @@ jQuery(document).ready(function($) {
 
         var content = document.querySelector('#reticle-text');
         var pos = content.getAttribute('position');
-        content.setAttribute('position', { x: pos.x, y: pos.y, z: pos.z-1 }); 
-        $('#positions #z-axis-counter').text(pos.z-1);
+        content.setAttribute('position', { x: pos.x, y: pos.y, z: (pos.z - 0.5) }); 
+        $('#positions #z-axis-counter').text(content.getAttribute('position').z);
     };
 
 
