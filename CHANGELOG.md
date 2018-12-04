@@ -1,3 +1,7 @@
+# 1.1.6
+
+- Bug fix: positioning items on z-axis in content type 'position'  was not working properly
+
 # 1.1.5
 
 - Added support for PostgreSQL databases
