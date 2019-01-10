@@ -48,7 +48,6 @@ class SpaceContentAddController extends Controller {
      */
     public function content_add($id, $contenttype) {
 
-        //$theme_id = session('theme-id');        
         try {
             $space = Space::where('id', $id)->firstOrFail();
         } catch (ModelNotFoundException $e) {
@@ -63,13 +62,17 @@ class SpaceContentAddController extends Controller {
 
         $config = json_decode($theme->config, true);
 
+
+				/* fields not part of a group */
         if (array_has($config, '#content-types.' . $contenttype)) {
-
-            /* prepare content type and fields */
             $vars = $this->contentType->prepare($space->id, $config['#content-types'][$contenttype]);
-
         } else {
             abort(404);
+        }
+
+				/* fields part of a group */
+				if (array_has($config, '#content-types.' . $contenttype . '.#field-groups')) {
+						$vars = $this->contentType->prepareGroup($space->id, $config['#content-types'][$contenttype]);
         }
 
 
