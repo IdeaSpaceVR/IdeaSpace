@@ -120,7 +120,7 @@ class ContentType {
 				/* step 1: prepare field data */
         foreach ($contenttype['#fields'] as $field_key => $properties) {
             if (array_has($this->fieldTypes, $properties['#type'])) {
-								/* do not deal with fields which are part of a field group */
+								/* only deal with fields which are part of a field group */
 								if (isset($properties['#field-group'])) {
                 		$contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($space_id, $field_key, $properties, $contenttype['#fields']);
 								}
@@ -186,17 +186,18 @@ class ContentType {
     public function load($space_id, $content_id, $contenttype) {
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
-
             if (array_has($this->fieldTypes, $properties['#type'])) {
-
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($space_id, $content_id, $field_key, $properties, $contenttype['#fields']);
-
+								/* do not deal with fields which are part of a field group */
+								if (!isset($properties['#field-group'])) {
+                		$contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($space_id, $content_id, $field_key, $properties, $contenttype['#fields']);
+								} else {
+										/* remove field which is part of field group */
+										unset($contenttype['#fields'][$field_key]);
+								}
             } else {
-
                 abort(404);
             }
         }
-
 
         /* reduce field type scripts */
         $field_type_scripts = [];
@@ -207,12 +208,83 @@ class ContentType {
         }
         $field_type_scripts = array_values($field_type_scripts);
 
+        /* load default content title */
+        $content = Content::where('id', $content_id)->first();
+        $contenttype['isvr_content_title'] = $content->title;
+        $contenttype['isvr_content_uri'] = $content->uri;
+        $contenttype['field_type_scripts'] = $field_type_scripts;
+
+        return $contenttype;
+    }
+
+
+    /**
+     * Load content for a groups, template, content edit.
+     *
+     * @param int $space_id
+     * @param int $content_id
+     * @param Array $contenttype
+     *
+     * @return $vars
+     */
+    public function loadGroup($space_id, $content_id, $contenttype) {
+
+				/* step 1: load field data */
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+            if (array_has($this->fieldTypes, $properties['#type'])) {
+								/* only deal with fields which are part of a field group */
+								if (isset($properties['#field-group'])) {
+                		$contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->load($space_id, $content_id, $field_key, $properties, $contenttype['#fields']);
+								}
+            } else {
+                abort(404);
+            }
+        }
+
+        /* reduce field type scripts */
+        $field_type_scripts = [];
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+          if (!array_key_exists($properties['#type'], $field_type_scripts) && array_key_exists('#template_script', $properties)) {
+            $field_type_scripts[$properties['#type']] = asset($properties['#template_script']);
+          }
+        }
+        $field_type_scripts = array_values($field_type_scripts);
 
         /* load default content title */
         $content = Content::where('id', $content_id)->first();
         $contenttype['isvr_content_title'] = $content->title;
         $contenttype['isvr_content_uri'] = $content->uri;
         $contenttype['field_type_scripts'] = $field_type_scripts;
+
+
+				/* step 2: assign fields to groups */
+				$all_groups = $contenttype['#field-groups'];
+				$groups = [];
+
+				foreach ($contenttype['#fields'] as $field_key => $properties) {
+						if (isset($properties['#field-group'])) {
+								/* only allow fields which are part of a group */
+								if (array_has($all_groups, $properties['#field-group'])) {
+										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
+										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
+										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
+										$groups[$properties['#field-group']]['#fields'][] = $properties;
+								} else {
+                		/* ignore unknown field group */
+                		Log::debug('Unknown field group found: ' . $properties['#type']);
+								}
+						} else {
+								/* remove field which is not part of a group */
+								unset($contenttype['#fields'][$field_key]);
+						}
+				}
+
+				/* remove #fields array */
+				unset($contenttype['#fields']);
+				/* overwrite #field-groups array */
+				$contenttype['#field-groups'] = $groups;
+
+Log::debug($contenttype);
 
         return $contenttype;
     }
@@ -277,6 +349,7 @@ class ContentType {
         }
         $content->save();
 
+Log::debug($request_all);
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {

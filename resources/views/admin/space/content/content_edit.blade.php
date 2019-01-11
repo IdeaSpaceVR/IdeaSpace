@@ -66,32 +66,35 @@
             @endforeach        
 
 						
-						@if (count($form['#field-groups']) > 0)
-                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
-            @endif
-            @foreach ($form['#field-groups'] as $group_id => $group_properties)
+						@if (isset($form['#field-groups']))
 
-                @include($group_properties['#template-group-header'], ['group_id' => $group_id, 'form' => $group_properties])
+								@if (count($form['#field-groups']) > 0)
+										<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+								@endif
+								@foreach ($form['#field-groups'] as $group_id => $group_properties)
 
-                @foreach ($group_properties['#fields'] as $field_id => $properties)
+										@include($group_properties['#template-group-header'], ['group_id' => $group_id, 'form' => $group_properties])
 
-                    @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
+										@foreach ($group_properties['#fields'] as $field_id => $properties)
 
-                    @if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
-                        @push('field_modals')
-                            @include($properties['#template_modal'], ['isvr_content_title' => '', 'field_id' => $field_id, 'form' => $properties])
-                        @endpush
-                        <?php $field_template_arr[] = $properties['#template_modal'];  ?>
-                    @endif
+												@include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
 
-                @endforeach
+												@if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
+														@push('field_modals')
+																@include($properties['#template_modal'], ['isvr_content_title' => '', 'field_id' => $field_id, 'form' => $properties])
+														@endpush
+														<?php $field_template_arr[] = $properties['#template_modal'];  ?>
+												@endif
 
-                @include($group_properties['#template-group-footer'], ['group_id' => $group_id, 'form' => $group_properties])
+										@endforeach
 
-            @endforeach
-            @if (count($form['#field-groups']) > 0)
-                </div>
-            @endif
+										@include($group_properties['#template-group-footer'], ['group_id' => $group_id, 'form' => $group_properties])
+
+								@endforeach
+								@if (count($form['#field-groups']) > 0)
+										</div>
+								@endif
+						@endif
 
 
             <div class="form-group text-center">

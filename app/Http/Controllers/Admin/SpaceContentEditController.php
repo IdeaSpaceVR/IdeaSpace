@@ -70,12 +70,22 @@ class SpaceContentEditController extends Controller {
 
         $config = json_decode($theme->config, true);
 
+
+				$vars = [];
+
+				/* fields not part of a group */
         if (array_has($config, '#content-types.' . $contenttype)) {
-            /* load and process content type and field content */
             $vars = $this->contentType->load($space_id, $content_id, $config['#content-types'][$contenttype]);
         } else {
             abort(404);
         }
+
+				/* fields part of a group */
+        if (array_has($config, '#content-types.' . $contenttype . '.#field-groups')) {
+            $field_group_vars = $this->contentType->loadGroup($space_id, $content_id, $config['#content-types'][$contenttype]);
+            $vars = array_merge($vars, $field_group_vars);
+        }
+
 
         $has_contenttype_uri = false;
         if (isset($config['#content-types'][$contenttype]['#content-type-view']) && strlen($config['#content-types'][$contenttype]['#content-type-view']) > 0) {
