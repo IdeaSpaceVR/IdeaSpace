@@ -36,6 +36,9 @@ class ContentType {
     const FIELD_TYPE_ROTATION = 'rotation';
     const FIELD_TYPE_SPACE_REFERENCE = 'space-reference';
 
+    const TEMPLATE_GROUP_HEADER = 'admin.space.content.field_group_header';
+    const TEMPLATE_GROUP_FOOTER = 'admin.space.content.field_group_footer';
+
     public $fieldTypes;
 
 
@@ -75,13 +78,15 @@ class ContentType {
     public function prepare($space_id, $contenttype) {
 
         foreach ($contenttype['#fields'] as $field_key => $properties) {
-
             if (array_has($this->fieldTypes, $properties['#type'])) {
-
-                $contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($space_id, $field_key, $properties, $contenttype['#fields']);
-
+								/* do not deal with fields which are part of a field group */
+								if (!isset($properties['#field-group'])) {
+                		$contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($space_id, $field_key, $properties, $contenttype['#fields']);
+								} else {
+										/* remove field which is part of field group */
+										unset($contenttype['#fields'][$field_key]);
+								}
             } else {
-
                 /* ignore unknown field type */
                 Log::debug('Unknown field type found: ' . $properties['#type']);
             }
@@ -102,6 +107,73 @@ class ContentType {
     }
 
   
+    /**
+     * Prepare a template, content add, first time.
+     * 
+     * @param int $space_id
+     * @param Array $contenttype
+     *
+     * @return $vars
+     */
+    public function prepareGroup($space_id, $contenttype) {
+
+				/* step 1: prepare field data */
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+            if (array_has($this->fieldTypes, $properties['#type'])) {
+								/* do not deal with fields which are part of a field group */
+								if (isset($properties['#field-group'])) {
+                		$contenttype['#fields'][$field_key] = $this->fieldTypes[$properties['#type']]->prepare($space_id, $field_key, $properties, $contenttype['#fields']);
+								}
+            } else {
+                /* ignore unknown field type */
+                Log::debug('Unknown field type found: ' . $properties['#type']);
+            }
+        }
+
+        /* reduce field type scripts */
+        $field_type_scripts = [];
+        foreach ($contenttype['#fields'] as $field_key => $properties) {
+          if (!array_key_exists($properties['#type'], $field_type_scripts) && array_key_exists('#template_script', $properties)) {
+            $field_type_scripts[$properties['#type']] = asset($properties['#template_script']);
+          }
+        }
+        $field_type_scripts = array_values($field_type_scripts);
+
+        $contenttype['field_type_scripts'] = $field_type_scripts;
+
+
+				/* step 2: assign fields to groups */
+				$all_groups = $contenttype['#field-groups'];
+				$groups = [];
+
+				foreach ($contenttype['#fields'] as $field_key => $properties) {
+						if (isset($properties['#field-group'])) {
+								/* only allow fields which are part of a group */
+								if (array_has($all_groups, $properties['#field-group'])) {
+										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
+										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
+										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
+										$groups[$properties['#field-group']]['#fields'][] = $properties;
+								} else {
+                		/* ignore unknown field group */
+                		Log::debug('Unknown field group found: ' . $properties['#type']);
+								}
+						} else {
+								/* remove field which is not part of a group */
+								unset($contenttype['#fields'][$field_key]);
+						}
+				}
+
+				/* remove #fields array */
+				unset($contenttype['#fields']);
+				/* overwrite #field-groups array */
+				$contenttype['#field-groups'] = $groups;
+
+        return $contenttype;
+    }
+		
+
+
     /**
      * Load content for a template, content edit.
      *

@@ -54,7 +54,9 @@
             $field_template_arr = [];
             ?>
             @foreach ($form['#fields'] as $field_id => $properties)
+
                 @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
+
                 @if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
                     @push('field_modals')
                         @include($properties['#template_modal'], ['isvr_content_title' => $form['isvr_content_title'], 'field_id' => $field_id, 'form' => $properties])
@@ -62,6 +64,35 @@
                     <?php $field_template_arr[] = $properties['#template_modal'];  ?>
                 @endif
             @endforeach        
+
+						
+						@if (count($form['#field-groups']) > 0)
+                <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+            @endif
+            @foreach ($form['#field-groups'] as $group_id => $group_properties)
+
+                @include($group_properties['#template-group-header'], ['group_id' => $group_id, 'form' => $group_properties])
+
+                @foreach ($group_properties['#fields'] as $field_id => $properties)
+
+                    @include($properties['#template'], ['field_id' => $field_id, 'form' => $properties])
+
+                    @if (isset($properties['#template_modal']) && !in_array($properties['#template_modal'], $field_template_arr))
+                        @push('field_modals')
+                            @include($properties['#template_modal'], ['isvr_content_title' => '', 'field_id' => $field_id, 'form' => $properties])
+                        @endpush
+                        <?php $field_template_arr[] = $properties['#template_modal'];  ?>
+                    @endif
+
+                @endforeach
+
+                @include($group_properties['#template-group-footer'], ['group_id' => $group_id, 'form' => $group_properties])
+
+            @endforeach
+            @if (count($form['#field-groups']) > 0)
+                </div>
+            @endif
+
 
             <div class="form-group text-center">
                 <button type="button" class="btn btn-primary btn-lg content-add-save" style="margin-right:20px"><span class="glyphicon glyphicon-ok" aria-hidden="true"></span> {{ trans('template_content_edit.save') }}</button> <a href="{{ route('content_delete', ['space_id' => $space_id, 'contenttype' => $contenttype_name, 'content_id' => $content_id]) }}" role="button" class="btn btn-default btn-lg content-add-cancel" style="margin-right:20px"><span class="glyphicon glyphicon-trash" aria-hidden="true"></span> {{ trans('template_content_edit.delete') }}</a> <a href="{{ route('space_edit', ['id' => $space_id]) }}#{{ $contenttype_name }}" role="button" class="btn btn-default btn-lg content-add-cancel"><span class="glyphicon glyphicon-remove" aria-hidden="true"></span> {{ trans('template_content_edit.cancel') }}</a> 

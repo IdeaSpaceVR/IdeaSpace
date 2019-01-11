@@ -63,6 +63,8 @@ class SpaceContentAddController extends Controller {
         $config = json_decode($theme->config, true);
 
 
+				$vars = [];
+
 				/* fields not part of a group */
         if (array_has($config, '#content-types.' . $contenttype)) {
             $vars = $this->contentType->prepare($space->id, $config['#content-types'][$contenttype]);
@@ -72,7 +74,8 @@ class SpaceContentAddController extends Controller {
 
 				/* fields part of a group */
 				if (array_has($config, '#content-types.' . $contenttype . '.#field-groups')) {
-						$vars = $this->contentType->prepareGroup($space->id, $config['#content-types'][$contenttype]);
+						$field_group_vars = $this->contentType->prepareGroup($space->id, $config['#content-types'][$contenttype]);
+						$vars = array_merge($vars, $field_group_vars);						
         }
 
 
@@ -96,7 +99,6 @@ class SpaceContentAddController extends Controller {
         $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
 
         $form = array('form' => $vars);
-        //$form['space_status'] = Space::STATUS_DRAFT;
         $form['space_id'] = $id;
         $form['space_uri'] = $space->uri;
         $form['theme'] = $theme_mod;
