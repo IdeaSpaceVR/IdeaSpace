@@ -153,7 +153,7 @@ class ContentType {
 										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
 										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
 										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
-										$groups[$properties['#field-group']]['#fields'][] = $properties;
+										$groups[$properties['#field-group']]['#fields'][$field_key] = $properties;
 								} else {
                 		/* ignore unknown field group */
                 		Log::debug('Unknown field group found: ' . $properties['#type']);
@@ -268,7 +268,7 @@ class ContentType {
 										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
 										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
 										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
-										$groups[$properties['#field-group']]['#fields'][] = $properties;
+										$groups[$properties['#field-group']]['#fields'][$field_key] = $properties;
 								} else {
                 		/* ignore unknown field group */
                 		Log::debug('Unknown field group found: ' . $properties['#type']);
@@ -283,8 +283,6 @@ class ContentType {
 				unset($contenttype['#fields']);
 				/* overwrite #field-groups array */
 				$contenttype['#field-groups'] = $groups;
-
-Log::debug($contenttype);
 
         return $contenttype;
     }
@@ -349,7 +347,6 @@ Log::debug($contenttype);
         }
         $content->save();
 
-Log::debug($request_all);
         foreach ($contenttype['#fields'] as $field_key => $properties) {
 
             if (array_has($this->fieldTypes, $properties['#type']) && array_has($request_all, $field_key)) {
