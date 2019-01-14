@@ -1,5 +1,6 @@
-# 1.1.6
+# 1.2.0
 
+- New feature: field groups: group fields together in a collapsible box; allows to keep a better overview if there are many fields
 - Bug fix: positioning items on z-axis in content type 'position'  was not working properly
 
 # 1.1.5
