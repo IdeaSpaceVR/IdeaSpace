@@ -7,5 +7,5 @@
 								</a>
 						</h4>
 				</div>
-				<div id="{{ $group_id }}-collapse" class="panel-collapse collapse in" role="tabpanel" aria-labelledby="{{ $group_id }}-header">
+				<div id="{{ $group_id }}-collapse" class="panel-collapse collapse" role="tabpanel" aria-labelledby="{{ $group_id }}-header">
 						<div class="panel-body">
