@@ -122,7 +122,36 @@ return [
       '#label' => 'Blog Posts',
       '#description' => 'Manage your blog posts.',
       '#max-values' => 'infinite',
-      '#field-groups' => ['north-east' => 'North East', 'east' => 'East', 'south-east' => 'South East', 'south' => 'South', 'south-west' => 'South West', 'west' => 'West', 'north-west' => 'North West'],
+      '#field-groups' => [
+					'north-east' => [
+							'title' => 'North East', 
+							'help' => 'Create content for the direction North East.'
+					], 
+					'east' => [
+							'title' => 'East',
+							'help' => 'Create content for the direction East.',
+					], 
+					'south-east' => [
+							'title' => 'South East',
+							'help' => 'Create content for the direction South East.'
+					], 
+					'south' => [
+							'title' => 'South',
+							'help' => 'Create content for the direction South.',
+					], 
+					'south-west' => [
+							'title' => 'South West',
+							'help' => 'Create content for the direction South West.',
+					], 
+					'west' => [
+							'title' => 'West',
+							'help' => 'Create content for the direction West.',
+					], 
+					'north-west' => [
+							'title' => 'North West',
+							'help' => 'Create content for the direction North West.'
+					]
+			],
 //      '#content-type-view' => 'blog-post', // TEST
       '#fields' => [
 

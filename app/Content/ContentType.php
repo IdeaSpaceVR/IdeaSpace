@@ -152,7 +152,8 @@ class ContentType {
 								if (array_has($all_groups, $properties['#field-group'])) {
 										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
 										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
-										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
+										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']]['title'];
+										$groups[$properties['#field-group']]['#help'] = $all_groups[$properties['#field-group']]['help'];
 										$groups[$properties['#field-group']]['#fields'][$field_key] = $properties;
 								} else {
                 		/* ignore unknown field group */
@@ -267,7 +268,8 @@ class ContentType {
 								if (array_has($all_groups, $properties['#field-group'])) {
 										$groups[$properties['#field-group']]['#template-group-header'] = ContentType::TEMPLATE_GROUP_HEADER;
 										$groups[$properties['#field-group']]['#template-group-footer'] = ContentType::TEMPLATE_GROUP_FOOTER;
-										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']];
+										$groups[$properties['#field-group']]['#title'] = $all_groups[$properties['#field-group']]['title'];
+										$groups[$properties['#field-group']]['#help'] = $all_groups[$properties['#field-group']]['help'];
 										$groups[$properties['#field-group']]['#fields'][$field_key] = $properties;
 								} else {
                 		/* ignore unknown field group */
