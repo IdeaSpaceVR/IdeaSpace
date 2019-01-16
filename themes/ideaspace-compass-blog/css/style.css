@@ -1,0 +1,79 @@
+body canvas {
+    cursor: move;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+    cursor: grab;
+}
+
+body {
+    background-color: #000000;
+}
+
+.cover {
+    width: 100%;
+    height: 100%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    overflow: hidden;
+    background-color: #000000;
+}
+
+#space-title-texture {
+    width: 1024px;
+		position: fixed;
+		top: 0;
+		left: 0;
+		z-index: -2;
+		background-color: transparent;
+		font-family: Verdana, Geneva, sans-serif;
+		text-align: center;
+		font-size: 52px;
+}
+
+.post-title-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		background-color: transparent;
+		text-align: center;
+}
+
+.navigation-arrow-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		background-color: transparent;
+		text-align: center;
+}
+
+.post-text-0-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.post-text-1-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.post-text-2-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+
