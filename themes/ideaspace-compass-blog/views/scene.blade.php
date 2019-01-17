@@ -9,17 +9,29 @@
         <a-assets>
 						@if (isset($content['blog-posts']))
 								@foreach ($content['blog-posts'] as $blog_post)
-										@if (isset($blog_post['post-image-0']))
-                    		<img id="post-image-0-texture-{{ $blog_post['post-image-0']['#content-id'] }}" data-cid="{{ $blog_post['post-image-0']['#content-id'] }}" class="post-image-0-texture" src="{{ $blog_post['post-image-0']['#uri']['#value'] }}" crossorigin>
+										@php
+										$cid = $blog_post['post-title-north']['#content-id'];
+										@endphp
+            				@if ($blog_post['post-display-north-east']['#value'] == 'image')
+                    		<img id="post-image-north-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-north-east-texture" src="{{ $blog_post['post-image-north-east']['#uri']['#value'] }}" crossorigin>
                  		@endif
-										@if (isset($blog_post['post-image-1']))
-                    		<img id="post-image-1-texture-{{ $blog_post['post-image-1']['#content-id'] }}" data-cid="{{ $blog_post['post-image-1']['#content-id'] }}" class="post-image-1-texture" src="{{ $blog_post['post-image-1']['#uri']['#value'] }}" crossorigin>
+            				@if ($blog_post['post-display-east']['#value'] == 'image')
+                    		<img id="post-image-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-east-texture" src="{{ $blog_post['post-image-east']['#uri']['#value'] }}" crossorigin>
                  		@endif
-										@if (isset($blog_post['post-image-2']))
-                    		<img id="post-image-2-texture-{{ $blog_post['post-image-2']['#content-id'] }}" data-cid="{{ $blog_post['post-image-2']['#content-id'] }}" class="post-image-2-texture" src="{{ $blog_post['post-image-2']['#uri']['#value'] }}" crossorigin>
+            				@if ($blog_post['post-display-south-east']['#value'] == 'image')
+                    		<img id="post-image-south-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-south-east-texture" src="{{ $blog_post['post-image-south-east']['#uri']['#value'] }}" crossorigin>
                  		@endif
-										@if (isset($blog_post['post-image-3']))
-                    		<img id="post-image-3-texture-{{ $blog_post['post-image-3']['#content-id'] }}" data-cid="{{ $blog_post['post-image-3']['#content-id'] }}" class="post-image-3-texture" src="{{ $blog_post['post-image-3']['#uri']['#value'] }}" crossorigin>
+            				@if ($blog_post['post-display-south']['#value'] == 'image')
+                    		<img id="post-image-south-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-south-texture" src="{{ $blog_post['post-image-south']['#uri']['#value'] }}" crossorigin>
+                 		@endif
+            				@if ($blog_post['post-display-south-west']['#value'] == 'image')
+                    		<img id="post-image-south-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-south-west-texture" src="{{ $blog_post['post-image-south-west']['#uri']['#value'] }}" crossorigin>
+                 		@endif
+            				@if ($blog_post['post-display-west']['#value'] == 'image')
+                    		<img id="post-image-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-west-texture" src="{{ $blog_post['post-image-west']['#uri']['#value'] }}" crossorigin>
+                 		@endif
+            				@if ($blog_post['post-display-north-west']['#value'] == 'image')
+                    		<img id="post-image-north-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-image-north-west-texture" src="{{ $blog_post['post-image-north-west']['#uri']['#value'] }}" crossorigin>
                  		@endif
 								@endforeach
 						@endif
@@ -61,8 +73,8 @@
 								position="0 0 0" 
 								id="posts-wrapper" 
 								@foreach ($content['blog-posts'] as $blog_post)
-										animation__nav_up_{{ $blog_post['post-text-0']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 -{{ (($post_counter * $meters_between_posts) - 10) }} 0; startEvents: nav_up_{{ $blog_post['post-text-0']['#content-id'] }}"
-										animation__nav_down_{{ $blog_post['post-text-0']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-text-0']['#content-id'] }}"
+										animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 -{{ (($post_counter * $meters_between_posts) - 10) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
+										animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
 										@php
 										$post_counter++;
 										@endphp
@@ -78,82 +90,80 @@
 
 								<a-entity 
 										position="0 -{{ ($post_counter * $meters_between_posts) }} 0" 
-										id="post-{{ $blog_post['post-text-0']['#content-id'] }}" 
+										id="post-{{ $blog_post['post-title-north']['#content-id'] }}" 
 										class="post post-{{ $post_counter }} collidable" 
 										@if ($post_counter == 0) visible="true" @endif>
 
-												@include('theme::partials.post_title', ['position' => $positions[0], 'post_counter' => $post_counter])
+										@include('theme::partials.post_title', ['position' => $positions[0], 'post_counter' => $post_counter])
 
-												@if ($blog_post['post-display-north-east']['#value'] != 'none')
-														@if ($blog_post['post-display-north-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[1], 'id' => 'north-east'])
-														@elseif ($blog_post['post-display-north-east']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[1], 'id' => 'north-east'])
-														@elseif ($blog_post['post-display-north-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[1], 'id' => 'north-east'])
-														@endif
+										@if ($blog_post['post-display-north-east']['#value'] != 'none')
+												@if ($blog_post['post-display-north-east']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[1], 'id' => 'north-east'])
+												@elseif ($blog_post['post-display-north-east']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[1], 'id' => 'north-east'])
+												@elseif ($blog_post['post-display-north-east']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[1], 'id' => 'north-east'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-east']['#value'] != 'none')
-														@if ($blog_post['post-display-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[2], 'id' => 'east'])
-														@elseif ($blog_post['post-display-east']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[2], 'id' => 'east'])
-														@elseif ($blog_post['post-display-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[2], 'id' => 'east'])
-														@endif
+										@if ($blog_post['post-display-east']['#value'] != 'none')
+												@if ($blog_post['post-display-east']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[2], 'id' => 'east'])
+												@elseif ($blog_post['post-display-east']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[2], 'id' => 'east'])
+												@elseif ($blog_post['post-display-east']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[2], 'id' => 'east'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-south-east']['#value'] != 'none')
-														@if ($blog_post['post-display-south-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[3], 'id' => 'south-east'])
-														@elseif ($blog_post['post-display-south-east']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[3], 'id' => 'south-east'])
-														@elseif ($blog_post['post-display-south-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[3], 'id' => 'south-east'])
-														@endif
+										@if ($blog_post['post-display-south-east']['#value'] != 'none')
+												@if ($blog_post['post-display-south-east']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[3], 'id' => 'south-east'])
+												@elseif ($blog_post['post-display-south-east']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[3], 'id' => 'south-east'])
+												@elseif ($blog_post['post-display-south-east']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[3], 'id' => 'south-east'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-south']['#value'] != 'none')
-														@if ($blog_post['post-display-south']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[4], 'id' => 'south'])
-														@elseif ($blog_post['post-display-south']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[4], 'id' => 'south'])
-														@elseif ($blog_post['post-display-south']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[4], 'id' => 'south'])
-														@endif
+										@if ($blog_post['post-display-south']['#value'] != 'none')
+												@if ($blog_post['post-display-south']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[4], 'id' => 'south'])
+												@elseif ($blog_post['post-display-south']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[4], 'id' => 'south'])
+												@elseif ($blog_post['post-display-south']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[4], 'id' => 'south'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-south-west']['#value'] != 'none')
-														@if ($blog_post['post-display-south-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[5], 'id' => 'south-west'])
-														@elseif ($blog_post['post-display-south-west']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[5], 'id' => 'south-west'])
-														@elseif ($blog_post['post-display-south-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[5], 'id' => 'south-west'])
-														@endif
+										@if ($blog_post['post-display-south-west']['#value'] != 'none')
+												@if ($blog_post['post-display-south-west']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[5], 'id' => 'south-west'])
+												@elseif ($blog_post['post-display-south-west']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[5], 'id' => 'south-west'])
+												@elseif ($blog_post['post-display-south-west']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[5], 'id' => 'south-west'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-west']['#value'] != 'none')
-														@if ($blog_post['post-display-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[6], 'id' => 'west'])
-														@elseif ($blog_post['post-display-west']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[6], 'id' => 'west'])
-														@elseif ($blog_post['post-display-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[6], 'id' => 'west'])
-														@endif
+										@if ($blog_post['post-display-west']['#value'] != 'none')
+												@if ($blog_post['post-display-west']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[6], 'id' => 'west'])
+												@elseif ($blog_post['post-display-west']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[6], 'id' => 'west'])
+												@elseif ($blog_post['post-display-west']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[6], 'id' => 'west'])
 												@endif
+										@endif
 
-												@if ($blog_post['post-display-north-west']['#value'] != 'none')
-														@if ($blog_post['post-display-north-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[7], 'id' => 'north-west'])
-														@elseif ($blog_post['post-display-north-west']['#value'] == 'image')
-																@include('theme::partials.layout_image', ['position' => $positions[7], 'id' => 'north-west'])
-														@elseif ($blog_post['post-display-north-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[7], 'id' => 'north-west'])
-														@endif
+										@if ($blog_post['post-display-north-west']['#value'] != 'none')
+												@if ($blog_post['post-display-north-west']['#value'] == 'text')
+														@include('theme::partials.layout_text', ['position' => $positions[7], 'id' => 'north-west'])
+												@elseif ($blog_post['post-display-north-west']['#value'] == 'image')
+														@include('theme::partials.layout_image', ['position' => $positions[7], 'id' => 'north-west'])
+												@elseif ($blog_post['post-display-north-west']['#value'] == 'link')
+														@include('theme::partials.layout_link', ['position' => $positions[7], 'id' => 'north-west'])
 												@endif
-
 										@endif
 
 								</a-entity>
@@ -211,33 +221,55 @@
 
         @foreach ($content['blog-posts'] as $blog_post)
 						@php
-						$d = new DateTime($blog_post['post-date']['#value']);
-						$date_formatted = $d->format('d F Y');
+						//$d = new DateTime($blog_post['post-date']['#value']);
+						//$date_formatted = $d->format('d F Y');
+						$cid = $blog_post['post-title-north']['#content-id'];
 						@endphp
 
-						<div id="post-title-texture-{{ $blog_post['post-title']['#content-id'] }}" data-cid="{{ $blog_post['post-title']['#content-id'] }}" class="post-title-texture">
-								{!! $blog_post['post-title']['#value'] !!}
-								<p><span style="font-family: arial, helvetica, sans-serif; font-size: 20pt; color: #ffffff;">{!! $date_formatted !!}</span></p>
+						<div id="post-title-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-title-texture">
+								{!! $blog_post['post-title-north']['#value'] !!}
+								<p><span style="font-family: arial, helvetica, sans-serif; font-size: 20pt; color: #ffffff;">{!! /*$date_formatted*/ !!}</span></p>
 						</div>
 
-            @if (isset($blog_post['post-text-0']))
-                <div id="post-text-0-texture-{{ $blog_post['post-text-0']['#content-id'] }}" data-cid="{{ $blog_post['post-text-0']['#content-id'] }}" class="post-text-0-texture" style="background-color:#FFFFFF">
-                {!! $blog_post['post-text-0']['#value'] !!}
+            @if ($blog_post['post-display-north-east']['#value'] == 'text')
+                <div id="post-text-north-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-north-east-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-north-east']['#value'] !!}
                 </div>
             @endif
-            @if (isset($blog_post['post-text-1']))
-                <div id="post-text-1-texture-{{ $blog_post['post-text-1']['#content-id'] }}" data-cid="{{ $blog_post['post-text-1']['#content-id'] }}" class="post-text-1-texture" style="background-color:#FFFFFF">
-                {!! $blog_post['post-text-1']['#value'] !!}
+
+            @if ($blog_post['post-display-east']['#value'] == 'text')
+                <div id="post-text-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-display-east-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-east']['#value'] !!}
                 </div>
             @endif
-            @if (isset($blog_post['post-text-2']))
-                <div id="post-text-2-texture-{{ $blog_post['post-text-2']['#content-id'] }}" data-cid="{{ $blog_post['post-text-2']['#content-id'] }}" class="post-text-2-texture" style="background-color:#FFFFFF">
-                {!! $blog_post['post-text-2']['#value'] !!}
+
+            @if ($blog_post['post-display-south-east']['#value'] == 'text')
+                <div id="post-text-south-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-east-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-south-east']['#value'] !!}
                 </div>
             @endif
-            @if (isset($blog_post['post-text-3']))
-                <div id="post-text-3-texture-{{ $blog_post['post-text-3']['#content-id'] }}" data-cid="{{ $blog_post['post-text-3']['#content-id'] }}" class="post-text-3-texture" style="background-color:#FFFFFF">
-                {!! $blog_post['post-text-3']['#value'] !!}
+
+            @if ($blog_post['post-display-south']['#value'] == 'text')
+                <div id="post-text-south-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-south']['#value'] !!}
+                </div>
+            @endif
+
+            @if ($blog_post['post-display-south-west']['#value'] == 'text')
+                <div id="post-text-south-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-west-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-south-west']['#value'] !!}
+                </div>
+            @endif
+
+            @if ($blog_post['post-display-west']['#value'] == 'text')
+                <div id="post-text-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-west-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-west']['#value'] !!}
+                </div>
+            @endif
+
+            @if ($blog_post['post-display-north-west']['#value'] == 'text')
+                <div id="post-text-north-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-north-west-texture" style="background-color:#FFFFFF">
+                {!! $blog_post['post-text-north-west']['#value'] !!}
                 </div>
             @endif
         @endforeach
@@ -246,8 +278,9 @@
     <script>
     (function() {
         /* DOM is loaded */
-				var text_0_textures = document.querySelectorAll('.post-text-0-texture');
-				text_0_textures.forEach(function(elem) {
+// TODO
+				var text_north_east_textures = document.querySelectorAll('.post-text-north-east-texture');
+				text_north_east_textures.forEach(function(elem) {
 						var text_wrapper_0 = document.getElementById('post-text-wrapper-0-' + elem.dataset.cid);
 						var height_meters = (elem.offsetHeight * text_wrapper_0.getAttribute('width')) / elem.offsetWidth;
 						text_wrapper_0.setAttribute('height', height_meters);
