@@ -278,54 +278,106 @@
     <script>
     (function() {
         /* DOM is loaded */
-// TODO
-				var text_north_east_textures = document.querySelectorAll('.post-text-north-east-texture');
-				text_north_east_textures.forEach(function(elem) {
-						var text_wrapper_0 = document.getElementById('post-text-wrapper-0-' + elem.dataset.cid);
-						var height_meters = (elem.offsetHeight * text_wrapper_0.getAttribute('width')) / elem.offsetWidth;
-						text_wrapper_0.setAttribute('height', height_meters);
+				var post_text_north_east_textures = document.querySelectorAll('.post-text-north-east-texture');
+				for (var i = 0; i < post_text_north_east_textures.length; i++) {
+						var post_text_wrapper_north_east = document.getElementById('post-text-wrapper-north-east-' + post_text_north_east_textures[i].dataset.cid);
+						var height_meters = (post_text_north_east_textures[i].offsetHeight * post_text_wrapper_north_east.getAttribute('width')) / post_text_north_east_textures[i].offsetWidth;
+						post_text_wrapper_north_east.setAttribute('height', height_meters);
 				});
 
-				var text_1_textures = document.querySelectorAll('.post-text-1-texture');
-				text_1_textures.forEach(function(elem) {
-						var text_wrapper_1 = document.getElementById('post-text-wrapper-1-' + elem.dataset.cid);
-						var height_meters = (elem.offsetHeight * text_wrapper_1.getAttribute('width')) / elem.offsetWidth;
-						text_wrapper_1.setAttribute('height', height_meters);
+				var post_text_east_textures = document.querySelectorAll('.post-text-east-texture');
+				for (var i = 0; i < post_text_east_textures.length; i++) {
+						var post_text_wrapper_east = document.getElementById('post-text-wrapper-east-' + post_text_east_textures[i].dataset.cid);
+						var height_meters = (post_text_east_textures[i].offsetHeight * post_text_wrapper_east.getAttribute('width')) / post_text_east_textures[i].offsetWidth;
+						post_text_wrapper_east.setAttribute('height', height_meters);
 				});
 
-				var text_2_textures = document.querySelectorAll('.post-text-2-texture');
-				text_2_textures.forEach(function(elem) {
-						var text_wrapper_2 = document.getElementById('post-text-wrapper-2-' + elem.dataset.cid);
-						var height_meters = (elem.offsetHeight * text_wrapper_2.getAttribute('width')) / elem.offsetWidth;
-						text_wrapper_2.setAttribute('height', height_meters);
+				var post_text_south_east_textures = document.querySelectorAll('.post-text-south-east-texture');
+				for (var i = 0; i < post_text_south_east_textures.length; i++) {
+						var post_text_wrapper_south_east = document.getElementById('post-text-wrapper-south-east-' + post_text_south_east_textures[i].dataset.cid);
+						var height_meters = (post_text_south_east_textures[i].offsetHeight * post_text_wrapper_south_east.getAttribute('width')) / post_text_south_east_textures[i].offsetWidth;
+						post_text_wrapper_south_east.setAttribute('height', height_meters);
 				});
+
+				var post_text_south_textures = document.querySelectorAll('.post-text-south-texture');
+				for (var i = 0; i < post_text_south_textures.length; i++) {
+						var post_text_wrapper_south = document.getElementById('post-text-wrapper-south-' + post_text_south_textures[i].dataset.cid);
+						var height_meters = (post_text_south_textures[i].offsetHeight * post_text_wrapper_south.getAttribute('width')) / post_text_south_textures[i].offsetWidth;
+						post_text_wrapper_south.setAttribute('height', height_meters);
+				}
+
+				var post_text_south_west_textures = document.querySelectorAll('.post-text-south-west-texture');
+				for (var i = 0; i < post_text_south_west_textures.length; i++) {
+						var post_text_wrapper_south_west = document.getElementById('post-text-wrapper-south-west-' + post_text_south_west_textures[i].dataset.cid);
+						var height_meters = (post_text_south_west_textures[i].offsetHeight * post_text_wrapper_south_west.getAttribute('width')) / post_text_south_west_textures[i].offsetWidth;
+						post_text_wrapper_south_west.setAttribute('height', height_meters);
+				}
+
+				var post_text_west_textures = document.querySelectorAll('.post-text-west-texture');
+				for (var i = 0; i < post_text_west_textures.length; i++) {
+						var post_text_wrapper_west = document.getElementById('post-text-wrapper-west-' + post_text_west_textures[i].dataset.cid);
+						var height_meters = (post_text_west_textures[i].offsetHeight * post_text_wrapper_west.getAttribute('width')) / post_text_west_textures[i].offsetWidth;
+						post_text_wrapper_west.setAttribute('height', height_meters);
+				}
+
+				var post_text_north_west_textures = document.querySelectorAll('.post-text-north-west-texture');
+				for (var i = 0; i < post_text_north_west_textures.length; i++) {
+						var post_text_wrapper_north_west = document.getElementById('post-text-wrapper-north-west-' + post_text_north_west_textures[i].dataset.cid);
+						var height_meters = (post_text_north_west_textures[i].offsetHeight * post_text_wrapper_north_west.getAttribute('width')) / post_text_north_west_textures[i].offsetWidth;
+						post_text_wrapper_north_west.setAttribute('height', height_meters);
+				}
 
 // TODO after image is loaded, execute func
 setTimeout(function() {
-				var image_0_textures = document.querySelectorAll('.post-image-0-texture');
-				image_0_textures.forEach(function(elem) {
-						var image_wrapper_0 = document.getElementById('post-image-wrapper-0-' + elem.dataset.cid);
-						var height_meters = (elem.height * image_wrapper_0.getAttribute('width')) / elem.width;
-						image_wrapper_0.setAttribute('height', (height_meters + 0.08));
+				var post_image_north_east_textures = document.querySelectorAll('.post-image-north-east-texture');
+				for (var i = 0; i < post_image_north_east_textures.length; i++) {
+						var post_image_wrapper_north_east = document.getElementById('post-image-wrapper-north-east-' + post_image_north_east_textures[i].dataset.cid);
+						var height_meters = (post_image_north_east_textures[i].height * post_image_wrapper_north_east.getAttribute('width')) / post_image_north_east_textures[i].width;
+						post_image_wrapper_north_east.setAttribute('height', (height_meters + 0.08));
 				});
-				var image_1_textures = document.querySelectorAll('.post-image-1-texture');
-				image_1_textures.forEach(function(elem) {
-						var image_wrapper_1 = document.getElementById('post-image-wrapper-1-' + elem.dataset.cid);
-						var height_meters = (elem.height * image_wrapper_1.getAttribute('width')) / elem.width;
-						image_wrapper_1.setAttribute('height', (height_meters + 0.08));
+
+				var post_image_east_textures = document.querySelectorAll('.post-image-east-texture');
+				for (var i = 0; i < post_image_east_textures.length; i++) {
+						var post_image_wrapper_east = document.getElementById('post-image-wrapper-east-' + post_image_east_textures[i].dataset.cid);
+						var height_meters = (post_image_east_textures[i].height * post_image_wrapper_east.getAttribute('width')) / post_image_east_textures[i].width;
+						post_image_wrapper_east.setAttribute('height', (height_meters + 0.08));
 				});
-				var image_2_textures = document.querySelectorAll('.post-image-2-texture');
-				image_2_textures.forEach(function(elem) {
-						var image_wrapper_2 = document.getElementById('post-image-wrapper-2-' + elem.dataset.cid);
-						var height_meters = (elem.height * image_wrapper_2.getAttribute('width')) / elem.width;
-						image_wrapper_2.setAttribute('height', (height_meters + 0.08));
+
+				var post_image_south_east_textures = document.querySelectorAll('.post-image-south-east-texture');
+				for (var i = 0; i < post_image_south_east_textures.length; i++) {
+						var post_image_wrapper_south_east = document.getElementById('post-image-wrapper-south-east-' + post_image_south_east_textures[i].dataset.cid);
+						var height_meters = (post_image_south_east_textures[i].height * post_image_wrapper_south_east.getAttribute('width')) / post_image_south_east_textures[i].width;
+						post_image_wrapper_south_east.setAttribute('height', (height_meters + 0.08));
 				});
-				var image_3_textures = document.querySelectorAll('.post-image-3-texture');
-				image_3_textures.forEach(function(elem) {
-						var image_wrapper_3 = document.getElementById('post-image-wrapper-3-' + elem.dataset.cid);
-						var height_meters = (elem.height * image_wrapper_3.getAttribute('width')) / elem.width;
-						image_wrapper_3.setAttribute('height', (height_meters + 0.08));
+
+				var post_image_south_textures = document.querySelectorAll('.post-image-south-texture');
+				for (var i = 0; i < post_image_south_textures.length; i++) {
+						var post_image_wrapper_south = document.getElementById('post-image-wrapper-south-' + post_image_south_textures[i].dataset.cid);
+						var height_meters = (post_image_south_textures[i].height * post_image_wrapper_south.getAttribute('width')) / post_image_south_textures[i].width;
+						post_image_wrapper_south.setAttribute('height', (height_meters + 0.08));
 				});
+
+				var post_image_south_west_textures = document.querySelectorAll('.post-image-south-west-texture');
+				for (var i = 0; i < post_image_south_west_textures.length; i++) {
+						var post_image_wrapper_south_west = document.getElementById('post-image-wrapper-south-west-' + post_image_south_west_textures[i].dataset.cid);
+						var height_meters = (post_image_south_west_textures[i].height * post_image_wrapper_south_west.getAttribute('width')) / post_image_south_west_textures[i].width;
+						post_image_wrapper_south_west.setAttribute('height', (height_meters + 0.08));
+				}
+
+				var post_image_west_textures = document.querySelectorAll('.post-image-west-texture');
+				for (var i = 0; i < post_image_west_textures.length; i++) {
+						var post_image_wrapper_west = document.getElementById('post-image-wrapper-west-' + post_image_west_textures[i].dataset.cid);
+						var height_meters = (post_image_west_textures[i].height * post_image_wrapper_west.getAttribute('width')) / post_image_west_textures[i].width;
+						post_image_wrapper_west.setAttribute('height', (height_meters + 0.08));
+				}
+
+				var post_image_north_west_textures = document.querySelectorAll('.post-image-north-west-texture');
+				for (var i = 0; i < post_image_north_west_textures.length; i++) {
+						var post_image_wrapper_north_west = document.getElementById('post-image-wrapper-north-west-' + post_image_north_west_textures[i].dataset.cid);
+						var height_meters = (post_image_north_west_textures[i].height * post_image_wrapper_north_west.getAttribute('width')) / post_image_north_west_textures[i].width;
+						post_image_wrapper_north_west.setAttribute('height', (height_meters + 0.08));
+				}
+
 }, 3000);
     })();
     </script>
