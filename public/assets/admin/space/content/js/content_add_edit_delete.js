@@ -7,7 +7,6 @@ jQuery(document).ready(function($) {
     			'autolink lists link charmap textcolor emoticons paste'
   			],
 				paste_as_text: true,
-				/*block_formats: 'Paragraph=p;Heading 1=h1;Heading 2=h2;Heading 3=h3',*/
 				content_css: 'https://fonts.googleapis.com/css?family=Bangers|Bungee+Shade|Codystar|Dr+Sugiyama|Indie+Flower|Lobster|Pacifico|Skranji',
 				fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 26pt 28pt 30pt 32pt 34pt 36pt 38pt 40pt 42pt 44pt 46pt 48pt 50pt 52pt 54pt 56pt 58pt 60pt 62pt 64pt 66pt 68pt 70pt 72pt 74pt 76pt 78pt 80pt 82pt 84pt 86pt 88pt 90pt 92pt 94pt 96pt 98pt 100pt 102pt 104pt 106pt 108pt 110pt 112pt 114pt 116pt 118pt 120pt 122pt 124pt 126pt 128pt 130pt',
 				toolbar: 'insert | undo redo | fontselect fontsizeselect emoticons | bold italic color forecolor backcolor  | alignleft aligncenter alignright alignjustify | bullist outdent indent | removeformat',
@@ -27,7 +26,6 @@ jQuery(document).ready(function($) {
     			'autolink lists link charmap textcolor emoticons paste'
   			],
 				paste_as_text: true,
-				/*block_formats: 'Paragraph=p;Heading 1=h1;Heading 2=h2;Heading 3=h3',*/
 				content_css: 'https://fonts.googleapis.com/css?family=Bangers|Bungee+Shade|Codystar|Dr+Sugiyama|Indie+Flower|Lobster|Pacifico|Skranji',
 				fontsize_formats: '8pt 10pt 12pt 14pt 16pt 18pt 20pt 22pt 24pt 26pt 28pt 30pt 32pt 34pt 36pt 38pt 40pt 42pt 44pt 46pt 48pt 50pt 52pt 54pt 56pt 58pt 60pt 62pt 64pt 66pt 68pt 70pt 72pt 74pt 76pt 78pt 80pt 82pt 84pt 86pt 88pt 90pt 92pt 94pt 96pt 98pt 100pt 102pt 104pt 106pt 108pt 110pt 112pt 114pt 116pt 118pt 120pt 122pt 124pt 126pt 128pt 130pt',
 				toolbar: 'insert | undo redo | fontselect fontsizeselect emoticons | bold italic color forecolor backcolor  | alignleft aligncenter alignright alignjustify | bullist outdent indent | removeformat',
