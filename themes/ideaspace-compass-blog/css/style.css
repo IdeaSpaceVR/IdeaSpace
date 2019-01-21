@@ -52,7 +52,7 @@ body {
 		text-align: center;
 }
 
-.post-text-0-texture {
+.post-text-north-east-texture {
     width: 512px;
     position: fixed;
     top: 0;
@@ -60,7 +60,7 @@ body {
     z-index: -2;
 }
 
-.post-text-1-texture {
+.post-text-east-texture {
     width: 512px;
     position: fixed;
     top: 0;
@@ -68,7 +68,7 @@ body {
     z-index: -2;
 }
 
-.post-text-2-texture {
+.post-text-south-east-texture {
     width: 512px;
     position: fixed;
     top: 0;
@@ -76,4 +76,35 @@ body {
     z-index: -2;
 }
 
+.post-text-south-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.post-text-south-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.post-text-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.post-text-north-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
 
