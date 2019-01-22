@@ -196,7 +196,7 @@
 				</a-entity>
 
 
-<a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen" position="0 0 -1"></a-entity>
+<!--a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen" position="0 0 -1"></a-entity//-->
 
 
 		</a-scene>
@@ -238,7 +238,7 @@
             @endif
 
             @if ($blog_post['post-display-east']['#value'] == 'text')
-                <div id="post-text-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-display-east-texture" style="background-color:#FFFFFF">
+                <div id="post-text-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-east-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-east']['#value'] !!}
                 </div>
             @endif
