@@ -50,6 +50,8 @@
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-navigation-up.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-navigation-down.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-link-hover.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-blog-post-nav-up.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-blog-post-nav-down.js') }}"></script>
 		
 		<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
 </head>

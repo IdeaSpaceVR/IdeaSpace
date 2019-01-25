@@ -11,6 +11,7 @@
 				id="navigation-arrow-up-{{ $blog_post['post-title-north']['#content-id'] }}"
 				class="navigation-arrow-up collidable"
 				isvr-navigation-up="cid: {{ $blog_post['post-title-north']['#content-id'] }}"
+				isvr-blog-post-nav-up="id: navigation-arrow-up-{{ $blog_post['post-title-north']['#content-id'] }}"
 				geometry="primitive: plane; width: 2; height: 2"
 				position="-1.15 0 -0.001" 
 				material="shader: html; target: #navigation-arrow-up-texture; transparent: true; ratio: width">
@@ -29,6 +30,7 @@
 				id="navigation-arrow-down-{{ $blog_post['post-title-north']['#content-id'] }}"
 				class="navigation-arrow-down collidable"
 				isvr-navigation-down="cid: {{ $blog_post['post-title-north']['#content-id'] }}"
+				isvr-blog-post-nav-down="id: navigation-arrow-down-{{ $blog_post['post-title-north']['#content-id'] }}"
 				geometry="primitive: plane; width: 2; height: 2"
 				position="1.15 0 -0.001" 
 				material="shader: html; target: #navigation-arrow-down-texture; transparent: true; ratio: width">

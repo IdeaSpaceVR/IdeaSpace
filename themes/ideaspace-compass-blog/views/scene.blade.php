@@ -208,8 +208,14 @@
 				<div id="navigation-arrow-up-texture" class="navigation-arrow-texture">
 						<i class="far fa-arrow-alt-circle-up" style="color:#ffffff;font-size:50pt;"></i>
 				</div>
+				<div id="navigation-arrow-up-hover-texture" class="navigation-arrow-texture">
+						<i class="far fa-arrow-alt-circle-up" style="color:#0080e5;font-size:50pt;"></i>
+				</div>
 				<div id="navigation-arrow-down-texture" class="navigation-arrow-texture">
 						<i class="far fa-arrow-alt-circle-down" style="color:#ffffff;font-size:50pt;"></i>
+				</div>
+				<div id="navigation-arrow-down-hover-texture" class="navigation-arrow-texture">
+						<i class="far fa-arrow-alt-circle-down" style="color:#0080e5;font-size:50pt;"></i>
 				</div>
 				<div id="navigation-arrow-up-inactive-texture" class="navigation-arrow-texture">
 						<i class="far fa-arrow-alt-circle-up" style="color:#3a3a3a;font-size:50pt;"></i>
