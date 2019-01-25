@@ -60,12 +60,32 @@ body {
     z-index: -2;
 }
 
+.post-link-north-east-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
 .post-text-east-texture {
     width: 512px;
     position: fixed;
     top: 0;
     left: 0;
     z-index: -2;
+}
+
+.post-link-east-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
 }
 
 .post-text-south-east-texture {
@@ -76,12 +96,32 @@ body {
     z-index: -2;
 }
 
+.post-link-south-east-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
 .post-text-south-texture {
     width: 512px;
     position: fixed;
     top: 0;
     left: 0;
     z-index: -2;
+}
+
+.post-link-south-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
 }
 
 .post-text-south-west-texture {
@@ -92,6 +132,16 @@ body {
     z-index: -2;
 }
 
+.post-link-south-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
 .post-text-west-texture {
     width: 512px;
     position: fixed;
@@ -100,11 +150,31 @@ body {
     z-index: -2;
 }
 
+.post-link-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
+}
+
 .post-text-north-west-texture {
     width: 512px;
     position: fixed;
     top: 0;
     left: 0;
     z-index: -2;
+}
+
+.post-link-north-west-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		font-size: 32px;
+		font-family: Arial, Helvetica, sans-serif;
 }
 

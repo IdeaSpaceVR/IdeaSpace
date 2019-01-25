@@ -51,9 +51,8 @@
 						@php
 						$meters_between_posts = 10;
 
-						function getCirclePoints($number_points) {
+						function getCirclePoints($number_points, $radius) {
 							$p = [];
-							$radius = 3;
 							$center = ['x' => 0, 'z' => 0];
     					$slice = 2 * pi() / $number_points;
     					for ($i = 0; $i < $number_points; $i++) {
@@ -65,7 +64,7 @@
 							return $p;
 						}
 
-						$positions = getCirclePoints(8);
+						$positions = getCirclePoints(8, 3);
 						$post_counter = 0;
 						@endphp
 
@@ -235,11 +234,27 @@
                 <div id="post-text-north-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-north-east-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-north-east']['#value'] !!}
                 </div>
+            @elseif ($blog_post['post-display-north-east']['#value'] == 'link')
+                <div id="post-link-north-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-north-east-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-north-east']['#value']) && trim($blog_post['post-link-text-north-east']['#value']) != '')
+                		{!! $blog_post['post-link-text-north-east']['#value'] !!}
+								@elseif (isset($blog_post['post-link-north-east']['#value']) && trim($blog_post['post-link-north-east']['#value']) != '')
+                		{!! $blog_post['post-link-north-east']['#value'] !!}
+								@endif
+                </div>
             @endif
 
             @if ($blog_post['post-display-east']['#value'] == 'text')
                 <div id="post-text-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-east-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-east']['#value'] !!}
+                </div>
+            @elseif ($blog_post['post-display-east']['#value'] == 'link')
+                <div id="post-link-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-east-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-east']['#value']) && trim($blog_post['post-link-text-east']['#value']) != '')
+                		{!! $blog_post['post-link-text-east']['#value'] !!}
+								@elseif (isset($blog_post['post-link-east']['#value']) && trim($blog_post['post-link-east']['#value']) != '')
+                		{!! $blog_post['post-link-east']['#value'] !!}
+								@endif
                 </div>
             @endif
 
@@ -247,11 +262,27 @@
                 <div id="post-text-south-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-east-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-south-east']['#value'] !!}
                 </div>
+            @elseif ($blog_post['post-display-south-east']['#value'] == 'link')
+                <div id="post-link-south-east-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-south-east-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-south-east']['#value']) && trim($blog_post['post-link-text-south-east']['#value']) != '')
+                		{!! $blog_post['post-link-text-south-east']['#value'] !!}
+								@elseif (isset($blog_post['post-link-south-east']['#value']) && trim($blog_post['post-link-south-east']['#value']) != '')
+                		{!! $blog_post['post-link-south-east']['#value'] !!}
+								@endif
+                </div>
             @endif
 
             @if ($blog_post['post-display-south']['#value'] == 'text')
                 <div id="post-text-south-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-south']['#value'] !!}
+                </div>
+            @elseif ($blog_post['post-display-south']['#value'] == 'link')
+                <div id="post-link-south-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-south-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-south']['#value']) && trim($blog_post['post-link-text-south']['#value']) != '')
+                		{!! $blog_post['post-link-text-south']['#value'] !!}
+								@elseif (isset($blog_post['post-link-south']['#value']) && trim($blog_post['post-link-south']['#value']) != '')
+                		{!! $blog_post['post-link-south']['#value'] !!}
+								@endif
                 </div>
             @endif
 
@@ -259,17 +290,41 @@
                 <div id="post-text-south-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-south-west-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-south-west']['#value'] !!}
                 </div>
+            @elseif ($blog_post['post-display-south-west']['#value'] == 'link')
+                <div id="post-link-south-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-south-west-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-south-west']['#value']) && trim($blog_post['post-link-text-south-west']['#value']) != '')
+                		{!! $blog_post['post-link-text-south-west']['#value'] !!}
+								@elseif (isset($blog_post['post-link-south-west']['#value']) && trim($blog_post['post-link-south-west']['#value']) != '')
+                		{!! $blog_post['post-link-south-west']['#value'] !!}
+								@endif
+                </div>
             @endif
 
             @if ($blog_post['post-display-west']['#value'] == 'text')
                 <div id="post-text-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-west-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-west']['#value'] !!}
                 </div>
+            @elseif ($blog_post['post-display-west']['#value'] == 'link')
+                <div id="post-link-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-west-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-west']['#value']) && trim($blog_post['post-link-text-west']['#value']) != '')
+                		{!! $blog_post['post-link-text-west']['#value'] !!}
+								@elseif (isset($blog_post['post-link-west']['#value']) && trim($blog_post['post-link-west']['#value']) != '')
+                		{!! $blog_post['post-link-west']['#value'] !!}
+								@endif
+                </div>
             @endif
 
             @if ($blog_post['post-display-north-west']['#value'] == 'text')
                 <div id="post-text-north-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-text-north-west-texture" style="background-color:#FFFFFF">
                 {!! $blog_post['post-text-north-west']['#value'] !!}
+                </div>
+            @elseif ($blog_post['post-display-north-west']['#value'] == 'link')
+                <div id="post-link-north-west-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-link-north-west-texture" style="background-color:#FFFFFF">
+								@if (isset($blog_post['post-link-text-north-west']['#value']) && trim($blog_post['post-link-text-north-west']['#value']) != '')
+                		{!! $blog_post['post-link-text-north-west']['#value'] !!}
+								@elseif (isset($blog_post['post-link-north-west']['#value']) && trim($blog_post['post-link-north-west']['#value']) != '')
+                		{!! $blog_post['post-link-north-west']['#value'] !!}
+								@endif
                 </div>
             @endif
         @endforeach
