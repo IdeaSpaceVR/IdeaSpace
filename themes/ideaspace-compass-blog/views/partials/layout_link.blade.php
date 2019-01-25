@@ -20,7 +20,7 @@
 		isvr-link-hover="id: post-link-wrapper2-{{ $id }}-{{ $blog_post['post-text-' . $id]['#content-id'] }}"
 		position="{{ $position['x'] }} 0 @if ($position['z'] < 0) {{ ($position['z'] + 0.001) }} @else {{ ($position['z'] - 0.001) }} @endif"
 		look-at="0 0 0"
-		color="#FFFFFF"
+		color="{{ $blog_post['post-text-image-background-color-' . $id]['#value'] }}"
 		width="1.95"
 		height="0.45"
 		top-left-radius="0.06"

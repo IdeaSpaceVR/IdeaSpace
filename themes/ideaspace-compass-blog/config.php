@@ -31,7 +31,7 @@ return [
           '#required' => false,
         ],
 
-				'environment' => [
+				/*'environment' => [
           '#label' => 'Environment',
           '#description' => 'Select an environment.',
           '#help' => 'Select an environment.',
@@ -72,7 +72,7 @@ return [
 							'none' => 'None', 
 					],
           '#default_value' => 'walkernoise',
-        ],
+        ],*/
 
         'background-color' => [
           '#label' => 'Background Color',
@@ -83,7 +83,7 @@ return [
           '#required' => false,
         ],
 
-				'photosphere' => [
+				/*'photosphere' => [
           '#label' => '360 Image Panorama Background',
           '#description' => 'Upload a photo sphere image.',
           '#help' => 'Photo sphere image in equirectangular projection format.',
@@ -91,9 +91,9 @@ return [
           '#content-preview-image' => true,
           '#required' => false,
           '#file-extension' => ['jpg', 'png'],
-        ],
+        ],*/
 
-        'a-painter-painting-url' => [
+        /*'a-painter-painting-url' => [
           '#label' => 'A-Painter Painting URL',
           '#description' => 'Enter the URL of your painting.',
           '#help' => 'Make a painting in A-Painter (<a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>) and enter the URL of your saved painting. Example: https://ucarecdn.com/1349e661-2fc2-4e35-baba-95daf48c4283/',
@@ -101,7 +101,7 @@ return [
           '#contentformat' => 'text',
           '#maxlength' => 1024,
           '#required' => false,
-        ],
+        ],*/
 
 				'antialiasing' => [
           '#label' => 'Antialiasing',
@@ -236,6 +236,16 @@ return [
           '#field-group' => 'north-east',
         ],
 
+        'post-text-image-background-color-north-east' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
+          '#field-group' => 'north-east',
+        ],
+
 
         'post-display-east' => [
           '#label' => 'Display',
@@ -295,6 +305,16 @@ return [
           '#contentformat' => 'text',
           '#maxlength' => 65,
           '#required' => false,
+          '#field-group' => 'east',
+        ],
+
+        'post-text-image-background-color-east' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
           '#field-group' => 'east',
         ],
 
@@ -360,6 +380,16 @@ return [
           '#field-group' => 'south-east',
         ],
 
+        'post-text-image-background-color-south-east' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
+          '#field-group' => 'south-east',
+        ],
+
 
         'post-display-south' => [
           '#label' => 'Display',
@@ -419,6 +449,16 @@ return [
           '#contentformat' => 'text',
           '#maxlength' => 65,
           '#required' => false,
+          '#field-group' => 'south',
+        ],
+
+        'post-text-image-background-color-south' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
           '#field-group' => 'south',
         ],
 
@@ -484,6 +524,16 @@ return [
           '#field-group' => 'south-west',
         ],
 
+        'post-text-image-background-color-south-west' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
+          '#field-group' => 'south-west',
+        ],
+
 
         'post-display-west' => [
           '#label' => 'Display',
@@ -546,6 +596,16 @@ return [
           '#field-group' => 'west',
         ],
 
+        'post-text-image-background-color-west' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
+          '#field-group' => 'west',
+        ],
+
 
         'post-display-north-west' => [
           '#label' => 'Display',
@@ -605,6 +665,16 @@ return [
           '#contentformat' => 'text',
           '#maxlength' => 65,
           '#required' => false,
+          '#field-group' => 'north-west',
+        ],
+
+        'post-text-image-background-color-north-west' => [
+          '#label' => 'Background Color',
+          '#description' => 'Select a background color.',
+          '#help' => 'Select a background color.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => true,
           '#field-group' => 'north-west',
         ],
 

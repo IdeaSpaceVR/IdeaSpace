@@ -1,7 +1,7 @@
 <a-rounded
     id="post-text-wrapper-{{ $id }}-{{ $blog_post['post-text-' . $id]['#content-id'] }}"
     position="{{ $position['x'] }} 0 {{ $position['z'] }}"
-    color="#FFFFFF"
+    color="{{ $blog_post['post-text-image-background-color-' . $id]['#value'] }}"
     look-at="0 0 0"
     width="2"
     height="3"
