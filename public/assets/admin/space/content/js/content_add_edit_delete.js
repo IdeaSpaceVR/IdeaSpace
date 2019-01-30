@@ -15,7 +15,7 @@ jQuery(document).ready(function($) {
 						font_formats: "Andale Mono=andale mono,times;Arial=arial,helvetica,sans-serif;Arial Black=arial black,avant garde;Bangers='Bangers',arial,helvetica,sans-serif;Book Antiqua=book antiqua,palatino;Bungee Shade='Bungee Shade',arial,helvetica,sans-serif;Codystar='Codystar',arial,helvetica,sans-serif;Comic Sans MS=comic sans ms,sans-serif;Courier New=courier new,courier;Dr Sugiyama='Dr Sugiyama',arial,helvetica,sans-serif;Georgia=georgia,palatino;Helvetica=helvetica;Indie Flower='Indie Flower',arial,helvetica,sans-serif;Impact=impact,chicago;Lobster='Lobster',arial,helvetica,sans-serif;Pacifico='Pacifico',arial,helvetica,sans-serif;Skranji='Skranji',arial,helvetica,sans-serif;Symbol=symbol;Tahoma=tahoma,arial,helvetica,sans-serif;Terminal=terminal,monaco;Times New Roman=times new roman,times;Verdana=verdana,geneva",
 						setup : function(ed) {
 							ed.on('init', function() {
-								this.execCommand("fontSize", false, "20pt");
+								this.execCommand("fontSize", false, "24pt");
 							});
 						}
 				}
