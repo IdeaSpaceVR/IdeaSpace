@@ -2,6 +2,8 @@
 
 - New feature: field groups: group fields together in a collapsible box; allows to keep a better overview if there are many fields
 - Bug fix: positioning items on z-axis in content type 'position'  was not working properly
+- Fonts helper: allow to configure webfont loader; helps to preload fonts
+- New theme: IdeaSpace Compass Blog; publish blog posts in VR (works with mobile devices and desktop PCs too)
 
 # 1.1.5
 
