@@ -24,11 +24,11 @@
     <meta property="og:type" content="website" />
     <meta property="og:url" content="{{ \Request::url() }}" />
 
-		@php 
-		if (function_exists('embed_fonts')) {
-			embed_fonts(); 
-		}
-		@endphp
+		@php
+    if (function_exists('embed_fonts')) {
+      embed_fonts(true);
+    }
+    @endphp
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
     <script src="{{ url($theme_dir . '/js/aframe/aframe-v0.8.2.min.js') }}"></script>
@@ -45,6 +45,8 @@
 <script src="{{ url($theme_dir . '/js/aframe-log-component.min.js') }}"></script>
 <!--script src="{{ url($theme_dir . '/js/aframe-super-hands-component/super-hands.min.js') }}"></script//-->
 
+    <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-helpers.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-load-posts.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-spin.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-navigation-up.js') }}"></script>

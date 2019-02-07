@@ -1,6 +1,6 @@
-
 <a-entity
 		id="post-title-{{ $blog_post['post-title-north']['#content-id'] }}"
+		class="post-title"
 		data-cid="{{ $blog_post['post-title-north']['#content-id'] }}"
 		geometry="primitive: plane; width: 2"
 		position="{{ $position['x'] }} 0 {{ $position['z'] }}" 
@@ -25,7 +25,7 @@
 				material="shader: html; target: #navigation-arrow-up-inactive-texture; transparent: true; ratio: width">
 		</a-entity>
 		@endif
-		@if (sizeof($content['blog-posts']) > $post_counter)
+		@if ((count($content['blog-posts']) - 1) > $post_counter)
 		<a-entity
 				id="navigation-arrow-down-{{ $blog_post['post-title-north']['#content-id'] }}"
 				class="navigation-arrow-down collidable"

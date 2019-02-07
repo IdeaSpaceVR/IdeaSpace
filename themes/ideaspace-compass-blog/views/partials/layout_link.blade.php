@@ -28,6 +28,7 @@
 		bottom-left-radius="0.06"
 		bottom-right-radius="0.06">		
 		<a-entity
+				class="post-link"
 				position="0 0 0.001"
 				material="shader: html; target: #post-link-{{ $id }}-texture-{{ $blog_post['post-link-' . $id]['#content-id'] }}; transparent: true; ratio: width"
 				@if (isset($blog_post['post-link-' . $id]['#value']) && trim($blog_post['post-link-' . $id]['#value']) != '')
