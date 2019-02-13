@@ -322,7 +322,7 @@ var posts = {
 						title.appendChild(nav_up);
 				}
 
-				if ((total_posts - 1) > post_counter && next_page_url != null) {
+				if ((total_posts - 1) > post_counter) {
 						var nav_down = document.createElement('a-entity');			
 						nav_down.id = 'navigation-arrow-down-' + cid;
 						nav_down.className = 'navigation-arrow-down collidable';
