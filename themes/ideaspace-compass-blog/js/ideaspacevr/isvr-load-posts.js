@@ -1,21 +1,22 @@
+/* global */
 var posts = {
 
-		load: function (url, meters, counter, total_posts, positions) {
+		load: function (next_page_url, meters, posts_per_page, total_posts, positions, post_counter) {
 
-				this.url = url;
+				this.next_page_url = next_page_url;
 				this.meters_between_posts = meters;
-				this.post_counter = counter;
+				this.posts_per_page = posts_per_page;
 				this.total_posts = total_posts;
 				this.positions = positions;
+				this.post_counter = post_counter;
 
 				this.xmlhttp = new XMLHttpRequest();
 				this.xmlhttp.onreadystatechange = this.responseHandler.bind(this);
-				this.xmlhttp.open('GET', this.url, true);
+				this.xmlhttp.open('GET', this.next_page_url, true);
 				this.xmlhttp.send();
 
 		}, /* load */
 
-// http://dev2.ideaspacevr.org/testsdsda/preview/content/blog-posts?per-page=3&page=2
 
 		responseHandler: function () {
 
@@ -46,7 +47,7 @@ var posts = {
 
 
 								/* blog post title textures and entities */	
-								this.createBlogPostTitleContent(cid, this.positions, textures, post, obj, i, this.post_counter, this.total_posts);								
+								this.createBlogPostTitleContent(cid, this.positions, textures, post, obj, i, this.post_counter, this.total_posts, obj['next_page_url'], this.meters_between_posts, this.posts_per_page);								
 
 
 								/* blog post textures and entities */
@@ -103,7 +104,7 @@ var posts = {
 						var texture = document.createElement('div');
 						texture.id = 'post-text-' + id + '-texture-' + cid;
 						texture.dataset.cid = cid;
-						texture.className = 'post-text-' + id + '-texture';
+						texture.className = 'post-text-' + id + '-texture post-text-texture';
 						texture.style.backgroundColor = obj['blog-posts'][i]['post-text-image-background-color-' + id]['#value'];
 						texture.innerHTML = obj['blog-posts'][i]['post-text-' + id]['#value'];
 						textures.appendChild(texture);
@@ -138,7 +139,7 @@ var posts = {
 						var texture = document.createElement('div');
 						texture.id = 'post-link-' + id + '-texture-' + cid;
 						texture.dataset.cid = cid;
-						texture.className = 'post-link-' + id + '-texture';
+						texture.className = 'post-link-' + id + '-texture post-link-texture';
 						texture.style.backgroundColor = obj['blog-posts'][i]['post-text-image-background-color-' + id]['#value'];
 						if (obj['blog-posts'][i]['post-link-text-' + id]['#value'].trim() != '') {
 								texture.innerHTML = obj['blog-posts'][i]['post-link-text-' + id]['#value'];
@@ -150,7 +151,7 @@ var posts = {
 						texture = document.createElement('div');
 						texture.id = 'post-link-' + id + '-texture-' + cid + '-active';
 						texture.dataset.cid = cid;
-						texture.className = 'post-link-' + id + '-texture';
+						texture.className = 'post-link-' + id + '-texture post-link-texture';
 						texture.style.color = '#0080e5'; 
 						texture.style.backgroundColor = obj['blog-posts'][i]['post-text-image-background-color-' + id]['#value'];
 						if (obj['blog-posts'][i]['post-link-text-' + id]['#value'].trim() != '') {
@@ -216,7 +217,7 @@ var posts = {
 										var texture = document.createElement('img');
 										texture.id = 'post-image-' + id + '-texture-' + cid;
 										texture.dataset.cid = cid;
-										texture.className = 'post-image-' + id + '-texture';
+										texture.className = 'post-image-' + id + '-texture post-image-texture';
 										texture.src = this.src;
 										texture.crossOrigin = 'anonymous';
 										textures.appendChild(texture);
@@ -278,7 +279,7 @@ var posts = {
 		}, /* createBlogPostContent */
 
 
-		createBlogPostTitleContent: function (cid, positions, textures, post, obj, i, post_counter, total_posts) {
+		createBlogPostTitleContent: function (cid, positions, textures, post, obj, i, post_counter, total_posts, next_page_url, meters, posts_per_page) {
 
 				var title_texture = document.createElement('div');
 				title_texture.id = 'post-title-texture-' + cid;
@@ -304,8 +305,7 @@ var posts = {
 						var nav_up = document.createElement('a-entity');			
 						nav_up.id = 'navigation-arrow-up-' + cid;
 						nav_up.className = 'navigation-arrow-up collidable';
-						nav_up.setAttribute('isvr-navigation-up', { cid: cid });
-						nav_up.setAttribute('isvr-blog-post-nav-up', { id: 'navigation-arrow-up-' + cid });
+						nav_up.setAttribute('isvr-blog-post-nav-up', { id: 'navigation-arrow-up-' + cid, cid: cid });
 						nav_up.setAttribute('geometry', { primitive: 'plane', width: 2, height: 2 });
 						nav_up.setAttribute('position', { x: -1.15, y: 0, z: -0.001 });
 						nav_up.setAttribute('material', { shader: 'html', target: '#navigation-arrow-up-texture', transparent: true, ratio: 'width' });
@@ -322,12 +322,11 @@ var posts = {
 						title.appendChild(nav_up);
 				}
 
-				if ((total_posts - 1) > post_counter) {
+				if ((total_posts - 1) > post_counter && next_page_url != null) {
 						var nav_down = document.createElement('a-entity');			
 						nav_down.id = 'navigation-arrow-down-' + cid;
 						nav_down.className = 'navigation-arrow-down collidable';
-						nav_down.setAttribute('isvr-navigation-down', { cid: cid });
-						nav_down.setAttribute('isvr-blog-post-nav-down', { id: 'navigation-arrow-down-' + cid });
+						nav_down.setAttribute('isvr-blog-post-nav-down', { id: 'navigation-arrow-down-' + cid, cid: cid, next_page_url: next_page_url, meters: meters, posts_per_page: posts_per_page, total_posts: total_posts, post_counter: post_counter  });
 						nav_down.setAttribute('geometry', { primitive: 'plane', width: 2, height: 2 });
 						nav_down.setAttribute('position', { x: 1.15, y: 0, z: -0.001 });
 						nav_down.setAttribute('material', { shader: 'html', target: '#navigation-arrow-down-texture', transparent: true, ratio: 'width' });
