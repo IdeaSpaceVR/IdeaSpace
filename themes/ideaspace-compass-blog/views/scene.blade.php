@@ -4,7 +4,7 @@
 
 @section('scene')
 
-		<a-scene debug isvr-scene light="defaultLightsEnabled: false" @if (isset($content['general-settings'][0]) && $content['general-settings'][0]['antialiasing']['#value'] == 'on') antialias="true" @endif>
+		<a-scene debug isvr-scene light="defaultLightsEnabled: false" @if (isset($content['general-settings'][0]) && $content['general-settings'][0]['antialiasing']['#value'] == 'off') antialias="off" @else antialias="on" @endif>
 
         <a-assets>
             <audio id="audio-click" src="{{ url($theme_dir . '/assets/audio/ui_click0.ogg') }}" response-type="arraybuffer" crossorigin></audio>
@@ -14,7 +14,6 @@
 				<a-entity light="type: ambient; color: #FFF"></a-entity>
 			
 				@php
-				$points = null;
 				/* number of posts to render on page load */
 				$max_posts = 3; 
 				@endphp
@@ -168,7 +167,7 @@
 				</a-entity>
 
 
-				<a-entity class="laser-controls-wrapper" @if (!is_null($points)) look-at="-{{ $points[0]['x'] }} 0 0" @endif>
+				<a-entity class="laser-controls-wrapper" @if (!is_null($positions)) look-at="-{{ $positions[0]['x'] }} 0 0" @endif>
 				</a-entity>
 
 

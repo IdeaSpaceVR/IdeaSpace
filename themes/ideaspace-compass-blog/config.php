@@ -31,49 +31,6 @@ return [
           '#required' => false,
         ],
 
-				/*'environment' => [
-          '#label' => 'Environment',
-          '#description' => 'Select an environment.',
-          '#help' => 'Select an environment.',
-          '#type' => 'options-select',
-          '#required' => true,
-          '#options' => [
-							'none' => 'None', 
-							'environment-hills' => 'Environment with hills', 
-							'environment-mountains' => 'Environment with mountains',
-							'environment-trees' => 'Environment with trees',
-							'environment-arches' => 'Environment with arches',
-							'environment-tron' => 'Tron',
-							'background-color' => 'Background Color',
-							'photosphere' => '360 Image Panorama Background',
-					],
-          '#default_value' => 'none',
-        ],
-
-        'environment-ground-color' => [
-          '#label' => 'Environment Ground Color',
-          '#description' => 'Select a ground color.',
-          '#help' => 'Select a ground color.',
-          '#type' => 'color',
-					'#default_value' => '#CCCCCC',
-          '#required' => false,
-        ],
-
-        'environment-ground-texture' => [
-          '#label' => 'Environment Ground Texture',
-          '#description' => 'Select a ground texture.',
-          '#help' => 'Select a ground texture.',
-          '#type' => 'options-select',
-          '#required' => false,
-          '#options' => [
-							'walkernoise' => 'Walkernoise',
-							'checkerboard' => 'Checkerboard',
-							'squares' => 'Squares',
-							'none' => 'None', 
-					],
-          '#default_value' => 'walkernoise',
-        ],*/
-
         'background-color' => [
           '#label' => 'Background Color',
           '#description' => 'Select a background color.',
@@ -83,26 +40,6 @@ return [
           '#required' => false,
         ],
 
-				/*'photosphere' => [
-          '#label' => '360 Image Panorama Background',
-          '#description' => 'Upload a photo sphere image.',
-          '#help' => 'Photo sphere image in equirectangular projection format.',
-          '#type' => 'photosphere',
-          '#content-preview-image' => true,
-          '#required' => false,
-          '#file-extension' => ['jpg', 'png'],
-        ],*/
-
-        /*'a-painter-painting-url' => [
-          '#label' => 'A-Painter Painting URL',
-          '#description' => 'Enter the URL of your painting.',
-          '#help' => 'Make a painting in A-Painter (<a href="https://aframe.io/a-painter/" target="_blank" style="color:#e42b5a;text-decoration:underline">https://aframe.io/a-painter/</a>) and enter the URL of your saved painting. Example: https://ucarecdn.com/1349e661-2fc2-4e35-baba-95daf48c4283/',
-          '#type' => 'textfield',
-          '#contentformat' => 'text',
-          '#maxlength' => 1024,
-          '#required' => false,
-        ],*/
-
 				'antialiasing' => [
           '#label' => 'Antialiasing',
           '#description' => 'Set antialiasing.',
@@ -110,7 +47,7 @@ return [
           '#type' => 'options-select',
           '#options' => ['off' => 'Off', 'on' => 'On'],
           '#required' => true,
-          '#default_value' => 'off',
+          '#default_value' => 'on',
         ],
 
       ],
