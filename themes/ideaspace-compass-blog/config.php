@@ -61,6 +61,15 @@ return [
           '#required' => false,
         ],
 
+        'blog-audio' => [
+          '#label' => 'Sound',
+          '#description' => 'Add background sound to your blog.',
+          '#help' => 'Add background sound to your post. Piano by <a href="https://freesound.org/people/ShadyDave/sounds/262259/" target="_blank">ShadyDave</a>. License: <a href="https://creativecommons.org/licenses/by-nc/3.0/" target="_blank">Creative Commons</a>',
+          '#type' => 'options-select',
+          '#options' => ['birds-0' => 'Birds', 'piano-0' => 'Piano'],
+          '#required' => false,
+        ],
+
 				'antialiasing' => [
           '#label' => 'Antialiasing',
           '#description' => 'Set antialiasing.',
@@ -122,15 +131,6 @@ return [
           '#rows' => 10,
           '#contentformat' => 'html/text',
           '#required' => true,
-        ],
-
-        'post-audio' => [
-          '#label' => 'Sound',
-          '#description' => 'Add a background sound to your post.',
-          '#help' => 'Add a background sound to your post.',
-          '#type' => 'options-select',
-          '#options' => ['birds' => 'Birds', 'ocean' => 'Ocean', 'street' => 'Street'],
-          '#required' => false,
         ],
 
         'post-display-north-east' => [

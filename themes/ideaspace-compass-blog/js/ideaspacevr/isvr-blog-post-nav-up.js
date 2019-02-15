@@ -15,6 +15,8 @@ AFRAME.registerComponent('isvr-blog-post-nav-up', {
 
 				var self = this;
 
+				var soundClick = document.querySelector('#sound-click');
+
 				this.el.addEventListener('mouseenter', function(evt) {
 						document.querySelector('#' + self.data.id).setAttribute('material', 'target', '#navigation-arrow-up-hover-texture');
         });
@@ -24,6 +26,10 @@ AFRAME.registerComponent('isvr-blog-post-nav-up', {
         });
 
 				this.el.addEventListener('click', function() {
+
+						soundClick.components.sound.stopSound();
+            soundClick.components.sound.playSound();
+
             document.querySelector('#posts-wrapper').emit('nav_up_' + self.data.cid);
         });
 		}

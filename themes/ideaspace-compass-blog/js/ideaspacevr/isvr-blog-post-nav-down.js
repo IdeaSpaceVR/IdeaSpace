@@ -30,6 +30,8 @@ AFRAME.registerComponent('isvr-blog-post-nav-down', {
 
 				var self = this;
 
+				var soundClick = document.querySelector('#sound-click');
+
 				//self.prev_post_counter = 1;
 
 				this.el.addEventListener('mouseenter', function(evt) {
@@ -60,6 +62,9 @@ AFRAME.registerComponent('isvr-blog-post-nav-down', {
 										posts_loaded.push(self.data.post_counter);
 								}
 						}
+
+						soundClick.components.sound.stopSound();
+            soundClick.components.sound.playSound();
 
             document.getElementById('posts-wrapper').emit('nav_down_' + self.data.cid);
         });

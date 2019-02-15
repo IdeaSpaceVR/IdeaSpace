@@ -4,12 +4,26 @@
 
 @section('scene')
 
-		<a-scene debug isvr-scene light="defaultLightsEnabled: false" @if (isset($content['general-settings'][0]) && $content['general-settings'][0]['antialiasing']['#value'] == 'off') antialias="off" @else antialias="on" @endif>
+		<a-scene 
+				@if (isset($content['general-settings'][0]['blog-audio']) && $content['general-settings'][0]['blog-audio']['#value'] == 'piano-0') 
+						isvr-scene="sound: {{ url($theme_dir . '/assets/audio/262259__shadydave__snowfall-final.mp3') }}"
+				@elseif (isset($content['general-settings'][0]['blog-audio']) && $content['general-settings'][0]['blog-audio']['#value'] == 'birds-0') 
+						isvr-scene="sound: {{ url($theme_dir . '/assets/audio/birds-0.mp3') }}"
+				@else 
+						isvr-scene="sound: none"
+				@endif 
+				light="defaultLightsEnabled: false" 
+				@if (isset($content['general-settings'][0]) && $content['general-settings'][0]['antialiasing']['#value'] == 'off') 
+						antialias="off" 
+				@else 
+						antialias="on" 
+				@endif>
 
         <a-assets>
             <audio id="audio-click" src="{{ url($theme_dir . '/assets/audio/ui_click0.ogg') }}" response-type="arraybuffer" crossorigin></audio>
 				</a-assets>
 
+				<a-entity id="sound-click" sound="src: #audio-click"></a-entity>
 
 				<a-entity light="type: ambient; color: #FFF"></a-entity>
 			
@@ -45,8 +59,8 @@
 								id="posts-wrapper" 
 								@foreach ($content['blog-posts'] as $blog_post)
 										@if ($post_counter < $max_posts)
-												animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ ((($post_counter - 1) * $meters_between_posts)) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
-												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
+												animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1000; easing: linear; to: 0 {{ ((($post_counter - 1) * $meters_between_posts)) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
+												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1000; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
 												@php
 												$post_counter++;
 												@endphp
@@ -170,9 +184,7 @@
 				<a-entity class="laser-controls-wrapper" @if (!is_null($positions)) look-at="-{{ $positions[0]['x'] }} 0 0" @endif>
 				</a-entity>
 
-
-<!--a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen" position="0 0 -1"></a-entity//-->
-
+				<!--a-entity log geometry="primitive: plane" material="color: #111" text="color: lightgreen" position="0 0 -1"></a-entity//-->
 
 		</a-scene>
 

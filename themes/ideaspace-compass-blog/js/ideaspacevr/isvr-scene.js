@@ -1,7 +1,17 @@
 
 AFRAME.registerComponent('isvr-scene', {
+
+
+		schema: {
+        sound: {
+            type: 'string'
+        }
+		},
+
   
     init: function () {
+
+				var self = this;
 
         this.el.addEventListener('enter-vr', function() {
 
@@ -12,15 +22,20 @@ AFRAME.registerComponent('isvr-scene', {
             }
 
 
-						//var cursor = document.querySelector('#cursor');
-						//cursor.setAttribute('cursor', { fuse: false, rayOrigin: 'entity' });
+						if (self.data.sound != 'none') {
+								self.sound = new Howl({
+										src: [self.data.sound],
+										autoplay: true,
+										loop: true
+								});
+								self.sound.play();
+						}
 
 
 						var wrapper = document.querySelector('.laser-controls-wrapper');
 
 						var lcLeftEl = document.createElement('a-entity');
 						lcLeftEl.setAttribute('laser-controls', {hand: 'left'});
-						//lcLeftEl.setAttribute('gearvr-controls', {hand: 'left'});
 						lcLeftEl.setAttribute('raycaster', {objects: '.collidable', near: 0.5});
 						lcLeftEl.setAttribute('line', {color: '#FFFFFF'});
 						lcLeftEl.setAttribute('class', 'laser-controls');
@@ -28,7 +43,6 @@ AFRAME.registerComponent('isvr-scene', {
 
 						var lcRightEl = document.createElement('a-entity');
 						lcRightEl.setAttribute('laser-controls', {hand: 'right'});
-						//lcRightEl.setAttribute('gearvr-controls', {hand: 'right'});
 						lcRightEl.setAttribute('raycaster', {objects: '.collidable', near: 0.5});
 						lcRightEl.setAttribute('line', {color: '#FFFFFF'});
 						lcRightEl.setAttribute('class', 'laser-controls');
@@ -46,6 +60,10 @@ AFRAME.registerComponent('isvr-scene', {
         });
 
         this.el.addEventListener('exit-vr', function() {
+
+						if (self.data.sound != 'none') {
+								self.sound.stop();
+						}
 
             document.querySelector('a-scene').removeState('entered-vr');
 
