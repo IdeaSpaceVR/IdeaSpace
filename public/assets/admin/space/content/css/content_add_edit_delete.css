@@ -141,3 +141,11 @@ label.large {
   color: #737373;
 }
 
+.info-block a:link,
+.info-block a:visited,
+.info-block a:hover,
+.info-block a:active {
+	text-decoration: underline;
+}
+
+
