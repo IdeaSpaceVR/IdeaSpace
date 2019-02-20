@@ -25,6 +25,8 @@
 						@if (isset($content['general-settings'][0]['blog-icon']))
 								<img id="about-image-texture" src="{{ $content['general-settings'][0]['blog-icon']['blog-icon-resized']['#uri']['#value'] }}" crossorigin>
 						@endif
+
+						<img id="windrose" width="512" height="512" src="{{ url($theme_dir . '/assets/images/windrose.svg') }}" crossorigin>
 				</a-assets>
 
 				<a-entity id="sound-click" sound="src: #audio-click"></a-entity>
@@ -172,27 +174,42 @@
 				@endif
 
 
+				<a-circle
+						position="0 -3 0" 
+						segments="64" 
+						radius="1.2" 
+						color="@if (isset($content['general-settings'][0]['about-blog-background-color'])) {{ $content['general-settings'][0]['about-blog-background-color']['#value'] }} @else #FFFFFF @endif" 
+						look-at="0 0 0">	
+						<a-image 
+								src="#windrose" 
+								width="2" 
+								height="2" 
+								rotation="0 0 -90" 
+								position="0 0 0.001">
+						</a-image>
+				</a-circle>	
+
+
 				@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
 				<a-entity 
 						id="about-link" 
 						class="collidable"
 						isvr-about-link
-						position="1.5 -1.5 0"
+						position="1.5 -1 0"
 						look-at="0 0 0"
-						position="0 0 0.001"
-						geometry="primitive: plane; width: 8"
+						geometry="primitive: plane; width: 1.2"
 						material="shader: html; target: #about-link-texture; transparent: true; ratio: width">
 				</a-entity>
 				<a-rounded
 						id="about-wrapper"
 						class="collidable"
-						position="{{ ($positions[0]['x'] - 0.001) }} -8 {{ $positions[0]['z'] }}"
+						position="{{ ($positions[0]['x'] - 0.001) }} -10 {{ $positions[0]['z'] }}"
 						rotation="0 -90 0"
 						color="{{ $content['general-settings'][0]['about-blog-background-color']['#value'] }}"
 						width="3"
 						height="3"
-						animation__show_about="property: position; dur: 1000; to: {{ ($positions[0]['x'] - 0.001) }} 0 {{ $positions[0]['z'] }}; startEvents: show-about"
-						animation__hide_about="property: position; dur: 1000; to: {{ ($positions[0]['x'] - 0.001) }} -8 {{ $positions[0]['z'] }}; startEvents: hide-about"
+						animation__show_about="property: position; dur: 1000; easing: easeInOutElastic; to: {{ ($positions[0]['x'] - 0.001) }} 0 {{ $positions[0]['z'] }}; startEvents: show-about"
+						animation__hide_about="property: position; dur: 1000; to: {{ ($positions[0]['x'] - 0.001) }} -10 {{ $positions[0]['z'] }}; startEvents: hide-about"
 						visible="false"
 						top-left-radius="0.06"
 						top-right-radius="0.06"

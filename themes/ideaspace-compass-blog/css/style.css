@@ -20,7 +20,7 @@ body {
     background-color: #000000;
 }
 
-#space-title-texture {
+/*#space-title-texture {
     width: 1024px;
 		position: fixed;
 		top: 0;
@@ -30,7 +30,7 @@ body {
 		font-family: Verdana, Geneva, sans-serif;
 		text-align: center;
 		font-size: 52px;
-}
+}*/
 
 .post-title-texture {
     width: 512px;
@@ -40,6 +40,7 @@ body {
     z-index: -2;
 		background-color: transparent;
 		text-align: center;
+margin-top: 10px;
 }
 
 .navigation-arrow-texture {
@@ -50,6 +51,7 @@ body {
     z-index: -2;
 		background-color: transparent;
 		text-align: center;
+		padding: 10px;
 }
 
 .post-text-north-east-texture {
@@ -187,7 +189,7 @@ body {
 }
 
 .about-link-texture {
-    width: 2048px;
+    width: 512px;
     position: fixed;
     top: 0;
     left: 0;
