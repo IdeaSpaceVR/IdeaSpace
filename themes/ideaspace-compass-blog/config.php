@@ -6,7 +6,7 @@ return [
   '#theme-key' => 'ideaspace-compass-blog',
   '#theme-version' => '1.0',
   '#ideaspace-version' => '>=1.2.0',
-  '#theme-description' => 'Surround yourself with blog posts.',
+  '#theme-description' => 'Immerse yourself in blog posts.',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
@@ -21,27 +21,6 @@ return [
       '#max-values' => 1,
       '#fields' => [
 
-        'blog-title' => [
-          '#label' => 'Blog Title',
-          '#description' => 'Enter a title.',
-          '#help' => 'Enter a title.',
-          '#type' => 'textfield',
-					'#contentformat' => 'html/text',
-					'#maxlength' => 1000,
-          '#required' => false,
-        ],
-
-        'blog-description' => [
-          '#label' => 'About Your Blog',
-          '#description' => 'What is your blog about?',
-          '#help' => 'Enter a text.',
-          '#type' => 'textarea',
-					'#rows' => 10,
-					'#contentformat' => 'html/text',
-					'#maxlength' => 10000,
-          '#required' => false,
-        ],
-
         'blog-icon' => [
           '#label' => 'Blog Icon',
           '#description' => 'Add an icon which represents your blog.',
@@ -52,12 +31,23 @@ return [
           '#required' => false,
         ],
 
+        'blog-about' => [
+          '#label' => 'About Your Blog',
+          '#description' => 'What is your blog about?',
+          '#help' => 'Enter a text.',
+          '#type' => 'textarea',
+					'#rows' => 10,
+					'#contentformat' => 'html/text',
+					'#maxlength' => 10000,
+          '#required' => false,
+        ],
+
         'about-blog-background-color' => [
           '#label' => 'About Your Blog Background Color',
           '#description' => 'Select a background color.',
           '#help' => 'Select a background color.',
           '#type' => 'color',
-					'#default_value' => '#000000',
+					'#default_value' => '#FFFFFF',
           '#required' => false,
         ],
 

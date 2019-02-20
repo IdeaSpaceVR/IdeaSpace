@@ -21,6 +21,10 @@
 
         <a-assets>
             <audio id="audio-click" src="{{ url($theme_dir . '/assets/audio/ui_click0.ogg') }}" response-type="arraybuffer" crossorigin></audio>
+
+						@if (isset($content['general-settings'][0]['blog-icon']))
+								<img id="about-image-texture" src="{{ $content['general-settings'][0]['blog-icon']['blog-icon-resized']['#uri']['#value'] }}" crossorigin>
+						@endif
 				</a-assets>
 
 				<a-entity id="sound-click" sound="src: #audio-click"></a-entity>
@@ -59,8 +63,8 @@
 								id="posts-wrapper" 
 								@foreach ($content['blog-posts'] as $blog_post)
 										@if ($post_counter < $max_posts)
-												animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1000; easing: linear; to: 0 {{ ((($post_counter - 1) * $meters_between_posts)) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
-												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1000; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
+												animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ ((($post_counter - 1) * $meters_between_posts)) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
+												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
 												@php
 												$post_counter++;
 												@endphp
@@ -168,6 +172,43 @@
 				@endif
 
 
+				@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
+				<a-entity 
+						id="about-link" 
+						class="collidable"
+						isvr-about-link
+						position="1.5 -1.5 0"
+						look-at="0 0 0"
+						position="0 0 0.001"
+						geometry="primitive: plane; width: 8"
+						material="shader: html; target: #about-link-texture; transparent: true; ratio: width">
+				</a-entity>
+				<a-rounded
+						id="about-wrapper"
+						class="collidable"
+						position="{{ ($positions[0]['x'] - 0.001) }} -8 {{ $positions[0]['z'] }}"
+						rotation="0 -90 0"
+						color="{{ $content['general-settings'][0]['about-blog-background-color']['#value'] }}"
+						width="3"
+						height="3"
+						animation__show_about="property: position; dur: 1000; to: {{ ($positions[0]['x'] - 0.001) }} 0 {{ $positions[0]['z'] }}; startEvents: show-about"
+						animation__hide_about="property: position; dur: 1000; to: {{ ($positions[0]['x'] - 0.001) }} -8 {{ $positions[0]['z'] }}; startEvents: hide-about"
+						visible="false"
+						top-left-radius="0.06"
+						top-right-radius="0.06"
+						bottom-left-radius="0.06"
+						bottom-right-radius="0.06">
+						<a-circle id="about-image" radius="0.3" src="#about-image-texture"></a-circle>
+						<a-entity
+								id="about"
+								geometry="primitive: plane; width: 2.8"
+								position="0 0 0.001"
+								material="shader: html; target: #about-texture; transparent: true; ratio: width">
+						</a-entity>
+				</a-rounded>
+				@endif
+
+
 				<a-entity id="camera-wrapper" @if (!is_null($positions)) look-at="-{{ $positions[0]['x'] }} 0 0" @endif>
 						<a-entity camera look-controls>
 								<a-entity
@@ -213,6 +254,26 @@
 				<div id="navigation-arrow-down-inactive-texture" class="navigation-arrow-texture">
 						<i class="far fa-arrow-alt-circle-down" style="color:#3a3a3a;font-size:50pt;"></i>
 				</div>
+
+
+				<div id="about-link-texture" class="about-link-texture">
+						<i class="far fa-user-circle" style="color:#3a3a3a;font-size:50pt;"></i>
+				</div>
+				<div id="about-link-hover-texture" class="about-link-texture">
+						<i class="far fa-user-circle" style="color:#0080e5;font-size:50pt;"></i>
+				</div>
+
+
+				@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
+						<div id="about-texture">
+								@if (isset($content['general-settings'][0]['blog-about']))
+										<div style="margin-left:17px;padding-top:80px">
+												{!! $content['general-settings'][0]['blog-about']['#value'] !!}
+										</div>
+								@endif
+						</div>
+				@endif
+
 
 				@php
 				$post_counter = 0;
@@ -267,6 +328,11 @@
 						@include('theme::partials.wrapper_border_script', ['id' => 'south-west'])
 						@include('theme::partials.wrapper_border_script', ['id' => 'west'])
 						@include('theme::partials.wrapper_border_script', ['id' => 'north-west'])
+
+						@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
+								@include('theme::partials.wrapper_about_border_script')
+						@endif
+
 				});
     })();
     </script>

@@ -178,4 +178,23 @@ body {
 		font-family: Arial, Helvetica, sans-serif;
 }
 
+#about-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+}
+
+.about-link-texture {
+    width: 2048px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+		background-color: transparent;
+		text-align: center;
+		padding: 10px;
+}
+
 
