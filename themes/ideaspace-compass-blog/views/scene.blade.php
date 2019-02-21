@@ -31,8 +31,14 @@
 
 				<a-entity id="sound-click" sound="src: #audio-click"></a-entity>
 
-				<a-entity light="type: ambient; color: #FFF"></a-entity>
+				<a-sky color="#000000"></a-sky>
+				@if (isset($content['general-settings'][0]['sky']) && $content['general-settings'][0]['sky']['#value'] == 'stars') 
+						<a-entity star-system="count: 1000; color: @if (isset($content['general-settings'][0]['sky-stars-color'])) {{ $content['general-settings'][0]['sky-stars-color']['#value'] }} @else #000000 @endif"></a-entity>
+				@endif
+
+				<a-entity light="type: ambient; color: #FFFFFF"></a-entity>
 			
+
 				@php
 				/* number of posts to render on page load */
 				$max_posts = 3; 

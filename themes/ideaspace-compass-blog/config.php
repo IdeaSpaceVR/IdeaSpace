@@ -60,6 +60,25 @@ return [
           '#required' => false,
         ],
 
+				'sky' => [
+          '#label' => 'Sky Type',
+          '#description' => 'Set the type of the sky.',
+          '#help' => 'Set the type of the sky.',
+          '#type' => 'options-select',
+          '#options' => ['black' => 'Black Sky', 'stars' => 'Black Sky With Stars'],
+          '#required' => true,
+          '#default_value' => 'black',
+        ],
+
+        'sky-stars-color' => [
+          '#label' => 'Sky Stars Color',
+          '#description' => 'Set the color of the stars.',
+          '#help' => 'Set the color of the stars.',
+          '#type' => 'color',
+					'#default_value' => '#FFFFFF',
+          '#required' => false,
+        ],
+
 				'antialiasing' => [
           '#label' => 'Antialiasing',
           '#description' => 'Set antialiasing.',

@@ -20,18 +20,6 @@ body {
     background-color: #000000;
 }
 
-/*#space-title-texture {
-    width: 1024px;
-		position: fixed;
-		top: 0;
-		left: 0;
-		z-index: -2;
-		background-color: transparent;
-		font-family: Verdana, Geneva, sans-serif;
-		text-align: center;
-		font-size: 52px;
-}*/
-
 .post-title-texture {
     width: 512px;
     position: fixed;

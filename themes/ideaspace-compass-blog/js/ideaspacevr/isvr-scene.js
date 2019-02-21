@@ -49,12 +49,6 @@ AFRAME.registerComponent('isvr-scene', {
 						wrapper.appendChild(lcRightEl);
 
 
-						/*var posts = document.querySelectorAll('.post');
-						posts.forEach(function(elem) {
-								elem.setAttribute('isvr-spin', '');
-						});*/
-
-
             document.querySelector('a-scene').addState('entered-vr');
 						
         });
