@@ -1,10 +1,12 @@
 <a-rounded
     id="post-text-wrapper-{{ $id }}-{{ $blog_post['post-text-' . $id]['#content-id'] }}"
-    position="{{ $position['x'] }} 0 {{ $position['z'] }}"
-    color="{{ $blog_post['post-text-image-background-color-' . $id]['#value'] }}"
+		class="collidable"
+    position="{{ $position['x'] }} 0 {{ ($position['z'] + 0.001) }}"
     look-at="0 0 0"
+    color="{{ $blog_post['post-text-image-background-color-' . $id]['#value'] }}"
     width="2"
     height="3"
+		isvr-text-nav
     top-left-radius="0.06"
     top-right-radius="0.06"
     bottom-left-radius="0.06"

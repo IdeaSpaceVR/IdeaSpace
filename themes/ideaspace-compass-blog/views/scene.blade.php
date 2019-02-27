@@ -47,7 +47,7 @@
 				@if (isset($content['blog-posts']))
 
 						@php
-						$meters_between_posts = 10;
+						$meters_between_posts = 20; 
 
 						function getCirclePoints($number_points, $radius) {
 							$p = [];
@@ -72,7 +72,7 @@
 								@foreach ($content['blog-posts'] as $blog_post)
 										@if ($post_counter < $max_posts)
 												animation__nav_up_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ ((($post_counter - 1) * $meters_between_posts)) }} 0; startEvents: nav_up_{{ $blog_post['post-title-north']['#content-id'] }}"
-												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + 10) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
+												animation__nav_down_{{ $blog_post['post-title-north']['#content-id'] }}="property: position; dur: 1; easing: linear; to: 0 {{ (($post_counter * $meters_between_posts) + $meters_between_posts) }} 0; startEvents: nav_down_{{ $blog_post['post-title-north']['#content-id'] }}"
 												@php
 												$post_counter++;
 												@endphp
@@ -91,7 +91,7 @@
 										<a-entity 
 												position="0 -{{ ($post_counter * $meters_between_posts) }} 0" 
 												id="post-{{ $blog_post['post-title-north']['#content-id'] }}" 
-												class="post post-{{ $post_counter }} collidable" 
+												class="post post-{{ $post_counter }}" 
 												@if ($post_counter == 0) visible="true" @endif>
 
 												@include('theme::partials.post_title', ['position' => $positions[0], 'post_counter' => $post_counter])
@@ -180,7 +180,7 @@
 				@endif
 
 
-				<a-circle
+				<!--a-circle
 						position="0 -3 0" 
 						segments="64" 
 						radius="1.2" 
@@ -193,7 +193,7 @@
 								rotation="0 0 -90" 
 								position="0 0 0.001">
 						</a-image>
-				</a-circle>	
+				</a-circle//-->	
 
 
 				@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))

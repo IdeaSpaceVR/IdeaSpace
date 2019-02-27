@@ -36,13 +36,13 @@ var posts = {
 
 								/* posts wrapper animation nav */
 								posts_wrapper.setAttribute('animation__nav_up_' + cid, { property: 'position', dur: 1, easing: 'linear', to: '0 ' + ((this.post_counter - 1) * this.meters_between_posts) + ' 0', startEvents: 'nav_up_' + cid });
-								posts_wrapper.setAttribute('animation__nav_down_' + cid, { property: 'position', dur: 1, easing: 'linear', to: '0 ' + ((this.post_counter * this.meters_between_posts) + 10) + ' 0', startEvents: 'nav_down_' + cid });
+								posts_wrapper.setAttribute('animation__nav_down_' + cid, { property: 'position', dur: 1, easing: 'linear', to: '0 ' + ((this.post_counter * this.meters_between_posts) + this.meters_between_posts) + ' 0', startEvents: 'nav_down_' + cid });
 
 
 								var post = document.createElement('a-entity');
 								post.setAttribute('position', { x: 0, y: -(this.post_counter * this.meters_between_posts), z: 0 }); 
 								post.id = 'post-' + cid;
-								post.className = 'post post-' + this.post_counter + ' collidable';
+								post.className = 'post post-' + this.post_counter;
 								posts_wrapper.appendChild(post);
 
 
@@ -111,6 +111,11 @@ var posts = {
 
 						var wrapper = document.createElement('a-rounded');
 						wrapper.id = 'post-text-wrapper-' + id + '-' + cid;
+						wrapper.className = 'collidable';
+
+						/* empty object needed, otherwise component is not added */
+						wrapper.setAttribute('isvr-text-nav', {});
+
 						wrapper.setAttribute('position', { x: position['x'], y: 0, z: position['z'] });
 						wrapper.setAttribute('color', obj['blog-posts'][i]['post-text-image-background-color-' + id]['#value']);
 						wrapper.setAttribute('look-at', { x: 0, y: 0, z: 0 });
@@ -130,7 +135,7 @@ var posts = {
 
 						var height_meters = (texture.offsetHeight * wrapper.getAttribute('width')) / texture.offsetWidth;
 						wrapper.setAttribute('height', height_meters);
-				
+
 						wrapper.appendChild(text);
 						post.appendChild(wrapper);
 
