@@ -3,13 +3,22 @@
 
     <a-assets>
         <a-asset-item id="model-glb" src="{{ $model_glb }}"></a-asset-item>
+				<img src="{{ asset('public/assets/admin/asset-library/images/grid.png') }}" id="grid" crossorigin="anonymous">
     </a-assets>
 
     <a-entity id="camera" position="0 1.6 4">
         <a-camera></a-camera>
     </a-entity>
 
-    <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
+		<a-circle
+        id="floor"
+        visible="true"
+        src="#grid"
+        repeat="100 100"
+        radius="100"
+        position="0 0 0"
+        rotation="-90 0 0">
+    </a-circle>
 
     <a-sky color="#000000"></a-sky>
 

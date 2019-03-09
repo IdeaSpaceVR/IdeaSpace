@@ -7,6 +7,7 @@
     <a-assets>
         <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
         <video id="video" src="{{ $uri }}">
+				<img src="{{ asset('public/assets/admin/asset-library/images/grid.png') }}" id="grid" crossorigin="anonymous">
     </a-assets>
 
     <a-entity id="camera-wrapper" position="0 0 4">
@@ -19,7 +20,15 @@
 
     <a-sky id="default-sky" color="#000000"></a-sky>
 
-    <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
+		<a-circle
+				id="floor"
+				visible="true"
+				src="#grid"
+				repeat="100 100"
+				radius="100"
+				position="0 0 0"
+				rotation="-90 0 0">
+		</a-circle>
 
     <a-video id="vr-view-video" load-video width="8" height="4" position="0 2 -20" visible="false"></a-video>
 

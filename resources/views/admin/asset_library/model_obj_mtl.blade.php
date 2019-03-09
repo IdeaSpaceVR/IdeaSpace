@@ -5,6 +5,7 @@
     <a-assets>
         <a-asset-item id="model-obj" src="{{ $model_obj }}"></a-asset-item>
         <a-asset-item id="model-mtl" src="{{ $model_mtl }}"></a-asset-item>
+				<img src="{{ asset('public/assets/admin/asset-library/images/grid.png') }}" id="grid" crossorigin="anonymous">
     </a-assets>
     @endif
 
@@ -12,7 +13,15 @@
         <a-camera></a-camera>
     </a-entity>
 
-    <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
+		<a-circle
+        id="floor"
+        visible="true"
+        src="#grid"
+        repeat="100 100"
+        radius="100"
+        position="0 0 0"
+        rotation="-90 0 0">
+    </a-circle>
 
     <a-sky color="#000000"></a-sky>
 

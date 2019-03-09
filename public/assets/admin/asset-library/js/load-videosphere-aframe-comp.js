@@ -10,7 +10,6 @@ AFRAME.registerComponent('load-videosphere', {
             document.querySelector('#image-loading').setAttribute('visible', false);
             document.querySelector('#image-loading-anim').stop();
             el.setAttribute('src', '#videosphere');
-            document.querySelector('#scene-floor-grid').setAttribute('visible', false);
             document.querySelector('#default-sky').setAttribute('visible', false);
             el.setAttribute('visible', true);
         }(this.el));

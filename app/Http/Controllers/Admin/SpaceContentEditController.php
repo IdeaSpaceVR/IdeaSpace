@@ -122,7 +122,6 @@ class SpaceContentEditController extends Controller {
             asset('public/assets/admin/asset-library/js/load-photosphere-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-video-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/load-videosphere-aframe-comp.js'),
-            asset('public/assets/admin/asset-library/js/scene-floor-grid-aframe-comp.js'),
             asset('public/assets/admin/asset-library/js/reset-camera-aframe-comp.js')
         ];
 

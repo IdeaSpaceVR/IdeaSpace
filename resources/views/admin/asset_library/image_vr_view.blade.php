@@ -13,11 +13,20 @@
 
                 <a-assets>
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading" crossorigin="anonymous">
+                    <img src="{{ asset('public/assets/admin/asset-library/images/grid.png') }}" id="grid" crossorigin="anonymous">
                 </a-assets>
 
                 <a-sky color="#000000"></a-sky>
 
-                <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
+								<a-circle 
+										id="floor" 
+										visible="true" 
+										src="#grid" 
+										repeat="100 100" 
+										radius="100" 
+										position="0 0 0" 
+										rotation="-90 0 0">
+								</a-circle>
 
 								@if ($file_type == 'image/gif')
 								<a-image id="vr-view-image" position="0 1.6 -20" visible="false" load-image="src:{{ $uri }}" width="{{ $width_meter }}" height="{{ $height_meter }}" shader="gif"></a-image>

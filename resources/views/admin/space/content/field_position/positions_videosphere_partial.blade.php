@@ -19,8 +19,6 @@
 
     <a-sky id="default-sky" color="#000000"></a-sky>
 
-    <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
-
     <!-- rotate to center video //-->
     <a-videosphere load-videosphere visible="false" rotation="0 -90 0"></a-videosphere>
 

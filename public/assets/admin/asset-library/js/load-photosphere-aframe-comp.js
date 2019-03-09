@@ -25,10 +25,6 @@ AFRAME.registerComponent('load-photosphere', {
 
                 el.setAttribute('src', '#img');
 
-                if (document.querySelector('#scene-floor-grid') !== null) { 
-                    document.querySelector('#scene-floor-grid').setAttribute('visible', false);
-                }
-
                 if (document.querySelector('#default-sky') !== null) {
                     document.querySelector('#default-sky').setAttribute('visible', false);
                 }

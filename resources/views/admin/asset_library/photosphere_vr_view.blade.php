@@ -17,8 +17,6 @@
 
                 <a-sky id="default-sky" color="#000000"></a-sky>
 
-                <a-entity scene-floor-grid id="scene-floor-grid"></a-entity>
-
                 <a-sky load-photosphere="src: {{ $uri }}" visible="false" rotation="0 -90 0"></a-sky>
 
                 <a-entity 
