@@ -75,7 +75,23 @@ class SpaceContentAddController extends Controller {
 				/* fields part of a group */
 				if (array_has($config, '#content-types.' . $contenttype . '.#field-groups')) {
 						$field_group_vars = $this->contentType->prepareGroup($space->id, $config['#content-types'][$contenttype]);
+
+						/* if $vars already has an field_type_scripts array and the group has one as well, 
+							then extract the group one before merging, otherwise we might loose entries in field_type_scripts due to merging */
+						$field_type_scripts = null;
+						if (array_has($field_group_vars, 'field_type_scripts') && array_has($vars, 'field_type_scripts')) {
+								$field_type_scripts['field_type_scripts'] = $field_group_vars['field_type_scripts'];
+								unset($field_group_vars['field_type_scripts']);
+						}
+
 						$vars = array_merge($vars, $field_group_vars);						
+
+						/* append field_type_scripts to existing field_type_scripts */
+						if ($field_type_scripts != null) {
+								foreach ($field_type_scripts['field_type_scripts'] as $fts) {
+										$vars['field_type_scripts'][] = $fts;
+								}
+						}
         }
 
 
