@@ -75,6 +75,8 @@ Route::group(['middleware' => 'web'], function () {
   Route::get('admin/space/{space_id}/edit/{contenttype}/positions/subject/{subject_type}/{subject_id?}', ['as' => 'fieldtype_position', 'uses' => 'Admin\FieldTypePositionController@positions_subject']); 
   Route::get('admin/space/{space_id}/edit/{contenttype}/rotation/subject/{subject_type}/{subject_id?}', ['as' => 'fieldtype_rotation', 'uses' => 'Admin\FieldTypeRotationController@rotation_subject']); 
 
+  Route::get('admin/space/{space_id}/edit/{contenttype}/painter/template/{scene_template}', ['as' => 'fieldtype_painter', 'uses' => 'Admin\FieldTypePainterController@init_painter']); 
+
 
   Route::get('admin/space/{id}/trash', ['as' => 'space_trash', 'uses' => 'Admin\SpacesController@space_trash']);
   Route::get('admin/space/{id}/delete', ['as' => 'space_delete', 'uses' => 'Admin\SpacesController@space_delete']);
