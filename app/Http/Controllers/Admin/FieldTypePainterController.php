@@ -90,15 +90,27 @@ class FieldTypePainterController extends Controller {
             'content' => []
         ];
 
-				$vars['content'][$contenttype][] = $this->contentType->loadContent($content_id);
+
+				$content_all = Content::where('space_id', $space->id)->orderBy('weight', 'asc')->get();
+
+				/* get content with 'content_id'; and all other content with other content types (keys) */
+        foreach ($content_all as $content) {
+						if ($content->id == $content_id) {
+            		$vars['content'][$content->key][] = $this->contentType->loadContent($content->id);
+						} else if ($content->key != $contenttype) { 
+            		$vars['content'][$content->key][] = $this->contentType->loadContent($content->id);
+						}
+        }
+
+				//Log::debug($vars);
 
         view()->addNamespace('theme', base_path($theme->root_dir . '/' . Theme::VIEWS_DIR));
 
-Log::debug($vars);
-
+// TODO how to load the template into the iframe in the modal?
 
 				return view('theme::' . $scene_template, $vars);       
     }
+
 
 
 }
