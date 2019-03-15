@@ -9,6 +9,7 @@ jQuery(document).ready(function($) {
         var space_id = $(e.target).attr('data-space-id');
         var contenttype_name = $(e.target).attr('data-contenttype-name');
         var scene_template = $(e.target).attr('data-scene-template');
+        var content_id = $(e.target).attr('data-content-id');
 
         //var subject_type = $(e.target).attr('data-subject-field-type');
         //var subject_name = $(e.target).attr('data-subject-field-name');
@@ -18,7 +19,7 @@ jQuery(document).ready(function($) {
         //subject_id = $('input[name="' + subject_name + '"]').val();
 
 
-        $('#painter-target').load(window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/painter/template/' + scene_template, function() {
+        $('#painter-target').load(window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/painter/' + scene_template + '/' + content_id, function() {
 
             /* set height dynamically, because of mobile */
             $('#painter .modal-body a-scene').css('max-height', '700px');
@@ -32,6 +33,11 @@ jQuery(document).ready(function($) {
                 var evt = window.document.createEvent('UIEvents');
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
+
+								/* global object in scene_template; must have a load function */
+								if (typeof scene === 'function') {
+										scene.load(field_values);
+								}
 
                 /*if (open_fieldtype_rotation_ref.find('.rotation-info').val() != '') {
 
