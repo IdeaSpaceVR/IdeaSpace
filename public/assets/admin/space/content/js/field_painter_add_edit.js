@@ -19,13 +19,14 @@ jQuery(document).ready(function($) {
         //subject_id = $('input[name="' + subject_name + '"]').val();
 
 
-        $('#painter-target').load(window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/painter/' + scene_template + '/' + content_id, function() {
+        //$('#painter-iframe').load(window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/painter/' + scene_template + '/' + content_id, function() {
+
+				document.getElementById('painter-iframe').onload = function() {
 
             /* set height dynamically, because of mobile */
-            $('#painter .modal-body a-scene').css('max-height', '700px');
-            $('#painter .modal-body a-scene').css('height', $(window).height() * 0.7);
+            $('#painter-iframe').css('height', $(window).height() * 0.5);
 
-            //$('#rotation .modal-title').text($('#rotation .modal-title').text() + ' ' + subject_label);
+            //$('#painter .modal-title').text($('#painter .modal-title').text() + ' ' + subject_label);
 
             $('#painter').on('shown.bs.modal', function() {
 
@@ -34,40 +35,28 @@ jQuery(document).ready(function($) {
                 evt.initUIEvent('resize', true, false, window, 0);
                 window.dispatchEvent(evt);
 
-								/* global object in scene_template; must have a load function */
-								if (typeof scene === 'function') {
-										scene.load(field_values);
-								}
-
-                /*if (open_fieldtype_rotation_ref.find('.rotation-info').val() != '') {
-
-
-                }*/ 
-
-
-
-                //$('#painter-target .insert-btn').unbind('click');
-                //$('#painter-target .insert-btn').click(painter_insert_click_handler);
-    
+                $('#painter-target .insert-btn').unbind('click');
+                $('#painter-target .insert-btn').click(painter_insert_click_handler);
             });
 
         
             /* remove children after closing, otherwise there can be conflicts when loading a-frame assets via loading component */  
             $('#painter-target .modal').on('hidden.bs.modal', function() {
-                $('#painter-target').empty();
+                $('#painter-iframe').empty();
             });
 
 
             $('#painter').modal('show');
+        };
 
-        });
+				document.getElementById('painter-iframe').src = window.ideaspace_site_path + '/admin/space/' + space_id + '/edit/' + contenttype_name + '/painter/' + scene_template + '/' + content_id;
 
     };
     $('.add-edit-painter-btn').unbind('click');
     $('.add-edit-painter-btn').click(painter_add_edit_click_handler);
 
 
-    /*var painter_insert_click_handler = function() {
+    var painter_insert_click_handler = function() {
 
         //var field_type = open_fieldtype_rotation_ref.find('.add-edit-rotation-btn').attr('data-subject-field-type');
 
@@ -80,7 +69,7 @@ jQuery(document).ready(function($) {
         }
 
         location.hash = '#' + open_fieldtype_rotation_ref.parent().attr('id');
-    };*/
+    };
 
 
     var painter_remove_click_handler = function(e) {
