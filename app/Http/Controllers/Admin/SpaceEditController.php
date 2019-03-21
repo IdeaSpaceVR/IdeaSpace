@@ -219,7 +219,7 @@ class SpaceEditController extends Controller {
   
         try {
             $space = Space::where('id', $space_id)->firstOrFail();
-            $space->title = $request->input('space_title');
+            $space->title = strip_tags($request->input('space_title'));
             $space->uri = $space_uri;
             $space->status = $request->input('space_status');
             $space->save();

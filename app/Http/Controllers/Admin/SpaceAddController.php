@@ -212,7 +212,7 @@ class SpaceAddController extends Controller {
             'user_id' => $user->id,
             'theme_id' => $theme->id,
             'uri' => $space_uri,
-            'title' => $request->input('space_title'),
+            'title' => strip_tags($request->input('space_title')),
             'status' => $request->input('space_status')
         ];
 
