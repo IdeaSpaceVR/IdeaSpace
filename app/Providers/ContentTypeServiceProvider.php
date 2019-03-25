@@ -16,18 +16,7 @@ class ContentTypeServiceProvider extends ServiceProvider {
     
         $this->app->bind('\App\Content\ContentType', function ($app) {
             return new \App\Content\ContentType();
-              //$this->app->make('\App\Content\FieldTypeImage'),  
-              //$this->app->make('\App\Content\FieldTypeText'));
         });    
-
-        /*$this->app->bind('\App\Content\FieldTypeImage', function ($app) {
-            return new \App\Content\FieldTypeImage();
-        });
-
-        $this->app->bind('\App\Content\FieldTypeText', function ($app) {
-            return new \App\Content\FieldTypeText();
-        });*/
-
     }
 
 
