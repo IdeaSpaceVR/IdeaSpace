@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
 use App\Setting;
+use App\Theme;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Schema;
 use DB;
@@ -67,6 +68,14 @@ class AppServiceProvider extends ServiceProvider {
             $view->with('origin_trial_token_data_feature', $origin_trial_token_data_feature);
             $view->with('origin_trial_token_data_expires', $origin_trial_token_data_expires);
         }); 
+
+
+				$themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
+
+				foreach ($themes as $theme) {
+						$config = json_decode($theme->config, true);
+						$this->loadTranslationsFrom($theme->root_dir . '/lang', $config['#theme-key']);
+				}
     }
 
     /**

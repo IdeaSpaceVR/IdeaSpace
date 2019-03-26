@@ -11,6 +11,7 @@ use Validator;
 use App\Space;
 use Route;
 use App\Http\Controllers\Admin\SpaceControllerTrait;
+use File;
 use Log;
 
 class SpaceAddController extends Controller {
@@ -114,6 +115,14 @@ class SpaceAddController extends Controller {
         $space->status = Space::STATUS_DRAFT;
         $space->theme_id = $theme->id;
         $vars['space'] = $space;
+
+				/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+        if (File::exists($theme->root_dir . '/lang')) {
+						$config = json_decode($theme->config, true);
+            $vars['theme_key'] = $config['#theme-key'];
+        } else {
+            $vars['theme_key'] = null;
+        }
 
         return view('admin.space.space_add', $vars);
     }

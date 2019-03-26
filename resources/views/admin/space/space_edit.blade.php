@@ -55,9 +55,9 @@
             </div>
 
             @if (isset($content))
-                @include('admin.space.content.contentlist', ['contentlist' => $content])
+                @include('admin.space.content.contentlist', ['contentlist' => $content, 'theme_key' => $theme_key])
             @else
-                @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes']])
+                @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes'], 'theme_key' => $theme_key])
             @endif
 
         </div>

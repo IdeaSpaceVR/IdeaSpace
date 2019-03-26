@@ -44,7 +44,7 @@
                 {!! $errors->has('space_uri')?$errors->first('space_uri', '<span class="help-block">:message</span>'):'' !!}
             </div>
 
-            @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes']])
+            @include('admin.space.content.contenttypes', ['contenttypes' => $theme['contenttypes'], 'theme_key' => $theme_key])
 
         </div>
 

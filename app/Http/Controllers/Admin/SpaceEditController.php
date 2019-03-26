@@ -17,6 +17,7 @@ use App\GenericFile;
 use App\Photosphere;
 use Route;
 use App\Http\Controllers\Admin\SpaceControllerTrait;
+use File;
 use Log;
 
 class SpaceEditController extends Controller {
@@ -117,6 +118,13 @@ class SpaceEditController extends Controller {
         //Log::debug($content_vars); 
         $vars['content'] = $content_vars;
         $vars['space'] = $space;
+
+				/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+				if (File::exists($theme->root_dir . '/lang')) {	
+        		$vars['theme_key'] = $config['#theme-key'];
+				} else {
+        		$vars['theme_key'] = null;
+				}
 
         /* needed for middleware: app/Http/Middleware/RegisterThemeEventListener.php */
         //session(['theme-id' => $theme->id]);
