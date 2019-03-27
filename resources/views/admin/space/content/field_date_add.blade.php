@@ -1,5 +1,5 @@
 <div class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
-    <label class="control-label large">{{ $form['#label'] }}</label>
+    <label class="control-label large">@if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $form['#label']) }} @else {{ $form['#label'] }} @endif</label>
     <div class="form-control-date {{ $errors->has($field_id)?'has-error':'' }}">
     {!! Form::date($field_id, \Carbon\Carbon::now(), array('class'=>'form-control input-lg')) !!}
     </div>

@@ -1,6 +1,6 @@
 <div id="{{ str_random(10) }}" class="form-group {{ $errors->has($field_id)?'has-error':'' }}">
     <div>
-        <label class="control-label large">{{ $form['#label'] }}</label>
+        <label class="control-label large">@if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $form['#label']) }} @else {{ $form['#label'] }} @endif</label>
     </div>
     <div class="form-control-add-file text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
