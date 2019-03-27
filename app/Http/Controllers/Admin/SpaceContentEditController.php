@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Auth;
 use Validator;
 use App\Http\Controllers\Admin\AssetLibraryControllerTrait;
+use File;
 use Log;
 
 class SpaceContentEditController extends Controller {
@@ -113,6 +114,14 @@ class SpaceContentEditController extends Controller {
         $theme_mod['theme-version'] = $config['#theme-version'];
         $theme_mod['theme-author-name'] = $config['#theme-author-name'];
         $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
+
+				/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+				if (File::exists($theme->root_dir . '/lang')) {
+						$theme_mod['theme-key'] = $config['#theme-key'];
+				} else {
+						$theme_mod['theme-key'] = null;
+				}
+
 
         //\Log::debug($vars);
 

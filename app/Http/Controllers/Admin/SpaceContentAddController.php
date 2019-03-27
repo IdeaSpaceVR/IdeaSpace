@@ -12,6 +12,7 @@ use Auth;
 use Validator;
 use App\Http\Controllers\Admin\AssetLibraryControllerTrait;
 use App\Content;
+use File;
 use Log;
 
 class SpaceContentAddController extends Controller {
@@ -113,6 +114,13 @@ class SpaceContentAddController extends Controller {
         $theme_mod['theme-version'] = $config['#theme-version'];
         $theme_mod['theme-author-name'] = $config['#theme-author-name'];
         $theme_mod['theme-screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
+
+				/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+        if (File::exists($theme->root_dir . '/lang')) {
+            $theme_mod['theme-key'] = $config['#theme-key'];
+        } else {
+            $theme_mod['theme-key'] = null;
+        }
 
         $form = array('form' => $vars);
         $form['space_id'] = $id;
