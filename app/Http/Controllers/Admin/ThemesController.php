@@ -139,6 +139,14 @@ class ThemesController extends Controller {
             $theme_mod['status_aria_pressed'] = (($theme->status==Theme::STATUS_ACTIVE)?'true':'false');          
             $theme_mod['status_text'] = $status_text;          
             $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);          
+
+						/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+						if (File::exists($theme->root_dir . '/lang')) {
+								$theme_mod['theme-key'] = $config['#theme-key'];          
+						} else {
+								$theme_mod['theme-key'] = null;          
+						}
+
             $themes_mod[] = $theme_mod;
         }
 

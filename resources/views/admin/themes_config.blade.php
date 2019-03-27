@@ -30,7 +30,7 @@
                     <h5><strong>{{ trans('template_themes_config.version') }}</strong> {{ $theme['theme-version'] }}</h5>
                     <h5><strong>{{ trans('template_themes_config.author') }}</strong> {{ $theme['theme-author-name'] }}</h5>
                     <h5><a href="{{ $theme['theme-homepage'] }}" target="_blank">{{ $theme['theme-homepage'] }}</a></h5>
-                    <p>{{ $theme['theme-description'] }}</p>
+                    <p>@if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $theme['theme-description']) }} @else {{ $theme['theme-description'] }} @endif</p>
                     <p style="margin-top:20px"><button type="button" class="theme-btn btn @if($theme['status']==\App\Theme::STATUS_ERROR || $theme['status']==\App\Theme::STATUS_INCOMPATIBLE) btn-danger @else btn-primary @endif {{ $theme['status_class'] }}" data-toggle="button" aria-pressed="{{ $theme['status_aria_pressed'] }}" autocomplete="off" data-theme-status="{{ $theme['status'] }}" @if($theme['status']==\App\Theme::STATUS_ERROR || $theme['status']==\App\Theme::STATUS_INCOMPATIBLE) disabled="disabled" @endif>{{ $theme['status_text'] }}</button></p>
                 </div>
             </div>
