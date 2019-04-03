@@ -99,7 +99,7 @@ trait AssetLibraryControllerTrait {
         $mime_types = $this->mime_types[$type];
         foreach ($mime_types as $mime_type) {
 						/* getMimeType() guesses the mime type by looking at the content, but it can be wrong in certain cases (audio/mp4 instead of video/mp4), 
-								so we use getClientMimeType() as well which gets the mime type from the request */
+							so we use getClientMimeType() as well which gets the mime type from the request */
             if ($mime_type === $file->getMimeType() || $mime_type === $file->getClientMimeType()) {
                 return true;
             }
