@@ -4,7 +4,7 @@ return [
 
     'add_videosphere' => 'Add Video Sphere',
     'dragndrop_videospheres' => 'Drag &amp; Drop Video Sphere(s) Here',    
-    'nearest_power_of_two' => 'Video spheres should be equirectangular.',
+    'nearest_power_of_two' => 'Video spheres should be in equirectangular format (2:1).',
     'edit' => 'Edit',
     'insert' => 'Insert',
     'caption' => 'Caption',
