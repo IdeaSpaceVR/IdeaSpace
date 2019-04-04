@@ -24,5 +24,6 @@ return [
     'insert' => 'Einfügen',
     'delete_permanently' => 'Endgültig löschen',
     'no_audio' => 'Es wurden noch keine Audiodateien hinzugefügt.',
+		'audio_file_formats' => 'Unterstützte Audio-Dateiformate: .mp3, .wav.',
 
 ];
