@@ -28,6 +28,7 @@
                 </div>
             </div><!-- upload //-->
             <div class="alert alert-info" role="alert">{{ trans('template_asset_library_images.nearest_power_of_two') }}</div>
+            <div class="alert alert-info image-file-formats" role="alert">{{ trans('template_asset_library_images.image_file_formats') }}</div>
 
         </div><!-- col-md-12 //-->
 

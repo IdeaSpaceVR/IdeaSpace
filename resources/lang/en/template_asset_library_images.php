@@ -5,6 +5,7 @@ return [
     'add_image' => 'Add Image',
     'dragndrop_images' => 'Drag &amp; Drop Image(s) Here',
     'nearest_power_of_two' => 'Width and height values of images should be power of two. Otherwise images are resized to the nearest power of two which can result in an undesired aspect ratio.',
+		'image_file_formats' => 'Supported image file formats: .gif, .png, .jpg, .tga.',
     'edit' => 'Edit',
     'insert' => 'Insert',
     'caption' => 'Caption',

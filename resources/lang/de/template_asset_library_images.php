@@ -5,6 +5,7 @@ return [
     'add_image' => 'Bild hinzufügen',
     'dragndrop_images' => 'Drag &amp; Drop die Bilddatei(en) hier',
     'nearest_power_of_two' => 'Breiten- und Höhenwerte des Bildes sollten Potenzen von zwei sein. Ist dies nicht der Fall, werden Bilder auf den nächsten passenden Wert skaliert, was zu ungewünschten Seitenverhältnissen führen kann.',
+		'image_file_formats' => 'Unterstützte Bild-Dateiformate: .gif, .png, .jpg, .tga.',
     'edit' => 'Bearbeiten',
     'insert' => 'Einfügen',
     'caption' => 'Caption',
