@@ -19,16 +19,6 @@
 
                 <a-sky id="default-sky" color="#000000"></a-sky>
 
-								<a-circle
-                    id="floor"
-                    visible="true"
-                    src="#grid"
-                    repeat="100 100"
-                    radius="100"
-                    position="0 0 0"
-                    rotation="-90 0 0">
-                </a-circle>
-
                 <a-videosphere load-videosphere visible="false" material="side: back"></a-videosphere>
 
                 <a-entity 
