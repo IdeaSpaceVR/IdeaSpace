@@ -319,13 +319,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#photospheres .files').attr('data-file-counter');
-              $('#photospheres #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#photospheres #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#photospheres .files').attr('data-file-counter');
-            $('#photospheres #file-' + i).html(message).addClass('file-upload-error');
+            $('#photospheres #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#photospheres').find('#file-error').remove();

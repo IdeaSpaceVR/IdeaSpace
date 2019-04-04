@@ -454,13 +454,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#models .files').attr('data-file-counter');
-              $('#models #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#models #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#models .files').attr('data-file-counter');
-            $('#models #file-' + i).html(message).addClass('file-upload-error');
+            $('#models #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#models').find('#file-error').remove();

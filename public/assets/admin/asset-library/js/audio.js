@@ -277,13 +277,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#audio .files').attr('data-file-counter');
-              $('#audio #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#audio #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#audio .files').attr('data-file-counter');
-            $('#audio #file-' + i).html(message).addClass('file-upload-error');
+            $('#audio #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#audio').find('#file-error').remove();

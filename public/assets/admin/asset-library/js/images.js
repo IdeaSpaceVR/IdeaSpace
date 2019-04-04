@@ -320,13 +320,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#images .files').attr('data-file-counter');
-              $('#images #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#images #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#images .files').attr('data-file-counter');
-            $('#images #file-' + i).html(message).addClass('file-upload-error');
+            $('#images #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#images').find('#file-error').remove();
