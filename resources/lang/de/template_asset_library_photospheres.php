@@ -6,6 +6,7 @@ return [
     'dragndrop_photospheres' => 'Drag &amp; Drop die Photo Sphere(s) hier',
     'nearest_power_of_two' => 'Breite und Höhe einer Photo Sphere werden automatisch auf die nächste Zweierpotenz gesetzt.',
     'nearest_power_of_two_hint' => 'Kontrollkästchen abwählen, um die ursprüngliche Breite und Höhe der Photo Sphere zu behalten. (Ein Seitenverhältnis von 2:1 wird empfohlen).',
+		'image_file_formats' => 'Unterstützte Bild-Dateiformate: .png, .jpg.',
     'edit' => 'Bearbeiten',
     'insert' => 'Einfügen',
     'caption' => 'Beschreibung',

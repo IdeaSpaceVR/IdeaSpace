@@ -34,6 +34,7 @@
 										</label>
 								</div>
 						</div>
+						<div class="alert alert-info photosphere-file-formats" role="alert">{!! trans('template_asset_library_photospheres.image_file_formats') !!}</div>
 
         </div><!-- col-md-12 //-->
 

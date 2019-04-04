@@ -9,6 +9,7 @@ jQuery(document).ready(function($) {
         $('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
+        $('.alert.photosphere-file-formats').hide();
 
         $('#photospheres .files .insert-link').show();
         $('#asset-details .insert-btn').show();
