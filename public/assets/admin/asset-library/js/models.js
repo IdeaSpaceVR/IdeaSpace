@@ -9,6 +9,7 @@ jQuery(document).ready(function($) {
         //$('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
+        $('.alert.model-file-formats').hide();
 
         $('#models .files .insert-link').show();
         $('#asset-details .insert-btn').show();
