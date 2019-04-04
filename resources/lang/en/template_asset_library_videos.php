@@ -36,5 +36,6 @@ return [
     '15_meters' => '15 meters',
     '20_meters' => '20 meters',
     'no_videos' => 'No videos added yet.',
+		'video_file_formats' => 'Supported video file formats: .mp4',
 
 ];

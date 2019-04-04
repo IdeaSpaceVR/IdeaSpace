@@ -27,7 +27,8 @@
                     <input type="hidden" id="max_filesize_bytes" value="{{ $max_filesize_bytes }}">
                 </div>
             </div><!-- upload //-->
-            <p class="help-block">{{ trans('template_asset_library_videospheres.nearest_power_of_two') }}</p>
+            <div class="alert alert-info">{{ trans('template_asset_library_videospheres.nearest_power_of_two') }}</div>
+						<div class="alert alert-info video-file-formats" role="alert">{{ trans('template_asset_library_videospheres.video_file_formats') }}</div>
 
         </div><!-- col-md-12 //-->
 

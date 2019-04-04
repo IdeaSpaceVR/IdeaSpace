@@ -25,5 +25,6 @@ return [
     'delete_permanently' => 'Delete Permanently',
     'vr_view' => 'VR View',
     'no_videospheres' => 'No video spheres added yet.',
+		'video_file_formats' => 'Supported video file formats: .mp4',
 
 ];

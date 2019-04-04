@@ -9,6 +9,8 @@ jQuery(document).ready(function($) {
         $('.upload-area').find('input[type="file"]').removeAttr('multiple');
         $('.upload-area').addClass('visible');
         $('.upload-area').show();
+				$('.alert.video-file-formats').hide();
+
         $('#videospheres .files .insert-link').show();
         $('#asset-details .insert-btn').show();
         $('#videospheres .files .list-item .insert').unbind('click');
