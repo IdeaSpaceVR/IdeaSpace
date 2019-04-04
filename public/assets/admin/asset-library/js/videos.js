@@ -336,13 +336,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#videos .files').attr('data-file-counter');
-              $('#videos #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#videos #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#videos .files').attr('data-file-counter');
-            $('#videos #file-' + i).html(message).addClass('file-upload-error');
+            $('#videos #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#videos').find('#file-error').remove();

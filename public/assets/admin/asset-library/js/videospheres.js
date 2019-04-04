@@ -334,7 +334,7 @@ jQuery(document).ready(function($) {
           }
         },
         onUploadError: function(id, message) {
-            $('#videospheres #file-' + id).html(message).addClass('file-upload-error');
+            $('#videospheres #file-' + id).first().html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#videospheres').find('#file-error').remove();
