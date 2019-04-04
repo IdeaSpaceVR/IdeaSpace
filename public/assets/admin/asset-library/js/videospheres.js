@@ -330,13 +330,11 @@ jQuery(document).ready(function($) {
 
           } else if (data.status == 'error') {
 
-              var i = $('#videospheres .files').attr('data-file-counter');
-              $('#videospheres #file-' + i).html(data.message).addClass('file-upload-error');
+              $('#videospheres #file-' + id).first().html(data.message).addClass('file-upload-error');
           }
         },
         onUploadError: function(id, message) {
-            var i = $('#videospheres .files').attr('data-file-counter');
-            $('#videospheres #file-' + i).html(message).addClass('file-upload-error');
+            $('#videospheres #file-' + id).html(message).addClass('file-upload-error');
         },
         onFileTypeError: function(file) {
             $('#videospheres').find('#file-error').remove();
