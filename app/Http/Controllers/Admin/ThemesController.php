@@ -292,20 +292,15 @@ class ThemesController extends Controller {
      */
     public function themes_all_json() {
 
-        $theme_keys = '';
-        $themes = Theme::get();
+        $theme_keys = 'IdeaSpaceVR-' . config('app.version') . '---';
+        $themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
         foreach ($themes as $theme) {
             $config = json_decode($theme->config, true);
-            $temp = explode('-', $config['#theme-key']);
-            $key = '';
-            foreach ($temp as $t) {
-                $key .= substr($t, 0, 1); 
-            }
-            $theme_keys = $theme_keys . $key . $config['#theme-version'] . '-';
+            $theme_keys = $theme_keys . $config['#theme-key'] . '-' . $config['#theme-version'] . '---';
         }
 
         if ($theme_keys != '') {
-            return response()->json(['themes' => substr($theme_keys, 0, -1)]);
+            return response()->json(['themes' => substr($theme_keys, 0, -3)]);
         } else {
             return response()->json(['themes' => '']);
         }
