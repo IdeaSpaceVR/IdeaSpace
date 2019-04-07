@@ -5,6 +5,7 @@
 - Bug fix: positioning items on z-axis in content type 'position'  was not working properly
 - Fonts helper: allow to configure webfont loader; helps to preload fonts
 - New theme: IdeaSpace Compass Blog; publish blog posts in VR (works with mobile devices and desktop PCs too)
+- New theme: Image Gallery: flip through your images in space
 - Allow HTML in field info text
 
 # 1.1.5
