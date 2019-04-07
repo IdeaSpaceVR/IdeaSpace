@@ -1,0 +1,25 @@
+#title-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    font-family: 'Indie Flower', arial, helvetica, sans-serif;
+    font-size: 30px;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px;
+}
+
+#description-texture {
+    width: 512px;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: -2;
+    font-family: 'Indie Flower', arial, helvetica, sans-serif;
+    font-size: 28px;
+    color: #FFFFFF;
+    text-align: center;
+    padding: 10px;
+}
