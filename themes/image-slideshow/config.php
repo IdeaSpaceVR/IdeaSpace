@@ -2,15 +2,15 @@
 
 return [
 
-  '#theme-name' => 'Image Gallery',
-  '#theme-key' => 'image-gallery',
+  '#theme-name' => 'Image Slideshow',
+  '#theme-key' => 'image-slideshow',
   '#theme-version' => '1.0',
   '#ideaspace-version' => '>=1.2.0',
   '#theme-description' => 'description.theme_description',
   '#theme-author-name' => 'IdeaSpaceVR',
   '#theme-author-email' => 'info@ideaspacevr.org',
   '#theme-homepage' => 'https://www.ideaspacevr.org/themes',
-  '#theme-keywords' => 'image, gallery',
+  '#theme-keywords' => 'image, slideshow',
   '#theme-view' => 'scene',
 
   '#content-types' => [

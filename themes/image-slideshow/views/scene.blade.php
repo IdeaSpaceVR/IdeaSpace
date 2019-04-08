@@ -109,7 +109,7 @@
 		</div>
 
 		<div id="description-texture">
-		{{ trans('image-gallery::description.intro_instruction') }}	
+		{{ trans('image-slideshow::description.intro_instruction') }}	
 		</div>
 
 @endsection

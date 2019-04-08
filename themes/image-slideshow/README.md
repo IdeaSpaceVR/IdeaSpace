@@ -1,4 +1,4 @@
-# Image Gallery 
+# Image Slideshow 
 
 Flip through your images in space.
 
