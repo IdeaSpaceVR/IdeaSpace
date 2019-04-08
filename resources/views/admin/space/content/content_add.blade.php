@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 style="padding-left:20px">{{ trans('template_content_add.add_new') }} {{ $form['#label'] }}</h1>
+    <h1 style="padding-left:20px">{{ trans('template_content_add.add_new') }} @if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $form['#label']) }} @else {{ $form['#label'] }} @endif</h1>
 
     {!! Form::open(array('route' => ['content_add', $space_id, $contenttype_name], 'method' => 'POST', 'autocomplete' => 'false')) !!}
 

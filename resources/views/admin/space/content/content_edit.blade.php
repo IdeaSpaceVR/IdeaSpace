@@ -4,7 +4,7 @@
 
 @section('content')
 
-    <h1 style="padding-left:20px">{{ trans('template_content_edit.edit') }} {{ $form['#label'] }}</h1>
+    <h1 style="padding-left:20px">{{ trans('template_content_edit.edit') }} @if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $form['#label']) }} @else {{ $form['#label'] }} @endif</h1>
 
     {!! Form::open(array('route' => ['content_edit', $space_id, $contenttype_name, $content_id], 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
