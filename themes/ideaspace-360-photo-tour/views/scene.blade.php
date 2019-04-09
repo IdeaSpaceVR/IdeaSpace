@@ -209,6 +209,9 @@
         @endif
 
 
+			  <a-image src=" data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAPoAAAD6CAMAAAC/MqoPAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAABJQTFRFhbH93/L/EY7+CJL+////AJn/Jg4NuwAAAR5JREFUeNrsz7ENACAIADAU/f9ld2YHI+0Hjd1WqKurq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urX5OzyDb1WEWoq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urq6urv18fRZ/6E9TV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1dXV1T9zBBgAcsW70R7vLtUAAAAASUVORK5CYII=" width="1" height="1" position="0 -0.2 0" rotation="-90 -180 0"></a-image>
+
+
         <a-entity
             id="intro-0"
             visible="true"
