@@ -9,11 +9,11 @@ AFRAME.registerComponent('isvr-image-trigger', {
 
 				var self = this;
 
-				document.addEventListener('click', function() {
+				document.querySelector('canvas').addEventListener('click', function() {
 						self.showImage();
         });
 
-				document.addEventListener('touchstart', function() {
+				document.querySelector('canvas').addEventListener('touchstart', function() {
 						self.showImage();
         });
 
