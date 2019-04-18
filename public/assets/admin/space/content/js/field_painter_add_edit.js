@@ -10,7 +10,7 @@ jQuery(document).ready(function($) {
         var contenttype_name = $(e.target).attr('data-contenttype-name');
         var scene_template = $(e.target).attr('data-scene-template');
         var content_id = $(e.target).attr('data-content-id');
-
+//console.log(scene_template);
         //var subject_type = $(e.target).attr('data-subject-field-type');
         //var subject_name = $(e.target).attr('data-subject-field-name');
         //var subject_label = $(e.target).attr('data-subject-field-label');
@@ -26,18 +26,25 @@ jQuery(document).ready(function($) {
             //$('#painter .modal-title').text($('#painter .modal-title').text() + ' ' + subject_label);
 
 						var doc = document.getElementById('painter-iframe').contentWindow.document;
-				
+			
+						/* scripts */	
 						var script = document.createElement('script');
-
 						script.src = window.ideaspace_site_path + '/public/a-painter/vendor/aframe-input-mapping-component.js';
 						doc.head.appendChild(script);
 
+						script = document.createElement('script');
+						script.src = window.ideaspace_site_path + '/public/a-painter/vendor/Tween.js';
+						doc.head.appendChild(script);
+
+						script = document.createElement('script');
 						script.src = window.ideaspace_site_path + '/public/a-painter/build.js';
 						doc.head.appendChild(script);
 
+						script = document.createElement('script');
 						script.src = window.ideaspace_site_path + '/public/a-painter/vendor/aframe-teleport-controls.min.js';
 						doc.head.appendChild(script);
 
+						script = document.createElement('script');
 						script.src = window.ideaspace_site_path + '/public/a-painter/vendor/aframe-tooltip-component.min.js';
 						doc.head.appendChild(script);
 
@@ -46,10 +53,13 @@ jQuery(document).ready(function($) {
 						link.href = window.ideaspace_site_path + '/public/a-painter/css/main.css';
 						doc.head.appendChild(link);
 
+						link = document.createElement('link');
 						link.rel = 'manifest';
 						link.href = window.ideaspace_site_path + '/public/a-painter/manifest.webmanifest';
 						doc.head.appendChild(link);
 
+
+						/* assets */	
 						var scene = doc.querySelector('a-scene');
 						var assets = doc.querySelector('a-assets');
 
@@ -66,56 +76,59 @@ jQuery(document).ready(function($) {
 						assets.appendChild(img);
 
 						var asset_item = document.createElement('a-asset-item');
-						asset_item.id = 'logoobj';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/models/logo.obj';
+						/*asset_item.id = 'logoobj';
+						asset_item.setAttribute('src', window.ideaspace_site_path + '/public/a-painter/assets/models/logo.obj');
 						assets.appendChild(asset_item);
 
 						asset_item = document.createElement('a-asset-item');
 						asset_item.id = 'logomtl';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/models/logo.mtl';
+						asset_item.setAttribute('src', window.ideaspace_site_path + '/public/a-painter/assets/models/logo.mtl');
 						assets.appendChild(asset_item);
+						*/
 
 						asset_item = document.createElement('a-asset-item');
 						asset_item.id = 'uiobj';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/models/ui.obj';
+						asset_item.setAttribute('src', window.ideaspace_site_path + '/public/a-painter/assets/models/ui.obj');
 						assets.appendChild(asset_item);
 
 						asset_item = document.createElement('a-asset-item');
 						asset_item.id = 'hitEntityObj';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/models/teleportHitEntity.obj';
+						asset_item.setAttribute('src', window.ideaspace_site_path + '/public/a-painter/assets/models/teleportHitEntity.obj');
 						assets.appendChild(asset_item);
 
 						var audio = document.createElement('audio');
-						asset_item.id = 'ui_click0';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_click0.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_click0';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_click0.ogg';
+						assets.appendChild(audio);
 
 						audio = document.createElement('audio');
-						asset_item.id = 'ui_click1';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_click1.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_click1';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_click1.ogg';
+						assets.appendChild(audio);
 
 						audio = document.createElement('audio');
-						asset_item.id = 'ui_menu';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_menu.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_menu';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_menu.ogg';
+						assets.appendChild(audio);
 
 						audio = document.createElement('audio');
-						asset_item.id = 'ui_undo';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_undo.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_undo';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_undo.ogg';
+						assets.appendChild(audio);
 
 						audio = document.createElement('audio');
-						asset_item.id = 'ui_tick';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_tick.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_tick';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_tick.ogg';
+						assets.appendChild(audio);
 
 						audio = document.createElement('audio');
-						asset_item.id = 'ui_paint';
-						asset_item.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_paint.ogg';
-						assets.appendChild(asset_item);
+						audio.id = 'ui_paint';
+						audio.src = window.ideaspace_site_path + '/public/a-painter/assets/sound/ui_paint.ogg';
+						assets.appendChild(audio);
 
-						var entity = document.createElement('a-light');
+
+						/* scene */
+						/*var entity = document.createElement('a-light');
 						entity.setAttribute('type', 'point');
 						entity.setAttribute('light', { color: '#fff', intensity: 0.6 });
 						entity.setAttribute('position', { x:3, y:10, z:1 });
@@ -142,8 +155,9 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('geometry', { primitive: 'box', width: 12, height: 0.01, depth: 12 });
 						entity.setAttribute('material', { shader: 'flat', src: '#floor' });
 						scene.appendChild(entity);
+						*/
 
-						entity = document.createElement('a-entity');
+						var entity = document.createElement('a-entity');
 						entity.id = 'hitEntityLeft';
 						entity.setAttribute('material', { shader: 'flat', color: '#ff3468' });
 						entity.setAttribute('obj-model', { obj: '#hitEntityObj' });
@@ -167,6 +181,7 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('orbit-controls', {});
 						camera_rig.appendChild(entity);
 
+
 						/* left hand */
 						var left_hand = document.createElement('a-entity');
 						left_hand.id = 'left-hand';
@@ -175,12 +190,10 @@ jQuery(document).ready(function($) {
 						left_hand.setAttribute('if-no-vr-headset', { visible: false });
 						left_hand.setAttribute('paint-controls', { hand: 'left' });
 						left_hand.setAttribute('teleport-controls', { cameraRig: '#cameraRig', button: 'trackpad', ground: '#ground', hitCylinderColor: '#ff3468', curveHitColor: '#ff3468', curveMissColor: '#333333', curveLineWidth: 0.01, hitEntity: '#hitEntityLeft' });
-						camera_rig.appendChild(left_hand);
 
 						var vive_tooltips = document.createElement('a-entity');
             vive_tooltips.className = 'vive-tooltips';
             vive_tooltips.setAttribute('visible', false);
-            left_hand.appendChild(vive_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Brush size\n(slide up/down)', width: 0.1, height: 0.04, targetPosition: '0 0.016 0.0073', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -206,10 +219,12 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
 						vive_tooltips.appendChild(entity);
 
+            left_hand.appendChild(vive_tooltips);
+
+
 						var oculus_tooltips = document.createElement('a-entity');
             oculus_tooltips.className = 'oculus-tooltips';
             oculus_tooltips.setAttribute('visible', false);
-            left_hand.appendChild(oculus_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Main Menu', width: 0.07, height: 0.03, targetPosition: '-0.009 0 -0.002', rotation: '-90 0 0', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -236,10 +251,12 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('position', { x:0.058, y:-0.01, z:0.055 });
 						oculus_tooltips.appendChild(entity);
 
+            left_hand.appendChild(oculus_tooltips);
+
+
 						var windows_motion_samsung_tooltips = document.createElement('a-entity');
             windows_motion_samsung_tooltips.className = 'windows-motion-samsung-tooltips';
             windows_motion_samsung_tooltips.setAttribute('visible', false);
-            left_hand.appendChild(windows_motion_samsung_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Trigger to paint!', width: 0.1, height: 0.04, targetPosition: '0 -0.3 -0.1', lineHorizontalAlign: 'center', lineVerticalAlign: 'bottom', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -265,10 +282,12 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
 						windows_motion_samsung_tooltips.appendChild(entity);
 
+            left_hand.appendChild(windows_motion_samsung_tooltips);
+
+
 						var windows_motion_tooltips = document.createElement('a-entity');
             windows_motion_tooltips.className = 'windows-motion-tooltips';
             windows_motion_tooltips.setAttribute('visible', false);
-            left_hand.appendChild(windows_motion_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Trigger to paint!', width: 0.1, height: 0.04, targetPosition: '0 -0.3 -0.1', lineHorizontalAlign: 'center', lineVerticalAlign: 'bottom', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -294,6 +313,11 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
 						windows_motion_tooltips.appendChild(entity);
 
+            left_hand.appendChild(windows_motion_tooltips);
+
+						camera_rig.appendChild(left_hand);
+
+
 						/* right hand */
 						var right_hand = document.createElement('a-entity');
 						right_hand.id = 'right-hand';
@@ -302,15 +326,41 @@ jQuery(document).ready(function($) {
 						right_hand.setAttribute('if-no-vr-headset', { visible: false });
 						right_hand.setAttribute('paint-controls', { hand: 'right' });
 						right_hand.setAttribute('teleport-controls', { cameraRig: '#cameraRig', button: 'trackpad', ground: '#ground', hitCylinderColor: '#ff3468', curveHitColor: '#ff3468', curveMissColor: '#333333', curveLineWidth: 0.01, hitEntity: '#hitEntityRight' });
-						camera_rig.appendChild(right_hand);
 
-						/* same tooltips as for left hand */
+						vive_tooltips = document.createElement('a-entity');
+            vive_tooltips.className = 'vive-tooltips';
+            vive_tooltips.setAttribute('visible', false);
+
+						entity = document.createElement('a-entity');
+						entity.setAttribute('tooltip', { text: 'Brush size\n(slide up/down)', width: 0.1, height: 0.04, targetPosition: '0 0.016 0.0073', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
+						entity.setAttribute('position', { x:0.1, y:0.025, z:0.048 });
+						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
+						vive_tooltips.appendChild(entity);
+
+						entity = document.createElement('a-entity');
+						entity.setAttribute('tooltip', { text: 'Main menu', width: 0.07, height: 0.03, targetPosition: '0 -0.07 -0.062', lineHorizontalAlign: 'center', lineVerticalAlign: 'bottom', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
+						entity.setAttribute('position', { x:0, y:0.015, z:-0.05 });
+						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
+						vive_tooltips.appendChild(entity);
+
+						entity = document.createElement('a-entity');
+						entity.setAttribute('tooltip', { text: 'Press to paint\n(pressure sensitive)', width: 0.11, height: 0.04, targetPosition: '0 -0.06 0.067', lineHorizontalAlign: 'right', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
+						entity.setAttribute('position', { x:-0.11, y:-0.055, z:0.04 });
+						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
+						vive_tooltips.appendChild(entity);
+
+						entity = document.createElement('a-entity');
+						entity.setAttribute('tooltip', { text: 'Undo', width: 0.06, height: 0.03, targetPosition: '-0.003 0.046 0.106', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
+						entity.setAttribute('position', { x:0.1, y:-0.005, z:0.12 });
+						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
+						vive_tooltips.appendChild(entity);
+
 						right_hand.appendChild(vive_tooltips);
+
 
 						oculus_tooltips = document.createElement('a-entity');
             oculus_tooltips.className = 'oculus-tooltips';
             oculus_tooltips.setAttribute('visible', false);
-            right_hand.appendChild(oculus_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Main Menu', width: 0.07, height: 0.03, targetPosition: '0.009 0 -0.002', rotation: '-90 0 0', lineHorizontalAlign: 'right', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -333,14 +383,16 @@ jQuery(document).ready(function($) {
 						oculus_tooltips.appendChild(entity);
 
 						entity = document.createElement('a-entity');
-						entity.setAttribute('tooltip', { text: 'Undo', width: 0.05, height: 0.03, targetPosition: '-0.005 -0.022 -0.027', lineHorizontalAlign: 'right', rotation: '-90 0 0', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
+						entity.setAttribute('tooltip', { text: 'Undo', width: 0.05, height: 0.03, targetPosition: '-0.005 -0.022 0.027', lineHorizontalAlign: 'right', rotation: '-90 0 0', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
 						entity.setAttribute('position', { x:-0.058, y:-0.01, z:0.055 });
 						oculus_tooltips.appendChild(entity);
+
+            right_hand.appendChild(oculus_tooltips);
+
 
 						windows_motion_samsung_tooltips = document.createElement('a-entity');
             windows_motion_samsung_tooltips.className = 'windows-motion-samsung-tooltips';
             windows_motion_samsung_tooltips.setAttribute('visible', false);
-            right_hand.appendChild(windows_motion_samsung_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Trigger to paint!', width: 0.1, height: 0.04, targetPosition: '0 -0.3 -0.1', lineHorizontalAlign: 'center', lineVerticalAlign: 'bottom', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -366,10 +418,12 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
 						windows_motion_samsung_tooltips.appendChild(entity);
 
+            right_hand.appendChild(windows_motion_samsung_tooltips);
+
+
 						windows_motion_tooltips = document.createElement('a-entity');
             windows_motion_tooltips.className = 'windows-motion-tooltips';
             windows_motion_tooltips.setAttribute('visible', false);
-            right_hand.appendChild(windows_motion_tooltips);
 
 						entity = document.createElement('a-entity');
 						entity.setAttribute('tooltip', { text: 'Trigger to paint!', width: 0.1, height: 0.04, targetPosition: '0 -0.3 -0.1', lineHorizontalAlign: 'center', lineVerticalAlign: 'bottom', src: window.ideaspace_site_path + '/public/a-painter/assets/images/tooltip.png' });
@@ -395,6 +449,9 @@ jQuery(document).ready(function($) {
 						entity.setAttribute('rotation', { x:-90, y:0, z:0 });
 						windows_motion_tooltips.appendChild(entity);
 
+            right_hand.appendChild(windows_motion_tooltips);
+
+						camera_rig.appendChild(right_hand);
 
 
             $('#painter').on('shown.bs.modal', function() {

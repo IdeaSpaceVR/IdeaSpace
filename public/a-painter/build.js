@@ -342,13 +342,13 @@ module.exports = __webpack_amd_options__;
 const AtlasJSON = __webpack_require__(8);
 
 function Atlas () {
-  this.map = new THREE.TextureLoader().load('assets/images/' + AtlasJSON.meta.image);
+  this.map = new THREE.TextureLoader().load('public/a-painter/assets/images/' + AtlasJSON.meta.image);
 }
 
 Atlas.prototype = {
   getUVConverters: function (filename) {
     if (filename) {
-      filename = filename.replace('brushes/', '');
+      filename = filename.replace('public/a-painter/brushes/', '');
       return {
         convertU: function (u) {
           var totalSize = AtlasJSON.meta.size;
@@ -2233,8 +2233,8 @@ AFRAME.registerSystem('ui', {
 
   initTextures: function () {
     var self = this;
-    var hoverTextureUrl = 'assets/images/ui-hover.png';
-    var pressedTextureUrl = 'assets/images/ui-pressed.png';
+    var hoverTextureUrl = 'public/a-painter/assets/images/ui-hover.png';
+    var pressedTextureUrl = 'public/a-painter/assets/images/ui-pressed.png';
     this.sceneEl.systems.material.loadTexture(hoverTextureUrl, {src: hoverTextureUrl}, onLoadedHoverTexture);
     this.sceneEl.systems.material.loadTexture(pressedTextureUrl, {src: pressedTextureUrl}, onLoadedPressedTexture);
     function onLoadedHoverTexture (texture) {
@@ -2338,9 +2338,9 @@ AFRAME.registerSystem('painter', {
     if (urlParams.url || urlParams.urljson) {
       var isBinary = urlParams.urljson === undefined;
       this.brushSystem.loadFromUrl(urlParams.url || urlParams.urljson, isBinary);
-      document.getElementById('logo').setAttribute('visible', false);
+      //document.getElementById('logo').setAttribute('visible', false);
       document.getElementById('acamera').setAttribute('orbit-controls', 'position', '0 1.6 3');
-      document.getElementById('apainter-logo').classList.remove('hidden');
+      //document.getElementById('apainter-logo').classList.remove('hidden');
       //document.getElementById('apainter-author').classList.remove('hidden'); // not used yet
     }
 
@@ -2359,9 +2359,9 @@ AFRAME.registerSystem('painter', {
     if (urlParams.floor !== undefined) {
       this.sceneEl.addEventListener('loaded', function (evt) {
         if (urlParams.floor === '') {
-          document.getElementById('ground').setAttribute('visible', false);
+          //document.getElementById('ground').setAttribute('visible', false);
         } else {
-          document.getElementById('ground').setAttribute('material', 'src', urlParams.floor);
+          //document.getElementById('ground').setAttribute('material', 'src', urlParams.floor);
         }
       });
     }
@@ -2370,16 +2370,16 @@ AFRAME.registerSystem('painter', {
     var self = this;
     document.addEventListener('stroke-started', function (event) {
       if (!self.startPainting) {
-        var logo = document.getElementById('logo');
+        /*var logo = document.getElementById('logo');
         var mesh = logo.getObject3D('mesh');
-        var tween = new AFRAME.TWEEN.Tween({ alpha: 1.0 })
+        var tween = new TWEEN.Tween({ alpha: 1.0 })
           .to({alpha: 0.0}, 4000)
           .onComplete(function () {
             logo.setAttribute('visible', false);
           })
           .onUpdate(function () {
             mesh.children[0].material.opacity = this.alpha;
-          }).start();
+          }).start();*/
         self.startPainting = true;
       }
     });
@@ -2395,7 +2395,7 @@ AFRAME.registerSystem('painter', {
         // Clear (c)
         self.brushSystem.clear();
       }
-      if (event.keyCode === 71) {
+      if (event.keyCode === 71) {
         // Export to GTF (g)
         var drawing = document.querySelector('.a-drawing');
         self.sceneEl.systems['gltf-exporter'].export(drawing);
@@ -2778,7 +2778,7 @@ AFRAME.registerComponent('paint-controls', {
   init: function () {
     var el = this.el;
     var self = this;
-    var highLightTextureUrl = 'assets/images/controller-pressed.png';
+    var highLightTextureUrl = 'public/a-painter/assets/images/controller-pressed.png';
     var tooltips = null;
     this.controller = null;
     this.modelLoaded = false;
@@ -2843,9 +2843,9 @@ AFRAME.registerComponent('paint-controls', {
       } else if (controllerName === 'oculus-touch-controls') {
         var hand = evt.detail.component.data.hand;
         //el.setAttribute('teleport-controls', {button: hand === 'left' ? 'ybutton' : 'bbutton'});
-        el.setAttribute('obj-model', {obj: 'assets/models/oculus-' + hand + '-controller.obj', mtl: 'https://cdn.aframe.io/controllers/oculus/oculus-touch-controller-' + hand + '.mtl'});
+        el.setAttribute('obj-model', {obj: 'public/a-painter/assets/models/oculus-' + hand + '-controller.obj', mtl: 'https://cdn.aframe.io/controllers/oculus/oculus-touch-controller-' + hand + '.mtl'});
       } else if (controllerName === 'vive-controls') {
-        el.setAttribute('json-model', {src: 'assets/models/controller_vive.json'});
+        el.setAttribute('json-model', {src: 'public/a-painter/assets/models/controller_vive.json'});
       } else { return; }
 
       if (!!tooltips) {
@@ -2882,7 +2882,7 @@ AFRAME.registerComponent('paint-controls', {
         var tooltips = Array.prototype.slice.call(document.querySelectorAll('[tooltip]'));
         var object = { opacity: 1.0 };
 
-        var tween = new AFRAME.TWEEN.Tween(object)
+        var tween = new TWEEN.Tween(object)
           .to({opacity: 0.0}, 1000)
           .onComplete(function () {
             tooltips.forEach(function (tooltip) {
@@ -3534,7 +3534,7 @@ AFRAME.registerComponent('ui', {
     this.objects.messageError.visible = false;
     this.objects.messageError.material = this.messagesMaterial;
 
-    var messagesImageUrl = 'assets/images/messages.png';
+    var messagesImageUrl = 'public/a-painter/assets/images/messages.png';
 
     this.el.sceneEl.systems.material.loadTexture(messagesImageUrl, {src: messagesImageUrl}, function (texture) {
       var material = self.messagesMaterial;
@@ -3545,13 +3545,13 @@ AFRAME.registerComponent('ui', {
     function showMessage (msgObject) {
       msgObject.visible = true;
       var object = { opacity: 0.0 };
-      var tween = new AFRAME.TWEEN.Tween(object)
+      var tween = new TWEEN.Tween(object)
         .to({opacity: 1.0}, 500)
         .onUpdate(function () {
           self.messagesMaterial.opacity = object.opacity;
         })
         .chain(
-          new AFRAME.TWEEN.Tween(object)
+          new TWEEN.Tween(object)
             .to({opacity: 0.0}, 500)
             .delay(3000)
             .onComplete(function () {
@@ -3724,12 +3724,12 @@ AFRAME.registerComponent('ui', {
     var tween;
     if (!this.closed) { return; }
     this.uiEl.setAttribute('visible', true);
-    tween = new AFRAME.TWEEN.Tween(coords)
+    tween = new TWEEN.Tween(coords)
         .to({ x: 1, y: 1, z: 1 }, 100)
         .onUpdate(function () {
           uiEl.setAttribute('scale', this);
         })
-        .easing(AFRAME.TWEEN.Easing.Exponential.Out);
+        .easing(TWEEN.Easing.Exponential.Out);
     tween.start();
     this.el.setAttribute('brush', 'enabled', false);
     this.rayEl.setAttribute('visible', false);
@@ -3914,7 +3914,7 @@ AFRAME.registerComponent('ui', {
     var coords = { x: 1, y: 1, z: 1 };
     var tween;
     if (this.closed) { return; }
-    tween = new AFRAME.TWEEN.Tween(coords)
+    tween = new TWEEN.Tween(coords)
         .to({ x: 0, y: 0, z: 0 }, 100)
         .onUpdate(function () {
           uiEl.setAttribute('scale', this);
@@ -3922,7 +3922,7 @@ AFRAME.registerComponent('ui', {
         .onComplete(function () {
           uiEl.setAttribute('visible', false);
         })
-        .easing(AFRAME.TWEEN.Easing.Exponential.Out);
+        .easing(TWEEN.Easing.Exponential.Out);
     tween.start();
     this.el.setAttribute('brush', 'enabled', true);
     this.closed = true;
@@ -4316,110 +4316,110 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'flat'
       },
-      thumbnail: 'brushes/thumb_flat.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_flat.gif'
     },
     {
       name: 'smooth',
       materialOptions: {
         type: 'shaded'
       },
-      thumbnail: 'brushes/thumb_smooth.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_smooth.gif'
     },
     {
       name: 'squared-textured',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/squared_textured.png'
+        textureSrc: 'public/a-painter/brushes/squared_textured.png'
       },
-      thumbnail: 'brushes/thumb_squared_textured.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_squared_textured.gif'
     },
     {
       name: 'line-gradient',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/line_gradient.png'
+        textureSrc: 'public/a-painter/brushes/line_gradient.png'
       },
-      thumbnail: 'brushes/thumb_line_gradient.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_line_gradient.gif'
     },
     {
       name: 'silky-flat',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/silky_flat.png'
+        textureSrc: 'public/a-painter/brushes/silky_flat.png'
       },
-      thumbnail: 'brushes/thumb_silky_flat.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_silky_flat.gif'
     },
     {
       name: 'silky-textured',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/silky_textured.png'
+        textureSrc: 'public/a-painter/brushes/silky_textured.png'
       },
-      thumbnail: 'brushes/thumb_silky_textured.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_silky_textured.gif'
     },
     {
       name: 'lines1',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/lines1.png'
+        textureSrc: 'public/a-painter/brushes/lines1.png'
       },
-      thumbnail: 'brushes/thumb_lines1.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_lines1.gif'
     },
     {
       name: 'lines2',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/lines2.png'
+        textureSrc: 'public/a-painter/brushes/lines2.png'
       },
-      thumbnail: 'brushes/thumb_lines2.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_lines2.gif'
     },
     {
       name: 'lines3',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/lines3.png'
+        textureSrc: 'public/a-painter/brushes/lines3.png'
       },
-      thumbnail: 'brushes/thumb_lines3.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_lines3.gif'
     },
     {
       name: 'lines4',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/lines4.png'
+        textureSrc: 'public/a-painter/brushes/lines4.png'
       },
-      thumbnail: 'brushes/thumb_lines4.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_lines4.gif'
     },
     {
       name: 'lines5',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/lines5.png'
+        textureSrc: 'public/a-painter/brushes/lines5.png'
       },
-      thumbnail: 'brushes/thumb_lines5.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_lines5.gif'
     },
     {
       name: 'line-grunge1',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/line_grunge1.png'
+        textureSrc: 'public/a-painter/brushes/line_grunge1.png'
       },
-      thumbnail: 'brushes/thumb_line_grunge1.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_line_grunge1.gif'
     },
     {
       name: 'line-grunge2',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/line_grunge2.png'
+        textureSrc: 'public/a-painter/brushes/line_grunge2.png'
       },
-      thumbnail: 'brushes/thumb_line_grunge2.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_line_grunge2.gif'
     },
     {
       name: 'line-grunge3',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'brushes/line_grunge3.png'
+        textureSrc: 'public/a-painter/brushes/line_grunge3.png'
       },
-      thumbnail: 'brushes/thumb_line_grunge3.gif'
+      thumbnail: 'public/a-painter/brushes/thumb_line_grunge3.gif'
     }
   ];
 
@@ -4593,18 +4593,18 @@ var onLoaded = __webpack_require__(3);
       name: 'dots',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'brushes/stamp_dots.png'
+        textureSrc: 'public/a-painter/brushes/stamp_dots.png'
       },
-      thumbnail: 'brushes/thumb_stamp_dots.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_dots.gif',
       spacing: 0.01
     },
     {
       name: 'squares',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'brushes/stamp_squares.png'
+        textureSrc: 'public/a-painter/brushes/stamp_squares.png'
       },
-      thumbnail: 'brushes/thumb_stamp_squares.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_squares.gif',
       spacing: 0.01
     },
     {
@@ -4612,9 +4612,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         autoRotate: true,
-        textureSrc: 'brushes/stamp_column.png'
+        textureSrc: 'public/a-painter/brushes/stamp_column.png'
       },
-      thumbnail: 'brushes/thumb_stamp_column.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_column.gif',
       spacing: 0.01
     },
     {
@@ -4623,9 +4623,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: Math.PI * 2,
         subTextures: 2,
-        textureSrc: 'brushes/stamp_gear.png'
+        textureSrc: 'public/a-painter/brushes/stamp_gear.png'
       },
-      thumbnail: 'brushes/thumb_stamp_gear.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_gear.gif',
       spacing: 0.05
     },
     {
@@ -4633,9 +4633,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_grunge1.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grunge1.png'
       },
-      thumbnail: 'brushes/stamp_grunge1.png',
+      thumbnail: 'public/a-painter/brushes/stamp_grunge1.png',
       spacing: 0.02
     },
     {
@@ -4643,9 +4643,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_grunge2.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grunge2.png'
       },
-      thumbnail: 'brushes/stamp_grunge2.png',
+      thumbnail: 'public/a-painter/brushes/stamp_grunge2.png',
       spacing: 0.02
     },
     {
@@ -4653,9 +4653,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_grunge3.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grunge3.png'
       },
-      thumbnail: 'brushes/stamp_grunge3.png',
+      thumbnail: 'public/a-painter/brushes/stamp_grunge3.png',
       spacing: 0.02
     },
     {
@@ -4663,9 +4663,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_grunge4.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grunge4.png'
       },
-      thumbnail: 'brushes/stamp_grunge4.png',
+      thumbnail: 'public/a-painter/brushes/stamp_grunge4.png',
       spacing: 0.02
     },
     {
@@ -4673,9 +4673,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_grunge5.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grunge5.png'
       },
-      thumbnail: 'brushes/thumb_stamp_grunge5.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_grunge5.gif',
       spacing: 0.02
     },
     {
@@ -4683,9 +4683,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI,
-        textureSrc: 'brushes/stamp_leaf1.png'
+        textureSrc: 'public/a-painter/brushes/stamp_leaf1.png'
       },
-      thumbnail: 'brushes/stamp_leaf1.png',
+      thumbnail: 'public/a-painter/brushes/stamp_leaf1.png',
       spacing: 0.03
     },
     {
@@ -4693,9 +4693,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: 60 * Math.PI / 180.0,
-        textureSrc: 'brushes/stamp_leaf2.png'
+        textureSrc: 'public/a-painter/brushes/stamp_leaf2.png'
       },
-      thumbnail: 'brushes/thumb_stamp_leaf2.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_leaf2.gif',
       spacing: 0.03
     },
     {
@@ -4703,9 +4703,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: 60 * Math.PI / 180.0,
-        textureSrc: 'brushes/stamp_leaf3.png'
+        textureSrc: 'public/a-painter/brushes/stamp_leaf3.png'
       },
-      thumbnail: 'brushes/thumb_stamp_leaf3.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_leaf3.gif',
       spacing: 0.03
     },
     {
@@ -4714,9 +4714,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 40 * Math.PI / 180.0,
         subTextures: 2,
-        textureSrc: 'brushes/stamp_fur1.png'
+        textureSrc: 'public/a-painter/brushes/stamp_fur1.png'
       },
-      thumbnail: 'brushes/stamp_fur1.png',
+      thumbnail: 'public/a-painter/brushes/stamp_fur1.png',
       spacing: 0.01
     },
     {
@@ -4725,9 +4725,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 10 * Math.PI / 180.0,
         subTextures: 3,
-        textureSrc: 'brushes/stamp_fur2.png'
+        textureSrc: 'public/a-painter/brushes/stamp_fur2.png'
       },
-      thumbnail: 'brushes/stamp_fur2.png',
+      thumbnail: 'public/a-painter/brushes/stamp_fur2.png',
       spacing: 0.01
     },
     {
@@ -4736,9 +4736,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 10 * Math.PI / 180.0,
         subTextures: 3,
-        textureSrc: 'brushes/stamp_grass.png'
+        textureSrc: 'public/a-painter/brushes/stamp_grass.png'
       },
-      thumbnail: 'brushes/thumb_stamp_grass.png',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_grass.png',
       spacing: 0.03
     },
     {
@@ -4746,18 +4746,18 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         subTextures: 2,
-        textureSrc: 'brushes/stamp_bush.png'
+        textureSrc: 'public/a-painter/brushes/stamp_bush.png'
       },
-      thumbnail: 'brushes/thumb_stamp_bush.gif',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_bush.gif',
       spacing: 0.04
     },
     {
       name: 'star',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'brushes/stamp_star.png'
+        textureSrc: 'public/a-painter/brushes/stamp_star.png'
       },
-      thumbnail: 'brushes/thumb_stamp_star.png',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_star.png',
       spacing: 0.06
     },
     {
@@ -4765,9 +4765,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'brushes/stamp_snow.png'
+        textureSrc: 'public/a-painter/brushes/stamp_snow.png'
       },
-      thumbnail: 'brushes/thumb_stamp_snow.png',
+      thumbnail: 'public/a-painter/brushes/thumb_stamp_snow.png',
       spacing: 0.06
     }
   ];
