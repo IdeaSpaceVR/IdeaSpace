@@ -19,7 +19,7 @@ AFRAME.registerComponent('load-image', {
                 assets.appendChild(image_elem);
 
                 document.querySelector('#image-loading').setAttribute('visible', false);
-                document.querySelector('#image-loading-anim').stop();
+                document.querySelector('#image-loading').emit('stop');
 
                 el.setAttribute('src', '#img');
                 /* default camera distance to image: -1 */

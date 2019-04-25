@@ -18,9 +18,9 @@ AFRAME.registerComponent('load-photosphere', {
                 var assets = document.querySelector('a-assets');
                 assets.appendChild(image_elem);
 
-                if (document.querySelector('#image-loading') !== null && document.querySelector('#image-loading-anim') !== null) {
+                if (document.querySelector('#image-loading') !== null) {
                     document.querySelector('#image-loading').setAttribute('visible', false);
-                    document.querySelector('#image-loading-anim').stop();
+                    document.querySelector('#image-loading').emit('stop');
                 }
 
                 el.setAttribute('src', '#img');

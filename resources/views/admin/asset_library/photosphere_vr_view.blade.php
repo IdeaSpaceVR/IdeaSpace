@@ -23,15 +23,8 @@
                     position="0 1.6 -4"
                     geometry="primitive: circle; radius: 2"
                     material="transparent: true; src: #loading"
+										animation="property: rotation; dur: 5000; to: 0 0 -360; easing: linear; loop: true; pauseEvents: stop; autoplay: true"
                     id="image-loading">
-                    <a-animation
-                        attribute="rotation"
-                        dur="5000"
-                        to="0 0 -360"
-                        easing="linear"
-                        repeat="indefinite"
-                        id="image-loading-anim">
-                    </a-animation>
                 </a-entity>
 
             </a-scene>      

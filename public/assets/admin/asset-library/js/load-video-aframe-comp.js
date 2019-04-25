@@ -8,7 +8,7 @@ AFRAME.registerComponent('load-video', {
         var video = document.querySelector('#video');
         video.addEventListener('canplaythrough', function(el) {
             document.querySelector('#image-loading').setAttribute('visible', false);
-            document.querySelector('#image-loading-anim').stop();
+            document.querySelector('#image-loading').emit('stop');
             el.setAttribute('src', '#video');
             /* default camera distance to video: -4 */
             el.setAttribute('position', '0 2 -4');
