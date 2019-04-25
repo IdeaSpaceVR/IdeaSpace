@@ -2,7 +2,7 @@
 
 @section('scene-content')
 <!-- a-frame //-->
-<a-scene embedded style="width:100%">
+<a-scene embedded style="width:100%" loading-screen="dotsColor: #0080e5; backgroundColor: #FFFFFF">
 
     <a-assets>
         <a-asset-item id="model-obj" src="{{ $model_obj }}"></a-asset-item>

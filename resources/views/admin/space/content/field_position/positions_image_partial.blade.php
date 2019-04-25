@@ -4,7 +4,7 @@
 
 @section('scene-content')
 <!-- a-frame //-->
-<a-scene reset-camera embedded style="width:100%">
+<a-scene reset-camera embedded style="width:100%" loading-screen="dotsColor: #0080e5; backgroundColor: #FFFFFF">
 
     <a-assets>
         <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading">
