@@ -2,8 +2,11 @@
 
 function painter_head() {
 
+		/* important for asset paths in build.js */
+		echo '<script>window.ideaspace_site_path = "' . url('/') . '";</script>';
+
 		echo '<script src="' . url('public/a-painter/vendor/aframe-input-mapping-component.js') . '"></script>';
-    echo '<script src="' . url('public/a-painter/vendor/Tween.js') . '"></script>';
+    //echo '<script src="' . url('public/a-painter/vendor/Tween.js') . '"></script>';
     echo '<script src="' . url('public/a-painter/build.js') . '"></script>';
 		//<script src="https://cdn.rawgit.com/zenorocha/clipboard.js/v1.5.12/dist/clipboard.min.js"></script>
     //<script src="https://unpkg.com/aframe-gltf-exporter-component/dist/aframe-gltf-exporter-component.min.js"></script>
@@ -35,9 +38,9 @@ function painter_entities() {
 
 		echo '<a-entity id="hitEntityLeft" material="shader:flat; color: #ff3468" obj-model="obj: #hitEntityObj"></a-entity>
       <a-entity id="hitEntityRight" material="shader:flat; color: #ff3468" obj-model="obj: #hitEntityObj"></a-entity>
-      <a-entity id="cameraRig" /*position="0 -1.6 0"*/>
+      <a-entity id="cameraRig">
         <!-- camera -->
-        <a-entity id="acamera" camera wasd-controls look-controls orbit-controls></a-entity>
+        <a-entity id="acamera" camera wasd-controls look-controls></a-entity>
         <!-- hand controls -->
         <a-entity id="left-hand"
                   brush

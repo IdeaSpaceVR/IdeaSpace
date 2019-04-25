@@ -280,40 +280,54 @@ module.exports = function (callback) {
   }
 }
 
+
 /***/ }),
 /* 4 */
 /***/ (function(module, exports, __webpack_require__) {
 
 window.saveAs = __webpack_require__(1).saveAs;
 
+//TWEEN = require('../vendor/Tween.js');
+
 __webpack_require__(7);
 __webpack_require__(9);
 __webpack_require__(10);
-__webpack_require__(11);
+//require('../vendor/OrbitControls.js');
 __webpack_require__(0);
 __webpack_require__(2);
 
+__webpack_require__(11);
 __webpack_require__(12);
-__webpack_require__(13);
 
+__webpack_require__(13);
 __webpack_require__(14);
 __webpack_require__(15);
-__webpack_require__(16);
 
+__webpack_require__(16);
 __webpack_require__(17);
 __webpack_require__(18);
 __webpack_require__(19);
 __webpack_require__(20);
 __webpack_require__(21);
 __webpack_require__(22);
-__webpack_require__(23);
 
+__webpack_require__(23);
 __webpack_require__(24);
 __webpack_require__(25);
 __webpack_require__(26);
 __webpack_require__(27);
 __webpack_require__(28);
-__webpack_require__(29);
+
+/*var tween = new TWEEN.Tween({ x: 0, y: 0, z: 0 })
+      .to({ x: 1, y: 1, z: 1 }, 100)
+      .onUpdate(function () {
+console.log('in tween');
+          //uiEl.setAttribute('scale', this);
+      })
+      .easing(TWEEN.Easing.Exponential.Out);
+    tween.start();
+
+*/
 
 
 /***/ }),
@@ -342,13 +356,13 @@ module.exports = __webpack_amd_options__;
 const AtlasJSON = __webpack_require__(8);
 
 function Atlas () {
-  this.map = new THREE.TextureLoader().load('public/a-painter/assets/images/' + AtlasJSON.meta.image);
+  this.map = new THREE.TextureLoader().load(window.ideaspace_site_path + '/public/a-painter/assets/images/' + AtlasJSON.meta.image);
 }
 
 Atlas.prototype = {
   getUVConverters: function (filename) {
     if (filename) {
-      filename = filename.replace('public/a-painter/brushes/', '');
+      filename = filename.replace(window.ideaspace_site_path + '/public/a-painter/brushes/', '');
       return {
         convertU: function (u) {
           var totalSize = AtlasJSON.meta.size;
@@ -595,1024 +609,6 @@ window.BinaryManager.prototype = {
 /* 11 */
 /***/ (function(module, exports) {
 
-/**
- * @author qiao / https://github.com/qiao
- * @author mrdoob / http://mrdoob.com
- * @author alteredq / http://alteredqualia.com/
- * @author WestLangley / http://github.com/WestLangley
- * @author erich666 / http://erichaines.com
- */
-
-// This set of controls performs orbiting, dollying (zooming), and panning.
-// Unlike TrackballControls, it maintains the "up" direction object.up (+Y by default).
-//
-//    Orbit - left mouse / touch: one finger move
-//    Zoom - middle mouse, or mousewheel / touch: two finger spread or squish
-//    Pan - right mouse, or arrow keys / touch: three finter swipe
-
-THREE.OrbitControls = function ( object, domElement ) {
-
-	this.object = object;
-
-	this.domElement = ( domElement !== undefined ) ? domElement : document;
-
-	// Set to false to disable this control
-	this.enabled = true;
-
-	// "target" sets the location of focus, where the object orbits around
-	this.target = new THREE.Vector3();
-
-	// How far you can dolly in and out ( PerspectiveCamera only )
-	this.minDistance = 0;
-	this.maxDistance = Infinity;
-
-	// How far you can zoom in and out ( OrthographicCamera only )
-	this.minZoom = 0;
-	this.maxZoom = Infinity;
-
-	// How far you can orbit vertically, upper and lower limits.
-	// Range is 0 to Math.PI radians.
-	this.minPolarAngle = 0; // radians
-	this.maxPolarAngle = Math.PI; // radians
-
-	// How far you can orbit horizontally, upper and lower limits.
-	// If set, must be a sub-interval of the interval [ - Math.PI, Math.PI ].
-	this.minAzimuthAngle = - Infinity; // radians
-	this.maxAzimuthAngle = Infinity; // radians
-
-	// Set to true to enable damping (inertia)
-	// If damping is enabled, you must call controls.update() in your animation loop
-	this.enableDamping = false;
-	this.dampingFactor = 0.25;
-
-	// This option actually enables dollying in and out; left as "zoom" for backwards compatibility.
-	// Set to false to disable zooming
-	this.enableZoom = true;
-	this.zoomSpeed = 1.0;
-
-	// Set to false to disable rotating
-	this.enableRotate = true;
-	this.rotateSpeed = 1.0;
-
-	// Set to false to disable panning
-	this.enablePan = true;
-	this.keyPanSpeed = 7.0;	// pixels moved per arrow key push
-
-	// Set to true to automatically rotate around the target
-	// If auto-rotate is enabled, you must call controls.update() in your animation loop
-	this.autoRotate = false;
-	this.autoRotateSpeed = 2.0; // 30 seconds per round when fps is 60
-
-	// Set to false to disable use of the keys
-	this.enableKeys = true;
-
-	// The four arrow keys
-	this.keys = { LEFT: 37, UP: 38, RIGHT: 39, BOTTOM: 40 };
-
-	// Mouse buttons
-	this.mouseButtons = { ORBIT: THREE.MOUSE.LEFT, ZOOM: THREE.MOUSE.MIDDLE, PAN: THREE.MOUSE.RIGHT };
-
-	// for reset
-	this.target0 = this.target.clone();
-	this.position0 = this.object.position.clone();
-	this.zoom0 = this.object.zoom;
-
-	//
-	// public methods
-	//
-
-	this.getPolarAngle = function () {
-
-		return spherical.phi;
-
-	};
-
-	this.getAzimuthalAngle = function () {
-
-		return spherical.theta;
-
-	};
-
-	this.reset = function () {
-
-		scope.target.copy( scope.target0 );
-		scope.object.position.copy( scope.position0 );
-		scope.object.zoom = scope.zoom0;
-
-		scope.object.updateProjectionMatrix();
-		scope.dispatchEvent( changeEvent );
-
-		scope.update();
-
-		state = STATE.NONE;
-
-	};
-
-	// this method is exposed, but perhaps it would be better if we can make it private...
-	this.update = function() {
-
-		var offset = new THREE.Vector3();
-
-		// so camera.up is the orbit axis
-		var quat = new THREE.Quaternion().setFromUnitVectors( object.up, new THREE.Vector3( 0, 1, 0 ) );
-		var quatInverse = quat.clone().inverse();
-
-		var lastPosition = new THREE.Vector3();
-		var lastQuaternion = new THREE.Quaternion();
-
-		return function update () {
-
-			var position = scope.object.position;
-
-			offset.copy( position ).sub( scope.target );
-
-			// rotate offset to "y-axis-is-up" space
-			offset.applyQuaternion( quat );
-
-			// angle from z-axis around y-axis
-			spherical.setFromVector3( offset );
-
-			if ( scope.autoRotate && state === STATE.NONE ) {
-
-				rotateLeft( getAutoRotationAngle() );
-
-			}
-
-			spherical.theta += sphericalDelta.theta;
-			spherical.phi += sphericalDelta.phi;
-
-			// restrict theta to be between desired limits
-			spherical.theta = Math.max( scope.minAzimuthAngle, Math.min( scope.maxAzimuthAngle, spherical.theta ) );
-
-			// restrict phi to be between desired limits
-			spherical.phi = Math.max( scope.minPolarAngle, Math.min( scope.maxPolarAngle, spherical.phi ) );
-
-			spherical.makeSafe();
-
-
-			spherical.radius *= scale;
-
-			// restrict radius to be between desired limits
-			spherical.radius = Math.max( scope.minDistance, Math.min( scope.maxDistance, spherical.radius ) );
-
-			// move target to panned location
-			scope.target.add( panOffset );
-
-			offset.setFromSpherical( spherical );
-
-			// rotate offset back to "camera-up-vector-is-up" space
-			offset.applyQuaternion( quatInverse );
-			position.copy( scope.target ).add( offset );
-			scope.object.lookAt( scope.target );
-
-			if ( scope.enableDamping === true ) {
-
-				sphericalDelta.theta *= ( 1 - scope.dampingFactor );
-				sphericalDelta.phi *= ( 1 - scope.dampingFactor );
-
-			} else {
-
-				sphericalDelta.set( 0, 0, 0 );
-
-			}
-
-			scale = 1;
-			panOffset.set( 0, 0, 0 );
-
-			// update condition is:
-			// min(camera displacement, camera rotation in radians)^2 > EPS
-			// using small-angle approximation cos(x/2) = 1 - x^2 / 8
-
-			if ( zoomChanged ||
-				lastPosition.distanceToSquared( scope.object.position ) > EPS ||
-				8 * ( 1 - lastQuaternion.dot( scope.object.quaternion ) ) > EPS ) {
-
-				scope.dispatchEvent( changeEvent );
-
-				lastPosition.copy( scope.object.position );
-				lastQuaternion.copy( scope.object.quaternion );
-				zoomChanged = false;
-
-				return true;
-
-			}
-
-			return false;
-
-		};
-
-	}();
-
-	this.dispose = function() {
-
-		scope.domElement.removeEventListener( 'contextmenu', onContextMenu, false );
-		scope.domElement.removeEventListener( 'mousedown', onMouseDown, false );
-		scope.domElement.removeEventListener( 'wheel', onMouseWheel, false );
-
-		scope.domElement.removeEventListener( 'touchstart', onTouchStart, false );
-		scope.domElement.removeEventListener( 'touchend', onTouchEnd, false );
-		scope.domElement.removeEventListener( 'touchmove', onTouchMove, false );
-
-		document.removeEventListener( 'mousemove', onMouseMove, false );
-		document.removeEventListener( 'mouseup', onMouseUp, false );
-
-		window.removeEventListener( 'keydown', onKeyDown, false );
-
-		//scope.dispatchEvent( { type: 'dispose' } ); // should this be added here?
-
-	};
-
-	//
-	// internals
-	//
-
-	var scope = this;
-
-	var changeEvent = { type: 'change' };
-	var startEvent = { type: 'start' };
-	var endEvent = { type: 'end' };
-
-	var STATE = { NONE : - 1, ROTATE : 0, DOLLY : 1, PAN : 2, TOUCH_ROTATE : 3, TOUCH_DOLLY : 4, TOUCH_PAN : 5 };
-
-	var state = STATE.NONE;
-
-	var EPS = 0.000001;
-
-	// current position in spherical coordinates
-	var spherical = new THREE.Spherical();
-	var sphericalDelta = new THREE.Spherical();
-
-	var scale = 1;
-	var panOffset = new THREE.Vector3();
-	var zoomChanged = false;
-
-	var rotateStart = new THREE.Vector2();
-	var rotateEnd = new THREE.Vector2();
-	var rotateDelta = new THREE.Vector2();
-
-	var panStart = new THREE.Vector2();
-	var panEnd = new THREE.Vector2();
-	var panDelta = new THREE.Vector2();
-
-	var dollyStart = new THREE.Vector2();
-	var dollyEnd = new THREE.Vector2();
-	var dollyDelta = new THREE.Vector2();
-
-	function getAutoRotationAngle() {
-
-		return 2 * Math.PI / 60 / 60 * scope.autoRotateSpeed;
-
-	}
-
-	function getZoomScale() {
-
-		return Math.pow( 0.95, scope.zoomSpeed );
-
-	}
-
-	function rotateLeft( angle ) {
-
-		sphericalDelta.theta -= angle;
-
-	}
-
-	function rotateUp( angle ) {
-
-		sphericalDelta.phi -= angle;
-
-	}
-
-	var panLeft = function() {
-
-		var v = new THREE.Vector3();
-
-		return function panLeft( distance, objectMatrix ) {
-
-			v.setFromMatrixColumn( objectMatrix, 0 ); // get X column of objectMatrix
-			v.multiplyScalar( - distance );
-
-			panOffset.add( v );
-
-		};
-
-	}();
-
-	var panUp = function() {
-
-		var v = new THREE.Vector3();
-
-		return function panUp( distance, objectMatrix ) {
-
-			v.setFromMatrixColumn( objectMatrix, 1 ); // get Y column of objectMatrix
-			v.multiplyScalar( distance );
-
-			panOffset.add( v );
-
-		};
-
-	}();
-
-	// deltaX and deltaY are in pixels; right and down are positive
-	var pan = function() {
-
-		var offset = new THREE.Vector3();
-
-		return function pan ( deltaX, deltaY ) {
-
-			var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-			if ( scope.object instanceof THREE.PerspectiveCamera ) {
-				// perspective
-				var position = scope.object.position;
-				offset.copy( position ).sub( scope.target );
-				var targetDistance = offset.length();
-
-				// half of the fov is center to top of screen
-				targetDistance *= Math.tan( ( scope.object.fov / 2 ) * Math.PI / 180.0 );
-
-				// we actually don't use screenWidth, since perspective camera is fixed to screen height
-				panLeft( 2 * deltaX * targetDistance / element.clientHeight, scope.object.matrix );
-				panUp( 2 * deltaY * targetDistance / element.clientHeight, scope.object.matrix );
-
-			} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-				// orthographic
-				panLeft( deltaX * ( scope.object.right - scope.object.left ) / scope.object.zoom / element.clientWidth, scope.object.matrix );
-				panUp( deltaY * ( scope.object.top - scope.object.bottom ) / scope.object.zoom / element.clientHeight, scope.object.matrix );
-
-			} else {
-
-				// camera neither orthographic nor perspective
-				console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - pan disabled.' );
-				scope.enablePan = false;
-
-			}
-
-		};
-
-	}();
-
-	function dollyIn( dollyScale ) {
-
-		if ( scope.object instanceof THREE.PerspectiveCamera ) {
-
-			scale /= dollyScale;
-
-		} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom * dollyScale ) );
-			scope.object.updateProjectionMatrix();
-			zoomChanged = true;
-
-		} else {
-
-			console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-			scope.enableZoom = false;
-
-		}
-
-	}
-
-	function dollyOut( dollyScale ) {
-
-		if ( scope.object instanceof THREE.PerspectiveCamera ) {
-
-			scale *= dollyScale;
-
-		} else if ( scope.object instanceof THREE.OrthographicCamera ) {
-
-			scope.object.zoom = Math.max( scope.minZoom, Math.min( scope.maxZoom, scope.object.zoom / dollyScale ) );
-			scope.object.updateProjectionMatrix();
-			zoomChanged = true;
-
-		} else {
-
-			console.warn( 'WARNING: OrbitControls.js encountered an unknown camera type - dolly/zoom disabled.' );
-			scope.enableZoom = false;
-
-		}
-
-	}
-
-	//
-	// event callbacks - update the object state
-	//
-
-	function handleMouseDownRotate( event ) {
-
-		//console.log( 'handleMouseDownRotate' );
-
-		rotateStart.set( event.clientX, event.clientY );
-
-	}
-
-	function handleMouseDownDolly( event ) {
-
-		//console.log( 'handleMouseDownDolly' );
-
-		dollyStart.set( event.clientX, event.clientY );
-
-	}
-
-	function handleMouseDownPan( event ) {
-
-		//console.log( 'handleMouseDownPan' );
-
-		panStart.set( event.clientX, event.clientY );
-
-	}
-
-	function handleMouseMoveRotate( event ) {
-
-		//console.log( 'handleMouseMoveRotate' );
-		rotateEnd.set( event.clientX, event.clientY );
-		rotateDelta.subVectors( rotateEnd, rotateStart );
-
-		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-		// rotating across whole screen goes 360 degrees around
-		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-
-		// rotating up and down along whole screen attempts to go 360, but limited to 180
-		rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-
-		rotateStart.copy( rotateEnd );
-
-		scope.update();
-
-	}
-
-	function handleMouseMoveDolly( event ) {
-
-		//console.log( 'handleMouseMoveDolly' );
-
-		dollyEnd.set( event.clientX, event.clientY );
-
-		dollyDelta.subVectors( dollyEnd, dollyStart );
-
-		if ( dollyDelta.y > 0 ) {
-
-			dollyIn( getZoomScale() );
-
-		} else if ( dollyDelta.y < 0 ) {
-
-			dollyOut( getZoomScale() );
-
-		}
-
-		dollyStart.copy( dollyEnd );
-
-		scope.update();
-
-	}
-
-	function handleMouseMovePan( event ) {
-
-		//console.log( 'handleMouseMovePan' );
-
-		panEnd.set( event.clientX, event.clientY );
-
-		panDelta.subVectors( panEnd, panStart );
-
-		pan( panDelta.x, panDelta.y );
-
-		panStart.copy( panEnd );
-
-		scope.update();
-
-	}
-
-	function handleMouseUp( event ) {
-
-		//console.log( 'handleMouseUp' );
-
-	}
-
-	function handleMouseWheel( event ) {
-
-		//console.log( 'handleMouseWheel' );
-
-		if ( event.deltaY < 0 ) {
-
-			dollyOut( getZoomScale() );
-
-		} else if ( event.deltaY > 0 ) {
-
-			dollyIn( getZoomScale() );
-
-		}
-
-		scope.update();
-
-	}
-
-	function handleKeyDown( event ) {
-
-		//console.log( 'handleKeyDown' );
-
-		switch ( event.keyCode ) {
-
-			case scope.keys.UP:
-				pan( 0, scope.keyPanSpeed );
-				scope.update();
-				break;
-
-			case scope.keys.BOTTOM:
-				pan( 0, - scope.keyPanSpeed );
-				scope.update();
-				break;
-
-			case scope.keys.LEFT:
-				pan( scope.keyPanSpeed, 0 );
-				scope.update();
-				break;
-
-			case scope.keys.RIGHT:
-				pan( - scope.keyPanSpeed, 0 );
-				scope.update();
-				break;
-
-		}
-
-	}
-
-	function handleTouchStartRotate( event ) {
-
-		//console.log( 'handleTouchStartRotate' );
-
-		rotateStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-	}
-
-	function handleTouchStartDolly( event ) {
-
-		//console.log( 'handleTouchStartDolly' );
-
-		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-		var distance = Math.sqrt( dx * dx + dy * dy );
-
-		dollyStart.set( 0, distance );
-
-	}
-
-	function handleTouchStartPan( event ) {
-
-		//console.log( 'handleTouchStartPan' );
-
-		panStart.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-	}
-
-	function handleTouchMoveRotate( event ) {
-
-		//console.log( 'handleTouchMoveRotate' );
-
-		rotateEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-		rotateDelta.subVectors( rotateEnd, rotateStart );
-
-		var element = scope.domElement === document ? scope.domElement.body : scope.domElement;
-
-		// rotating across whole screen goes 360 degrees around
-		rotateLeft( 2 * Math.PI * rotateDelta.x / element.clientWidth * scope.rotateSpeed );
-
-		// rotating up and down along whole screen attempts to go 360, but limited to 180
-		rotateUp( 2 * Math.PI * rotateDelta.y / element.clientHeight * scope.rotateSpeed );
-
-		rotateStart.copy( rotateEnd );
-
-		scope.update();
-
-	}
-
-	function handleTouchMoveDolly( event ) {
-
-		//console.log( 'handleTouchMoveDolly' );
-
-		var dx = event.touches[ 0 ].pageX - event.touches[ 1 ].pageX;
-		var dy = event.touches[ 0 ].pageY - event.touches[ 1 ].pageY;
-
-		var distance = Math.sqrt( dx * dx + dy * dy );
-
-		dollyEnd.set( 0, distance );
-
-		dollyDelta.subVectors( dollyEnd, dollyStart );
-
-		if ( dollyDelta.y > 0 ) {
-
-			dollyOut( getZoomScale() );
-
-		} else if ( dollyDelta.y < 0 ) {
-
-			dollyIn( getZoomScale() );
-
-		}
-
-		dollyStart.copy( dollyEnd );
-
-		scope.update();
-
-	}
-
-	function handleTouchMovePan( event ) {
-
-		//console.log( 'handleTouchMovePan' );
-
-		panEnd.set( event.touches[ 0 ].pageX, event.touches[ 0 ].pageY );
-
-		panDelta.subVectors( panEnd, panStart );
-
-		pan( panDelta.x, panDelta.y );
-
-		panStart.copy( panEnd );
-
-		scope.update();
-
-	}
-
-	function handleTouchEnd( event ) {
-
-		//console.log( 'handleTouchEnd' );
-
-	}
-
-	//
-	// event handlers - FSM: listen for events and reset state
-	//
-
-	function onMouseDown( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		event.preventDefault();
-
-		if ( event.button === scope.mouseButtons.ORBIT ) {
-
-			if ( scope.enableRotate === false ) return;
-
-			handleMouseDownRotate( event );
-
-			state = STATE.ROTATE;
-
-		} else if ( event.button === scope.mouseButtons.ZOOM ) {
-
-			if ( scope.enableZoom === false ) return;
-
-			handleMouseDownDolly( event );
-
-			state = STATE.DOLLY;
-
-		} else if ( event.button === scope.mouseButtons.PAN ) {
-
-			if ( scope.enablePan === false ) return;
-
-			handleMouseDownPan( event );
-
-			state = STATE.PAN;
-
-		}
-
-		if ( state !== STATE.NONE ) {
-
-			document.addEventListener( 'mousemove', onMouseMove, false );
-			document.addEventListener( 'mouseup', onMouseUp, false );
-
-			scope.dispatchEvent( startEvent );
-
-		}
-
-	}
-
-	function onMouseMove( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		event.preventDefault();
-
-		if ( state === STATE.ROTATE ) {
-
-			if ( scope.enableRotate === false ) return;
-
-			handleMouseMoveRotate( event );
-
-		} else if ( state === STATE.DOLLY ) {
-
-			if ( scope.enableZoom === false ) return;
-
-			handleMouseMoveDolly( event );
-
-		} else if ( state === STATE.PAN ) {
-
-			if ( scope.enablePan === false ) return;
-
-			handleMouseMovePan( event );
-
-		}
-
-	}
-
-	function onMouseUp( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		handleMouseUp( event );
-
-		document.removeEventListener( 'mousemove', onMouseMove, false );
-		document.removeEventListener( 'mouseup', onMouseUp, false );
-
-		scope.dispatchEvent( endEvent );
-
-		state = STATE.NONE;
-
-	}
-
-	function onMouseWheel( event ) {
-
-		if ( scope.enabled === false || scope.enableZoom === false || ( state !== STATE.NONE && state !== STATE.ROTATE ) ) return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		handleMouseWheel( event );
-
-		scope.dispatchEvent( startEvent ); // not sure why these are here...
-		scope.dispatchEvent( endEvent );
-
-	}
-
-	function onKeyDown( event ) {
-
-		if ( scope.enabled === false || scope.enableKeys === false || scope.enablePan === false ) return;
-
-		handleKeyDown( event );
-
-	}
-
-	function onTouchStart( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		switch ( event.touches.length ) {
-
-			case 1:	// one-fingered touch: rotate
-
-				if ( scope.enableRotate === false ) return;
-
-				handleTouchStartRotate( event );
-
-				state = STATE.TOUCH_ROTATE;
-
-				break;
-
-			case 2:	// two-fingered touch: dolly
-
-				if ( scope.enableZoom === false ) return;
-
-				handleTouchStartDolly( event );
-
-				state = STATE.TOUCH_DOLLY;
-
-				break;
-
-			case 3: // three-fingered touch: pan
-
-				if ( scope.enablePan === false ) return;
-
-				handleTouchStartPan( event );
-
-				state = STATE.TOUCH_PAN;
-
-				break;
-
-			default:
-
-				state = STATE.NONE;
-
-		}
-
-		if ( state !== STATE.NONE ) {
-
-			scope.dispatchEvent( startEvent );
-
-		}
-
-	}
-
-	function onTouchMove( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		event.preventDefault();
-		event.stopPropagation();
-
-		switch ( event.touches.length ) {
-
-			case 1: // one-fingered touch: rotate
-
-				if ( scope.enableRotate === false ) return;
-				if ( state !== STATE.TOUCH_ROTATE ) return; // is this needed?...
-
-				handleTouchMoveRotate( event );
-
-				break;
-
-			case 2: // two-fingered touch: dolly
-
-				if ( scope.enableZoom === false ) return;
-				if ( state !== STATE.TOUCH_DOLLY ) return; // is this needed?...
-
-				handleTouchMoveDolly( event );
-
-				break;
-
-			case 3: // three-fingered touch: pan
-
-				if ( scope.enablePan === false ) return;
-				if ( state !== STATE.TOUCH_PAN ) return; // is this needed?...
-
-				handleTouchMovePan( event );
-
-				break;
-
-			default:
-
-				state = STATE.NONE;
-
-		}
-
-	}
-
-	function onTouchEnd( event ) {
-
-		if ( scope.enabled === false ) return;
-
-		handleTouchEnd( event );
-
-		scope.dispatchEvent( endEvent );
-
-		state = STATE.NONE;
-
-	}
-
-	function onContextMenu( event ) {
-
-		event.preventDefault();
-
-	}
-
-	//
-
-	scope.domElement.addEventListener( 'contextmenu', onContextMenu, false );
-
-	scope.domElement.addEventListener( 'mousedown', onMouseDown, false );
-	scope.domElement.addEventListener( 'wheel', onMouseWheel, false );
-
-	scope.domElement.addEventListener( 'touchstart', onTouchStart, false );
-	scope.domElement.addEventListener( 'touchend', onTouchEnd, false );
-	scope.domElement.addEventListener( 'touchmove', onTouchMove, false );
-
-	window.addEventListener( 'keydown', onKeyDown, false );
-
-	// force an update at start
-
-	this.update();
-
-};
-
-THREE.OrbitControls.prototype = Object.create( THREE.EventDispatcher.prototype );
-THREE.OrbitControls.prototype.constructor = THREE.OrbitControls;
-
-Object.defineProperties( THREE.OrbitControls.prototype, {
-
-	center: {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .center has been renamed to .target' );
-			return this.target;
-
-		}
-
-	},
-
-	// backward compatibility
-
-	noZoom: {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-			return ! this.enableZoom;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .noZoom has been deprecated. Use .enableZoom instead.' );
-			this.enableZoom = ! value;
-
-		}
-
-	},
-
-	noRotate: {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-			return ! this.enableRotate;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .noRotate has been deprecated. Use .enableRotate instead.' );
-			this.enableRotate = ! value;
-
-		}
-
-	},
-
-	noPan: {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-			return ! this.enablePan;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .noPan has been deprecated. Use .enablePan instead.' );
-			this.enablePan = ! value;
-
-		}
-
-	},
-
-	noKeys: {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-			return ! this.enableKeys;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .noKeys has been deprecated. Use .enableKeys instead.' );
-			this.enableKeys = ! value;
-
-		}
-
-	},
-
-	staticMoving : {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-			return ! this.enableDamping;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .staticMoving has been deprecated. Use .enableDamping instead.' );
-			this.enableDamping = ! value;
-
-		}
-
-	},
-
-	dynamicDampingFactor : {
-
-		get: function () {
-
-			console.warn( 'THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-			return this.dampingFactor;
-
-		},
-
-		set: function ( value ) {
-
-			console.warn( 'THREE.OrbitControls: .dynamicDampingFactor has been renamed. Use .dampingFactor instead.' );
-			this.dampingFactor = value;
-
-		}
-
-	}
-
-} );
-
-
-/***/ }),
-/* 12 */
-/***/ (function(module, exports) {
-
 window.Utils = (function() {
     const DIGITS = 6;
     function numberToFixed (number) {
@@ -1664,7 +660,7 @@ window.Utils = (function() {
 
 
 /***/ }),
-/* 13 */
+/* 12 */
 /***/ (function(module, exports) {
 
 /* global Clipboard */
@@ -1690,15 +686,15 @@ window.addEventListener('load', function (event) {
     progressBar.style.width = Math.floor(event.detail.progress * 100) + '%';
   });
 
-  var clipboard = new Clipboard('.button.copy');
+  /*var clipboard = new Clipboard('.button.copy');
   clipboard.on('error', function (e) {
     console.error('Error copying to clipboard:', e.action, e.trigger);
-  });
+  });*/
 });
 
 
 /***/ }),
-/* 14 */
+/* 13 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE BinaryManager */
@@ -2222,7 +1218,7 @@ AFRAME.registerSystem('brush', {
 
 
 /***/ }),
-/* 15 */
+/* 14 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME */
@@ -2233,8 +1229,8 @@ AFRAME.registerSystem('ui', {
 
   initTextures: function () {
     var self = this;
-    var hoverTextureUrl = 'public/a-painter/assets/images/ui-hover.png';
-    var pressedTextureUrl = 'public/a-painter/assets/images/ui-pressed.png';
+    var hoverTextureUrl = window.ideaspace_site_path + '/public/a-painter/assets/images/ui-hover.png';
+    var pressedTextureUrl = window.ideaspace_site_path + '/public/a-painter/assets/images/ui-pressed.png';
     this.sceneEl.systems.material.loadTexture(hoverTextureUrl, {src: hoverTextureUrl}, onLoadedHoverTexture);
     this.sceneEl.systems.material.loadTexture(pressedTextureUrl, {src: pressedTextureUrl}, onLoadedPressedTexture);
     function onLoadedHoverTexture (texture) {
@@ -2256,7 +1252,7 @@ AFRAME.registerSystem('ui', {
 
 
 /***/ }),
-/* 16 */
+/* 15 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* global AFRAME Blob uploadcare */
@@ -2309,7 +1305,6 @@ AFRAME.registerSystem('painter', {
         }
       }
     };
-
     this.sceneEl.addEventListener('loaded', function() {
       AFRAME.registerInputMappings(mappings);
       AFRAME.currentInputMapping = 'painting';
@@ -2339,11 +1334,10 @@ AFRAME.registerSystem('painter', {
       var isBinary = urlParams.urljson === undefined;
       this.brushSystem.loadFromUrl(urlParams.url || urlParams.urljson, isBinary);
       //document.getElementById('logo').setAttribute('visible', false);
-      document.getElementById('acamera').setAttribute('orbit-controls', 'position', '0 1.6 3');
+      //document.getElementById('acamera').setAttribute('orbit-controls', 'position', '0 1.6 3');
       //document.getElementById('apainter-logo').classList.remove('hidden');
       //document.getElementById('apainter-author').classList.remove('hidden'); // not used yet
     }
-
     if (urlParams.bgcolor !== undefined) {
       document.body.style.backgroundColor = '#' + urlParams.bgcolor;
     }
@@ -2504,7 +1498,7 @@ AFRAME.registerSystem('painter', {
 
 
 /***/ }),
-/* 17 */
+/* 16 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -2607,7 +1601,7 @@ AFRAME.registerComponent('brush', {
 
 
 /***/ }),
-/* 18 */
+/* 17 */
 /***/ (function(module, exports) {
 
 /* global AFRAME */
@@ -2650,7 +1644,7 @@ AFRAME.registerComponent('if-no-vr-headset', {
 
 
 /***/ }),
-/* 19 */
+/* 18 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -2683,7 +1677,7 @@ AFRAME.registerComponent('json-model', {
 
 
 /***/ }),
-/* 20 */
+/* 19 */
 /***/ (function(module, exports) {
 
 AFRAME.registerComponent('orbit-controls', {
@@ -2760,7 +1754,7 @@ AFRAME.registerComponent('orbit-controls', {
 
 
 /***/ }),
-/* 21 */
+/* 20 */
 /***/ (function(module, exports) {
 
 AFRAME.registerSystem('paint-controls', {
@@ -2778,7 +1772,7 @@ AFRAME.registerComponent('paint-controls', {
   init: function () {
     var el = this.el;
     var self = this;
-    var highLightTextureUrl = 'public/a-painter/assets/images/controller-pressed.png';
+    var highLightTextureUrl = window.ideaspace_site_path + '/public/a-painter/assets/images/controller-pressed.png';
     var tooltips = null;
     this.controller = null;
     this.modelLoaded = false;
@@ -2843,9 +1837,9 @@ AFRAME.registerComponent('paint-controls', {
       } else if (controllerName === 'oculus-touch-controls') {
         var hand = evt.detail.component.data.hand;
         //el.setAttribute('teleport-controls', {button: hand === 'left' ? 'ybutton' : 'bbutton'});
-        el.setAttribute('obj-model', {obj: 'public/a-painter/assets/models/oculus-' + hand + '-controller.obj', mtl: 'https://cdn.aframe.io/controllers/oculus/oculus-touch-controller-' + hand + '.mtl'});
+        el.setAttribute('obj-model', {obj: window.ideaspace_site_path + '/public/a-painter/assets/models/oculus-' + hand + '-controller.obj', mtl: 'https://cdn.aframe.io/controllers/oculus/oculus-touch-controller-' + hand + '.mtl'});
       } else if (controllerName === 'vive-controls') {
-        el.setAttribute('json-model', {src: 'public/a-painter/assets/models/controller_vive.json'});
+        el.setAttribute('json-model', {src: window.ideaspace_site_path + '/public/a-painter/assets/models/controller_vive.json'});
       } else { return; }
 
       if (!!tooltips) {
@@ -2882,20 +1876,20 @@ AFRAME.registerComponent('paint-controls', {
         var tooltips = Array.prototype.slice.call(document.querySelectorAll('[tooltip]'));
         var object = { opacity: 1.0 };
 
-        var tween = new TWEEN.Tween(object)
-          .to({opacity: 0.0}, 1000)
-          .onComplete(function () {
+        //var tween = new TWEEN.Tween(object)
+          //.to({opacity: 0.0}, 1000)
+          //.onComplete(function () {
             tooltips.forEach(function (tooltip) {
               tooltip.setAttribute('visible', false);
             });
-          })
-          .delay(2000)
-          .onUpdate(function () {
-            tooltips.forEach(function (tooltip) {
-              tooltip.setAttribute('tooltip', {opacity: object.opacity});
-            });
-          });
-        tween.start();
+          //})
+          //.delay(2000)
+          //.onUpdate(function () {
+            //tooltips.forEach(function (tooltip) {
+              //tooltip.setAttribute('tooltip', {opacity: object.opacity});
+            //});
+          //});
+        //tween.start();
       }
     });
   },
@@ -2987,7 +1981,7 @@ AFRAME.registerComponent('paint-controls', {
 
 
 /***/ }),
-/* 22 */
+/* 21 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -3065,8 +2059,10 @@ AFRAME.registerComponent('ui', {
       }
 
       if (controllerName === 'oculus-touch-controls') {
-        self.uiEl.setAttribute('rotation', '45 0 0');
-        uiEl.setAttribute('position', '0 0.13 -0.08');
+        //self.uiEl.setAttribute('rotation', '45 0 0');
+        self.uiEl.setAttribute('rotation', '0 0 0');
+        //uiEl.setAttribute('position', '0 0.13 -0.08');
+        uiEl.setAttribute('position', '0 0.05 -0.08');
         self.rayAngle = 0;
         el.setAttribute('ui-raycaster', {
           rotation: 0
@@ -3534,7 +2530,7 @@ AFRAME.registerComponent('ui', {
     this.objects.messageError.visible = false;
     this.objects.messageError.material = this.messagesMaterial;
 
-    var messagesImageUrl = 'public/a-painter/assets/images/messages.png';
+    var messagesImageUrl = window.ideaspace_site_path + '/public/a-painter/assets/images/messages.png';
 
     this.el.sceneEl.systems.material.loadTexture(messagesImageUrl, {src: messagesImageUrl}, function (texture) {
       var material = self.messagesMaterial;
@@ -3545,7 +2541,11 @@ AFRAME.registerComponent('ui', {
     function showMessage (msgObject) {
       msgObject.visible = true;
       var object = { opacity: 0.0 };
-      var tween = new TWEEN.Tween(object)
+
+setTimeout(function() {
+  self.messagesMaterial.opacity = {opacity: 1.0};
+}, 500);
+      /*var tween = new TWEEN.Tween(object)
         .to({opacity: 1.0}, 500)
         .onUpdate(function () {
           self.messagesMaterial.opacity = object.opacity;
@@ -3562,7 +2562,12 @@ AFRAME.registerComponent('ui', {
             })
           );
 
-      tween.start();
+      tween.start();*/
+setTimeout(function() {
+  msgObject.visible = false;
+  self.messagesMaterial.opacity = {opacity: 1.0};
+}, 3000);
+
     }
 
     this.el.sceneEl.addEventListener('drawing-upload-completed', function (event) {
@@ -3724,13 +2729,15 @@ AFRAME.registerComponent('ui', {
     var tween;
     if (!this.closed) { return; }
     this.uiEl.setAttribute('visible', true);
-    tween = new TWEEN.Tween(coords)
-        .to({ x: 1, y: 1, z: 1 }, 100)
-        .onUpdate(function () {
-          uiEl.setAttribute('scale', this);
-        })
-        .easing(TWEEN.Easing.Exponential.Out);
-    tween.start();
+    //tween = new TWEEN.Tween(coords)
+			//.to({ x: 1, y: 1, z: 1 }, 100)
+			//.onUpdate(function () {
+      //    uiEl.setAttribute('scale', this);
+      //})
+			//.easing(TWEEN.Easing.Exponential.Out);
+    //tween.start();
+uiEl.setAttribute('scale', { x: 1, y: 1, z: 1 });
+
     this.el.setAttribute('brush', 'enabled', false);
     this.rayEl.setAttribute('visible', false);
     this.closed = false;
@@ -3914,16 +2921,19 @@ AFRAME.registerComponent('ui', {
     var coords = { x: 1, y: 1, z: 1 };
     var tween;
     if (this.closed) { return; }
-    tween = new TWEEN.Tween(coords)
-        .to({ x: 0, y: 0, z: 0 }, 100)
-        .onUpdate(function () {
-          uiEl.setAttribute('scale', this);
-        })
-        .onComplete(function () {
-          uiEl.setAttribute('visible', false);
-        })
-        .easing(TWEEN.Easing.Exponential.Out);
-    tween.start();
+    //tween = new TWEEN.Tween(coords)
+      //  .to({ x: 0, y: 0, z: 0 }, 100)
+       // .onUpdate(function () {
+     //     uiEl.setAttribute('scale', this);
+       // })
+        //.onComplete(function () {
+        //  uiEl.setAttribute('visible', false);
+        //})
+        //.easing(TWEEN.Easing.Exponential.Out);
+    //tween.start();
+uiEl.setAttribute('scale', { x: 0, y: 0, z: 0 });
+uiEl.setAttribute('visible', false);
+
     this.el.setAttribute('brush', 'enabled', true);
     this.closed = true;
 
@@ -3945,7 +2955,7 @@ AFRAME.registerComponent('ui', {
 
 
 /***/ }),
-/* 23 */
+/* 22 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -4110,7 +3120,7 @@ AFRAME.registerComponent('ui-raycaster', {
 
 
 /***/ }),
-/* 24 */
+/* 23 */
 /***/ (function(module, exports, __webpack_require__) {
 
 /* globals AFRAME THREE */
@@ -4316,110 +3326,110 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'flat'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_flat.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_flat.gif'
     },
     {
       name: 'smooth',
       materialOptions: {
         type: 'shaded'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_smooth.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_smooth.gif'
     },
     {
       name: 'squared-textured',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/squared_textured.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/squared_textured.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_squared_textured.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_squared_textured.gif'
     },
     {
       name: 'line-gradient',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/line_gradient.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/line_gradient.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_line_gradient.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_line_gradient.gif'
     },
     {
       name: 'silky-flat',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/silky_flat.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/silky_flat.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_silky_flat.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_silky_flat.gif'
     },
     {
       name: 'silky-textured',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/silky_textured.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/silky_textured.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_silky_textured.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_silky_textured.gif'
     },
     {
       name: 'lines1',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/lines1.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/lines1.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_lines1.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_lines1.gif'
     },
     {
       name: 'lines2',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/lines2.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/lines2.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_lines2.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_lines2.gif'
     },
     {
       name: 'lines3',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/lines3.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/lines3.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_lines3.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_lines3.gif'
     },
     {
       name: 'lines4',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/lines4.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/lines4.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_lines4.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_lines4.gif'
     },
     {
       name: 'lines5',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/lines5.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/lines5.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_lines5.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_lines5.gif'
     },
     {
       name: 'line-grunge1',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/line_grunge1.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/line_grunge1.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_line_grunge1.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_line_grunge1.gif'
     },
     {
       name: 'line-grunge2',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/line_grunge2.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/line_grunge2.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_line_grunge2.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_line_grunge2.gif'
     },
     {
       name: 'line-grunge3',
       materialOptions: {
         type: 'textured',
-        textureSrc: 'public/a-painter/brushes/line_grunge3.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/line_grunge3.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_line_grunge3.gif'
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_line_grunge3.gif'
     }
   ];
 
@@ -4437,7 +3447,7 @@ var onLoaded = __webpack_require__(3);
 
 
 /***/ }),
-/* 25 */
+/* 24 */
 /***/ (function(module, exports, __webpack_require__) {
 
  /* global AFRAME THREE */
@@ -4593,18 +3603,18 @@ var onLoaded = __webpack_require__(3);
       name: 'dots',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'public/a-painter/brushes/stamp_dots.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_dots.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_dots.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_dots.gif',
       spacing: 0.01
     },
     {
       name: 'squares',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'public/a-painter/brushes/stamp_squares.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_squares.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_squares.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_squares.gif',
       spacing: 0.01
     },
     {
@@ -4612,9 +3622,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         autoRotate: true,
-        textureSrc: 'public/a-painter/brushes/stamp_column.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_column.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_column.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_column.gif',
       spacing: 0.01
     },
     {
@@ -4623,9 +3633,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: Math.PI * 2,
         subTextures: 2,
-        textureSrc: 'public/a-painter/brushes/stamp_gear.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_gear.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_gear.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_gear.gif',
       spacing: 0.05
     },
     {
@@ -4633,9 +3643,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_grunge1.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge1.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_grunge1.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge1.png',
       spacing: 0.02
     },
     {
@@ -4643,9 +3653,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_grunge2.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge2.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_grunge2.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge2.png',
       spacing: 0.02
     },
     {
@@ -4653,9 +3663,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_grunge3.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge3.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_grunge3.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge3.png',
       spacing: 0.02
     },
     {
@@ -4663,9 +3673,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_grunge4.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge4.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_grunge4.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge4.png',
       spacing: 0.02
     },
     {
@@ -4673,9 +3683,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_grunge5.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grunge5.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_grunge5.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_grunge5.gif',
       spacing: 0.02
     },
     {
@@ -4683,9 +3693,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI,
-        textureSrc: 'public/a-painter/brushes/stamp_leaf1.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_leaf1.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_leaf1.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_leaf1.png',
       spacing: 0.03
     },
     {
@@ -4693,9 +3703,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: 60 * Math.PI / 180.0,
-        textureSrc: 'public/a-painter/brushes/stamp_leaf2.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_leaf2.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_leaf2.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_leaf2.gif',
       spacing: 0.03
     },
     {
@@ -4703,9 +3713,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: 60 * Math.PI / 180.0,
-        textureSrc: 'public/a-painter/brushes/stamp_leaf3.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_leaf3.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_leaf3.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_leaf3.gif',
       spacing: 0.03
     },
     {
@@ -4714,9 +3724,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 40 * Math.PI / 180.0,
         subTextures: 2,
-        textureSrc: 'public/a-painter/brushes/stamp_fur1.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_fur1.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_fur1.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_fur1.png',
       spacing: 0.01
     },
     {
@@ -4725,9 +3735,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 10 * Math.PI / 180.0,
         subTextures: 3,
-        textureSrc: 'public/a-painter/brushes/stamp_fur2.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_fur2.png'
       },
-      thumbnail: 'public/a-painter/brushes/stamp_fur2.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_fur2.png',
       spacing: 0.01
     },
     {
@@ -4736,9 +3746,9 @@ var onLoaded = __webpack_require__(3);
         type: 'shaded',
         angleJitter: 10 * Math.PI / 180.0,
         subTextures: 3,
-        textureSrc: 'public/a-painter/brushes/stamp_grass.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_grass.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_grass.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_grass.png',
       spacing: 0.03
     },
     {
@@ -4746,18 +3756,18 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         subTextures: 2,
-        textureSrc: 'public/a-painter/brushes/stamp_bush.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_bush.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_bush.gif',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_bush.gif',
       spacing: 0.04
     },
     {
       name: 'star',
       materialOptions: {
         type: 'shaded',
-        textureSrc: 'public/a-painter/brushes/stamp_star.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_star.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_star.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_star.png',
       spacing: 0.06
     },
     {
@@ -4765,9 +3775,9 @@ var onLoaded = __webpack_require__(3);
       materialOptions: {
         type: 'shaded',
         angleJitter: Math.PI * 2,
-        textureSrc: 'public/a-painter/brushes/stamp_snow.png'
+        textureSrc: window.ideaspace_site_path + '/public/a-painter/brushes/stamp_snow.png'
       },
-      thumbnail: 'public/a-painter/brushes/thumb_stamp_snow.png',
+      thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_stamp_snow.png',
       spacing: 0.06
     }
   ];
@@ -4797,7 +3807,7 @@ var onLoaded = __webpack_require__(3);
 
 
 /***/ }),
-/* 26 */
+/* 25 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -4850,12 +3860,12 @@ AFRAME.registerBrush('spheres',
     }
   },
   // Define extra options for this brush
-  {thumbnail: 'brushes/thumb_spheres.gif', spacing: 0.01}
+  {thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_spheres.gif', spacing: 0.01}
 );
 
 
 /***/ }),
-/* 27 */
+/* 26 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -4884,12 +3894,12 @@ AFRAME.registerBrush('cubes',
       return true;
     }
   },
-  {thumbnail: 'brushes/thumb_cubes.gif', spacing: 0.01}
+  {thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_cubes.gif', spacing: 0.01}
 );
 
 
 /***/ }),
-/* 28 */
+/* 27 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -4996,13 +4006,13 @@ AFRAME.registerBrush('cubes',
         this.material.uniforms.time.value = timeOffset;
       },
     },
-    {thumbnail:'brushes/thumb_rainbow.png', maxPoints: 3000}
+    {thumbnail:window.ideaspace_site_path + '/public/a-painter/brushes/thumb_rainbow.png', maxPoints: 3000}
   );
 })();
 
 
 /***/ }),
-/* 29 */
+/* 28 */
 /***/ (function(module, exports) {
 
 /* globals AFRAME THREE */
@@ -5032,7 +4042,7 @@ AFRAME.registerBrush('single-sphere',
       return true;
     }
   },
-  {thumbnail: 'brushes/thumb_single_sphere.png', spacing: 0.0}
+  {thumbnail: window.ideaspace_site_path + '/public/a-painter/brushes/thumb_single_sphere.png', spacing: 0.0}
 );
 
 
