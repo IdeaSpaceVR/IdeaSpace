@@ -1,5 +1,5 @@
 <!-- a-frame //-->
-<a-scene reset-camera embedded>
+<a-scene reset-camera embedded loading-screen="dotsColor: #0080e5; backgroundColor: #FFFFFF">
 
     <a-assets>
         <a-asset-item id="plyModel" src="{{ $model_ply }}"></a-asset-item>

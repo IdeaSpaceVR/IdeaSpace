@@ -9,7 +9,7 @@
         <div class="col-md-8">
 
             <!-- a-frame //-->
-            <a-scene embedded style="width:100%">
+            <a-scene embedded style="width:100%" loading-screen="dotsColor: #0080e5; backgroundColor: #FFFFFF">
 
                 <a-assets>
                     <img src="{{ asset('public/assets/admin/asset-library/images/loading.png') }}" id="loading" crossorigin="anonymous">
