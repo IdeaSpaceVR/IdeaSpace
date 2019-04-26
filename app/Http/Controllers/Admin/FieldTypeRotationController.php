@@ -116,30 +116,6 @@ class FieldTypeRotationController extends Controller {
                     return view($template, $vars);       
                     break;
 
-                case Model3D::FILE_EXTENSION_DAE:            
-                    $template = $this->fieldTypeRotation->subjectTypeTemplates[$subject_type . '__' . Model3D::FILE_EXTENSION_DAE];
-                    $model_data = json_decode($model3d->data, true);
-                    $scale = '0 0 0';
-                    $rotation_x = '0';
-                    $rotation_y = '0';
-                    $rotation_z = '0';
-                    if (!is_null($model_data) && array_key_exists(Model3D::MODEL_SCALE, $model_data) && array_key_exists(Model3D::MODEL_ROTATION, $model_data)) {
-                        $scale = $model_data[Model3D::MODEL_SCALE];
-                        $rotation = explode(' ', $model_data[Model3D::MODEL_ROTATION]);
-                        $rotation_x = $rotation[0];
-                        $rotation_y = $rotation[1];
-                        $rotation_z = $rotation[2];
-                    }
-                    $vars = [
-                        'model_dae' => asset($genericFile->uri),
-                        'scale' => $scale,
-                        'rotation_x' => $rotation_x,
-                        'rotation_y' => $rotation_y,
-                        'rotation_z' => $rotation_z
-                    ];
-                    return view($template, $vars);       
-                    break;
-
                 case Model3D::FILE_EXTENSION_OBJ:            
                 case Model3D::FILE_EXTENSION_MTL:            
                     $template = $this->fieldTypeRotation->subjectTypeTemplates[$subject_type . '__' . Model3D::FILE_EXTENSION_OBJ . '_' . Model3D::FILE_EXTENSION_MTL];

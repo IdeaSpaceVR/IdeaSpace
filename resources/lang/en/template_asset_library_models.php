@@ -4,7 +4,7 @@ return [
 
     'add_model' => 'Add Model',
     'dragndrop_models' => 'Drag &amp; Drop Model(s) Here',
-    'supported_model_formats' => 'Supported model file formats: 3D Wavefront (.obj and .mtl), Collada (.dae), Polygon (.ply) and glTF embedded and binary (.gltf and .glb). Model and texture files must be uploaded at the same time.',
+    'supported_model_formats' => 'Supported model file formats: 3D Wavefront (.obj and .mtl), Polygon (.ply) and glTF embedded and binary (.gltf and .glb). Model and texture files must be uploaded at the same time.',
     'edit' => 'Edit',
     'insert' => 'Insert',
     'caption' => 'Caption',
