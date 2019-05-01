@@ -2,6 +2,9 @@
 
 <p align="center">
 <a href="https://github.com/ideaspacevr/ideaspace/releases"><img src="https://img.shields.io/github/downloads/ideaspacevr/ideaspace/total.svg"></a>
+<a href="https://github.com/ideaspacevr/ideaspace/releases"><img src="https://img.shields.io/github/license/ideaspacevr/ideaspace.svg"></a>
+<a href="https://github.com/ideaspacevr/ideaspace/releases"><img src="https://img.shields.io/github/release/ideaspacevr/ideaspace.svg"></a>
+<a href="https://twitter.com/ideaspacevr"><img src="https://img.shields.io/twitter/follow/ideaspacevr.svg?style=social"></a>
 </p>
 
 ## About IdeaSpaceVR 
