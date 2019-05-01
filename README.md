@@ -1,5 +1,9 @@
 <p align="center"><img src="public/assets/layouts/app/images/isvr-logo-v2.png" width="100" alt="IdeaSpaceVR - PHP Content management system (CMS) for the virtual reality web (WebVR)"></p>
 
+<p align="center">
+<a href="https://github.com/ideaspacevr/ideaspace/releases">https://img.shields.io/github/downloads/ideaspacevr/ideaspace/total.svg</a>
+</p>
+
 ## About IdeaSpaceVR 
 
 ### Mission
