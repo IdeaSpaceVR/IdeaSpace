@@ -11,6 +11,8 @@
                 <div class="row">
                     <div class="col-sm-8 content-target">
 
+										<input type="hidden" value="" id="painter-blob">
+
                     <iframe id="painter-iframe" allowfullscreen style="width:100%; border:none">
                     </iframe>
 

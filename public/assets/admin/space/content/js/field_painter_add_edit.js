@@ -1,30 +1,22 @@
 jQuery(document).ready(function($) {
 
+		var open_fieldtype_painter_ref = null;
+
     /* click on painter button */
     var painter_add_edit_click_handler = function(e) {
 
         /* needed for insert operation */
-        //open_fieldtype_rotation_ref = $(this).parent().parent();
+        open_fieldtype_painter_ref = $(this).parent().parent();
 
         var space_id = $(e.target).attr('data-space-id');
         var contenttype_name = $(e.target).attr('data-contenttype-name');
         var scene_template = $(e.target).attr('data-scene-template');
         var content_id = $(e.target).attr('data-content-id');
-//console.log(scene_template);
-        //var subject_type = $(e.target).attr('data-subject-field-type');
-        //var subject_name = $(e.target).attr('data-subject-field-name');
-        //var subject_label = $(e.target).attr('data-subject-field-label');
-
-        //var subject_id = '';
-        //subject_id = $('input[name="' + subject_name + '"]').val();
 
 				document.getElementById('painter-iframe').onload = function() {
 
             /* set height dynamically, because of mobile */
             $('#painter-iframe').css('height', $(window).height() * 0.5);
-
-            //$('#painter .modal-title').text($('#painter .modal-title').text() + ' ' + subject_label);
-
 
             $('#painter').on('shown.bs.modal', function() {
 
@@ -56,23 +48,27 @@ jQuery(document).ready(function($) {
 
     var painter_insert_click_handler = function() {
 
-        //var field_type = open_fieldtype_rotation_ref.find('.add-edit-rotation-btn').attr('data-subject-field-type');
+				var blob = document.getElementById('painter-iframe').contentWindow.painting;
 
+				var fileReader = new FileReader();
+				fileReader.onload = function(event) {
+					/* base64 encode */
+     			open_fieldtype_painter_ref.find('.painter-info').val(fileReader.result.substr(fileReader.result.indexOf(',') + 1));
+				};
+				fileReader.readAsDataURL(blob);	
 
-        //open_fieldtype_rotation_ref.find('.rotation-info').val(info);
-
-        if (open_fieldtype_rotation_ref.find('.rotation-add').css('display') != 'none') {
-            open_fieldtype_rotation_ref.find('.rotation-add').hide();
-            open_fieldtype_rotation_ref.find('.rotation-edit').show();
+        if (open_fieldtype_painter_ref.find('.painter-add').css('display') != 'none') {
+            open_fieldtype_painter_ref.find('.painter-add').hide();
+            open_fieldtype_painter_ref.find('.painter-edit').show();
         }
 
-        location.hash = '#' + open_fieldtype_rotation_ref.parent().attr('id');
+        location.hash = '#' + open_fieldtype_painter_ref.parent().attr('id');
     };
 
 
     var painter_remove_click_handler = function(e) {
 
-        //$(this).parent().parent().find('.rotation-info').val('');
+        $(this).parent().parent().find('.painter-info').val('');
         $(this).parent().parent().find('.painter-add').show();
         $(this).parent().parent().find('.painter-edit').hide();
     };

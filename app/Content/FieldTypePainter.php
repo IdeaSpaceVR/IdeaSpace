@@ -8,11 +8,14 @@ use App\Theme;
 use App\Content;
 use App\Content\ContentType;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use File;
 use Log;
 
 class FieldTypePainter {
 
     use FieldTypeTrait;
+
+		CONST PAINTING_STORAGE_PATH = 'public/assets/user/paintings/'; 
 
     private $template_add = 'admin.space.content.field_painter_add';
     private $template_edit = 'admin.space.content.field_painter_edit';
@@ -79,6 +82,7 @@ class FieldTypePainter {
             return $field_arr;
         }
 
+				/* field->data is path to apa file */
         $field_arr['#content'] = array('#value' => $field->data);
 
         return $field_arr;
@@ -132,8 +136,11 @@ class FieldTypePainter {
             try {
                 /* there is only one field key per content (id) */
                 $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
-                $field->data = $request_all[$field_key];
-                $field->save();
+
+								/* field->data is base64 encoded blob painting */
+								$filename = $field->data;
+
+								File::put($filename, base64_decode($request_all[$field_key]));
 
             } catch (ModelNotFoundException $e) {
 
@@ -141,7 +148,17 @@ class FieldTypePainter {
                 $field->content_id = $content_id;
                 $field->key = $field_key;
                 $field->type = $type;
-                $field->data = $request_all[$field_key];
+
+								$filename = FieldTypePainter::PAINTING_STORAGE_PATH . str_random(60) . '.apa';
+
+								File::put($filename, base64_decode($request_all[$field_key]));
+
+								$files = json_decode($field->data, true);
+
+								$files[] = $filename;
+
+                $field->data = json_encode($files);
+
                 $field->save();
             }
 
@@ -149,7 +166,11 @@ class FieldTypePainter {
 
             try {
                 $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
+
+								File::delete($field->data);
+
                 $field->delete();
+
             } catch (ModelNotFoundException $e) {
             }
         }
@@ -174,6 +195,9 @@ class FieldTypePainter {
         } catch (ModelNotFoundException $e) {
             return;
         }
+
+				File::delete($field->data);
+
         $field->delete();
     }
 
@@ -211,14 +235,10 @@ class FieldTypePainter {
         $content_arr['#id'] = $field->id;
         $content_arr['#content-id'] = $field->content_id;
         $content_arr['#type'] = $field->type;
-        //$content_arr['#rotation'] = [];
-
-        /*$data_arr = json_decode($field->data, true);
-
-        if (!is_null($data_arr) && sizeof($data_arr) > 0) {
-        
-            $content_arr['#rotation'] = ['#x' => $data_arr['x'], '#y' => $data_arr['y'], '#z' => $data_arr['z']];
-        }*/
+			
+				/* field->data is path to apa file */
+				$files = json_decode($field->data, true);
+				$content_arr['#value'] = $files;
 
         return $content_arr;
     }

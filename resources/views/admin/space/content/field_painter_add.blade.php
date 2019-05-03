@@ -4,7 +4,7 @@
     </div>
     <div class="form-control-add-painter text-center {{ $errors->has($field_id)?'has-error':'' }}">
 
-        <input type="hidden" value="{{ old($field_id) }}" name="{{ $field_id }}" class="painter-info">
+				<input type="hidden" value="{{ old($field_id) }}" name="{{ $field_id }}" class="painter-info">
 
         <div class="painter-add" @if (old($field_id) != '') style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg add-painter-btn add-edit-painter-btn disabled" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-scene-template="{{ $form['#scene-template'] }}">

@@ -1449,7 +1449,11 @@ AFRAME.registerSystem('painter', {
   save: function () {
     var dataviews = this.brushSystem.getBinary();
     var blob = new Blob(dataviews, {type: 'application/octet-binary'});
-    saveAs(blob, 'demo.apa');
+    //saveAs(blob, 'demo.apa');
+		/*var myblob = new Blob(['TESTTEST'], {
+    	type: 'text/plain'
+		});*/ 
+		window.painting = blob;
   },
   upload: function (success, error) {
     this.sceneEl.emit('drawing-upload-started');
@@ -1777,6 +1781,13 @@ AFRAME.registerComponent('paint-controls', {
     this.controller = null;
     this.modelLoaded = false;
 
+		/* workaround: controller roation wrong */
+		el.object3D.children.forEach(function(obj) {
+			if (obj.el.className == 'oculus-tooltips') {
+				obj.rotateX(-Math.PI / 4);
+			}	
+		});
+
     this.onModelLoaded = this.onModelLoaded.bind(this);
     el.addEventListener('model-loaded', this.onModelLoaded);
 
@@ -1832,6 +1843,7 @@ AFRAME.registerComponent('paint-controls', {
       }
 
       tooltips = Utils.getTooltips(controllerName);
+
       if (controllerName.indexOf('windows-motion') >= 0) {
         // el.setAttribute('teleport-controls', {button: 'trackpad'});
       } else if (controllerName === 'oculus-touch-controls') {
@@ -1953,6 +1965,12 @@ AFRAME.registerComponent('paint-controls', {
 
     this.changeBrushSize(this.el.components.brush.data.size);
     this.changeBrushColor(this.el.components.brush.color);
+
+		/* workaround: controller rotation wrong */
+		if (evt.detail.model.el.controller == 'oculus-touch-controls') {
+			controllerObject3D.rotateX(-Math.PI / 4);
+		}
+
   },
 
   onButtonEvent: function (id, evtName) {
@@ -2063,7 +2081,11 @@ AFRAME.registerComponent('ui', {
         self.uiEl.setAttribute('rotation', '0 0 0');
         //uiEl.setAttribute('position', '0 0.13 -0.08');
         uiEl.setAttribute('position', '0 0.05 -0.08');
-        self.rayAngle = 0;
+        //self.rayAngle = 0;
+
+				/* workaround: controller rotation wrong */
+        self.rayAngle = 45; 
+
         el.setAttribute('ui-raycaster', {
           rotation: 0
         });
@@ -2198,7 +2220,8 @@ AFRAME.registerComponent('ui', {
       }
       case name === 'save': {
         if (!this.pressedObjects[name]) {
-          this.el.sceneEl.systems.painter.upload();
+          //this.el.sceneEl.systems.painter.upload();
+          this.el.sceneEl.systems.painter.save();
           this.playSound('ui_click1');
         }
         break;

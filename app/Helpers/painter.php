@@ -6,9 +6,7 @@ function painter_head() {
 		echo '<script>window.ideaspace_site_path = "' . url('/') . '";</script>';
 
 		echo '<script src="' . url('public/a-painter/vendor/aframe-input-mapping-component.js') . '"></script>';
-    //echo '<script src="' . url('public/a-painter/vendor/Tween.js') . '"></script>';
     echo '<script src="' . url('public/a-painter/build.js') . '"></script>';
-		//<script src="https://cdn.rawgit.com/zenorocha/clipboard.js/v1.5.12/dist/clipboard.min.js"></script>
     //<script src="https://unpkg.com/aframe-gltf-exporter-component/dist/aframe-gltf-exporter-component.min.js"></script>
     echo '<script src="' . url('public/a-painter/vendor/aframe-teleport-controls.min.js') . '"></script>';
     echo '<script src="' . url('public/a-painter/vendor/aframe-tooltip-component.min.js') . '"></script>';
