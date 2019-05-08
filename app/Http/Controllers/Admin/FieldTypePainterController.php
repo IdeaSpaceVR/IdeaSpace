@@ -106,8 +106,6 @@ class FieldTypePainterController extends Controller {
 
         view()->addNamespace('theme', base_path($theme->root_dir . '/' . Theme::VIEWS_DIR));
 
-// TODO how to load the template into the iframe in the modal?
-
 				return view('theme::' . $scene_template, $vars);       
     }
 
