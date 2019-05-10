@@ -82,8 +82,10 @@ class FieldTypePainter {
             return $field_arr;
         }
 
-				/* field->data is path to apa file */
-        $field_arr['#content'] = array('#value' => $field->data);
+        //$field_arr['#content'] = array('#value' => $field->data);
+
+				/* placeholder is inserted because we don't work with this value; it is just there that the content is not deleted when the form is saved */
+        $field_arr['#content'] = array('#value' => 'placeholder');
 
         return $field_arr;
     }
@@ -138,9 +140,17 @@ class FieldTypePainter {
                 $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
 
 								/* field->data is base64 encoded blob painting */
-								$filename = $field->data;
+								$files = json_decode($field->data, true);
+
+								$filename = FieldTypePainter::PAINTING_STORAGE_PATH . str_random(60) . '.apa';
 
 								File::put($filename, base64_decode($request_all[$field_key]));
+
+								$files[] = $filename;
+
+                $field->data = json_encode($files);
+
+                $field->save();
 
             } catch (ModelNotFoundException $e) {
 
@@ -167,12 +177,17 @@ class FieldTypePainter {
             try {
                 $field = Field::where('content_id', $content_id)->where('key', $field_key)->firstOrFail();
 
-								File::delete($field->data);
+								$files = json_decode($field->data, true);
+
+								foreach ($files as $file) {
+										File::delete($file);
+								}
 
                 $field->delete();
 
             } catch (ModelNotFoundException $e) {
             }
+
         }
 
         return true;

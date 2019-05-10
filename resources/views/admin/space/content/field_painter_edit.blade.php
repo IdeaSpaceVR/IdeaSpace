@@ -6,7 +6,7 @@
 
 				<input type="hidden" value="{{ $content_id }}" class="content-id">
         <input type="hidden" value="{{ $field_id }}" class="content-key">
-        <input type="hidden" value="" name="{{ $field_id }}" class="painter-info">
+        <input type="hidden" @if (isset($form['#content']['#value']) && $form['#content']['#value'] != '') value="{{ $form['#content']['#value'] }}" @else value="" @endif name="{{ $field_id }}" class="painter-info">
 
         <div class="painter-add" @if (isset($form['#content']['#value']) && $form['#content']['#value'] != '') style="display:none" @endif>
             <button type="button" class="btn btn-primary btn-lg add-painter-btn add-edit-painter-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-scene-template="{{ $form['#scene-template'] }}" data-content-id="{{ $content_id }}">
