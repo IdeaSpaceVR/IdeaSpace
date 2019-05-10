@@ -7,7 +7,6 @@ function painter_head() {
 
 		echo '<script src="' . url('public/a-painter/vendor/aframe-input-mapping-component.js') . '"></script>';
     echo '<script src="' . url('public/a-painter/build.js') . '"></script>';
-    //<script src="https://unpkg.com/aframe-gltf-exporter-component/dist/aframe-gltf-exporter-component.min.js"></script>
     echo '<script src="' . url('public/a-painter/vendor/aframe-teleport-controls.min.js') . '"></script>';
     echo '<script src="' . url('public/a-painter/vendor/aframe-tooltip-component.min.js') . '"></script>';
     echo '<link rel="stylesheet" href="' . url('public/a-painter/css/main.css') . '">';
@@ -23,12 +22,12 @@ function painter_assets() {
 		echo '<a-asset-item id="logomtl" src="' . url('public/a-painter/assets/models/logo.mtl') . '"></a-asset-item>';
 		echo '<a-asset-item id="uiobj" src="' . url('public/a-painter/assets/models/ui.obj') . '"></a-asset-item>';
 		echo '<a-asset-item id="hitEntityObj" src="' . url('public/a-painter/assets/models/teleportHitEntity.obj') . '"></a-asset-item>';
-		echo '<audio id="ui_click0" src="https://cdn.aframe.io/a-painter/sounds/ui_click0.ogg" crossorigin="anonymous">';
-		echo '<audio id="ui_click1" src="https://cdn.aframe.io/a-painter/sounds/ui_click1.ogg" crossorigin="anonymous">';
-		echo '<audio id="ui_menu" src="https://cdn.aframe.io/a-painter/sounds/ui_menu.ogg" crossorigin="anonymous">';
-		echo '<audio id="ui_undo" src="https://cdn.aframe.io/a-painter/sounds/ui_undo.ogg" crossorigin="anonymous">';
-		echo '<audio id="ui_tick" src="https://cdn.aframe.io/a-painter/sounds/ui_tick.ogg" crossorigin="anonymous">';
-		echo '<audio id="ui_paint" src="https://cdn.aframe.io/a-painter/sounds/ui_paint.ogg" crossorigin="anonymous">';
+		echo '<audio id="ui_click0" src="' . url('public/a-painter/assetsr/sounds/ui_click0.ogg') . '" crossorigin="anonymous"></audio>';
+		echo '<audio id="ui_click1" src="' . url('public/a-painter/assets/sounds/ui_click1.ogg') . '" crossorigin="anonymous"></audio>';
+		echo '<audio id="ui_menu" src="' . url('public/a-painter/assets/sounds/ui_menu.ogg') . '" crossorigin="anonymous"></audio>';
+		echo '<audio id="ui_undo" src="' . url('public/a-painter/assets/sounds/ui_undo.ogg') . '" crossorigin="anonymous"></audio>';
+		echo '<audio id="ui_tick" src="' . url('public/a-painter/assets/sounds/ui_tick.ogg') . '" crossorigin="anonymous"></audio>';
+		echo '<audio id="ui_paint" src="' . url('public/a-painter/assets/sounds/ui_paint.ogg') . '" crossorigin="anonymous"></audio>';
 }
 
 
