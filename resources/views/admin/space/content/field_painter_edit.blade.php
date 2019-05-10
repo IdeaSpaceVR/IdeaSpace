@@ -15,7 +15,7 @@
         </div>
 
         <div class="painter-edit" @if (isset($form['#content']['#value']) && $form['#content']['#value'] == '') style="display:none" @endif>
-            <div class="painter-placeholder" style="margin-bottom:10px"><i class="fa fa-repeat" aria-hidden="true" style="font-size:60px"></i></div>
+            <div class="painter-placeholder" style="margin-bottom:10px"><i class="fa fa-paint-brush" aria-hidden="true" style="font-size:60px"></i></div>
             <button type="button" class="btn btn-primary add-edit-painter-btn" data-space-id="{{ $space_id }}" data-contenttype-name="{{ $contenttype_name }}" data-scene-template="{{ $form['#scene-template'] }}" data-content-id="{{ $content_id }}">
                 <span class="glyphicon glyphicon-pencil" aria-hidden="true"></span> {{ trans('fieldtype_painter.edit_painting') }}
             </button>
