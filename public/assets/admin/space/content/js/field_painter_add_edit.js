@@ -36,7 +36,7 @@ jQuery(document).ready(function($) {
             });
 
 
-						document.getElementById('painter-iframe').contentWindow.insert_btn_ref = $('#painter-target .insert-btn'); //document.getElementById('painter-target').find('insert-btn');
+						document.getElementById('painter-iframe').contentWindow.insert_btn_ref = $('#painter-target .insert-btn'); 
 
             $('#painter').modal('show');
         };
