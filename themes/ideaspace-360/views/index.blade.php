@@ -27,7 +27,7 @@
     <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe-v0.8.2.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-v0.9.2.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-component.js') }}"></script>
@@ -37,6 +37,7 @@
     <script src="{{ url($theme_dir . '/js/isvr-hotspot-text-listener.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-title-listener.js') }}"></script>
 		<script src="{{ url($theme_dir . '/js/aframe-html-shader-component/aframe-html-shader.min.js') }}"></script>
+		<script src="{{ url($theme_dir . '/js/aframe-log-component.min.js') }}"></script>
 </head>
 <body>
 

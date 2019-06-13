@@ -66,9 +66,8 @@ AFRAME.registerComponent('isvr-photosphere-menu-navigation', {
                 if (document.querySelector('#img-photosphere-thumb-' + id) == null) {
 
                     /* start anim */
-                    var anim = document.querySelector('#photosphere-loading-anim-' + (i+1));
-                    anim.start();
                     var animEl = document.querySelector('#photosphere-loading-' + (i+1));
+                    animEl.emit('photosphere-loading-anim-' + (i+1));
                     animEl.setAttribute('visible', true);
 
                     var photosphere_thumb_image = new Image();
@@ -99,8 +98,7 @@ AFRAME.registerComponent('isvr-photosphere-menu-navigation', {
                                         /* stop anim */
                                         var animEl = document.querySelector('#photosphere-loading-' + (i+1));
                                         animEl.setAttribute('visible', false);
-                                        var anim = document.querySelector('#photosphere-loading-anim-' + (i+1));
-                                        anim.stop();
+                                        animEl.emit('stop-photosphere-loading-anim-' + (i+1));
 
                                         /* show thumbnails if thumb and its photo sphere have been loaded */
                                         thumb.setAttribute('material', 'src', '#img-photosphere-thumb-' + id);

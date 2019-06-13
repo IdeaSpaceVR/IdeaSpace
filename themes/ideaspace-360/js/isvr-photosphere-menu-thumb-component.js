@@ -1,22 +1,50 @@
 AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
 
+		schema: {
+        id: {
+            default: ''
+        }
+    },
+
+
     init: function() {
 
-      this.el.addEventListener('click', this.onClick.bind(this));
-      
+    		this.el.addEventListener('click', this.onClick.bind(this));
+      	this.el.addEventListener('mouseenter', this.onMouseenter.bind(this));
+      	this.el.addEventListener('mouseleave', this.onMouseleave.bind(this));
+
+				window.menu_thumb_enter = false;
     },
+
+
+    onMouseenter: function(evt) {
+				if (window.menu_thumb_enter == false) {
+						document.querySelector(this.data.id).emit('trigger-mouseenter');
+						window.menu_thumb_enter = true;
+				}
+		},
+
+
+    onMouseleave: function(evt) {
+				if (window.menu_thumb_enter == true) {
+						document.querySelector(this.data.id).emit('trigger-mouseleave');
+						window.menu_thumb_enter = false;
+				}
+		},
+
 
     onClick: function(evt) {
 
         var self = this;
+				var el = document.querySelector(this.data.id);
 
-        var position = this.el.getAttribute('position');
+        var position = el.getAttribute('position');
 
         /* prevent immediate selection of image after menu appears */
-        if (this.el.parentEl.getAttribute('visible') && position.z == 0.5) {
+        if (el.parentEl.getAttribute('visible') && position.z == 0.5) {
 
-            var image_id = this.el.getAttribute('data-image-id');
-            var content_id = this.el.getAttribute('data-content-id');
+            var image_id = el.getAttribute('data-image-id');
+            var content_id = el.getAttribute('data-content-id');
 
             var hotspots = document.querySelectorAll('.hotspot-wrapper');
             for (var i = 0; i < hotspots.length; i++) {
@@ -39,8 +67,7 @@ AFRAME.registerComponent('isvr-photosphere-menu-thumb', {
                     camera.setAttribute('rotation', { x:0, y:0, z:0 });
 
                     document.querySelector('#photosphere-menu').setAttribute('visible', false);
-
-                    self.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
+                    document.querySelector('#photosphere-menu').setAttribute('position', { x: 0, y:100, z:-4 });
 
                     /* set visible to true on hotspot wrapper, opacity is still 0 so they are invisible */
                     var hotspot_wrapper = document.querySelectorAll('.hotspot-wrapper-content-id-' + content_id);

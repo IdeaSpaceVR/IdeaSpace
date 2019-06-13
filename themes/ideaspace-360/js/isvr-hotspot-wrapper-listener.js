@@ -8,8 +8,6 @@ AFRAME.registerComponent('isvr-hotspot-wrapper-listener', {
 
             if (this.getAttribute('data-content-id') == document.querySelector('#photosphere').getAttribute('data-content-id') && 
                 document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
-
-                self.el.sceneEl.systems['isvr-scene-helper'].showCursor();
             }
         });
 
@@ -17,8 +15,6 @@ AFRAME.registerComponent('isvr-hotspot-wrapper-listener', {
 
             if (this.getAttribute('data-content-id') == document.querySelector('#photosphere').getAttribute('data-content-id') && 
                 document.querySelector('#photosphere-menu').getAttribute('visible') == false) {
-
-                self.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
             }
         });
 

@@ -37,33 +37,23 @@ AFRAME.registerComponent('isvr-init-assets', {
                     var sphere = document.querySelector('#photosphere');
                     sphere.setAttribute('material', 'src', '#img-photosphere-1');
                     sphere.setAttribute('data-content-id', content_id);
+                    //sphere.emit('photosphere-fade-in');
 
                     var photosphere_texture_loaded_listener = function() {
 
                         document.querySelector('#photosphere-loading').setAttribute('visible', false);
                         document.querySelector('#photosphere-loading-background').setAttribute('visible', false);
-                        document.querySelector('#photosphere-loading-anim').stop();
+                        document.querySelector('#photosphere-loading').emit('stop-photosphere-loading-anim');
 
                         document.querySelector('#photosphere-start-btn').setAttribute('visible', true);
 
-                        var intro_mouseenter = function() {
-                            self.el.sceneEl.systems['isvr-scene-helper'].showCursor();
-                        };
-                        var intro_mouseleave = function() {
-                            self.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
-                        };
-                        document.querySelector('#intro-0').addEventListener('mouseenter', intro_mouseenter);
-                        document.querySelector('#intro-0').addEventListener('mouseleave', intro_mouseleave);
-
                         document.querySelector('#intro-0').addEventListener('click', function(evt) {
 
-                            document.querySelector('#intro-0').removeEventListener('mouseenter', intro_mouseenter);
-                            document.querySelector('#intro-0').removeEventListener('mouseleave', intro_mouseleave);
-                            self.el.sceneEl.systems['isvr-scene-helper'].hideCursor();
+														document.querySelector('#photosphere-start-btn-circle').emit('stop-photosphere-start-btn-anim');
 
                             // workaround because of interference with menu
-                            document.querySelector('#intro-0').setAttribute('position', { x: 0, y: 1.6, z: -10 });
-                            document.querySelector('#no-hmd-intro').setAttribute('position', { x: 0, y: 1.6, z: -10 });
+                            document.querySelector('#intro-0').setAttribute('position', { x: 0, y: 100, z: -2.1 });
+                            document.querySelector('#no-hmd-intro').setAttribute('position', { x: 0, y: 100, z: -2.1 });
 
                             document.querySelector('#intro-0').setAttribute('visible', false);
                             document.querySelector('#no-hmd-intro').setAttribute('visible', false);
@@ -129,7 +119,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                                     assets.appendChild(image_elem);
 
                                     document.querySelector('#photosphere-loading-' + (i+1)).setAttribute('visible', false);
-                                    document.querySelector('#photosphere-loading-anim-' + (i+1)).stop();
+                                    document.querySelector('#photosphere-loading-' + (i+1)).emit('stop-photosphere-loading-anim-' + (i+1));
                         
                                     thumb.setAttribute('material', 'src', '#img-photosphere-thumb-' + id);
                                     thumb.setAttribute('visible', true);
@@ -140,7 +130,7 @@ AFRAME.registerComponent('isvr-init-assets', {
                         } else {
 
                           document.querySelector('#photosphere-loading-' + (i+1)).setAttribute('visible', false);
-                          document.querySelector('#photosphere-loading-anim-' + (i+1)).stop();
+                          document.querySelector('#photosphere-loading-' + (i+1)).emit('stop-photosphere-loading-anim-' + (i+1));
 
                           thumb.setAttribute('material', 'src', '#img-photosphere-thumb-' + id);
                           thumb.setAttribute('visible', true);
