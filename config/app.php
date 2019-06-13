@@ -218,8 +218,8 @@ return [
     'disable_forgot_password' => true,
 
     'version' => '1.2.0',
-    'aframe_lib' => 'aframe-v0.9.1.min.js',
+    'aframe_lib' => 'aframe-v0.9.2.min.js',
     /* modified a-frame lib, in order to allow capture key events for WASD navigation within a bootstrap modal dialog (without using iframes) */
-    'aframe_lib_for_assets' => 'aframe-asset-library-v0.9.1.min.js',
+    'aframe_lib_for_assets' => 'aframe-asset-library-v0.9.2.min.js',
 
 ];

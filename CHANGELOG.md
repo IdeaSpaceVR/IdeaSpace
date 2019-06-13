@@ -8,8 +8,10 @@
 - New theme: Image Gallery: flip through your images in space
 - New field type: painter; paint in your theme with 6-DOF controllers
 - Allow HTML in field info text
-- A-Frame v0.9.1 update
+- A-Frame v0.9.2 update
 - Removed Collada model (.dae) support
+- Updated all pre-installed themes to A-Frame v0.9.2
+- Performance improvements for all pre-installed themes
 
 # 1.1.5
 
