@@ -11,7 +11,7 @@
 - A-Frame v0.9.2 update
 - Removed Collada model (.dae) support
 - Updated all pre-installed themes to A-Frame v0.9.2
-- Performance improvements for all pre-installed themes
+- Some performance improvements for pre-installed themes
 
 # 1.1.5
 
