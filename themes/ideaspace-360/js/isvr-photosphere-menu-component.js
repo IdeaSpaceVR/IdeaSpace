@@ -1,27 +1,8 @@
 AFRAME.registerComponent('isvr-photosphere-menu', {
 
-    /* in play: otherwide AFRAME.utils.device.checkHeadsetConnected() returns false */
-    play: function() {
+    init: function() {
 
-        if (AFRAME.utils.device.checkHeadsetConnected()) {
-
-            document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
-
-        } else if (!AFRAME.utils.device.checkHeadsetConnected() && AFRAME.utils.device.isMobile()) {
-
-            document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
-
-        } else {
-
-            window.onkeydown = (function(e) {
-                var code = e.keyCode ? e.keyCode : e.which;
-                /* space or enter keys */
-                if (code === 13 || code === 32) { 
-                    this.onClick();
-                }
-            }).bind(this);
-        }
-
+				document.querySelector('#photosphere').addEventListener('click', this.onClick.bind(this));
 
         this.yaxis = new THREE.Vector3(0, 1, 0);
         this.zaxis = new THREE.Vector3(0, 0, 1);
@@ -34,6 +15,7 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
         this.pivot.add(this.el.object3D);
 
     },
+
 
     onClick: function(evt) {
 
@@ -106,7 +88,9 @@ AFRAME.registerComponent('isvr-photosphere-menu', {
 
     },
 
+
     update: function(oldData) {},
+
 
     remove: function() {}
 

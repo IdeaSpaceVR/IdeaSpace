@@ -3,10 +3,6 @@ AFRAME.registerComponent('isvr-scene', {
   
     init: function () {
 
-        if (!AFRAME.utils.device.checkHeadsetConnected() || !AFRAME.utils.device.isOculusGo || !AFRAME.utils.device.isGearVR) {
-            document.querySelector('#no-hmd-intro').setAttribute('visible', true);
-        }
-
         this.el.addEventListener('enter-vr', function() {
 
 						if (AFRAME.utils.device.checkHeadsetConnected()) {
