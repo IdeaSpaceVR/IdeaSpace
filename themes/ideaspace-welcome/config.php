@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace Welcome!',
   '#theme-key' => 'ideaspace-welcome',
-  '#theme-version' => '1.0',
+  '#theme-version' => '1.2',
   '#ideaspace-version' => '>=1.1.1',
   '#theme-description' => 'A configurable navigation menu environment theme in order to link to other virtual reality websites.',
   '#theme-author-name' => 'IdeaSpaceVR',
@@ -127,16 +127,6 @@ return [
           '#contentformat' => 'text',
           '#maxlength' => 1024,
           '#required' => false,
-        ],
-
-				'antialiasing' => [
-          '#label' => 'Antialiasing',
-          '#description' => 'Set antialiasing.',
-          '#help' => 'Mobile VR headsets may need to have antialiasing set to off (for performance reasons).',
-          '#type' => 'options-select',
-          '#options' => ['off' => 'Off', 'on' => 'On'],
-          '#required' => true,
-          '#default_value' => 'off',
         ],
 
       ],

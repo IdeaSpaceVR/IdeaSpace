@@ -1,7 +1,13 @@
-## 1.0
+## 1.2
 
-- Initial version
+- Updated to A-frame v0.9.2
+- Removed anti-alias configuration (anti-alias is now enabled per default)
 
 ## 1.1
 
 - Bug fix: if Google Fonts are used and they need longer to load, the material HTML shader must be updated 
+
+## 1.0
+
+- Initial version
+
