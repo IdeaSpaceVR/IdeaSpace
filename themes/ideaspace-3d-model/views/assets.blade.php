@@ -17,10 +17,6 @@
 
             <a-asset-item class="model-asset" id="model-glb" src="{{ $content['model'][0]['model']['#model'][0]['#uri']['#value'] }}"></a-asset-item>
 
-        @elseif ($filetype == \App\Model3D::FILE_EXTENSION_DAE)
-
-            <a-asset-item class="model-asset" id="model-dae" src="{{ $content['model'][0]['model']['#model'][0]['#uri']['#value'] }}"></a-asset-item>
-
         @elseif ($filetype == \App\Model3D::FILE_EXTENSION_OBJ)
 
             <a-asset-item class="model-asset" id="model-obj" src="{{ $content['model'][0]['model']['#model'][0]['#uri']['#value'] }}"></a-asset-item>

@@ -1,3 +1,8 @@
+## 1.4
+
+- Updated to A-Frame v0.9.2
+- Removed support for DAE models
+
 ## 1.3
 
 - Use A-Frame teleportation controls

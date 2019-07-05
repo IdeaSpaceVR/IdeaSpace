@@ -25,13 +25,13 @@
     <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe/aframe-v0.8.2.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe/aframe-v0.9.2.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-teleport-controls/aframe-teleport-controls.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/gradientsky.min.js') }}"></script>
 		<script src="{{ url($theme_dir . '/js/aframe-html-shader-component/aframe-html-shader.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-extras/aframe-extras.loaders.min.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/aframe-orbit-controls/aframe-orbit-controls-component.min.js') }}"></script>
-    <script src="{{ url($theme_dir . '/js/kframe/aframe-look-at-component.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-orbit-controls/aframe-orbit-controls.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/superframe/aframe-look-at-component.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-vr-mode.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-model-center.js') }}"></script>
 </head>

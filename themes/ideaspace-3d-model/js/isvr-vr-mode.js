@@ -30,6 +30,11 @@ AFRAME.registerComponent('isvr-vr-mode', {
             self.camera_wrapper_pos = camera_wrapper.getAttribute('position');
 						camera_wrapper.setAttribute('position', { x: 0, y: 0, z: self.data.camera_distance_vr });
 
+						var annotation_wrappers = document.querySelectorAll('.annotation-wrapper');
+            for (var i=0; i<annotation_wrappers.length; i++) {
+								annotation_wrappers[i].setAttribute('look-at', '#camera');
+						}
+
 
 						var primaryHand = document.createElement('a-entity');
             primaryHand.setAttribute('id', 'primaryHand');
@@ -37,8 +42,9 @@ AFRAME.registerComponent('isvr-vr-mode', {
             primaryHand.setAttribute('oculus-touch-controls', {hand: 'right'});
             primaryHand.setAttribute('vive-controls', {hand: 'right'});
             primaryHand.setAttribute('windows-motion-controls', {hand: 'right'});
-            primaryHand.setAttribute('daydream-controls', 'right');
-            primaryHand.setAttribute('gearvr-controls', 'right');
+            primaryHand.setAttribute('daydream-controls', { hand: 'right'});
+            primaryHand.setAttribute('gearvr-controls', { hand: 'right'});
+            primaryHand.setAttribute('oculus-go-controls', { hand: 'right'});
             camera_wrapper.appendChild(primaryHand);
 
 						var secondaryHand = document.createElement('a-entity');
@@ -47,8 +53,9 @@ AFRAME.registerComponent('isvr-vr-mode', {
             secondaryHand.setAttribute('oculus-touch-controls', {hand: 'left'});
             secondaryHand.setAttribute('vive-controls', {hand: 'left'});
             secondaryHand.setAttribute('windows-motion-controls', {hand: 'left'});
-            secondaryHand.setAttribute('daydream-controls', 'left');
-            secondaryHand.setAttribute('gearvr-controls', 'left');
+            secondaryHand.setAttribute('daydream-controls', { hand: 'left'});
+            secondaryHand.setAttribute('gearvr-controls', { hand: 'left'});
+            secondaryHand.setAttribute('oculus-go-controls', { hand: 'left'});
             camera_wrapper.appendChild(secondaryHand);
         });
 
