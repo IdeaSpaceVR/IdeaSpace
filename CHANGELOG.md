@@ -10,6 +10,7 @@
 - A-Frame v0.9.2 update
 - Removed Collada model (.dae) support
 - Removed IdeaSpace 360 Photo Tour theme
+- Removed VR View themes
 - Updated all pre-installed themes to A-Frame v0.9.2
 - Some performance improvements for pre-installed themes
 
