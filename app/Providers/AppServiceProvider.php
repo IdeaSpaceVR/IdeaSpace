@@ -54,6 +54,14 @@ class AppServiceProvider extends ServiceProvider {
                     $origin_trial_token_data_expires = $setting_origin_trial_token_data_expires->value;
                 } catch (ModelNotFoundException $e) {
                 }
+
+								/* load theme translations */
+								$themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
+
+								foreach ($themes as $theme) {
+										$config = json_decode($theme->config, true);
+										$this->loadTranslationsFrom($theme->root_dir . '/lang', $config['#theme-key']);
+								}
             }
         }
 
@@ -68,14 +76,6 @@ class AppServiceProvider extends ServiceProvider {
             $view->with('origin_trial_token_data_feature', $origin_trial_token_data_feature);
             $view->with('origin_trial_token_data_expires', $origin_trial_token_data_expires);
         }); 
-
-
-				$themes = Theme::where('status', Theme::STATUS_ACTIVE)->get();
-
-				foreach ($themes as $theme) {
-						$config = json_decode($theme->config, true);
-						$this->loadTranslationsFrom($theme->root_dir . '/lang', $config['#theme-key']);
-				}
     }
 
     /**
