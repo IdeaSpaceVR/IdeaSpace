@@ -75,7 +75,7 @@ class FrontpageController extends Controller {
                 /* show space in iframe because of the top navbar */
                 if (Auth::check()) {
 
-                    $content = space_embed_code('/' . $space->uri, '100%', '100%'); 
+                    $content = space_embed_code($space->uri, '100%', '100%'); 
 
                     return view('frontpage.onespace_frontpage', [
                         'css' => array(asset('public/assets/frontpage/css/frontpage.css')), 
