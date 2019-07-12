@@ -4,7 +4,7 @@
 - New feature: internationalization (i18n) for themes 
 - Bug fix: positioning items on z-axis in content type 'position'  was not working properly
 - Fonts helper: allow to configure webfont loader; helps to preload fonts
-- New theme: Image Gallery: flip through your images in space
+- New theme: Image Slideshow: flip through your images in space
 - New field type: painter; paint in your theme with 6-DOF controllers
 - Allow HTML in field info text
 - A-Frame v0.9.2 update
