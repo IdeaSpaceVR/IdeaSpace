@@ -49,6 +49,14 @@ class SpaceAddController extends Controller {
             $theme_mod['theme-description'] = $config['#theme-description'];
             //$theme_mod['theme-compatibility'] = explode(',', $config['#theme-compatibility']);
             $theme_mod['screenshot'] = url($theme->root_dir . '/' . Theme::SCREENSHOT_FILE);
+
+						/* if lang directory exists we assume there are language files; support legacy themes without lang files */
+            if (File::exists($theme->root_dir . '/lang')) {
+                $theme_mod['theme-key'] = $config['#theme-key'];
+            } else {
+                $theme_mod['theme-key'] = null;
+            }
+
             $themes_mod[] = $theme_mod; 
         }
 

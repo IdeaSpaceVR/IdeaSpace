@@ -31,7 +31,7 @@
                 <img width="470" src="{{ $theme['screenshot'] }}" class="img-responsive" alt="{{ $theme['theme-name'] }}">
                 <div class="caption">
                     <h3>{{ $theme['theme-name'] }}</h3>
-                    <p class="text-center">{{ $theme['theme-description'] }}</p>
+                    <p class="text-center">@if (!is_null($theme['theme-key'])) {{ trans($theme['theme-key'] . '::' . $theme['theme-description']) }} @else {{ $theme['theme-description'] }} @endif</p>
                     <button class="btn btn-default btn-primary" type="button">{{ trans('template_space_add_edit.select') }}</button>
                 </div>
             </div>
