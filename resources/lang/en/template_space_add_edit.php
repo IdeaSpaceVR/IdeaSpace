@@ -28,5 +28,9 @@ return [
     'move_to_trash' => 'Move to Trash',
     'update' => 'Update',
     'back' => 'Back to All Spaces',
+    'select_theme' => 'Select a theme:',
+    'no_installed_themes' => 'There are no installed themes.',
+    'install_some_themes' => 'Install some themes',
+    'select' => 'Select',
 
 ];

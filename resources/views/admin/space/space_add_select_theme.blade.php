@@ -4,15 +4,15 @@
 
 @section('content')
 
-    <h1 style="padding-left:35px">Add New Space</h1> 
-    <h3 style="padding-left:35px">Select a theme:</h3>
+    <h1 style="padding-left:35px">{{ trans('template_space_add_edit.headline_new_space') }}</h1> 
+    <h3 style="padding-left:35px">{{ trans('template_space_add_edit.select_theme') }}</h3>
 
     {!! Form::open(array('route' => 'space_add_select_theme_submit', 'method' => 'POST', 'autocomplete' => 'false')) !!}
 
     @if (count($themes) === 0) 
         <div class="row" style="padding-left:35px">
             <div class="col-md-12" style="font-size:16px">
-            There are no installed themes. <a href="{{ route('themes') }}" style="color:#000000;text-decoration:underline">Install some themes here</a>.
+            {{ trans('template_space_add_edit.no_installed_themes') }} <a href="{{ route('themes') }}" style="color:#000000;text-decoration:underline">{{ trans('template_space_add_edit.install_some_themes') }}</a>.
             </div>    
         </div>    
     @endif 
@@ -32,7 +32,7 @@
                 <div class="caption">
                     <h3>{{ $theme['theme-name'] }}</h3>
                     <p class="text-center">{{ $theme['theme-description'] }}</p>
-                    <button class="btn btn-default btn-primary" type="button">Select</button>
+                    <button class="btn btn-default btn-primary" type="button">{{ trans('template_space_add_edit.select') }}</button>
                 </div>
             </div>
         </div>
