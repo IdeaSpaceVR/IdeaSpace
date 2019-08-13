@@ -1,3 +1,7 @@
+# 1.2.1
+
+- New theme: IdeaSpace Compass Blog
+
 # 1.2.0
 
 - New feature: field groups: group fields together in a collapsible box; allows to keep a better overview if there are many fields
