@@ -147,7 +147,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -219,7 +219,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -291,7 +291,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -363,7 +363,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -435,7 +435,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -507,7 +507,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
@@ -579,7 +579,7 @@ return [
           '#description' => 'description.select_media_type',
           '#help' => 'help.select_media_type',
           '#type' => 'options-select',
-          '#required' => false,
+          '#required' => true,
           '#options' => [
 							'none' => 'options.none',
 							'text' => 'options.text',
