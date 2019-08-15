@@ -14,7 +14,7 @@
 
 
 ### Content Management System
-Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (MySQL or MariaDB). 
+Manage your virtual reality spaces and assets like you would manage blog posts. Run it on your own server. All you need is PHP and a database (MySQL, PostgreSQL or MariaDB). 
 
 ### Themes
 Download and install themes and create a 3D/VR website. Or create your own theme with the Theme API [Take a look at our theme directory](https://www.ideaspacevr.org/themes). A theme can be anything - a 360 photo tour, a 3D artist portfolio, an interactive video or a blog in VR. 
