@@ -360,7 +360,7 @@
 								$cid = $blog_post['post-title-north']['#content-id'];
 								@endphp
 
-								<div id="post-title-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-title-texture">
+								<div id="post-title-texture-{{ $cid }}" data-cid="{{ $cid }}" class="post-title-texture" style="visibility:hidden">
 										{!! $blog_post['post-title-north']['#value'] !!} 
 										<p>&nbsp;</p>
 								</div>

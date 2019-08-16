@@ -1,24 +1,25 @@
 @php
 $_id = str_replace('-', '_', $id);
 @endphp
+document.fonts.ready.then(function() {
+		function text_wrapper_{{ $_id }} () {
 
-function text_wrapper_{{ $_id }} () {
+				var post_text_{{ $_id }}_textures = document.querySelectorAll('.post-text-{{ $id }}-texture');
+				for (var i = 0; i < post_text_{{ $_id }}_textures.length; i++) {
+						var post_text_wrapper_{{ $_id }} = document.getElementById('post-text-wrapper-{{ $id }}-' + post_text_{{ $_id }}_textures[i].dataset.cid);
+						var height_meters = (post_text_{{ $_id }}_textures[i].offsetHeight * post_text_wrapper_{{ $_id }}.getAttribute('width')) / post_text_{{ $_id }}_textures[i].offsetWidth;
 
-		var post_text_{{ $_id }}_textures = document.querySelectorAll('.post-text-{{ $id }}-texture');
-		for (var i = 0; i < post_text_{{ $_id }}_textures.length; i++) {
-				var post_text_wrapper_{{ $_id }} = document.getElementById('post-text-wrapper-{{ $id }}-' + post_text_{{ $_id }}_textures[i].dataset.cid);
-				var height_meters = (post_text_{{ $_id }}_textures[i].offsetHeight * post_text_wrapper_{{ $_id }}.getAttribute('width')) / post_text_{{ $_id }}_textures[i].offsetWidth;
-
-				if (isNaN(height_meters)) {
-						window.requestAnimationFrame(text_wrapper_{{ $_id }});
-				} else {
-						post_text_wrapper_{{ $_id }}.setAttribute('height', height_meters);
-						post_text_wrapper_{{ $_id }}.setAttribute('isvr-text-nav', {});
+						if (isNaN(height_meters)) {
+								window.requestAnimationFrame(text_wrapper_{{ $_id }});
+						} else {
+								post_text_wrapper_{{ $_id }}.setAttribute('height', height_meters);
+								post_text_wrapper_{{ $_id }}.setAttribute('isvr-text-nav', {});
+								post_text_wrapper_{{ $_id }}.setAttribute('visible', true);
+						}
 				}
-		}
-};
-text_wrapper_{{ $_id }}();
-
+		};
+		text_wrapper_{{ $_id }}();
+});
 
 function image_wrapper_{{ $_id }} () {
 

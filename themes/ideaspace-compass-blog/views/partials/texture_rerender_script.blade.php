@@ -1,5 +1,5 @@
 
-document.fonts.onloadingdone = function(fontFaceSetEvent) {
+document.fonts.ready.then(function() {
 
 		var post_title_textures = document.querySelectorAll('.post-title-texture');
 		for (var i = 0; i < post_title_textures.length; i++) {
@@ -8,6 +8,7 @@ document.fonts.onloadingdone = function(fontFaceSetEvent) {
 						if (post_title_textures_elems[j].style.color == 'rgb(0, 0, 0)' || post_title_textures_elems[j].style.color == '') {
 								post_title_textures_elems[j].style.color = 'rgb(255, 255, 255)';
 						}
+						post_title_textures[i].style.visibility = 'visible';
 				}
 				/* update html shader material, even if font color is not changed */
 				document.querySelector('#post-title-' + post_title_textures[i].dataset.cid).components.material.shader.__render();
@@ -56,6 +57,6 @@ document.fonts.onloadingdone = function(fontFaceSetEvent) {
 
 		document.querySelector('#ideaspacevr').components.material.shader.__render();		
 		
-}
+});
 
 

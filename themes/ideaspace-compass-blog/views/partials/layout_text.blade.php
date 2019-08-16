@@ -1,6 +1,7 @@
 <a-rounded
     id="post-text-wrapper-{{ $id }}-{{ $blog_post['post-text-' . $id]['#content-id'] }}"
 		class="collidable"
+		visible="false"
     position="{{ $position['x'] }} 0 {{ ($position['z'] + 0.001) }}"
 		rotation="0 {{ $rotation_y }} 0"
     color="{{ $blog_post['post-text-image-background-color-' . $id]['#value'] }}"
