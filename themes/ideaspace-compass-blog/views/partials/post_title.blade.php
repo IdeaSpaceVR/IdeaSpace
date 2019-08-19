@@ -5,7 +5,7 @@
 		geometry="primitive: plane; width: 2"
 		position="{{ $position['x'] }} 0 {{ $position['z'] }}" 
 		rotation="0 -90 0"
-		material="shader: html; side: double; target: #post-title-texture-{{ $blog_post['post-title-north']['#content-id'] }}; transparent: true; ratio: width">
+		material="shader: html; fps: 1; side: double; target: #post-title-texture-{{ $blog_post['post-title-north']['#content-id'] }}; transparent: true; ratio: width">
 		@if ($post_counter > 0)
 		<a-entity
 				id="navigation-arrow-up-{{ $blog_post['post-title-north']['#content-id'] }}"
@@ -14,7 +14,7 @@
 				geometry="primitive: plane; width: 1; height: 1"
 				position="-1.15 0 -0.001" 
 				rotation="0 0 0" 
-				material="shader: html; side: double; target: #navigation-arrow-up-texture; transparent: true; ratio: width">
+				material="shader: html; fps: 1; side: double; target: #navigation-arrow-up-texture; transparent: true; ratio: width">
 		</a-entity>
 		@else
 		<a-entity
@@ -23,7 +23,7 @@
 				geometry="primitive: plane; width: 1; height: 1"
 				position="-1.15 0 -0.001" 
 				rotation="0 0 0" 
-				material="shader: html; side: double; target: #navigation-arrow-up-inactive-texture; transparent: true; ratio: width">
+				material="shader: html; fps: 1; side: double; target: #navigation-arrow-up-inactive-texture; transparent: true; ratio: width">
 		</a-entity>
 		@endif
 		@if ((count($content['blog-posts']) - 1) > $post_counter)
@@ -34,7 +34,7 @@
 				geometry="primitive: plane; width: 1; height: 1"
 				position="1.15 0 -0.001" 
 				rotation="0 0 0" 
-				material="shader: html; side: double; target: #navigation-arrow-down-texture; transparent: true; ratio: width">
+				material="shader: html; fps: 1; side: double; target: #navigation-arrow-down-texture; transparent: true; ratio: width">
 		</a-entity>
 		@else
 		<a-entity
@@ -43,7 +43,7 @@
 				geometry="primitive: plane; width: 1; height: 1"
 				position="1.15 0 -0.001" 
 				rotation="0 0 0" 
-				material="shader: html; side: double; target: #navigation-arrow-down-inactive-texture; transparent: true; ratio: width">
+				material="shader: html; fps: 1; side: double; target: #navigation-arrow-down-inactive-texture; transparent: true; ratio: width">
 		</a-entity>
 		@endif
 </a-entity>

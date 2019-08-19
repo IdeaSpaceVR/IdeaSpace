@@ -115,71 +115,71 @@
 
 												@if ($blog_post['post-display-north-east']['#value'] != 'none')
 														@if ($blog_post['post-display-north-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[1], 'rotation_y' => -135, 'id' => 'north-east'])
+																@include('theme::partials.layout_text', ['position' => $positions[1], 'rotation_y' => -135, 'id' => 'north-east', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-north-east']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[1], 'rotation_y' => -135, 'id' => 'north-east'])
 														@elseif ($blog_post['post-display-north-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[1], 'rotation_y' => -135, 'id' => 'north-east'])
+																@include('theme::partials.layout_link', ['position' => $positions[1], 'rotation_y' => -135, 'id' => 'north-east', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-east']['#value'] != 'none')
 														@if ($blog_post['post-display-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[2], 'rotation_y' => 180, 'id' => 'east'])
+																@include('theme::partials.layout_text', ['position' => $positions[2], 'rotation_y' => 180, 'id' => 'east', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-east']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[2], 'rotation_y' => 180, 'id' => 'east'])
 														@elseif ($blog_post['post-display-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[2], 'rotation_y' => 180, 'id' => 'east'])
+																@include('theme::partials.layout_link', ['position' => $positions[2], 'rotation_y' => 180, 'id' => 'east', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-south-east']['#value'] != 'none')
 														@if ($blog_post['post-display-south-east']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[3], 'rotation_y' => 135, 'id' => 'south-east'])
+																@include('theme::partials.layout_text', ['position' => $positions[3], 'rotation_y' => 135, 'id' => 'south-east', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-south-east']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[3], 'rotation_y' => 135, 'id' => 'south-east'])
 														@elseif ($blog_post['post-display-south-east']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[3], 'rotation_y' => 135, 'id' => 'south-east'])
+																@include('theme::partials.layout_link', ['position' => $positions[3], 'rotation_y' => 135, 'id' => 'south-east', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-south']['#value'] != 'none')
 														@if ($blog_post['post-display-south']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[4], 'rotation_y' => 90, 'id' => 'south'])
+																@include('theme::partials.layout_text', ['position' => $positions[4], 'rotation_y' => 90, 'id' => 'south', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-south']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[4], 'rotation_y' => 90, 'id' => 'south'])
 														@elseif ($blog_post['post-display-south']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[4], 'rotation_y' => 90, 'id' => 'south'])
+																@include('theme::partials.layout_link', ['position' => $positions[4], 'rotation_y' => 90, 'id' => 'south', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-south-west']['#value'] != 'none')
 														@if ($blog_post['post-display-south-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[5], 'rotation_y' => 45, 'id' => 'south-west'])
+																@include('theme::partials.layout_text', ['position' => $positions[5], 'rotation_y' => 45, 'id' => 'south-west', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-south-west']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[5], 'rotation_y' => 45, 'id' => 'south-west'])
 														@elseif ($blog_post['post-display-south-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[5], 'rotation_y' => 45, 'id' => 'south-west'])
+																@include('theme::partials.layout_link', ['position' => $positions[5], 'rotation_y' => 45, 'id' => 'south-west', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-west']['#value'] != 'none')
 														@if ($blog_post['post-display-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[6], 'rotation_y' => 0, 'id' => 'west'])
+																@include('theme::partials.layout_text', ['position' => $positions[6], 'rotation_y' => 0, 'id' => 'west', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-west']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[6], 'rotation_y' => 0, 'id' => 'west'])
 														@elseif ($blog_post['post-display-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[6], 'rotation_y' => 0, 'id' => 'west'])
+																@include('theme::partials.layout_link', ['position' => $positions[6], 'rotation_y' => 0, 'id' => 'west', 'field_painter' => 'true'])
 														@endif
 												@endif
 
 												@if ($blog_post['post-display-north-west']['#value'] != 'none')
 														@if ($blog_post['post-display-north-west']['#value'] == 'text')
-																@include('theme::partials.layout_text', ['position' => $positions[7], 'rotation_y' => -45, 'id' => 'north-west'])
+																@include('theme::partials.layout_text', ['position' => $positions[7], 'rotation_y' => -45, 'id' => 'north-west', 'field_painter' => 'true'])
 														@elseif ($blog_post['post-display-north-west']['#value'] == 'image')
 																@include('theme::partials.layout_image', ['position' => $positions[7], 'rotation_y' => -45, 'id' => 'north-west'])
 														@elseif ($blog_post['post-display-north-west']['#value'] == 'link')
-																@include('theme::partials.layout_link', ['position' => $positions[7], 'rotation_y' => -45, 'id' => 'north-west'])
+																@include('theme::partials.layout_link', ['position' => $positions[7], 'rotation_y' => -45, 'id' => 'north-west', 'field_painter' => 'true'])
 														@endif
 												@endif
 
@@ -227,7 +227,7 @@
 								position="1.5 -1 -0.5"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #blog-post-rotate-left-texture; transparent: true; ratio: width">
+								material="shader: html; fps: 1; side: double; target: #blog-post-rotate-left-texture; transparent: true; ratio: width">
 						</a-entity>
 						<a-entity 
 								id="blog-post-rotate-right" 
@@ -237,7 +237,7 @@
 								position="1.5 -1 0.5"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #blog-post-rotate-right-texture; transparent: true; ratio: width">
+								material="shader: html; fps: 1; side: double; target: #blog-post-rotate-right-texture; transparent: true; ratio: width">
 						</a-entity>
 						@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
 						<a-entity 
@@ -247,7 +247,7 @@
 								position="1.5 -1 0"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #about-link-texture; transparent: true; ratio: width">
+								material="shader: html; fps: 1; side: double; target: #about-link-texture; transparent: true; ratio: width">
 						</a-entity>
 						<a-rounded
 								id="about-wrapper"
@@ -269,7 +269,7 @@
 										id="about"
 										geometry="primitive: plane; width: 2.8"
 										position="0 0 0.001"
-										material="shader: html; side: double; target: #about-texture; transparent: true; ratio: width">
+										material="shader: html; fps: 1; side: double; target: #about-texture; transparent: true; ratio: width">
 								</a-entity>
 						</a-rounded>
 						@endif
@@ -281,7 +281,7 @@
 								position="1.5 -1.25 0"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 1.2"
-								material="shader: html; side: double; target: #ideaspacevr-texture; transparent: true; ratio: width">
+								material="shader: html; fps: 1; side: double; target: #ideaspacevr-texture; transparent: true; ratio: width">
 						</a-entity>
 
 				</a-entity>

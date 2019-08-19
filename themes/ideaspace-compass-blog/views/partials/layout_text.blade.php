@@ -16,6 +16,6 @@
         class="post-text"
         geometry="primitive: plane; width: 1.8"
         position="0 0 0.001"
-        material="shader: html; target: #post-text-{{ $id }}-texture-{{ $blog_post['post-text-' . $id]['#content-id'] }}; transparent: true; ratio: width">
+        material="shader: html; @if (isset($field_painter) && $field_painter == 'true') fps: 1; @endif target: #post-text-{{ $id }}-texture-{{ $blog_post['post-text-' . $id]['#content-id'] }}; transparent: true; ratio: width">
     </a-entity>
 </a-rounded>
