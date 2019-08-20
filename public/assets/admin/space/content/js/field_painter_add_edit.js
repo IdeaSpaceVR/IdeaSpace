@@ -27,6 +27,9 @@ jQuery(document).ready(function($) {
 
                 $('#painter-target .insert-btn').unbind('click');
                 $('#painter-target .insert-btn').click(painter_insert_click_handler);
+
+								/* workaround to reload iframe, otherwise it is not shown in oculus browser */
+								document.getElementById('painter-iframe').src += '';
             });
 
         
