@@ -13,7 +13,7 @@
 
 										<input type="hidden" value="" id="painter-blob">
 
-                    <iframe id="painter-iframe" allowfullscreen style="width:100%; border:none">
+                    <iframe id="painter-iframe" name="painter-iframe" allowfullscreen style="width:100%; border:none">
                     </iframe>
 
                     </div><!-- col-md-8 //-->
