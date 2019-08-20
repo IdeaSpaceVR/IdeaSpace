@@ -35,7 +35,7 @@
 				@if (isset($blog_post['post-link-' . $id]['#value']) && trim($blog_post['post-link-' . $id]['#value']) != '')
 				link="href: {{ $blog_post['post-link-' . $id]['#value'] }}; visualAspectEnabled: false"
 				@endif
-				material="shader: html; @if (isset($field_painter) && $field_painter == 'true') fps: 1; @endif target: #post-link-{{ $id }}-texture-{{ $blog_post['post-link-' . $id]['#content-id'] }}; transparent: true; ratio: width"
+				material="shader: html; target: #post-link-{{ $id }}-texture-{{ $blog_post['post-link-' . $id]['#content-id'] }}; transparent: true; ratio: width"
 				geometry="primitive: plane; width: 1.8">
 		</a-entity>
 </a-rounded>
