@@ -227,7 +227,7 @@
 								position="1.5 -1 -0.5"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #blog-post-rotate-left-texture; transparent: true; ratio: width">
+								material="shader: html; target: #blog-post-rotate-left-texture; transparent: true; ratio: width">
 						</a-entity>
 						<a-entity 
 								id="blog-post-rotate-right" 
@@ -237,7 +237,7 @@
 								position="1.5 -1 0.5"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #blog-post-rotate-right-texture; transparent: true; ratio: width">
+								material="shader: html; target: #blog-post-rotate-right-texture; transparent: true; ratio: width">
 						</a-entity>
 						@if (isset($content['general-settings'][0]['blog-icon']) || isset($content['general-settings'][0]['blog-about']))
 						<a-entity 
@@ -247,7 +247,7 @@
 								position="1.5 -1 0"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 0.5"
-								material="shader: html; side: double; target: #about-link-texture; transparent: true; ratio: width">
+								material="shader: html; target: #about-link-texture; transparent: true; ratio: width">
 						</a-entity>
 						<a-rounded
 								id="about-wrapper"
@@ -269,7 +269,7 @@
 										id="about"
 										geometry="primitive: plane; width: 2.8"
 										position="0 0 0.001"
-										material="shader: html; side: double; target: #about-texture; transparent: true; ratio: width">
+										material="shader: html; target: #about-texture; transparent: true; ratio: width">
 								</a-entity>
 						</a-rounded>
 						@endif
@@ -281,7 +281,7 @@
 								position="1.5 -1.25 0"
 								rotation="-30 -90 0"
 								geometry="primitive: plane; width: 1.2"
-								material="shader: html; side: double; target: #ideaspacevr-texture; transparent: true; ratio: width">
+								material="shader: html; target: #ideaspacevr-texture; transparent: true; ratio: width">
 						</a-entity>
 
 				</a-entity>
@@ -426,6 +426,18 @@
 								var rotate_elems = document.querySelectorAll('.blog-post-rotate');
 								for (var j = 0; j < rotate_elems.length; j++) {
 										rotate_elems[j].components.material.shader.__render();						
+								}
+								var title = document.querySelectorAll('.post-title');
+								for (var j = 0; j < title.length; j++) {
+										title[j].components.material.shader.__render();						
+								}
+								var nav_arrow_up = document.querySelectorAll('.navigation-arrow-up');
+								for (var j = 0; j < nav_arrow_up.length; j++) {
+										nav_arrow_up[j].components.material.shader.__render();						
+								}
+								var nav_arrow_down = document.querySelectorAll('.navigation-arrow-down');
+								for (var j = 0; j < nav_arrow_down.length; j++) {
+										nav_arrow_down[j].components.material.shader.__render();						
 								}
 								var about_elem = document.querySelector('#about-link');
 								about_elem.components.material.shader.__render();						
