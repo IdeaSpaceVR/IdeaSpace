@@ -18,7 +18,6 @@ return [
     'enter_origin_trial_token_data_feature' => 'Enter a text',
     'origin_trial_token_data_expires' => 'Origin Trial Token Expiration (Chrome browser)',
     'enter_origin_trial_token_data_expires' => 'Enter an expiration date',
-    'origin_trial_help' => 'By setting an origin trial token in your WebVR site meta tags you make your VR content more accessible because people do not need to manually enable Google Chrome flags in order to experience your content. Additionally HTTPS is required for making this work.',
     'origin_trial_help_more_information' => 'Get more information.',
 
 ];
