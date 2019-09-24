@@ -46,6 +46,8 @@ https://www.ideaspacevr.org/documentation/1.1/contributions
 
 ![IdeaSpaceVR - Welcome Theme](IdeaSpaceVR-welcome.jpg "IdeaSpaceVR - Welcome Theme")
 
+![IdeaSpaceVR - Compass Blog Theme](IdeaSpaceVR-compass-blog.jpg "IdeaSpaceVR - Compass Blog Theme")
+
 ## Credits
 
 IdeaSpace would not exist without these awesome projects:
