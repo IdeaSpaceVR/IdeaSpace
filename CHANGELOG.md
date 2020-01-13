@@ -1,3 +1,7 @@
+# 1.2.2
+
+- Updated to A-Frame v1.0.3
+
 # 1.2.1
 
 - New theme: IdeaSpace Compass Blog
