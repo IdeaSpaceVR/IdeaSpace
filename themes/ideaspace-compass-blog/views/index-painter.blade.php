@@ -14,8 +14,6 @@
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
-		<meta http-equiv="origin-trial" data-feature="{{ $origin_trial_token_data_feature }}" data-expires="{{ $origin_trial_token_data_expires }}" content="{{ $origin_trial_token }}">
-
     <meta property="og:site_name" content="@yield('title')" />
     <meta property="og:image:secure_url" content="" />
     <meta property="og:image" content="" />
@@ -33,7 +31,7 @@
     }
     @endphp
 
-    <script src="{{ url($theme_dir . '/js/aframe/aframe-master.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe/aframe-v1.0.3.min.js') }}"></script>
 		<script src="{{ url($theme_dir . '/js/aframe-star-system-component/aframe-star-system-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-html-shader/aframe-html-shader.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-gif-shader/aframe-gif-shader.min.js') }}"></script>
