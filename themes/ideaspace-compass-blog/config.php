@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace Compass Blog',
   '#theme-key' => 'ideaspace-compass-blog',
-  '#theme-version' => '1.0',
+  '#theme-version' => '1.1',
   '#ideaspace-version' => '>=1.2.0',
   '#theme-description' => 'theme.theme_description',
   '#theme-author-name' => 'IdeaSpaceVR',
