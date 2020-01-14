@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace Welcome!',
   '#theme-key' => 'ideaspace-welcome',
-  '#theme-version' => '1.2',
+  '#theme-version' => '1.3',
   '#ideaspace-version' => '>=1.1.1',
   '#theme-description' => 'A configurable navigation menu environment theme in order to link to other virtual reality websites.',
   '#theme-author-name' => 'IdeaSpaceVR',
