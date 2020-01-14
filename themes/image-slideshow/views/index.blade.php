@@ -14,8 +14,6 @@
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
-    <meta http-equiv="origin-trial" data-feature="{{ $origin_trial_token_data_feature }}" data-expires="{{ $origin_trial_token_data_expires }}" content="{{ $origin_trial_token }}">
-
     <meta property="og:site_name" content="@yield('title')" />
     <meta property="og:image:secure_url" content="{{ url($theme_dir . '/screenshot.png') }}" />
     <meta property="og:image" content="{{ url($theme_dir . '/screenshot.png') }}" />
@@ -31,7 +29,7 @@
     @endphp
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe-master.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-v1.0.3.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-star-system-component/aframe-star-system-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/ideaspacevr/isvr-image-trigger.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/aframe-html-shader/aframe-html-shader.min.js') }}"></script>

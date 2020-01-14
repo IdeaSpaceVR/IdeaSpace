@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'Image Slideshow',
   '#theme-key' => 'image-slideshow',
-  '#theme-version' => '1.0',
+  '#theme-version' => '1.1',
   '#ideaspace-version' => '>=1.2.0',
   '#theme-description' => 'description.theme_description',
   '#theme-author-name' => 'IdeaSpaceVR',
