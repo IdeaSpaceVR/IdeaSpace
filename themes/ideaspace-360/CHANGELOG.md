@@ -1,3 +1,8 @@
+## 2.1
+
+- Update to A-Frame v1.0.3
+- WebXR Device API support added
+
 ## 1.7
 
 - Hide controller models if HMD is connected but site is used in desktop mode

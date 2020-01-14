@@ -14,8 +14,6 @@
     <meta name="copyright" content="" />
     <meta name="robots" content="follow, index" />
 
-    <meta http-equiv="origin-trial" data-feature="{{ $origin_trial_token_data_feature }}" data-expires="{{ $origin_trial_token_data_expires }}" content="{{ $origin_trial_token }}">
-
     <meta property="og:site_name" content="@yield('title')" />
     @if (isset($content['photo-spheres']) && count($content['photo-spheres']) > 0)
     <meta property="og:image:secure_url" content="{{ $content['photo-spheres'][0]['photo-sphere']['#uri']['#value'] }}" />
@@ -27,7 +25,7 @@
     <meta property="og:url" content="{{ \Request::url() }}" />
 
     <link rel="stylesheet" href="{{ url($theme_dir . '/css/style.css') }}">
-    <script src="{{ url($theme_dir . '/js/aframe-v0.9.2.min.js') }}"></script>
+    <script src="{{ url($theme_dir . '/js/aframe-v1.0.3.min.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-scene.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-init-assets-component.js') }}"></script>
     <script src="{{ url($theme_dir . '/js/isvr-photosphere-menu-component.js') }}"></script>
