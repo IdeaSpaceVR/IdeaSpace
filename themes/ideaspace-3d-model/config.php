@@ -4,7 +4,7 @@ return [
 
   '#theme-name' => 'IdeaSpace 3D Model',
   '#theme-key' => 'ideaspace-3d-model',
-  '#theme-version' => '1.4',
+  '#theme-version' => '1.5',
   '#ideaspace-version' => '>=1.1.0',
   '#theme-description' => '3D model viewer with info hotspots. Attach text annotations to hotspots.',
   '#theme-author-name' => 'IdeaSpaceVR',

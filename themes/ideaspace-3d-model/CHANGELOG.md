@@ -1,3 +1,8 @@
+## 1.5
+
+- Updated to A-Frame v1.0.3
+- WebXR Device API support added
+
 ## 1.4
 
 - Updated to A-Frame v0.9.2
