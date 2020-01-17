@@ -19,8 +19,8 @@ Manage your virtual reality spaces and assets like you would manage blog posts. 
 ### Themes
 Download and install themes and create a 3D/VR website. Or create your own theme with the Theme API [Take a look at our theme directory](https://www.ideaspacevr.org/themes). A theme can be anything - a 360 photo tour, a 3D artist portfolio, an interactive video or a blog in VR. 
 
-### Based on WebVR API
-IdeaSpaceVR is using WebVR for interactive 3D and VR experiences that is compatible with all modern web browsers on desktop, mobile and VR headsets. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)! 
+### Based on WebXR Device API
+IdeaSpaceVR is using the WebXR Device API for interactive 3D and VR experiences that is compatible with all modern web browsers on desktop, mobile and VR headsets. Therefore... we love [A-Frame](https://github.com/aframevr/aframe)! 
 
 ## Download Latest Release
 
