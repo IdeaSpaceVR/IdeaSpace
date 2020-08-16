@@ -1,0 +1,36 @@
+<?php
+
+return [
+
+    'headline_new_space' => 'Aggiungi Nuovo Spazio',
+    'headline_edit_space' => 'Modifica Spazio',
+    'field_errors' => 'Ci sono errori nel campo sottostante.',
+    'space_title_placeholder' => 'Inserisci titolo qui',
+    'space_uri_placeholder' => 'Inserisci il percorso qui',
+    'publish' => 'Pubblica',
+    'preview' => 'Anteprima',
+    'save_draft' => 'Salva Bozza',
+    'status' => 'Stato:',
+    'edit' => 'Modifica',
+    'published' => 'Pubblicato',
+    'draft' => 'Bozza',
+    'ok' => 'Ok',
+    'cancel' => 'Cancella',
+    'publish' => 'Pubblica',
+    'theme' => 'Tema',
+    'embed_code' => 'Incorpora Codice',
+    'embed_code_help' => 'Copia il codice e incorpora questo spazio in qualsiasi sito web.',
+    'version' => 'Versione:',
+    'author' => 'Autore:',
+    'space_status' => 'Stato:',
+    'updated' => 'Caricato il:',
+    'draft' => 'Bozza',
+    'move_to_trash' => 'Sposta nel Cestino',
+    'update' => 'Aggiorna',
+    'back' => 'Torna a Tutti gli Spazi',
+    'select_theme' => 'Seleziona un Tema:',
+    'no_installed_themes' => 'Non ci sono Temi installati.',
+    'install_some_themes' => 'Installa qualche Tema',
+    'select' => 'Seleziona',
+
+];

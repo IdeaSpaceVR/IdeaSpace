@@ -73,6 +73,7 @@ class GeneralSettingsController extends Controller {
             'zh-cn' => trans('template_general_settings.chinese_china'),
             'de' => trans('template_general_settings.german'),
             'fr' => trans('template_general_settings.french'),
+            'it' => trans('template_general_settings.italian'),
         ];
 
 
